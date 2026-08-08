@@ -74,3 +74,8 @@ foreach(term IN ITEMS windows-2022 windows-2025-vs2026 vs2022-x64-release vs2026
         message(FATAL_ERROR "CI does not cover required toolchain marker: ${term}")
     endif()
 endforeach()
+foreach(term IN ITEMS windows-11-arm "Visual Studio 17 2022" ARM64)
+    if(NOT ci_workflow MATCHES "${term}")
+        message(FATAL_ERROR "CI does not cover native ARM64 marker: ${term}")
+    endif()
+endforeach()
