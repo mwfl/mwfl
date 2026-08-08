@@ -3,6 +3,9 @@
 This reference summarizes the contracts coding agents most often need. Exact
 signatures live in the named public header and remain authoritative.
 
+For machine-readable task routing, use `docs/api-index.json`. It connects each
+common job to headers, public symbols, compiled examples, tests, and invariants.
+
 ## `RunApplication` and `Application`
 
 - Header: `<mwtl/application.h>`
@@ -128,4 +131,3 @@ signatures live in the named public header and remain authoritative.
 - `Must(value, context)` converts failed setup results into rich diagnostics.
 - Use it for operations that must succeed before the window can function.
 - Do not let resulting exceptions escape a Win32 callback.
-

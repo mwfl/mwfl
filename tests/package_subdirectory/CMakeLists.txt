@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.21)
+project(mwtl_subdirectory_consumer LANGUAGES CXX)
+set(MWTL_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(MWTL_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+add_subdirectory("${MWTL_SOURCE_DIR}" mwtl-source EXCLUDE_FROM_ALL)
+add_executable(mwtl_subdirectory_consumer ../package_consumer/main.cpp)
+target_compile_features(mwtl_subdirectory_consumer PRIVATE cxx_std_20)
+target_link_libraries(mwtl_subdirectory_consumer PRIVATE mwtl::mwtl)

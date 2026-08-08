@@ -14,9 +14,15 @@ evidence.
 
 1. Give the agent one prompt from `tasks.json`, plus only the public repository
    context a normal user would provide.
-2. Save its project outside `fixtures/` and compile it with VS 2022 or VS 2026.
-3. Record the evidence booleans using `result-template.json`.
-4. Score it with:
+2. Save its single translation unit outside `fixtures/`.
+3. Compile, record conservative evidence, and score it with:
+
+```powershell
+./agent-evals/run-eval.ps1 -TaskId 01-window -Candidate path/to/main.cpp -Agent codex -Model model-name
+```
+
+4. Review the generated evidence JSON, then rescore it if a human check changes
+   semantic evidence:
 
 ```powershell
 ./agent-evals/score-result.ps1 -Result path/to/result.json
@@ -24,6 +30,10 @@ evidence.
 
 Track first-attempt compilation separately from eventual compilation. Do not
 edit an agent result before recording first-attempt evidence.
+
+The fixture matching each task is the golden public-API patch. It is compiled
+with `/W4 /permissive- /WX`; it is a structural reference, not a byte-for-byte
+answer requirement.
 
 ## Verify the suite
 
@@ -33,4 +43,3 @@ is checked by `mwtl.agent_evals` and by:
 ```powershell
 ./scripts/verify.ps1 -Mode Docs
 ```
-

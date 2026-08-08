@@ -139,6 +139,7 @@ install(FILES
     docs/llms.txt
     docs/llms-full.txt
     docs/scope-map.md
+    docs/api-index.json
     DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl)
 install(FILES cmake/Dependencies.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mwtl)

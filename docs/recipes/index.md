@@ -11,4 +11,6 @@ canonical code instead of duplicating a second, drifting implementation.
 - [Use file and folder dialogs](file-dialogs.md)
 - [Persist window placement](window-placement.md)
 - [Handle DPI and appearance](dpi-and-appearance.md)
-
+- [Add a public control wrapper](add-control-wrapper.md)
+- [Use native message interop](native-message-interop.md)
+- [Change the public API safely](public-api-change.md)

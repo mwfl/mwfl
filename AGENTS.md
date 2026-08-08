@@ -60,6 +60,8 @@ sources found below a build tree as repository code.
 
 See `docs/development-architecture.md` and `docs/change-matrix.json` for the
 full path-to-validation map.
+Use `docs/api-index.json` to map a user task to public symbols, examples, tests,
+and constraints before searching implementation files.
 Use `docs/scope-map.md` before adding a feature that resembles another Windows
 UI framework; it defines direct support, raw Win32 composition, and exclusions.
 
@@ -67,6 +69,7 @@ UI framework; it defines direct support, raw Win32 composition, and exclusions.
 
 ```powershell
 ./scripts/doctor.ps1
+./scripts/verify-change.ps1 -Execute
 ./scripts/verify.ps1 -Mode Fast
 ```
 

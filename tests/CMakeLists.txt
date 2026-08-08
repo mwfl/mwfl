@@ -331,6 +331,23 @@ add_test(
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_agent_evals.cmake")
 set_tests_properties(mwtl.agent_evals PROPERTIES TIMEOUT 20)
 
+add_test(NAME mwtl.api_index
+    COMMAND "${CMAKE_COMMAND}" "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_api_index.cmake")
+set_tests_properties(mwtl.api_index PROPERTIES TIMEOUT 20)
+
+find_program(mwtl_test_powershell NAMES pwsh powershell REQUIRED)
+add_test(NAME mwtl.change_selector
+    COMMAND "${mwtl_test_powershell}" -NoProfile -NonInteractive
+        -ExecutionPolicy Bypass -File "${CMAKE_CURRENT_SOURCE_DIR}/verify_change_selector.ps1"
+        -ProjectRoot "${PROJECT_SOURCE_DIR}")
+set_tests_properties(mwtl.change_selector PROPERTIES TIMEOUT 20)
+
+add_test(NAME mwtl.architecture_boundaries
+    COMMAND "${CMAKE_COMMAND}" "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_architecture_boundaries.cmake")
+set_tests_properties(mwtl.architecture_boundaries PROPERTIES TIMEOUT 20)
+
 # Every test has semantic labels so local agents can run a predictable subset.
 get_property(mwtl_all_tests DIRECTORY PROPERTY TESTS)
 foreach(test_name IN LISTS mwtl_all_tests)
@@ -340,7 +357,7 @@ foreach(test_name IN LISTS mwtl_all_tests)
         set(labels "metadata;fast")
     elseif(test_name STREQUAL "mwtl.hot_corners_self_test")
         set(labels "gui;integration")
-    elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals)$")
+    elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries)$")
         set(labels "docs;metadata;fast")
     elseif(test_name STREQUAL "mwtl.package_consumer")
         set(labels "package;integration;slow")

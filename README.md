@@ -241,6 +241,7 @@ For controlled environments, see the
 - [Copyable application templates](templates/)
 - [Task recipes](docs/recipes/)
 - [Agent-oriented public API contracts](docs/agent-reference.md)
+- [Machine-readable task-to-API index](docs/api-index.json)
 - [Capability and scope map](docs/scope-map.md)
 - [Coding-agent evaluation suite](agent-evals/)
 - [Compact agent context](docs/llms.txt)

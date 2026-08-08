@@ -1,6 +1,7 @@
 foreach(path IN ITEMS
         agent-evals/README.md agent-evals/tasks.json agent-evals/rubric.json
         agent-evals/result-template.json agent-evals/score-result.ps1
+        agent-evals/run-eval.ps1
         agent-evals/fixtures/CMakeLists.txt)
     if(NOT EXISTS "${PROJECT_ROOT}/${path}")
         message(FATAL_ERROR "agent eval asset is missing: ${path}")
@@ -31,3 +32,10 @@ endforeach()
 if(NOT total_points EQUAL 100)
     message(FATAL_ERROR "agent eval rubric must total 100 points; found ${total_points}")
 endif()
+
+file(READ "${PROJECT_ROOT}/agent-evals/run-eval.ps1" runner)
+foreach(term IN ITEMS MWTL_AGENT_EVAL_CANDIDATE first_compile public_api_only thread_safe)
+    if(NOT runner MATCHES "${term}")
+        message(FATAL_ERROR "agent evaluation runner lacks ${term}")
+    endif()
+endforeach()

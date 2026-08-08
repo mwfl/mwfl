@@ -8,12 +8,21 @@ set(required_files
     docs/development-architecture.md
     docs/change-matrix.json
     docs/scope-map.md
+    docs/api-index.json
     scripts/developer-tools.ps1
     scripts/doctor.ps1
-    scripts/verify.ps1)
+    scripts/verify.ps1
+    scripts/verify-change.ps1)
 foreach(path IN LISTS required_files)
     if(NOT EXISTS "${PROJECT_ROOT}/${path}")
         message(FATAL_ERROR "developer-agent asset is missing: ${path}")
+    endif()
+endforeach()
+
+file(READ "${PROJECT_ROOT}/scripts/verify-change.ps1" change_selector)
+foreach(term IN ITEMS change-matrix.json ChangedFiles Execute VerifyMode)
+    if(NOT change_selector MATCHES "${term}")
+        message(FATAL_ERROR "verify-change.ps1 does not cover ${term}")
     endif()
 endforeach()
 

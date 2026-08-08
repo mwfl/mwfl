@@ -18,6 +18,7 @@
     {"pattern":".github/**","validation":["docs"]},
     {"pattern":"scripts/**","validation":["docs","fast"]},
     {"pattern":"agent-evals/**","validation":["docs","fast"]},
+    {"pattern":"docs/api-index.json","validation":["docs","metadata"]},
     {"pattern":".vsconfig","validation":["docs"]}
   ]
 }

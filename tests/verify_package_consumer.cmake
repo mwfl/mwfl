@@ -14,6 +14,31 @@ if(NOT install_result EQUAL 0)
     message(FATAL_ERROR "mwtl install failed: ${install_result}")
 endif()
 
+foreach(method IN ITEMS subdirectory fetchcontent)
+    set(method_build "${MWTL_BUILD_DIR}/package-${method}-build")
+    file(REMOVE_RECURSE "${method_build}")
+    execute_process(
+        COMMAND "${CMAKE_COMMAND}"
+                -S "${MWTL_SOURCE_DIR}/tests/package_${method}"
+                -B "${method_build}"
+                -G "${MWTL_GENERATOR}" -A "${MWTL_PLATFORM}"
+                "-DMWTL_SOURCE_DIR=${MWTL_SOURCE_DIR}"
+                "-DMWTL_WTL_SOURCE_DIR=${MWTL_WTL_SOURCE_DIR}"
+                "-DMWTL_WIL_SOURCE_DIR=${MWTL_WIL_SOURCE_DIR}"
+                "-DMWTL_DEPENDENCY_MODE=SYSTEM"
+        RESULT_VARIABLE method_configure_result)
+    if(NOT method_configure_result EQUAL 0)
+        message(FATAL_ERROR "${method} consumer configure failed: ${method_configure_result}")
+    endif()
+    execute_process(
+        COMMAND "${CMAKE_COMMAND}" --build "${method_build}"
+                --config "${MWTL_CONFIGURATION}"
+        RESULT_VARIABLE method_build_result)
+    if(NOT method_build_result EQUAL 0)
+        message(FATAL_ERROR "${method} consumer build failed: ${method_build_result}")
+    endif()
+endforeach()
+
 execute_process(
     COMMAND "${CMAKE_COMMAND}"
             -S "${MWTL_SOURCE_DIR}/tests/package_consumer"
