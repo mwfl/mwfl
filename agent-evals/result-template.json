@@ -1,0 +1,19 @@
+{
+  "task_id": "01-window",
+  "agent": "replace-me",
+  "model": "replace-me",
+  "toolchain": "vs2026-x64-debug",
+  "evidence": {
+    "first_compile": false,
+    "eventual_compile": false,
+    "public_api_only": false,
+    "thread_safe": false,
+    "lifetime_safe": false,
+    "event_semantics": false,
+    "dip_correct": false,
+    "failure_handled": false,
+    "minimal_diff": false
+  },
+  "notes": ""
+}
+

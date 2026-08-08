@@ -316,3 +316,45 @@ add_test(
         "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_agent_assets.cmake")
 set_tests_properties(mwtl.agent_assets PROPERTIES TIMEOUT 20)
+
+add_test(
+    NAME mwtl.developer_assets
+    COMMAND "${CMAKE_COMMAND}"
+        "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_developer_assets.cmake")
+set_tests_properties(mwtl.developer_assets PROPERTIES TIMEOUT 20)
+
+add_test(
+    NAME mwtl.agent_evals
+    COMMAND "${CMAKE_COMMAND}"
+        "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_agent_evals.cmake")
+set_tests_properties(mwtl.agent_evals PROPERTIES TIMEOUT 20)
+
+# Every test has semantic labels so local agents can run a predictable subset.
+get_property(mwtl_all_tests DIRECTORY PROPERTY TESTS)
+foreach(test_name IN LISTS mwtl_all_tests)
+    if(test_name MATCHES "^mwtl\\.(lifecycle|advanced\\.)")
+        set(labels "lifecycle;fast")
+    elseif(test_name MATCHES "^mwtl\\.manifest\\.")
+        set(labels "metadata;fast")
+    elseif(test_name STREQUAL "mwtl.hot_corners_self_test")
+        set(labels "gui;integration")
+    elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals)$")
+        set(labels "docs;metadata;fast")
+    elseif(test_name STREQUAL "mwtl.package_consumer")
+        set(labels "package;integration;slow")
+    elseif(test_name MATCHES "^mwtl\\.(modern_api|desktop)$")
+        set(labels "integration;fast")
+    else()
+        set(labels "unit;fast")
+    endif()
+    set_tests_properties(${test_name} PROPERTIES LABELS "${labels}")
+endforeach()
+
+foreach(test_name IN LISTS mwtl_all_tests)
+    get_test_property(${test_name} LABELS labels)
+    if(NOT labels)
+        message(FATAL_ERROR "CTest test has no semantic labels: ${test_name}")
+    endif()
+endforeach()

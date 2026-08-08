@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "default": ["fast"],
+  "paths": [
+    {"pattern":"include/mwtl/**","validation":["fast","unit","lifecycle","package","full"]},
+    {"pattern":"src/layout.cpp","validation":["fast","unit","layout","full"]},
+    {"pattern":"src/message_pump.cpp","validation":["fast","lifecycle","gui","full"]},
+    {"pattern":"src/application.cpp","validation":["fast","lifecycle","package","full"]},
+    {"pattern":"src/**","validation":["fast","unit"]},
+    {"pattern":"cmake/**","validation":["package","full"]},
+    {"pattern":"CMakeLists.txt","validation":["package","full"]},
+    {"pattern":"CMakePresets.json","validation":["docs","full"]},
+    {"pattern":"tests/**","validation":["fast","full"]},
+    {"pattern":"examples/**","validation":["fast","gui","metadata"]},
+    {"pattern":"templates/**","validation":["package","docs"]},
+    {"pattern":"docs/**","validation":["docs"]},
+    {"pattern":"site/**","validation":["docs"]},
+    {"pattern":".github/**","validation":["docs"]},
+    {"pattern":"scripts/**","validation":["docs","fast"]},
+    {"pattern":"agent-evals/**","validation":["docs","fast"]},
+    {"pattern":".vsconfig","validation":["docs"]}
+  ]
+}

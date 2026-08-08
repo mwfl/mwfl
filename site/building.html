@@ -146,9 +146,9 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
       <pre data-title="PowerShell"><code>git clone https://github.com/everettjf/mwtl.git
 cd mwtl
 cmake --preset vs2026-x64
-cmake --build --preset x64-debug
-ctest --preset x64-debug</code></pre>
-      <p>Build a single example with <code>cmake --build build/vs2026-x64 --config Debug --target mwtl_hello</code>. See the <a href="components/index.html">complete component gallery</a> for source links and screenshots.</p>
+cmake --build --preset vs2026-x64-debug
+ctest --preset vs2026-x64-debug</code></pre>
+      <p>Replace <code>vs2026</code> with <code>vs2022</code> to use the minimum supported toolchain. Build a single example with <code>cmake --build build/presets/vs2026-x64 --config Debug --target mwtl_hello</code>. See the <a href="components/index.html">complete component gallery</a> for source links and screenshots.</p>
     </section>
 
     <section id="offline">

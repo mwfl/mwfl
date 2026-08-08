@@ -97,7 +97,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
 
 See [recipes](recipes/index.md) for complete task flows, [public symbols](agent-reference.md)
 for contracts, [terminology](terminology.md) when translating another framework,
-and [common mistakes](common-mistakes.md) before emitting final code.
+[common mistakes](common-mistakes.md) before emitting final code, and the
+[scope map](scope-map.md) before assuming a framework-level capability exists.
 
 ## Generation checklist
 

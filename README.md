@@ -201,19 +201,25 @@ MSVC, a Windows SDK and C++ ATL, CMake 3.21 or newer, and C++20.
 
 ```powershell
 cmake --preset vs2026-x64
-cmake --build --preset x64-debug
-ctest --preset x64-debug
+cmake --build --preset vs2026-x64-debug
+ctest --preset vs2026-x64-debug
 ```
 
-On an ARM64 development machine use `vs2026-arm64`, `arm64-debug`, and the
-matching `arm64-debug` test preset.
+Visual Studio 2022 is also supported: replace `vs2026` with `vs2022` in
+the configure, build, and test preset names. Visual Studio 2026 is recommended.
+
+On an ARM64 development machine use `vs2026-arm64` and
+`vs2026-arm64-debug` (or the corresponding VS 2022 presets).
 
 Build and test Release:
 
 ```powershell
-cmake --build --preset x64-release
-ctest --preset x64-release
+cmake --build --preset vs2026-x64-release
+ctest --preset vs2026-x64-release
 ```
+
+For repository development, `./scripts/doctor.ps1` discovers the supported
+toolchains and `./scripts/verify.ps1 -Mode Fast` runs the standard edit loop.
 
 The project rejects non-Windows, non-MSVC-compatible ABI, and 32-bit
 configurations. CI validates MSVC x64 and ARM64, clang-cl (with its GUI-launch
@@ -235,6 +241,8 @@ For controlled environments, see the
 - [Copyable application templates](templates/)
 - [Task recipes](docs/recipes/)
 - [Agent-oriented public API contracts](docs/agent-reference.md)
+- [Capability and scope map](docs/scope-map.md)
+- [Coding-agent evaluation suite](agent-evals/)
 - [Compact agent context](docs/llms.txt)
 - [Get started](https://everettjf.github.io/mwtl/building.html)
 - [Component reference](https://everettjf.github.io/mwtl/components/)

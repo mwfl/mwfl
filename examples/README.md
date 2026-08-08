@@ -45,7 +45,7 @@ With the repository presets, the equivalent full examples/test build is:
 
 ```powershell
 cmake --preset vs2026-x64
-cmake --build --preset x64-debug
+cmake --build --preset vs2026-x64-debug
 ```
 
 All examples use the shared Per-Monitor V2 manifest in `example.manifest`.

@@ -10,39 +10,65 @@ permissions:
 
 jobs:
   x64:
-    name: x64 ${{ matrix.configuration }}
-    runs-on: windows-2022
+    name: VS 2026 x64 ${{ matrix.configuration }}
+    runs-on: windows-2025-vs2026
     strategy:
       fail-fast: false
       matrix:
-        configuration: [Debug, Release]
+        include:
+          - configuration: Debug
+            preset: vs2026-x64-debug
+          - configuration: Release
+            preset: vs2026-x64-release
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Diagnose developer environment
+        if: matrix.configuration == 'Debug'
+        shell: pwsh
+        run: ./scripts/doctor.ps1 -VisualStudio 2026
+
       - name: Configure
-        run: >-
-          cmake -S . -B build/x64
-          -G "Visual Studio 17 2022" -A x64
-          -DMWTL_BUILD_EXAMPLES=ON
-          -DMWTL_BUILD_TESTS=ON
+        run: cmake --preset vs2026-x64
 
       - name: Build
-        run: cmake --build build/x64 --config ${{ matrix.configuration }} --verbose
+        run: cmake --build --preset ${{ matrix.preset }} --verbose
 
       - name: Test
-        run: ctest --test-dir build/x64 -C ${{ matrix.configuration }} --output-on-failure
+        run: ctest --preset ${{ matrix.preset }}
+
+      - name: Verify documented developer workflow
+        if: matrix.configuration == 'Debug'
+        shell: pwsh
+        run: ./scripts/verify.ps1 -Mode Docs -VisualStudio 2026 -Jobs 2
+
+  vs2022-compatibility:
+    name: VS 2022 x64 Release compatibility
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Diagnose developer environment
+        shell: pwsh
+        run: ./scripts/doctor.ps1 -VisualStudio 2022
+      - name: Configure
+        run: cmake --preset vs2022-x64
+      - name: Build
+        run: cmake --build --preset vs2022-x64-release --parallel
+      - name: Test
+        run: ctest --preset vs2022-x64-release
 
   static-analysis:
-    name: MSVC static analysis
-    runs-on: windows-2022
+    name: VS 2026 MSVC static analysis
+    runs-on: windows-2025-vs2026
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Configure library
         run: >-
           cmake -S . -B build/analyze
-          -G "Visual Studio 17 2022" -A x64
+          -G "Visual Studio 18 2026" -A x64
           -DMWTL_BUILD_EXAMPLES=OFF
           -DMWTL_BUILD_TESTS=OFF
           -DMWTL_WARNINGS_AS_ERRORS=ON
@@ -55,7 +81,7 @@ jobs:
 
   clang-cl:
     name: clang-cl x64 Release
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Locate Windows SDK manifest tool
@@ -71,25 +97,25 @@ jobs:
       - name: Configure
         run: >-
           cmake -S . -B build/clang-cl
-          -G "Visual Studio 17 2022" -A x64 -T ClangCL
+          -G "Visual Studio 18 2026" -A x64 -T ClangCL
           -DCMAKE_MT="$env:MWTL_MT_TOOL"
           -DMWTL_BUILD_EXAMPLES=ON -DMWTL_BUILD_TESTS=ON
       - name: Build
         run: cmake --build build/clang-cl --config Release --parallel
       - name: Test
-        # The hosted VS 2022 image cannot activate clang-cl GUI executables
+        # The hosted image cannot reliably activate clang-cl GUI executables
         # (Win32 14001); the same GUI self-test runs in the MSVC matrices.
         run: ctest --test-dir build/clang-cl -C Release --output-on-failure -E mwtl.hot_corners_self_test
 
   address-sanitizer:
-    name: MSVC AddressSanitizer
-    runs-on: windows-2022
+    name: VS 2026 MSVC AddressSanitizer
+    runs-on: windows-2025-vs2026
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Configure
         run: >-
           cmake -S . -B build/asan
-          -G "Visual Studio 17 2022" -A x64
+          -G "Visual Studio 18 2026" -A x64
           -DMWTL_BUILD_EXAMPLES=OFF -DMWTL_BUILD_TESTS=ON
           -DMWTL_ENABLE_ASAN=ON
       - name: Build
@@ -99,20 +125,20 @@ jobs:
 
   coverage:
     name: Native source coverage
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Configure
         run: >-
           cmake -S . -B build/coverage
-          -G "Visual Studio 17 2022" -A x64
+          -G "Visual Studio 18 2026" -A x64
           -DMWTL_BUILD_EXAMPLES=ON -DMWTL_BUILD_TESTS=ON
       - name: Build
         run: cmake --build build/coverage --config Debug --parallel
       - name: Locate coverage collector
         shell: pwsh
         run: |
-          $collector = Get-ChildItem "${env:ProgramFiles}\Microsoft Visual Studio\2022\Enterprise" `
+          $collector = Get-ChildItem "${env:ProgramFiles}\Microsoft Visual Studio\18" `
             -Recurse -Filter Microsoft.CodeCoverage.Console.exe | Select-Object -First 1
           if (-not $collector) { throw 'Microsoft native code coverage collector was not found.' }
           "MWTL_COVERAGE_COLLECTOR=$($collector.FullName)" | Out-File $env:GITHUB_ENV -Append
@@ -141,14 +167,14 @@ jobs:
           if-no-files-found: error
 
   arm64:
-    name: ARM64 Debug
+    name: VS 2026 ARM64 Debug
     runs-on: windows-11-arm
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Configure
         run: >-
           cmake -S . -B build/arm64
-          -G "Visual Studio 17 2022" -A ARM64
+          -G "Visual Studio 18 2026" -A ARM64
           -DMWTL_BUILD_EXAMPLES=ON -DMWTL_BUILD_TESTS=ON
       - name: Build
         run: cmake --build build/arm64 --config Debug --parallel

@@ -138,6 +138,7 @@ install(FILES
     docs/examples.json
     docs/llms.txt
     docs/llms-full.txt
+    docs/scope-map.md
     DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl)
 install(FILES cmake/Dependencies.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mwtl)
@@ -181,6 +182,7 @@ endif()
 
 if(MWTL_BUILD_TESTS)
     enable_testing()
+    add_subdirectory(agent-evals/fixtures)
     add_subdirectory(tests)
     if(MWTL_ENABLE_ASAN)
         add_custom_target(mwtl_asan_runtime ALL

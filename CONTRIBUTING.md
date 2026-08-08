@@ -11,15 +11,13 @@ contract requires a deprecation period, migration note, and compatibility
 fixture. Provisional APIs may receive source-compatible additions.
 
 ```powershell
-cmake --preset vs2026-x64
-cmake --build --preset x64-debug
-ctest --preset x64-debug
-cmake --build --preset x64-release
-ctest --preset x64-release
+./scripts/doctor.ps1
+./scripts/verify.ps1 -Mode Full -VisualStudio 2026
 ```
 
+Visual Studio 2022 is the minimum supported IDE and Visual Studio 2026 is
+recommended. The scripts accept `-VisualStudio 2022` for compatibility checks.
 CI additionally owns clang-cl, AddressSanitizer, and native ARM64 validation.
-Contributors with an ARM64 toolset can use the `arm64-debug` presets locally.
 
 No exception may cross a Win32 callback. UI objects belong to their creating
 thread; cross-thread work requires an explicitly documented handoff.

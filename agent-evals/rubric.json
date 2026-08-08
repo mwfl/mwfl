@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "dimensions": [
+    {"id":"first_compile","points":30,"description":"The first generated project configures and compiles."},
+    {"id":"eventual_compile","points":15,"description":"The final unassisted result configures and compiles."},
+    {"id":"public_api_only","points":10,"description":"Uses real public mwtl symbols and no internal headers."},
+    {"id":"thread_safe","points":10,"description":"Preserves UI thread affinity and safe handoff."},
+    {"id":"lifetime_safe","points":10,"description":"Controls, layout, callbacks, and workers have valid lifetimes."},
+    {"id":"event_semantics","points":10,"description":"Handled and Propagate semantics are correct."},
+    {"id":"dip_correct","points":5,"description":"Uses DIPs for retained layout and explicit pixel boundaries."},
+    {"id":"failure_handled","points":5,"description":"Checks required setup and distinguishes cancellation/failure."},
+    {"id":"minimal_diff","points":5,"description":"Avoids unrelated dependencies and unnecessary framework code."}
+  ]
+}
+

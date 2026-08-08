@@ -1,0 +1,33 @@
+foreach(path IN ITEMS
+        agent-evals/README.md agent-evals/tasks.json agent-evals/rubric.json
+        agent-evals/result-template.json agent-evals/score-result.ps1
+        agent-evals/fixtures/CMakeLists.txt)
+    if(NOT EXISTS "${PROJECT_ROOT}/${path}")
+        message(FATAL_ERROR "agent eval asset is missing: ${path}")
+    endif()
+endforeach()
+
+file(READ "${PROJECT_ROOT}/agent-evals/tasks.json" tasks_json)
+string(JSON task_count LENGTH "${tasks_json}" tasks)
+if(NOT task_count EQUAL 10)
+    message(FATAL_ERROR "agent eval suite must contain exactly 10 tasks")
+endif()
+math(EXPR last_task "${task_count} - 1")
+foreach(index RANGE 0 ${last_task})
+    string(JSON fixture GET "${tasks_json}" tasks ${index} fixture)
+    if(NOT EXISTS "${PROJECT_ROOT}/agent-evals/fixtures/${fixture}")
+        message(FATAL_ERROR "agent eval fixture is missing: ${fixture}")
+    endif()
+endforeach()
+
+file(READ "${PROJECT_ROOT}/agent-evals/rubric.json" rubric_json)
+string(JSON dimension_count LENGTH "${rubric_json}" dimensions)
+set(total_points 0)
+math(EXPR last_dimension "${dimension_count} - 1")
+foreach(index RANGE 0 ${last_dimension})
+    string(JSON points GET "${rubric_json}" dimensions ${index} points)
+    math(EXPR total_points "${total_points} + ${points}")
+endforeach()
+if(NOT total_points EQUAL 100)
+    message(FATAL_ERROR "agent eval rubric must total 100 points; found ${total_points}")
+endif()

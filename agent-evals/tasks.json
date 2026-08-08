@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "tasks": [
+    {"id":"01-window","prompt":"Create a minimal native mwtl window with a status label and a Close button.","fixture":"window.cpp","required":["WindowBase","ControlHost","DIP layout","typed command event"]},
+    {"id":"02-form","prompt":"Create a profile form that rejects display names shorter than two characters and focuses the invalid field.","fixture":"form.cpp","required":["member controls","explicit model","validation feedback","focus recovery"]},
+    {"id":"03-layout","prompt":"Create a responsive settings window with a fixed navigation column and a stretching content panel.","fixture":"layout.cpp","required":["nested Row/Column","Fixed","Stretch","DIP values"]},
+    {"id":"04-commands","prompt":"Create one Save command shared by a button and Ctrl+S, with command dispatch in the window.","fixture":"commands.cpp","required":["CommandSet","stable ControlId","accelerator","single action callback"]},
+    {"id":"05-background","prompt":"Run work on a background thread and safely update a status label on the UI thread when it completes.","fixture":"background.cpp","required":["std::jthread member","WindowWakeup","OnWakeup","no worker UI access"]},
+    {"id":"06-dialog","prompt":"Add an Open button that shows a native text-file dialog and displays the selected path or cancellation.","fixture":"dialog.cpp","required":["owner HWND","filters","accepted/cancelled distinction","typed command"]},
+    {"id":"07-placement","prompt":"Restore window placement at startup and save it when the window closes.","fixture":"placement.cpp","required":["SavedWindowPlacement","application registry key","OnClose propagation"]},
+    {"id":"08-dpi","prompt":"Create a DPI-aware window that lays out controls in DIPs and refreshes its UI font after a DPI change.","fixture":"dpi.cpp","required":["DIP layout","DpiContext","DpiChangedEvent","propagation"]},
+    {"id":"09-appearance","prompt":"Apply system appearance and give an otherwise ambiguous input an accessible name.","fixture":"appearance.cpp","required":["AppearanceOptions","SetAccessibleName","best-effort handling"]},
+    {"id":"10-native-message","prompt":"Post and handle an application-defined WM_APP message while preserving mwtl typed dispatch.","fixture":"native_message.cpp","required":["GetHwnd","WindowMessage","Handled/Propagate","no internal API"]}
+  ]
+}
+

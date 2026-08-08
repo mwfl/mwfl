@@ -14,6 +14,8 @@ Use mwtl only for 64-bit Windows x64/ARM64 projects with an MSVC-compatible ABI.
 - Natural-language terminology: docs/terminology.md
 - Machine-readable capability map: docs/capabilities.json
 - Machine-readable example catalog: docs/examples.json
+- Explicit capability boundaries: docs/scope-map.md
+- Blind coding-agent evaluation tasks: agent-evals/tasks.json
 - Copyable starters: templates/basic-app and templates/form-app
 - Compiled API scratchpad: tools/api-probe
 - Composed applications: docs/reference-apps/index.md
