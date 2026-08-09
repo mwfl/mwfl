@@ -4,6 +4,7 @@ project(mwtl VERSION 0.1.0 DESCRIPTION "Modern Windows Thin Layer" LANGUAGES CXX
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+include(FetchContent)
 
 if(NOT WIN32)
     message(FATAL_ERROR "mwtl supports Windows only.")
@@ -33,11 +34,13 @@ if(PROJECT_IS_TOP_LEVEL)
     option(MWTL_BUILD_TESTS "Build mwtl tests" ON)
     option(MWTL_WARNINGS_AS_ERRORS "Treat mwtl warnings as errors" ON)
     option(MWTL_ENABLE_ASAN "Enable AddressSanitizer for repository validation" OFF)
+    option(MWTL_BUILD_SCINTILLA "Build the optional pinned Scintilla component" OFF)
 else()
     option(MWTL_BUILD_EXAMPLES "Build mwtl examples" OFF)
     option(MWTL_BUILD_TESTS "Build mwtl tests" OFF)
     option(MWTL_WARNINGS_AS_ERRORS "Treat mwtl warnings as errors" OFF)
     option(MWTL_ENABLE_ASAN "Enable AddressSanitizer for repository validation" OFF)
+    option(MWTL_BUILD_SCINTILLA "Build the optional pinned Scintilla component" OFF)
 endif()
 
 if(MWTL_ENABLE_ASAN)
@@ -127,6 +130,48 @@ target_include_directories(mwtl_imaging PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(mwtl_imaging PUBLIC mwtl PRIVATE windowscodecs)
 
+if(MWTL_BUILD_SCINTILLA)
+    FetchContent_Declare(mwtl_scintilla_source
+        URL https://www.scintilla.org/scintilla565.zip
+        URL_HASH SHA256=345140A60BF4CEEA3340942E8205E6A8FBDA8DB13EB48F827126B9BE15BD3DA1
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+    FetchContent_Declare(mwtl_scintilla_binary
+        URL https://www.scintilla.org/wscite565.zip
+        URL_HASH SHA256=9B5A7AF4BEB2D61BA6A5F62FA678FF68C96D175D19664FC1A801F444B357303B
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+    FetchContent_MakeAvailable(mwtl_scintilla_source mwtl_scintilla_binary)
+    set(MWTL_SCINTILLA_RUNTIME
+        "${mwtl_scintilla_binary_SOURCE_DIR}/Scintilla.dll")
+    if(NOT EXISTS "${MWTL_SCINTILLA_RUNTIME}" OR
+       NOT EXISTS "${mwtl_scintilla_source_SOURCE_DIR}/include/Scintilla.h")
+        message(FATAL_ERROR "Pinned Scintilla 5.6.5 package layout is invalid")
+    endif()
+
+    add_library(mwtl_scintilla STATIC src/scintilla.cpp)
+    add_library(mwtl::scintilla ALIAS mwtl_scintilla)
+    set_target_properties(mwtl_scintilla PROPERTIES EXPORT_NAME scintilla)
+    target_compile_features(mwtl_scintilla PUBLIC cxx_std_20)
+    target_compile_options(mwtl_scintilla PRIVATE /W4 /permissive- /EHsc /utf-8)
+    if(MWTL_WARNINGS_AS_ERRORS)
+        target_compile_options(mwtl_scintilla PRIVATE /WX)
+    endif()
+    target_include_directories(mwtl_scintilla
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+        PRIVATE "${mwtl_scintilla_source_SOURCE_DIR}/include")
+    target_link_libraries(mwtl_scintilla PUBLIC mwtl)
+
+    function(mwtl_deploy_scintilla target)
+        if(NOT TARGET "${target}")
+            message(FATAL_ERROR "mwtl_deploy_scintilla target does not exist: ${target}")
+        endif()
+        add_custom_command(TARGET "${target}" POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "${MWTL_SCINTILLA_RUNTIME}" "$<TARGET_FILE_DIR:${target}>/Scintilla.dll")
+    endfunction()
+endif()
+
 get_target_property(mwtl_wtl_include_dirs WTL::WTL INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(mwtl_wil_include_dirs WIL::WIL INTERFACE_INCLUDE_DIRECTORIES)
 
@@ -169,6 +214,14 @@ install(TARGETS mwtl mwtl_d2d mwtl_d3d mwtl_imaging
     EXPORT mwtlTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+if(MWTL_BUILD_SCINTILLA)
+    install(TARGETS mwtl_scintilla EXPORT mwtlTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    install(FILES "${MWTL_SCINTILLA_RUNTIME}" DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(FILES "${mwtl_scintilla_source_SOURCE_DIR}/License.txt"
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl/scintilla-5.6.5)
+endif()
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(FILES
     LICENSE

@@ -362,6 +362,29 @@ target_link_libraries(mwtl_imaging_decode_test PRIVATE mwtl::imaging)
 add_test(NAME mwtl.imaging_decode COMMAND mwtl_imaging_decode_test)
 set_tests_properties(mwtl.imaging_decode PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
+if(MWTL_BUILD_SCINTILLA)
+    add_library(mwtl_header_scintilla OBJECT header_scintilla.cpp)
+    target_compile_features(mwtl_header_scintilla PRIVATE cxx_std_20)
+    target_compile_options(mwtl_header_scintilla PRIVATE /W4 /permissive- /EHsc /utf-8)
+    target_link_libraries(mwtl_header_scintilla PRIVATE mwtl::scintilla)
+
+    add_executable(mwtl_scintilla_text_test scintilla_text_test.cpp)
+    target_compile_features(mwtl_scintilla_text_test PRIVATE cxx_std_20)
+    target_compile_options(mwtl_scintilla_text_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+    target_link_libraries(mwtl_scintilla_text_test PRIVATE mwtl::scintilla)
+    add_test(NAME mwtl.scintilla_text COMMAND mwtl_scintilla_text_test)
+    set_tests_properties(mwtl.scintilla_text PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+    add_executable(mwtl_scintilla_native_test WIN32 scintilla_native_test.cpp)
+    target_sources(mwtl_scintilla_native_test PRIVATE "${PROJECT_SOURCE_DIR}/examples/example.manifest")
+    target_compile_features(mwtl_scintilla_native_test PRIVATE cxx_std_20)
+    target_compile_options(mwtl_scintilla_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+    target_link_libraries(mwtl_scintilla_native_test PRIVATE mwtl::scintilla oleacc)
+    mwtl_deploy_scintilla(mwtl_scintilla_native_test)
+    add_test(NAME mwtl.scintilla_native COMMAND mwtl_scintilla_native_test)
+    set_tests_properties(mwtl.scintilla_native PROPERTIES TIMEOUT 30 LABELS "fast;unit")
+endif()
+
 add_executable(mwtl_property_sheet_model_test property_sheet_model_test.cpp)
 target_compile_features(mwtl_property_sheet_model_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_property_sheet_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -595,6 +618,7 @@ add_test(
         "-DMWTL_PLATFORM=${CMAKE_GENERATOR_PLATFORM}"
         "-DMWTL_ENABLE_ASAN=${MWTL_ENABLE_ASAN}"
         "-DMWTL_EXPECT_NOTEPAD=$<BOOL:$<TARGET_EXISTS:mwtl_notepad>>"
+        "-DMWTL_EXPECT_SCINTILLA=$<BOOL:$<TARGET_EXISTS:mwtl_scintilla>>"
         "-DMWTL_WTL_SOURCE_DIR=${MWTL_RESOLVED_WTL_SOURCE_DIR}"
         "-DMWTL_WIL_SOURCE_DIR=${MWTL_RESOLVED_WIL_SOURCE_DIR}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_package_consumer.cmake")

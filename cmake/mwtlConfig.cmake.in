@@ -15,5 +15,17 @@ endif()
 if(TARGET mwtl::imaging)
     set(mwtl_imaging_FOUND TRUE)
 endif()
+if(TARGET mwtl::scintilla)
+    set(mwtl_scintilla_FOUND TRUE)
+    set(MWTL_SCINTILLA_RUNTIME "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_BINDIR@/Scintilla.dll")
+    function(mwtl_deploy_scintilla target)
+        if(NOT TARGET "${target}")
+            message(FATAL_ERROR "mwtl_deploy_scintilla target does not exist: ${target}")
+        endif()
+        add_custom_command(TARGET "${target}" POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "${MWTL_SCINTILLA_RUNTIME}" "$<TARGET_FILE_DIR:${target}>/Scintilla.dll")
+    endfunction()
+endif()
 
 check_required_components(mwtl)

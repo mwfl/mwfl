@@ -1,7 +1,7 @@
 if(NOT DEFINED MWTL_BUILD_DIR OR NOT DEFINED MWTL_SOURCE_DIR OR
    NOT DEFINED MWTL_INSTALL_DIR OR NOT DEFINED MWTL_CONFIGURATION OR
    NOT DEFINED MWTL_GENERATOR OR NOT DEFINED MWTL_PLATFORM OR
-   NOT DEFINED MWTL_EXPECT_NOTEPAD)
+   NOT DEFINED MWTL_EXPECT_NOTEPAD OR NOT DEFINED MWTL_EXPECT_SCINTILLA)
     message(FATAL_ERROR "Package consumer verification arguments are incomplete")
 endif()
 
@@ -16,6 +16,9 @@ if(NOT install_result EQUAL 0)
 endif()
 if(MWTL_EXPECT_NOTEPAD AND NOT EXISTS "${MWTL_INSTALL_DIR}/bin/mwtl_notepad.exe")
     message(FATAL_ERROR "installed package is missing bin/mwtl_notepad.exe")
+endif()
+if(MWTL_EXPECT_SCINTILLA AND NOT EXISTS "${MWTL_INSTALL_DIR}/bin/Scintilla.dll")
+    message(FATAL_ERROR "installed package is missing pinned bin/Scintilla.dll")
 endif()
 
 foreach(method IN ITEMS subdirectory fetchcontent)
@@ -50,6 +53,7 @@ execute_process(
             -G "${MWTL_GENERATOR}" -A "${MWTL_PLATFORM}"
             "-DCMAKE_PREFIX_PATH=${MWTL_INSTALL_DIR}"
             "-DMWTL_ENABLE_ASAN=${MWTL_ENABLE_ASAN}"
+            "-DMWTL_TEST_SCINTILLA=${MWTL_EXPECT_SCINTILLA}"
             "-DMWTL_WTL_SOURCE_DIR=${MWTL_WTL_SOURCE_DIR}"
             "-DMWTL_WIL_SOURCE_DIR=${MWTL_WIL_SOURCE_DIR}"
             "-DMWTL_DEPENDENCY_MODE=SYSTEM"
@@ -64,6 +68,15 @@ execute_process(
     RESULT_VARIABLE build_result)
 if(NOT build_result EQUAL 0)
     message(FATAL_ERROR "Installed-package consumer build failed: ${build_result}")
+endif()
+
+if(MWTL_EXPECT_SCINTILLA)
+    execute_process(
+        COMMAND "${MWTL_BUILD_DIR}/package-consumer-build/${MWTL_CONFIGURATION}/mwtl_scintilla_package_consumer.exe"
+        RESULT_VARIABLE scintilla_run_result)
+    if(NOT scintilla_run_result EQUAL 0)
+        message(FATAL_ERROR "Installed Scintilla consumer failed: ${scintilla_run_result}")
+    endif()
 endif()
 
 execute_process(

@@ -48,6 +48,14 @@
       "binaryDir": "${sourceDir}/build/presets/vs2026-x64"
     },
     {
+      "name": "vs2026-x64-scintilla",
+      "displayName": "Visual Studio 2026 x64 with optional Scintilla",
+      "inherits": "vs2026-base",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/presets/vs2026-x64-scintilla",
+      "cacheVariables": {"MWTL_BUILD_SCINTILLA": "ON"}
+    },
+    {
       "name": "vs2026-arm64",
       "displayName": "Visual Studio 2026 ARM64 (recommended)",
       "inherits": "vs2026-base",
@@ -61,6 +69,8 @@
     {"name":"vs2022-arm64-debug","configurePreset":"vs2022-arm64","configuration":"Debug"},
     {"name":"vs2026-x64-debug","configurePreset":"vs2026-x64","configuration":"Debug"},
     {"name":"vs2026-x64-release","configurePreset":"vs2026-x64","configuration":"Release"},
+    {"name":"vs2026-x64-scintilla-debug","configurePreset":"vs2026-x64-scintilla","configuration":"Debug"},
+    {"name":"vs2026-x64-scintilla-release","configurePreset":"vs2026-x64-scintilla","configuration":"Release"},
     {"name":"vs2026-arm64-debug","configurePreset":"vs2026-arm64","configuration":"Debug"},
     {"name":"x64-debug","configurePreset":"vs2026-x64","configuration":"Debug"},
     {"name":"x64-release","configurePreset":"vs2026-x64","configuration":"Release"},
@@ -72,6 +82,8 @@
     {"name":"vs2022-arm64-debug","configurePreset":"vs2022-arm64","configuration":"Debug","output":{"outputOnFailure":true}},
     {"name":"vs2026-x64-debug","configurePreset":"vs2026-x64","configuration":"Debug","output":{"outputOnFailure":true}},
     {"name":"vs2026-x64-release","configurePreset":"vs2026-x64","configuration":"Release","output":{"outputOnFailure":true}},
+    {"name":"vs2026-x64-scintilla-debug","configurePreset":"vs2026-x64-scintilla","configuration":"Debug","output":{"outputOnFailure":true}},
+    {"name":"vs2026-x64-scintilla-release","configurePreset":"vs2026-x64-scintilla","configuration":"Release","output":{"outputOnFailure":true}},
     {"name":"vs2026-arm64-debug","configurePreset":"vs2026-arm64","configuration":"Debug","output":{"outputOnFailure":true}},
     {"name":"x64-debug","configurePreset":"vs2026-x64","configuration":"Debug","output":{"outputOnFailure":true}},
     {"name":"x64-release","configurePreset":"vs2026-x64","configuration":"Release","output":{"outputOnFailure":true}},
