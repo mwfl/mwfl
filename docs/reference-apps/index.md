@@ -20,6 +20,7 @@ with the repository manifest and exercised through its real Win32 entry point.
 | Explorer | Shared accelerators, tabs, TreeView, ListView, and keyboard Splitter; MSAA names are read from all primary surfaces | DIP layout and Splitter geometry; theme/settings refresh reapplies system appearance | `mwtl.explorer_model`, `mwtl.explorer_gui`, and its manifest test |
 | Hot Corners | Menu accelerators and native controls; GUI self-test reads selector/status MSAA names | DPI-specific fonts; runtime theme/settings refresh reapplies system appearance | Pure behavior and tray-state models, real Shell tests, GUI self-test, and its manifest test |
 | Notepad | One command model projects menus, toolbar, and accelerators; GUI test reads editor/toolbar/status MSAA names | Responsive DIP layout, DPI font projection, and theme/settings refresh | Document/search/history/file/single-instance models, `mwtl.notepad_gui`, package consumer, and its manifest test |
+| Drawing | Native buttons plus Delete/Ctrl+Z canvas input; the host has an explicit accessible name | Input and render coordinates are DIPs; theme, settings, DPI, and High Contrast flow through the reusable host | Pure document/SVG test, real D2D resource test, `mwtl.drawing_gui`, package component consumer, and manifest test |
 
 `mwtl.appearance` directly verifies the shared appearance policy: Windows High
 Contrast disables custom color/backdrop choices. The native control classes

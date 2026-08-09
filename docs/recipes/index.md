@@ -15,4 +15,5 @@ canonical code instead of duplicating a second, drifting implementation.
 - [Handle DPI and appearance](dpi-and-appearance.md)
 - [Add a public control wrapper](add-control-wrapper.md)
 - [Use native message interop](native-message-interop.md)
+- [Add a DPI-aware Direct2D drawing surface](direct2d-drawing.md)
 - [Change the public API safely](public-api-change.md)

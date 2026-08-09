@@ -206,6 +206,16 @@
       "example": "examples/common_controls/main.cpp",
       "tests": ["mwtl.control_resources_native", "mwtl.modern_api", "mwtl.desktop"],
       "constraints": ["ImageList owns its HIMAGELIST and toolbar borrowing requires it to outlive the toolbar", "Tooltip owns text and its HWND but borrows owner and tools", "tooltip text does not replace an accessible name", "command ID zero is invalid for popup selection", "invalid menu or owner is failed while zero after valid tracking is cancelled because TrackPopupMenuEx has no extended error"]
+    },
+    {
+      "id": "direct2d-drawing",
+      "intent": ["Direct2D drawing", "DPI-aware canvas", "recover rendering resources", "export application drawing data"],
+      "symbols": ["mwtl::D2DHost", "mwtl::D2DHostOptions", "mwtl::D2DRenderContext", "mwtl::D2DRenderStateModel"],
+      "headers": ["mwtl/d2d_host.h"],
+      "example": "examples/drawing/main.cpp",
+      "recipe": "docs/recipes/direct2d-drawing.md",
+      "tests": ["mwtl.d2d_host_model", "mwtl.d2d_host_native", "mwtl.drawing_model", "mwtl.drawing_gui", "mwtl.package_consumer"],
+      "constraints": ["request the d2d package component and link mwtl::d2d", "the core target does not link Direct2D", "D2DHost owns BeginDraw and EndDraw", "paint context and render target are callback-scoped borrowed views", "keep document data independent of device resources", "render and input coordinates are DIPs"]
     }
   ]
 }

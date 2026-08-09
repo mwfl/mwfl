@@ -263,6 +263,25 @@ non-owning and non-copyable; both referenced objects must outlive them.
 The API prioritizes concise, safe application code over historical source
 compatibility.
 
+## Optional Direct2D host
+
+`<mwtl/d2d_host.h>` is supplied by the optional `mwtl::d2d` target. The core
+`mwtl::mwtl` target does not link Direct2D. Installed consumers use
+`find_package(mwtl CONFIG REQUIRED COMPONENTS d2d)` and link `mwtl::d2d`.
+
+`D2DHost` owns its child HWND, factory, HWND render target, and every
+`BeginDraw`/`EndDraw` transaction. `D2DHostCallbacks::paint` receives a borrowed
+`D2DRenderContext`; it must not retain the target/context or begin/end drawing.
+Device-dependent brushes belong in `create_device_resources` and are released
+in `discard_device_resources`. `D2DERR_RECREATE_TARGET` discards the target and
+the next render recreates it. Callback exceptions become `E_UNEXPECTED` and are
+retrieved with `TakeCallbackException`.
+
+Sizes and input positions are DIPs. A zero-area/minimized host is a successful
+no-op. Keep document/stroke/image data application-owned so GPU resource loss
+never loses user content. See `examples/drawing` and
+`docs/recipes/direct2d-drawing.md`.
+
 ## Concise ownership defaults
 
 `ControlHost::Add(control, ...)` allocates a host-local control ID starting

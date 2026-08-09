@@ -35,6 +35,7 @@ The repository includes 31 focused executables. Each example is intentionally sm
 | `layout_gallery` | `mwtl_layout_gallery_demo` | Responsive nested rows, columns, overlays, sizing, alignment, and dynamic content |
 | `property_sheet` | `mwtl_property_sheet_demo` | Persistent multi-page Settings with validation and Apply/OK/Cancel |
 | `explorer` | `mwtl_explorer_demo` | Stable TreeView and virtual ListView in a complete Explorer-style shell |
+| `drawing` | `mwtl_drawing_demo` | DPI-aware Direct2D drawing, resource recovery, and SVG export |
 
 Configure with `MWTL_BUILD_EXAMPLES=ON`, then build one target or all targets:
 
@@ -78,6 +79,7 @@ The examples remain native: every component is a real child HWND and direct Win3
 | Native look and accessibility | `appearance` | appearance and accessibility helpers | composed |
 | Persistent application settings | `property_sheet` | property pages, task dialogs, versioned state | reference app |
 | Explorer-style desktop shell | `explorer` | stable navigation, virtual data, splitter, commands | reference app |
+| Direct2D drawing | `drawing` | application-owned strokes, resource recovery, SVG export | reference app |
 
 Coding agents should copy a complete example and modify it instead of merging
 unrelated fragments. See `docs/agent-usage.md` for lifetime and threading rules.

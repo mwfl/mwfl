@@ -23,6 +23,10 @@ Task sources:
 - desktop integration: examples/desktop_integration/main.cpp
 - DPI/appearance: examples/dpi/main.cpp and examples/appearance/main.cpp
 - complete SDI editor: examples/notepad/main.cpp
+- optional Direct2D: request COMPONENTS d2d and link mwtl::d2d;
+  D2DHost owns draw transactions and recovery while application data remains
+  GPU-independent. See examples/drawing and docs/recipes/direct2d-drawing.md.
+  Layout does not provide a Spacer API.
 - property pages: examples/property_sheet/main.cpp and
   docs/tutorials/settings-application.md; stable nonzero page IDs, `command`
   calls `SetDirty`, validation precedes commit, persistence succeeds before

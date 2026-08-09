@@ -220,3 +220,17 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 - `Must(value, context)` converts failed setup results into rich diagnostics.
 - Use it for operations that must succeed before the window can function.
 - Do not let resulting exceptions escape a Win32 callback.
+
+## Direct2D drawing
+
+- Header: `<mwtl/d2d_host.h>`; CMake target: `mwtl::d2d`.
+- For installed packages request `COMPONENTS d2d`. Do not add Direct2D to the
+  core target or include the optional header when it is not requested.
+- Store `D2DHost` and device resources as window members. Create brushes in
+  `create_device_resources`, release them in `discard_device_resources`, and
+  draw only inside `paint`.
+- Never call `BeginDraw`/`EndDraw` or retain `D2DRenderContext`/its target.
+- Keep application content GPU-independent and use DIP coordinates.
+- Layout has no `Spacer()` helper. Use only `Row`, `Column`, `Margin`, `Gap`,
+  `Auto`, `Fixed`, and `Stretch` APIs present in `<mwtl/layout.h>`.
+- Start from `examples/drawing` and `docs/recipes/direct2d-drawing.md`.

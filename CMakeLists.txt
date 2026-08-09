@@ -171,6 +171,7 @@ install(FILES
     docs/tutorials/notepad.md
     docs/recipes/notepad-command-setting.md
     docs/recipes/split-pane.md
+    docs/recipes/direct2d-drawing.md
     DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl)
 install(FILES cmake/Dependencies.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mwtl)

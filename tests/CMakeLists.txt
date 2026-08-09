@@ -314,6 +314,15 @@ target_link_libraries(mwtl_d2d_host_native_test PRIVATE mwtl::d2d)
 add_test(NAME mwtl.d2d_host_native COMMAND mwtl_d2d_host_native_test)
 set_tests_properties(mwtl.d2d_host_native PROPERTIES TIMEOUT 30 LABELS "fast;unit")
 
+add_executable(mwtl_drawing_model_test
+    drawing_model_test.cpp
+    "${PROJECT_SOURCE_DIR}/examples/drawing/drawing_model.cpp")
+target_include_directories(mwtl_drawing_model_test PRIVATE "${PROJECT_SOURCE_DIR}/examples/drawing")
+target_compile_features(mwtl_drawing_model_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_drawing_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+add_test(NAME mwtl.drawing_model COMMAND mwtl_drawing_model_test)
+set_tests_properties(mwtl.drawing_model PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
 add_executable(mwtl_property_sheet_model_test property_sheet_model_test.cpp)
 target_compile_features(mwtl_property_sheet_model_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_property_sheet_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -506,6 +515,13 @@ if(TARGET mwtl_hello)
             -Executable $<TARGET_FILE:mwtl_explorer_demo>
             -RuntimePath "${mwtl_test_runtime_path}")
     set_tests_properties(mwtl.explorer_gui PROPERTIES TIMEOUT 15)
+    add_test(NAME mwtl.drawing_gui
+        COMMAND "${mwtl_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwtl_drawing_demo>
+            -RuntimePath "${mwtl_test_runtime_path}")
+    set_tests_properties(mwtl.drawing_gui PROPERTIES TIMEOUT 15)
 endif()
 
 add_test(
@@ -607,6 +623,7 @@ foreach(test_name IN LISTS mwtl_all_tests)
     elseif(test_name STREQUAL "mwtl.hot_corners_self_test" OR
            test_name STREQUAL "mwtl.settings_application_gui" OR
            test_name STREQUAL "mwtl.explorer_gui" OR
+           test_name STREQUAL "mwtl.drawing_gui" OR
            test_name STREQUAL "mwtl.notepad_gui")
         set(labels "gui;integration")
     elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap)$")

@@ -102,6 +102,11 @@ at explicit Win32 boundaries.
   GUI test covers safe transitions, persistence, accessibility, DPI, repeated
   document cycles, and packaging. Use
   `docs/recipes/notepad-command-setting.md` for a compiled command-setting task.
+- Direct2D is optional: request `COMPONENTS d2d`, link `mwtl::d2d`, and include
+  `<mwtl/d2d_host.h>`. `D2DHost` owns BeginDraw/EndDraw and target recovery;
+  callbacks receive borrowed views, coordinates are DIPs, and application data
+  stays GPU-independent. Use `examples/drawing` and
+  `docs/recipes/direct2d-drawing.md`. There is no `mwtl::Spacer` API.
 - Background work and notification-area utility: `examples/wakeup` and
   `examples/hot_corners`.
 - Dialogs, clipboard, file drop, placement: `examples/desktop_integration`.

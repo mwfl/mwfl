@@ -31,6 +31,7 @@
     {"directory":"appearance","intent":"theme backdrop and accessibility","symbols":["AppearanceOptions","SetAccessibleName"],"complexity":"reference"},
     {"directory":"layout_gallery","intent":"responsive nested native layout","symbols":["Row","Column","Overlay"],"complexity":"reference"},
     {"directory":"property_sheet","intent":"persistent modeless multi-page settings with validation and Apply/OK/Cancel","symbols":["PropertyPage","PropertySheetDialog","PropertySheetResult","ShowTaskDialog"],"tests":["mwtl.property_sheet_model","mwtl.property_sheet_native","mwtl.settings_application_model","mwtl.settings_application_gui"],"complexity":"reference"},
-    {"directory":"explorer","intent":"Explorer-style native shell with stable navigation and virtual data","symbols":["Rebar","Toolbar","Splitter","TreeView","VirtualListModel","TabControl","StatusBar","ImageList","Menu"],"tests":["mwtl.explorer_model","mwtl.explorer_gui","mwtl.splitter_native","mwtl.navigation_native"],"complexity":"reference"}
+    {"directory":"explorer","intent":"Explorer-style native shell with stable navigation and virtual data","symbols":["Rebar","Toolbar","Splitter","TreeView","VirtualListModel","TabControl","StatusBar","ImageList","Menu"],"tests":["mwtl.explorer_model","mwtl.explorer_gui","mwtl.splitter_native","mwtl.navigation_native"],"complexity":"reference"},
+    {"directory":"drawing","intent":"DPI-aware Direct2D drawing with device-resource recovery and SVG export","symbols":["D2DHost","D2DRenderContext","D2DRenderStateModel"],"tests":["mwtl.d2d_host_model","mwtl.d2d_host_native","mwtl.drawing_model","mwtl.drawing_gui"],"complexity":"reference"}
   ]
 }
