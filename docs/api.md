@@ -37,6 +37,13 @@ with `SchemaVersion` (`REG_DWORD`) and `RecentFiles` (`REG_MULTI_SZ`). Load and
 save results distinguish missing settings, access denial, malformed or unknown
 schema data, and other I/O failures. The supplied root key is always borrowed.
 
+`SingleInstance` uses a per-session named mutex for ownership and a registered
+top-level HWND property plus bounded `WM_COPYDATA` for activation forwarding.
+The primary explicitly registers and unregisters its window. A secondary waits
+for startup only up to its caller-supplied timeout, and results distinguish no
+receiver, timeout, access denial, and malformed or rejected delivery. Payloads
+are copied and limited to 32,767 UTF-16 code units.
+
 `Command` owns an application action's ID, display text, enabled/checked state,
 optional shortcut, and callback. `CommandSet::Dispatch` can be returned directly
 from `OnCommand`.

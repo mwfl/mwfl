@@ -25,6 +25,10 @@ constexpr std::wstring_view kSettingsKey = L"Software\\mwtl\\Notepad\\1";
 
 class NotepadWindow final : public mwtl::WindowBase {
 public:
+    NotepadWindow(mwtl::SingleInstance& instance,
+                  std::optional<std::filesystem::path> initial_path)
+        : instance_(instance), initial_path_(std::move(initial_path)) {}
+
     void BuildUI() override {
         if (const auto loaded = mwtl::LoadRecentFilesFromRegistry(
                 HKEY_CURRENT_USER, kSettingsKey, recent_.GetMaximumEntries()); loaded.Succeeded()) {
@@ -51,6 +55,7 @@ public:
         mwtl::Must(accelerators_.Create(commands_), "create Notepad accelerators");
         SetAccelerators(accelerators_.GetHandle());
         mwtl::EnableFileDrop(GetHwnd());
+        mwtl::Must(instance_.RegisterWindow(GetHwnd()), "register Notepad activation window");
         SetLayout(mwtl::Column()
             .Add(toolbar_, mwtl::Fixed(36.0_dip))
             .Add(editor_, mwtl::Stretch())
@@ -61,6 +66,7 @@ public:
                 HKEY_CURRENT_USER, kSettingsKey, L"WindowPlacement", placement))
             mwtl::RestoreWindowPlacement(GetHwnd(), placement);
         SyncPresentation(L"Ready");
+        if (initial_path_) OpenPath(*initial_path_);
     }
 
     mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
@@ -74,6 +80,12 @@ public:
     }
 
     mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
+        if (auto activation = instance_.DecodeActivation(event.id, event.lparam)) {
+            if (::IsIconic(GetHwnd())) ::ShowWindow(GetHwnd(), SW_RESTORE);
+            ::SetForegroundWindow(GetHwnd());
+            if (!activation->empty() && ConfirmTransition()) OpenPath(*activation);
+            return mwtl::EventResult::Handled();
+        }
         if (event.id == find_message_) {
             HandleFindReplace(*reinterpret_cast<FINDREPLACEW*>(event.lparam));
             return mwtl::EventResult::Handled();
@@ -400,6 +412,8 @@ private:
     }
 
     mwtl::DocumentState document_;
+    mwtl::SingleInstance& instance_;
+    std::optional<std::filesystem::path> initial_path_;
     mwtl::RecentFileList recent_{5};
     mwtl::TextHistory history_;
     mwtl::TextEncoding encoding_ = mwtl::TextEncoding::utf8;
@@ -420,7 +434,28 @@ private:
 }  // namespace
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
+    int argument_count{};
+    wchar_t** arguments = ::CommandLineToArgvW(::GetCommandLineW(), &argument_count);
+    std::optional<std::filesystem::path> initial_path;
+    if (arguments && argument_count > 1) {
+        std::error_code error;
+        auto absolute = std::filesystem::absolute(arguments[1], error);
+        initial_path = error ? std::filesystem::path{arguments[1]} : std::move(absolute);
+    }
+    if (arguments) ::LocalFree(arguments);
+
+    mwtl::SingleInstance single_instance{L"everettjf.mwtl.notepad.v1"};
+    if (!single_instance.IsPrimary()) {
+        const std::wstring payload = initial_path ? initial_path->wstring() : std::wstring{};
+        const auto activation = single_instance.ForwardActivation(payload);
+        if (!activation.Delivered()) {
+            ::MessageBoxW(nullptr, L"The existing mwtl Notepad instance did not respond.",
+                          L"mwtl Notepad", MB_OK | MB_ICONERROR);
+            return 2;
+        }
+        return 0;
+    }
     return mwtl::RunApplication<NotepadWindow>(instance, show,
         {.title = L"mwtl Notepad", .initial_bounds = {{}, {900.0_dip, 640.0_dip}},
-         .use_default_bounds = false});
+         .use_default_bounds = false}, {}, single_instance, std::move(initial_path));
 }

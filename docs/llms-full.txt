@@ -46,6 +46,8 @@ at explicit Win32 boundaries.
   application needs deterministic Undo/Redo and saved-state tracking.
 - Recent files: `mwtl/recent_files.h`; use the versioned registry helpers and
   handle missing, access-denied, and invalid-data states separately.
+- Single instance: `mwtl/single_instance.h`; the primary registers its HWND and
+  decodes activation, while a secondary forwards a bounded path with a timeout.
 - Background work: `examples/wakeup` and `examples/hot_corners`.
 - Dialogs, clipboard, file drop, placement: `examples/desktop_integration`.
 - DPI and appearance: `examples/dpi` and `examples/appearance`.

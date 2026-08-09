@@ -81,6 +81,15 @@
       "constraints": ["root registry handles are borrowed", "schema version is validated", "paths are deduplicated with Windows case-insensitive comparison"]
     },
     {
+      "id": "single-instance",
+      "intent": ["allow only one application instance", "forward a file to the existing window", "activate an existing application"],
+      "symbols": ["mwtl::SingleInstance", "mwtl::ActivationResult", "mwtl::ActivationStatus"],
+      "headers": ["mwtl/single_instance.h"],
+      "example": "examples/notepad/main.cpp",
+      "tests": ["mwtl.single_instance"],
+      "constraints": ["register only the primary top-level window", "activation payloads are bounded copied UTF-16", "same-user UIPI access denial is reported"]
+    },
+    {
       "id": "background-ui-update",
       "intent": ["background worker", "update UI from thread", "notify window"],
       "symbols": ["mwtl::WindowWakeup"],
