@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Build mwtl WebView2 and Scintilla reference applications with Visual Studio 2026 x64.">
+  <link rel="canonical" href="https://everettjf.github.io/mwtl/optional-integrations.html">
+  <title>Optional integrations — mwtl</title>
+  <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
+  <link rel="stylesheet" href="styles.css?v=20260808k">
+  <script defer src="assets/site.js?v=20260808k"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><div class="shell nav">
+    <a class="brand" href="index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+    <nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a href="tutorial.html">Get started</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
+  </div></header>
+  <main id="main" class="shell prose guide">
+    <div class="hero"><div class="eyebrow">Optional native integrations</div><h1>Browser and editor, without burdening the core.</h1><p class="lede">WebView2 and Scintilla are pinned, isolated CMake components. Enable one explicitly, retain native ownership and escape hatches, and run deterministic tests without network or dialogs.</p></div>
+    <section id="webview2">
+      <div class="eyebrow">Web content</div><h2>WebView2 Browser</h2>
+      <p>The <code>mwtl::webview2</code> target pins the official SDK and x64 static loader. <code>WebView2Host</code> reports an absent Evergreen Runtime as structured state, creates its environment and controller asynchronously in the application STA, resizes and transfers focus, routes accelerators, reports navigation, recovers failed processes, and closes deterministically.</p>
+      <pre data-title="PowerShell"><code>cmake --preset vs2026-x64-webview2
+cmake --build --preset vs2026-x64-webview2-debug --target mwtl_browser_demo
+./build/presets/vs2026-x64-webview2/examples/browser/Debug/mwtl_browser_demo.exe</code></pre>
+      <pre data-title="Installed CMake"><code>find_package(mwtl CONFIG REQUIRED COMPONENTS webview2)
+target_link_libraries(my_browser PRIVATE mwtl::webview2)</code></pre>
+      <div class="callout"><strong>Offline evidence:</strong> the GUI test navigates to an in-memory HTML page. Runtime absence never launches an installer or becomes an unconditional skip.</div>
+    </section>
+    <section id="scintilla">
+      <div class="eyebrow">Source editing</div><h2>Scintilla Code Editor</h2>
+      <p>The <code>mwtl::scintilla</code> target pins official Scintilla 5.6.5 source and x64 runtime archives. The wrapper uses strict UTF-16/UTF-8 conversion, defines positions as UTF-8 bytes, decodes typed notifications, and exposes commands, search/replace, save points, zoom, and a raw pinned-API escape hatch.</p>
+      <pre data-title="PowerShell"><code>cmake --preset vs2026-x64-scintilla
+cmake --build --preset vs2026-x64-scintilla-debug --target mwtl_code_editor_demo
+./build/presets/vs2026-x64-scintilla/examples/code_editor/Debug/mwtl_code_editor_demo.exe</code></pre>
+      <pre data-title="Installed CMake"><code>find_package(mwtl CONFIG REQUIRED COMPONENTS scintilla)
+target_link_libraries(my_editor PRIVATE mwtl::scintilla)
+mwtl_deploy_scintilla(my_editor)</code></pre>
+      <div class="callout"><strong>Deployment:</strong> keep <code>Scintilla.dll</code> beside the executable. Missing and wrong-architecture runtimes are structured diagnostics.</div>
+    </section>
+    <section><h2>Ownership rules</h2><ul><li>All WebView2 and Scintilla operations stay on the creating UI thread; WebView2 initialization requires an STA.</li><li>The hosts own their HWND/controller subscriptions. Raw COM interfaces and native notification payloads are borrowed.</li><li>Call WebView2 <code>Close</code> before owner teardown. Post a message before <code>Restart</code> from process-failure callbacks.</li><li>Core <code>mwtl::mwtl</code> consumers do not download, link, or deploy either component.</li></ul></section>
+  </main>
+  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Thin Layer · MIT licensed · Windows 10+ · x64</span><nav aria-label="Footer"><a href="building.html">Build</a><a href="https://github.com/everettjf/mwtl">Source</a></nav></div></footer>
+</body>
+</html>

@@ -261,3 +261,25 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
   resources in create/discard callbacks and keep authoritative data outside.
 - `allow_warp_fallback` controls software rendering; never silently claim
   hardware acceleration. See `docs/recipes/direct3d-swap-chain.md`.
+## Optional integration selection
+
+- Generic child HWND: include `mwtl/native_host.h`, link `mwtl::mwtl`, create
+  the third-party child with the host as parent, then `Attach` it.
+- Web content: set `MWTL_BUILD_WEBVIEW2=ON`, include `mwtl/webview2.h`, and link
+  `mwtl::webview2`. Run in an STA, wait for ready, handle missing Runtime, and
+  use `NavigateToString` in tests.
+- Source editor: set `MWTL_BUILD_SCINTILLA=ON`, include `mwtl/scintilla.h`, link
+  `mwtl::scintilla`, and deploy `Scintilla.dll`. Treat positions as UTF-8 bytes.
+- 2D drawing: link `mwtl::d2d`; keep document data independent of brushes and
+  render targets.
+- Swap chain: link `mwtl::d3d`; render on demand and handle every frame status.
+- Image decode: link `mwtl::imaging`; initialize COM and enforce pixel budgets.
+
+Never add optional SDK libraries to `mwtl::mwtl`. Do not retain callback-scoped
+COM interfaces, render contexts, native notification pointers, or raw escape
+hatches. UI integrations and callbacks remain on their creating thread.
+
+Start browser changes from `examples/browser`, editor changes from
+`examples/code_editor`, HWND hosting from `docs/recipes/native-host.md`, and
+rendering changes from the corresponding reference application. Each supports
+deterministic local tests without network or dialogs.

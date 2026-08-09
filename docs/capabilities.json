@@ -236,6 +236,36 @@
       "recipe": "docs/tutorials/image-viewer.md",
       "tests": ["mwtl.imaging_model", "mwtl.imaging_decode", "mwtl.image_viewer_gui", "mwtl.d2d_host_native", "mwtl.package_consumer"],
       "constraints": ["request imaging and d2d package components", "COM must be initialized before WIC decode", "default normalized pixel budget is 256 MiB", "DecodedImage owns top-down premultiplied BGRA8 CPU pixels", "color profile presence and successful sRGB conversion are distinct", "D2D bitmap and brushes are disposable caches", "viewport units are DIPs while image units are pixels"]
+    },
+    {
+      "id": "native-hwnd-host",
+      "intent": ["host a third-party HWND", "forward native notifications", "manage child focus and resize"],
+      "symbols": ["mwtl::NativeHost", "mwtl::NativeHostStateModel"],
+      "headers": ["mwtl/native_host.h"],
+      "example": "tests/native_host_native_test.cpp",
+      "recipe": "docs/recipes/native-host.md",
+      "tests": ["mwtl.native_host_model", "mwtl.native_host_native"],
+      "constraints": ["the host owns its container and borrows one direct-child HWND", "host and child must share a UI thread and process", "Detach does not destroy or reparent", "forwarded notification memory is message-scoped"]
+    },
+    {
+      "id": "webview2-browser",
+      "intent": ["host web content", "build a browser", "detect missing WebView2 Runtime", "recover a WebView2 process"],
+      "symbols": ["mwtl::WebView2Host", "mwtl::WebView2RuntimeInfo", "mwtl::WebView2InitializationResult", "mwtl::WebView2HostCallbacks"],
+      "headers": ["mwtl/webview2.h"],
+      "example": "examples/browser/main.cpp",
+      "recipe": "docs/tutorials/browser.md",
+      "tests": ["mwtl.webview2_model", "mwtl.webview2_native", "mwtl.browser_gui", "mwtl.package_consumer"],
+      "constraints": ["enable MWTL_BUILD_WEBVIEW2 and link mwtl::webview2", "SDK 1.0.4129.50 is hash-pinned", "operations and callbacks stay on the creating STA thread", "controller environment and escape-hatch interfaces are borrowed", "Close invalidates pending callbacks", "post before Restart from a process callback", "use NavigateToString for deterministic offline tests"]
+    },
+    {
+      "id": "scintilla-code-editor",
+      "intent": ["build a source editor", "host Scintilla", "handle editor notifications", "search and replace code"],
+      "symbols": ["mwtl::ScintillaRuntime", "mwtl::ScintillaEditor", "mwtl::ScintillaNotification", "mwtl::ScintillaTextRange"],
+      "headers": ["mwtl/scintilla.h"],
+      "example": "examples/code_editor/main.cpp",
+      "recipe": "docs/tutorials/code-editor.md",
+      "tests": ["mwtl.scintilla_text", "mwtl.scintilla_native", "mwtl.code_editor_gui", "mwtl.package_consumer"],
+      "constraints": ["enable MWTL_BUILD_SCINTILLA link mwtl::scintilla and deploy Scintilla.dll", "Scintilla 5.6.5 archives are hash-pinned", "public strings convert strictly between UTF-16 and UTF-8", "positions are UTF-8 byte offsets", "editor operations and notifications stay on the creating UI thread", "raw Send follows the pinned native API"]
     }
   ]
 }

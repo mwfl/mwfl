@@ -91,6 +91,15 @@ property sheet, and Explorer-style split view.
 
 - reusable native-host lifecycle and focus/navigation contract;
 - optional WebView2 and Scintilla CMake components;
+
+The 0.4 implementation uses isolated `mwtl::webview2` and
+`mwtl::scintilla` targets rather than placing third-party dependencies in the
+core target. WebView2 has structured Runtime discovery, asynchronous
+environment/controller ownership, navigation, focus/accelerator routing,
+process recovery, and deterministic close. Scintilla has pinned binary/source
+identity, strict Unicode conversion, typed notifications, UTF-8 byte positions,
+search/replace, save points, and deployment support. `examples/browser` and
+`examples/code_editor` are complete offline-testable reference applications.
 - Direct2D host and Direct3D swap-chain host;
 - COM event subscription RAII and asynchronous initialization/shutdown safety;
 - DPI-correct third-party child-window hosting.

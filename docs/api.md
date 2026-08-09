@@ -382,3 +382,55 @@ and output origin are DIPs. It implements bounded Fit, anchored zoom, and
 clamped pan. Keep `DecodedImage` authoritative and treat a D2D bitmap as a
 disposable device cache. See `examples/image_viewer` and
 `docs/tutorials/image-viewer.md`.
+## Generic native host
+
+`<mwtl/native_host.h>` provides `NativeHost`, an owned container HWND that
+borrows one same-thread, same-process direct-child HWND. `Attach` arranges the
+child and enables focus plus notification forwarding; `Detach` stops management
+without destroying or reparenting. Parent destruction follows normal Win32
+child destruction. `NativeHostStateModel` exposes the HWND-free state machine.
+
+Forwarded `WM_NOTIFY`, control `WM_COMMAND`, and `WM_CONTEXTMENU` data remain
+message-scoped borrowed memory. All host operations are creating-thread-only.
+Use a specialized host when the integration does not create an attachable HWND.
+
+## Optional WebView2 host
+
+`<mwtl/webview2.h>` is supplied by `mwtl::webview2`, enabled with
+`MWTL_BUILD_WEBVIEW2`. The optional component pins official SDK
+`1.0.4129.50`; core `mwtl::mwtl` does not fetch or link it. Installed consumers
+request `COMPONENTS webview2`.
+
+`QueryWebView2Runtime` reports `available`, `missing`, or `failed` and never
+installs software or displays UI. `WebView2Host::Initialize` asynchronously
+creates an environment and controller on the creating STA. Its structured
+result distinguishes host state, runtime state, and HRESULT. Initialization,
+navigation, process-failure, and accelerator callbacks contain exceptions.
+
+The host owns its container, environment, controller, web view, and event
+subscriptions. `GetController` and `GetWebView` are borrowed SDK escape hatches.
+`Close` invalidates pending callbacks, removes subscriptions, and closes the
+controller exactly once. `Restart` recreates the environment/controller after
+a process failure; post a window message before calling it from an event
+callback. Resize and parent DPI messages update controller bounds, and host
+focus moves into web content. Tests use `NavigateToString` to remain offline.
+
+## Optional Scintilla editor
+
+`<mwtl/scintilla.h>` is supplied by `mwtl::scintilla`, enabled with
+`MWTL_BUILD_SCINTILLA`. It pins Scintilla 5.6.5 source and x64 runtime archives.
+Installed consumers request `COMPONENTS scintilla`, link the target, and invoke
+`mwtl_deploy_scintilla(target)`.
+
+`ScintillaRuntime` returns structured missing/wrong-architecture/failure state.
+Its loaded module state is shared with every created editor so a live HWND never
+outlives its code. `ScintillaEditor` owns its HWND and default native document;
+raw document or loader handles returned through `Send` follow the pinned native
+ownership contract.
+
+Public strings convert strictly between UTF-16 and UTF-8. All positions are
+UTF-8 byte offsets. Typed notifications cover modification, save points,
+characters, and UI updates. High-level operations include code-style setup,
+line-number margins, selection, find/replace, undo/redo, clipboard commands,
+read-only state, dirty state, and zoom. HWND operations and notifications stay
+on the creating UI thread.

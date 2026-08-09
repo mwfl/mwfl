@@ -139,6 +139,14 @@ offline WTL/WIL sources, and building this repository.
   window placement, custom modal/modeless dialogs, task dialogs, image lists,
   tooltips, and RAII notification-area icons;
 - wait-aware message pumping and lifetime-safe worker wakeups.
+- optional, isolated Direct2D, Direct3D, WIC imaging, pinned Scintilla, and
+  pinned WebView2 components with reference applications and offline self-tests.
+
+Optional components are requested explicitly. For example, configure with
+`MWTL_BUILD_WEBVIEW2=ON` and link `mwtl::webview2`, or configure with
+`MWTL_BUILD_SCINTILLA=ON`, link `mwtl::scintilla`, and call
+`mwtl_deploy_scintilla(your_target)`. Core-only consumers do not fetch, link,
+or deploy either dependency.
 
 The [component reference](https://everettjf.github.io/mwtl/components/) shows
 every control with current code, a native screenshot, and its runnable example.
@@ -146,13 +154,13 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
 
-The repository contains 31 independently buildable programs. Each link opens
+The repository contains 35 independently buildable programs. Each link opens
 the complete source. Start with **Hello** for the smallest application,
 **Controls** for the basic widget set, or **Hot corners** for a complete
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 31 runnable examples</strong></summary>
+<summary><strong>Browse all 35 runnable examples</strong></summary>
 
 <br>
 
@@ -191,6 +199,8 @@ multi-monitor utility.
 | Explorer | [examples/explorer/main.cpp](examples/explorer/main.cpp) | Rebar, commands, stable navigation, virtual data, tabs, and splitter |
 | Drawing | [examples/drawing/main.cpp](examples/drawing/main.cpp) | Optional Direct2D host, DPI-aware input, device recovery, and SVG export |
 | Image Viewer | [examples/image_viewer/main.cpp](examples/image_viewer/main.cpp) | WIC decode, color metadata, Fit/zoom/pan, and recoverable D2D pixels |
+| Code Editor | [examples/code_editor/main.cpp](examples/code_editor/main.cpp) | Optional pinned Scintilla, Unicode files, search/replace, and notifications |
+| Browser | [examples/browser/main.cpp](examples/browser/main.cpp) | Optional pinned WebView2, offline startup, process recovery, and navigation |
 
 </details>
 

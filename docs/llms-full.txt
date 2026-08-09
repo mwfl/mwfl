@@ -135,3 +135,24 @@ transfer, or consume the moving `main` branch in a reproducible project.
 Compile the smallest template or `tools/api-probe` before adding features. Use
 only symbols found in public headers or `docs/agent-reference.md`. See
 `docs/recipes` for task flows and `docs/reference-apps` for composed programs.
+OPTIONAL THIRD-PARTY AND RENDERING INTEGRATIONS
+
+Generic HWND: mwtl/native_host.h; NativeHost owns a container and borrows one
+same-thread direct-child HWND. Attach enables resize, focus, and synchronous
+notification forwarding. Detach does not destroy or reparent.
+
+WebView2: configure MWTL_BUILD_WEBVIEW2=ON; link mwtl::webview2; include
+mwtl/webview2.h. SDK 1.0.4129.50 is hash-pinned. Run in an STA. Query Runtime
+availability, wait for WebView2HostState::ready, keep callbacks on the owner
+thread, use Restart after posting out of a process-failure callback, and Close
+before owner teardown. GetController/GetWebView are borrowed. Offline tests use
+NavigateToString. Reference: examples/browser and docs/tutorials/browser.md.
+
+Scintilla: configure MWTL_BUILD_SCINTILLA=ON; link mwtl::scintilla; call
+mwtl_deploy_scintilla(target); include mwtl/scintilla.h. Scintilla 5.6.5 is
+hash-pinned. LoadAdjacent before Create. Public strings are strict UTF-16/UTF-8;
+positions are UTF-8 byte offsets. Notifications and HWND calls stay on the UI
+thread. Reference: examples/code_editor and docs/tutorials/code-editor.md.
+
+Direct2D uses mwtl::d2d, Direct3D uses mwtl::d3d, and WIC imaging uses
+mwtl::imaging. These optional targets never belong on core mwtl::mwtl.

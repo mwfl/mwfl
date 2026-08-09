@@ -40,6 +40,7 @@
         <a href="#vscode">VS Code</a>
         <a href="#first-window">First window</a>
         <a href="#repository">Build the repo</a>
+        <a href="#optional">Optional components</a>
         <a href="#offline">Offline</a>
       </nav>
     </div>
@@ -159,6 +160,19 @@ ctest --preset vs2026-x64-debug</code></pre>
 # Full release-equivalent verification
 ./scripts/verify.ps1 -Mode Full -VisualStudio 2026</code></pre>
       <p>Build a single example with <code>cmake --build build/presets/vs2026-x64 --config Debug --target mwtl_hello</code>. Its executable is under <code>build/presets/vs2026-x64/examples/hello/Debug/</code>. See the <a href="components/index.html">complete component gallery</a> for source links and screenshots.</p>
+    </section>
+
+    <section id="optional">
+      <div class="eyebrow">Explicit dependencies</div><h2>Optional integrations</h2>
+      <p>Core applications link <code>mwtl::mwtl</code> and never fetch WebView2 or Scintilla. Enable only the component an application uses.</p>
+      <pre data-title="Visual Studio 2026 x64"><code># Browser
+cmake --preset vs2026-x64-webview2
+cmake --build --preset vs2026-x64-webview2-debug --target mwtl_browser_demo
+
+# Editor
+cmake --preset vs2026-x64-scintilla
+cmake --build --preset vs2026-x64-scintilla-debug --target mwtl_code_editor_demo</code></pre>
+      <p>Installed consumers request <code>COMPONENTS webview2</code> or <code>COMPONENTS scintilla</code>. Scintilla applications also call <code>mwtl_deploy_scintilla(target)</code>. See the <a href="optional-integrations.html">complete ownership, Runtime, and offline-test guide</a>.</p>
     </section>
 
     <section id="offline">

@@ -291,10 +291,15 @@ install(FILES
     docs/announcement-v0.1.md
     docs/tutorials/notepad.md
     docs/tutorials/image-viewer.md
+    docs/tutorials/browser.md
+    docs/tutorials/code-editor.md
     docs/recipes/notepad-command-setting.md
     docs/recipes/split-pane.md
     docs/recipes/direct2d-drawing.md
     docs/recipes/direct3d-swap-chain.md
+    docs/recipes/native-host.md
+    docs/recipes/webview2-navigation.md
+    docs/recipes/scintilla-notification.md
     DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl)
 install(FILES cmake/Dependencies.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mwtl)
