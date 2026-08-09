@@ -42,6 +42,7 @@ public:
 
 private:
     HMENU menu_ = nullptr;
+    bool owns_menu_ = false;
 };
 
 class AcceleratorTable final {

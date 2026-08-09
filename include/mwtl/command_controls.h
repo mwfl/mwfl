@@ -12,6 +12,7 @@
 #include <mwtl/concepts.h>
 #include <mwtl/controls.h>
 #include <mwtl/command.h>
+#include <mwtl/control_resources.h>
 
 namespace mwtl {
 
@@ -24,6 +25,7 @@ public:
     bool AddTextButton(ControlId command, std::wstring_view text);
     bool AddCommand(const Command& command);
     bool UpdateCommand(const Command& command) noexcept;
+    bool SetImageList(const ImageList& images) noexcept;
     Toolbar& AutoSize() noexcept;
 };
 

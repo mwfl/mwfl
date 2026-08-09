@@ -155,7 +155,7 @@ private:
         mwtl::Must(file.AppendCommand(*commands_.Find(kExit)), "append Exit command");
         if (!recent_.GetPaths().empty()) {
             mwtl::Must(file.AppendSeparator(), "append recent separator");
-            for (std::size_t index = 0; index < recent_.GetPaths().size(); ++index)
+            for (std::size_t index = 0; index < recent_.GetMaximumEntries(); ++index)
                 mwtl::Must(file.AppendCommand(*commands_.Find(
                     {static_cast<WORD>(kRecentBase.value + index)})), "append recent file");
         }
@@ -276,7 +276,7 @@ private:
         const auto paths = recent_.GetPaths();
         for (std::size_t index = 0; index < recent_.GetMaximumEntries(); ++index) {
             auto* command = commands_.Find({static_cast<WORD>(kRecentBase.value + index)});
-            command->SetEnabled(index < paths.size());
+            command->SetEnabled(index < paths.size()).SetVisible(index < paths.size());
             command->SetText(index < paths.size() ? MenuPathText(index, paths[index]) : L"Recent file");
         }
     }

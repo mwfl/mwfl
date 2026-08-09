@@ -34,7 +34,7 @@ at explicit Win32 boundaries.
 ## Common tasks
 
 - Form and validation: `examples/form_binding`, `ValueBinding::Pull/Push`.
-- Commands: `examples/commands`, one CommandSet for menu/toolbar/accelerators.
+- Commands: `examples/notepad`, one CommandSet owns text/enabled/checked/visible/image/shortcut/action state for menu, toolbar, and accelerators. Toolbar image lists are borrowed; rebuild a menu to reinsert a hidden command.
 - Document state: `mwtl/document.h`; contents and I/O remain application-owned,
   and transitions distinguish proceed, save-required, and cancelled outcomes.
 - Unicode text files: `mwtl/text_file.h`; preserve detected UTF-8/UTF-16

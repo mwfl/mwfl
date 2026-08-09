@@ -33,7 +33,9 @@
       "intent": ["menu", "toolbar", "keyboard shortcut", "shared action"],
       "symbols": ["mwtl::Command", "mwtl::CommandSet", "mwtl::Toolbar", "mwtl::Menu"],
       "headers": ["mwtl/command.h", "mwtl/command_controls.h", "mwtl/desktop.h"],
-      "example": "examples/commands/main.cpp"
+      "example": "examples/notepad/main.cpp",
+      "tests": ["mwtl.command", "mwtl.modern_api", "mwtl.desktop"],
+      "constraints": ["Command is the source for text enabled checked visible image and shortcut state", "a toolbar borrows its ImageList", "rebuild a menu to show a command after removing it"]
     },
     {
       "id": "document-state",

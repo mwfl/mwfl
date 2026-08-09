@@ -44,14 +44,25 @@ for startup only up to its caller-supplied timeout, and results distinguish no
 receiver, timeout, access denial, and malformed or rejected delivery. Payloads
 are copied and limited to 32,767 UTF-16 code units.
 
-`Command` owns an application action's ID, display text, enabled/checked state,
-optional shortcut, and callback. `CommandSet::Dispatch` can be returned directly
-from `OnCommand`.
+`Command` owns an application action's ID, display text, enabled, checked, and
+visible state, optional toolbar image-list index, optional shortcut, and
+callback. `CommandSet::Dispatch` can be returned directly from `OnCommand`.
 `Menu::AppendCommand` and `Menu::UpdateCommand` project the same state into a
-native menu without taking ownership of the command. `Toolbar::AddCommand` and
-`UpdateCommand` do the same for toolbar buttons, while
+native menu without taking ownership of the command. Invisible commands are
+skipped when a menu is built; hiding an existing item removes it, so showing it
+again requires rebuilding that menu to preserve deliberate item ordering.
+An attached `Menu` retains a non-owning handle for later updates while the
+window owns the native menu. Reattaching a rebuilt menu releases the previous
+native menu. `Toolbar::AddCommand` and `UpdateCommand` project all command state
+onto toolbar buttons. `Toolbar::SetImageList` borrows an `ImageList`; that list
+must outlive the toolbar and command image indices address its entries. Finally,
 `AcceleratorTable::Create(CommandSet)` builds native shortcuts from all commands
 that declare one.
+
+Command image indices are non-negative positions in that borrowed list. A
+command without an image uses `ClearImageIndex`; it does not own or destroy an
+icon. Visibility affects presentation, not dispatch, so a deliberately hidden
+command may remain reachable through its accelerator while enabled.
 
 `WindowOptions::appearance` applies system/light/dark color preference, optional
 Mica/Acrylic/Tabbed backdrops, and corner policy after HWND creation. Unsupported

@@ -140,12 +140,38 @@ public:
         ip_.SetValue(mwtl::IpAddressValue{{127, 0, 0, 1}});
         spin_.SetBuddy(spin_text_).SetRange(0, 100).SetValue(42);
         mwtl::Command toolbar_command({600}, L"Tool");
-        toolbar_command.SetChecked(true);
+        const int command_image = images_.AddIcon(
+            ::LoadIconW(nullptr, IDI_APPLICATION));
+        if (command_image < 0 || !toolbar_.SetImageList(images_))
+            throw std::runtime_error("configure toolbar images failed");
+        toolbar_command.SetChecked(true).SetImageIndex(command_image);
         if (!toolbar_.AddCommand(toolbar_command))
             throw std::runtime_error("populate toolbar command failed");
-        toolbar_command.SetChecked(false).SetEnabled(false).SetText(L"Disabled");
+        toolbar_command.SetImageIndex(-1);
+        if (toolbar_.UpdateCommand(toolbar_command))
+            throw std::runtime_error("negative toolbar image index accepted");
+        toolbar_command.SetImageIndex(command_image);
+        toolbar_command.SetChecked(false).SetEnabled(false).SetVisible(false)
+            .SetText(L"Disabled");
         if (!toolbar_.UpdateCommand(toolbar_command))
             throw std::runtime_error("update toolbar command failed");
+        TBBUTTONINFOW toolbar_info{};
+        wchar_t toolbar_text[32]{};
+        toolbar_info.cbSize = sizeof(toolbar_info);
+        toolbar_info.dwMask = TBIF_IMAGE | TBIF_STATE | TBIF_TEXT;
+        toolbar_info.pszText = toolbar_text;
+        toolbar_info.cchText = 32;
+        if (::SendMessageW(toolbar_.GetHwnd(), TB_GETBUTTONINFOW, 600,
+                           reinterpret_cast<LPARAM>(&toolbar_info)) < 0 ||
+            toolbar_info.iImage != command_image ||
+            (toolbar_info.fsState & TBSTATE_ENABLED) != 0 ||
+            (toolbar_info.fsState & TBSTATE_HIDDEN) == 0 ||
+            std::wstring_view{toolbar_text} != L"Disabled") {
+            throw std::runtime_error("toolbar command state did not propagate");
+        }
+        toolbar_command.SetVisible(true);
+        if (!toolbar_.UpdateCommand(toolbar_command))
+            throw std::runtime_error("show toolbar command failed");
         toolbar_.AutoSize();
         static_cast<void>(rebar_.AddBand(toolbar_, L"Band", 120));
         pager_.SetChild(pager_label_);
@@ -254,10 +280,10 @@ private:
     mwtl::TreeView tree_; mwtl::ListView list_view_; mwtl::Header header_;
     mwtl::TabControl tabs_; mwtl::ComboBoxEx combo_ex_; mwtl::DateTimePicker date_;
     mwtl::MonthCalendar calendar_; mwtl::HotKey hot_key_; mwtl::IpAddress ip_;
+    mwtl::ImageList images_;
     mwtl::TextBox spin_text_; mwtl::UpDown spin_; mwtl::SysLink link_; mwtl::Rebar rebar_; mwtl::Toolbar toolbar_;
     mwtl::Pager pager_; mwtl::Label pager_label_; mwtl::Animation animation_;
     mwtl::ScrollBar scroll_; mwtl::StatusBar status_bar_; mwtl::Tooltip tooltip_;
-    mwtl::ImageList images_;
     mwtl::UiTimer timer_;
 };
 
