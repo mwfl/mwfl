@@ -106,13 +106,15 @@ project(my_app LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwtl
   GIT_REPOSITORY https://github.com/everettjf/mwtl.git
-  GIT_TAG v0.1.0
+  GIT_TAG main
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwtl)
 
 add_executable(my_app WIN32 main.cpp)
 target_link_libraries(my_app PRIVATE mwtl::mwtl)
 ```
+
+Pin a release tag or immutable commit for reproducible application builds.
 
 ```powershell
 cmake -S . -B build -G "Visual Studio 18 2026" -A x64
@@ -237,7 +239,6 @@ For controlled environments, see the
 
 ## Documentation
 
-- [v0.1 announcement](docs/announcement-v0.1.md)
 - [Using mwtl with coding agents](docs/agent-usage.md)
 - [Copyable application templates](templates/)
 - [Task recipes](docs/recipes/)

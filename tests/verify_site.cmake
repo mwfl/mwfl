@@ -1,6 +1,7 @@
 foreach(required IN ITEMS
         index.html
         building.html
+        changelog.html
         components/index.html
         components/application.html
         components/controls.html
@@ -15,6 +16,13 @@ foreach(required IN ITEMS
         .nojekyll)
     if(NOT EXISTS "${SITE_ROOT}/${required}")
         message(FATAL_ERROR "required Pages file is missing: ${required}")
+    endif()
+endforeach()
+
+file(READ "${SITE_ROOT}/changelog.html" changelog)
+foreach(marker IN ITEMS "First public release" "0.1.0" "releases/tag/v0.1.0" "x64" "ARM64")
+    if(NOT changelog MATCHES "${marker}")
+        message(FATAL_ERROR "changelog is missing release marker: ${marker}")
     endif()
 endforeach()
 

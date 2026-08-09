@@ -42,7 +42,7 @@ foreach(generator IN ITEMS "Visual Studio 18 2026" "Visual Studio 17 2022")
     endif()
 endforeach()
 foreach(versioned_file IN ITEMS
-        README.md site/building.html
+        site/building.html
         templates/basic-app/CMakeLists.txt templates/form-app/CMakeLists.txt)
     file(READ "${PROJECT_ROOT}/${versioned_file}" versioned_text)
     if(NOT versioned_text MATCHES "v0\\.1\\.0")
@@ -52,6 +52,10 @@ foreach(versioned_file IN ITEMS
         message(FATAL_ERROR "${versioned_file} contains a stale pre-public version")
     endif()
 endforeach()
+file(READ "${PROJECT_ROOT}/README.md" readme_text)
+if(readme_text MATCHES "v[0-9]+\\.[0-9]+\\.[0-9]+")
+    message(FATAL_ERROR "README must remain version-neutral")
+endif()
 if(NOT release_workflow_text MATCHES [[gh release create]] OR
    NOT release_workflow_text MATCHES [[artifacts/\*\.zip]] OR
    NOT release_workflow_text MATCHES [[artifacts/SHA256SUMS-\*\.txt]])
