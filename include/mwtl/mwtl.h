@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mwtl/appearance.h>
+#include <mwtl/async.h>
 #include <mwtl/binding.h>
 #include <mwtl/application.h>
 #include <mwtl/command_controls.h>
