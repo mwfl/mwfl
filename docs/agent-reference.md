@@ -85,6 +85,21 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
   `message`; `Push()` writes the model to the control.
 - Lifetime: binding, control, and model value must have compatible lifetimes.
 
+## Property sheets and persisted Settings
+
+- Header: `<mwtl/property_sheet.h>`; canonical application:
+  `examples/property_sheet`.
+- Give pages stable nonzero IDs. Create page controls in `initialize`, route
+  native edit/click notifications through `command`, and call `SetDirty()`.
+- `validate` runs before `apply`; return invalid and focus the offending control
+  without mutating committed application state.
+- Build a candidate from the committed value, persist it, then replace the
+  committed value. Return `false` on persistence failure so dirty state remains.
+- `reset` projects the committed value back to controls for Cancel. Modeless
+  sheets and page callbacks stay on their creating UI thread.
+- Follow `docs/tutorials/settings-application.md`; verify focused changes with
+  `mwtl.settings_application_model` and `mwtl.settings_application_gui`.
+
 ## Commands
 
 - Headers: `<mwtl/command.h>`, `<mwtl/command_controls.h>`, `<mwtl/desktop.h>`.

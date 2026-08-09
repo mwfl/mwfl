@@ -24,9 +24,9 @@ Task sources:
 - DPI/appearance: examples/dpi/main.cpp and examples/appearance/main.cpp
 - complete SDI editor: examples/notepad/main.cpp
 - property pages: examples/property_sheet/main.cpp and
-  docs/recipes/property-page.md; stable nonzero page IDs, `command` calls
-  `SetDirty`, validation precedes commit, and modeless sheets stay on the UI
-  thread
+  docs/tutorials/settings-application.md; stable nonzero page IDs, `command`
+  calls `SetDirty`, validation precedes commit, persistence succeeds before
+  committed state changes, and modeless sheets stay on the UI thread
 - task dialogs: `TaskDialogOptions` provides buttons, radios, verification,
   progress, links and callbacks; controller values are callback-scoped and
   errors/exceptions are returned through `TaskDialogResult`

@@ -65,7 +65,10 @@ at explicit Win32 boundaries.
   create controls in `initialize`, route edit/click notifications through
   `command`, call `SetDirty`, validate before mutating the model, commit in
   `apply`, and restore in `reset`. Modeless sheets are move-only UI-thread HWND
-  owners. Follow `docs/recipes/property-page.md` and `examples/property_sheet`.
+  owners. The canonical Settings application persists a candidate before
+  replacing committed state and returns false on save failure so dirty state is
+  retained. Follow `docs/tutorials/settings-application.md`,
+  `docs/recipes/property-page.md`, and `examples/property_sheet`.
 - Task dialogs: use structured `TaskDialogOptions` for custom/common buttons,
   radios, verification, progress, links, and callbacks. The controller is valid
   only during its UI-thread callback. Return `keep_open` to reject a button

@@ -185,9 +185,9 @@
       "symbols": ["mwtl::PropertyPage", "mwtl::PropertySheetModel", "mwtl::PropertySheetDialog", "mwtl::PropertySheetResult"],
       "headers": ["mwtl/property_sheet.h"],
       "example": "examples/property_sheet/main.cpp",
-      "recipe": "docs/recipes/property-page.md",
-      "tests": ["mwtl.property_sheet_model", "mwtl.property_sheet_native"],
-      "constraints": ["page IDs are stable and nonzero", "page HWNDs are borrowed and lazily created", "modeless operations stay on the creating UI thread", "callback exceptions are captured in the result"]
+      "recipe": "docs/tutorials/settings-application.md",
+      "tests": ["mwtl.property_sheet_model", "mwtl.property_sheet_native", "mwtl.settings_application_model", "mwtl.settings_application_gui"],
+      "constraints": ["page IDs are stable and nonzero", "page HWNDs are borrowed and lazily created", "modeless operations stay on the creating UI thread", "callback exceptions are captured in the result", "persist candidates before replacing committed application state"]
     },
     {
       "id": "task-dialog",

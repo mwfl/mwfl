@@ -279,6 +279,17 @@ target_link_libraries(mwtl_property_sheet_model_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.property_sheet_model COMMAND mwtl_property_sheet_model_test)
 set_tests_properties(mwtl.property_sheet_model PROPERTIES TIMEOUT 20)
 
+add_executable(mwtl_settings_application_model_test
+    settings_application_model_test.cpp
+    "${PROJECT_SOURCE_DIR}/examples/property_sheet/settings_model.cpp")
+target_include_directories(mwtl_settings_application_model_test PRIVATE
+    "${PROJECT_SOURCE_DIR}/examples/property_sheet")
+target_compile_features(mwtl_settings_application_model_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_settings_application_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_settings_application_model_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.settings_application_model COMMAND mwtl_settings_application_model_test)
+set_tests_properties(mwtl.settings_application_model PROPERTIES TIMEOUT 20)
+
 add_executable(mwtl_property_sheet_native_test property_sheet_native_test.cpp)
 target_sources(mwtl_property_sheet_native_test PRIVATE "${PROJECT_SOURCE_DIR}/examples/example.manifest")
 target_compile_features(mwtl_property_sheet_native_test PRIVATE cxx_std_20)
@@ -420,6 +431,13 @@ if(TARGET mwtl_hello)
             -Executable $<TARGET_FILE:mwtl_hot_corners_demo>
             -RuntimePath "${mwtl_test_runtime_path}")
     set_tests_properties(mwtl.hot_corners_self_test PROPERTIES TIMEOUT 10)
+    add_test(NAME mwtl.settings_application_gui
+        COMMAND "${mwtl_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwtl_property_sheet_demo>
+            -RuntimePath "${mwtl_test_runtime_path}")
+    set_tests_properties(mwtl.settings_application_gui PROPERTIES TIMEOUT 15)
 endif()
 
 add_test(
@@ -519,6 +537,7 @@ foreach(test_name IN LISTS mwtl_all_tests)
     elseif(test_name MATCHES "^mwtl\\.manifest\\.")
         set(labels "metadata;fast")
     elseif(test_name STREQUAL "mwtl.hot_corners_self_test" OR
+           test_name STREQUAL "mwtl.settings_application_gui" OR
            test_name STREQUAL "mwtl.notepad_gui")
         set(labels "gui;integration")
     elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap)$")

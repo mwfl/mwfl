@@ -1,22 +1,27 @@
-# Settings and validated forms
+# Settings application
 
-Canonical source: `examples/form_binding/main.cpp`.
+Canonical source: `examples/property_sheet/main.cpp` with the independently
+testable state and persistence layer in `examples/property_sheet/settings_model.*`.
 
-This application combines native form controls, explicit model state,
-`ValueBinding`, validation messages, focus recovery, responsive nested layout,
-DPI-dependent fonts, accessible names, a default dialog button, and system
-appearance.
+This is a complete native settings workflow rather than a control screenshot.
+It uses two resizable property pages, stable page IDs, dirty tracking,
+Apply/OK/Cancel, validation with task-dialog feedback, accessible controls, and
+a versioned per-user registry schema. The host keeps committed settings separate
+from page controls, so Cancel restores the committed values and a failed save
+keeps the page dirty.
 
 ## Composition
 
-1. Controls and bindings are window members with compatible lifetimes.
-2. `BuildUI()` creates every HWND before constructing the retained layout.
-3. `PushModel()` initializes controls from explicit model values.
-4. `PullModel()` validates the candidate before updating previews.
-5. `OnCommand()` distinguishes commit actions from live control notifications.
-6. `OnDpiChanged()` refreshes native fonts and propagates default processing.
+1. `Settings` is the application-owned value object.
+2. `LoadSettings` and `SaveSettings` borrow `HKEY_CURRENT_USER`, return structured
+   status, and reject unknown schema versions, malformed types, and invalid data.
+3. Each page creates its controls in `initialize` and owns a normal retained
+   `Column` layout that grows with the native sheet.
+4. Edit/click notifications call `SetDirty`; `validate` runs before `apply`.
+5. `apply` builds a candidate value, persists it, and only then replaces the
+   committed value. `reset` projects the committed value back to controls.
+6. The model test uses a unique temporary registry key. The GUI self-test drives
+   the real executable through both pages and verifies persisted presentation.
 
-Use this source as the base for preferences, account setup, properties, and
-small data-entry applications. Add persistence behind the explicit model rather
-than reading controls throughout the rest of the program.
-
+For a from-scratch walkthrough, follow
+[`docs/tutorials/settings-application.md`](../tutorials/settings-application.md).

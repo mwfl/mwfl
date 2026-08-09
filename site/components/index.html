@@ -46,6 +46,7 @@
         <a href="#data-navigation">Data &amp; navigation</a>
         <a href="#date-input">Date &amp; input</a>
         <a href="#commands">Commands &amp; containers</a>
+        <a href="#settings">Settings application</a>
         <a href="#resources">Resources &amp; dialogs</a>
       </nav>
     </aside>
@@ -277,6 +278,23 @@ SetLayout(
                 .Add(greet_, mwtl::Fixed(100.0_dip)),
             mwtl::Stretch())
         .Add(status_, mwtl::Auto()));</code></pre></div>
+      </section>
+
+      <section id="settings" class="doc-section">
+        <div class="doc-heading"><div><span class="tag">Reference application</span><h2>Persistent Settings</h2></div><p>Two resizable native property pages with stable IDs, dirty tracking, validation, task-dialog feedback, Apply/OK/Cancel, and a versioned per-user registry schema.</p></div>
+        <div class="code-panel compact"><pre data-title="settings.cpp"><code>auto candidate = committed_;
+candidate.display_name = name_.GetText();
+
+const auto saved = SaveSettings(
+    HKEY_CURRENT_USER, settings_key, candidate);
+if (!saved.Succeeded()) {
+    ShowTaskDialog(page, L"Settings were not saved", ...);
+    return false; // keep the page dirty
+}
+committed_ = std::move(candidate);
+return true;</code></pre></div>
+        <div class="native-note"><strong>Cancel is predictable.</strong> Controls are an editable projection, not the source of truth. Each page's reset callback restores the last committed value.</div>
+        <p class="source-link"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/settings-application.md">Follow the complete beginner tutorial on GitHub →</a></p>
       </section>
 
       <section id="resources" class="doc-section">
