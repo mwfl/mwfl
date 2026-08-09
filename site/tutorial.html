@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A step-by-step beginner tutorial for building and running a first native Windows application with mwtl, CMake, and Visual Studio.">
+  <link rel="canonical" href="https://everettjf.github.io/mwtl/tutorial.html">
+  <title>First application tutorial — mwtl</title>
+  <meta name="theme-color" content="#f7f9ff">
+  <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
+  <link rel="stylesheet" href="styles.css?v=20260808k">
+  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script defer src="assets/site.js?v=20260808k"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell nav">
+      <a class="brand" href="index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="components/index.html">Components</a>
+        <a class="active" href="tutorial.html" aria-current="page">Get started</a>
+        <a href="building.html">Build reference</a>
+        <a href="changelog.html">Changelog</a>
+        <a href="https://github.com/everettjf/mwtl">GitHub</a>
+        <button class="theme-toggle" type="button" aria-label="Toggle color theme"></button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="shell prose guide">
+    <div class="hero">
+      <div class="eyebrow">Beginner tutorial · about 15 minutes</div>
+      <h1>Build your first native Windows application.</h1>
+      <p class="lede">Start with an empty folder and finish with a real, resizable HWND window. Every command and file you need is on this page.</p>
+      <nav class="page-toc" aria-label="On this page">
+        <a href="#before">Before you start</a>
+        <a href="#install">Install tools</a>
+        <a href="#project">Create files</a>
+        <a href="#configure">Configure</a>
+        <a href="#build">Build and run</a>
+        <a href="#edit">Make a change</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+        <a href="#next">Next steps</a>
+      </nav>
+    </div>
+
+    <div class="requirements">
+      <div><strong>You need</strong><span>Windows 10 1809+ or Windows 11</span></div>
+      <div><strong>Time</strong><span>About 15 minutes plus the first download</span></div>
+      <div><strong>Experience</strong><span>Basic C++ syntax; no Win32 or CMake experience required</span></div>
+      <div><strong>Result</strong><span>A native x64 Debug application</span></div>
+    </div>
+
+    <section id="before">
+      <div class="eyebrow">Step 0</div><h2>Know what the tools do</h2>
+      <ul>
+        <li><strong>Visual Studio</strong> supplies the MSVC C++ compiler, Windows SDK, ATL, debugger, and CMake.</li>
+        <li><strong>Git</strong> lets CMake download mwtl and its pinned dependencies.</li>
+        <li><strong>CMake</strong> reads <code>CMakeLists.txt</code> and creates a Visual Studio build.</li>
+      </ul>
+      <p>You do not need to create a <code>.sln</code> file, configure include directories, or download WTL/WIL manually.</p>
+    </section>
+
+    <section id="install">
+      <div class="eyebrow">Step 1</div><h2>Install Visual Studio and Git</h2>
+      <ol>
+        <li>Install <strong>Visual Studio 2026 Community</strong> or <strong>Visual Studio 2022 Community</strong>.</li>
+        <li>In Visual Studio Installer, select <strong>Desktop development with C++</strong>.</li>
+        <li>Under Individual components, confirm these items:
+          <ul>
+            <li>MSVC x64/x86 build tools</li>
+            <li>C++ CMake tools for Windows</li>
+            <li>C++ ATL for the installed MSVC toolset</li>
+            <li>Windows 11 SDK or a recent Windows 10 SDK</li>
+          </ul>
+        </li>
+        <li>Install <strong>Git for Windows</strong> if <code>git</code> is not already available.</li>
+        <li>From the Start menu, open <strong>Developer PowerShell for VS 2026</strong>. For VS 2022, open its corresponding Developer PowerShell.</li>
+      </ol>
+      <pre data-title="Developer PowerShell"><code>git --version
+cmake --version
+cl</code></pre>
+      <p>Success means all three commands are found. <code>cl</code> prints a compiler version and then reports that no source files were supplied; that final message is expected.</p>
+    </section>
+
+    <section id="project">
+      <div class="eyebrow">Step 2</div><h2>Create an empty project folder</h2>
+      <pre data-title="Developer PowerShell"><code>New-Item -ItemType Directory -Path "$HOME\source\mwtl-hello"
+Set-Location "$HOME\source\mwtl-hello"
+New-Item -ItemType File CMakeLists.txt, main.cpp, app.manifest</code></pre>
+      <p>Open this folder in your editor. Its final shape is:</p>
+      <pre data-title="project layout"><code>mwtl-hello/
+├── CMakeLists.txt
+├── main.cpp
+└── app.manifest</code></pre>
+
+      <h3>1. CMakeLists.txt</h3>
+      <p>This downloads a tested release, creates a Windows GUI executable, enables C++20, and links mwtl.</p>
+      <pre data-title="CMakeLists.txt"><code>cmake_minimum_required(VERSION 3.21)
+project(mwtl_hello LANGUAGES CXX)
+
+include(FetchContent)
+FetchContent_Declare(mwtl
+  GIT_REPOSITORY https://github.com/everettjf/mwtl.git
+  GIT_TAG v0.1.0
+  GIT_SHALLOW TRUE)
+FetchContent_MakeAvailable(mwtl)
+
+add_executable(mwtl_hello WIN32 main.cpp app.manifest)
+set_property(SOURCE app.manifest PROPERTY VS_TOOL_OVERRIDE "Manifest")
+target_compile_features(mwtl_hello PRIVATE cxx_std_20)
+target_compile_options(mwtl_hello PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_hello PRIVATE mwtl::mwtl)</code></pre>
+
+      <h3>2. main.cpp</h3>
+      <pre data-title="main.cpp"><code>#include &lt;mwtl/mwtl.h&gt;
+
+using mwtl::operator""_dip;
+
+class MainWindow final : public mwtl::WindowBase {
+public:
+    void BuildUI() override {
+        SetTitle(L"My first mwtl application");
+
+        mwtl::ControlHost ui{*this};
+        ui.Add(message_, L"Hello from a native HWND window.");
+        ui.Add(close_, L"Close");
+
+        SetLayout(mwtl::Column()
+            .Margin(24_dip)
+            .Gap(12_dip)
+            .Add(message_, mwtl::Stretch())
+            .Add(close_, mwtl::Fixed(38_dip)));
+    }
+
+    mwtl::EventResult OnCommand(
+        const mwtl::CommandEvent&amp; event) override {
+        if (event.IsClicked(close_)) {
+            Close();
+            return mwtl::EventResult::Handled();
+        }
+        return mwtl::EventResult::Propagate();
+    }
+
+private:
+    mwtl::Label message_;
+    mwtl::Button close_;
+};
+
+int WINAPI wWinMain(
+    HINSTANCE instance, HINSTANCE, PWSTR, int show) {
+    return mwtl::RunApplication&lt;MainWindow&gt;(instance, show);
+}</code></pre>
+
+      <h3>3. app.manifest</h3>
+      <p>The manifest enables current Common Controls and Per-Monitor-V2 DPI behavior.</p>
+      <pre data-title="app.manifest"><code>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"&gt;
+  &lt;assemblyIdentity name="mwtl.hello" processorArchitecture="*"
+    version="1.0.0.0" type="win32" /&gt;
+  &lt;dependency&gt;&lt;dependentAssembly&gt;
+    &lt;assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls"
+      version="6.0.0.0" processorArchitecture="*"
+      publicKeyToken="6595b64144ccf1df" language="*" /&gt;
+  &lt;/dependentAssembly&gt;&lt;/dependency&gt;
+  &lt;application xmlns="urn:schemas-microsoft-com:asm.v3"&gt;
+    &lt;windowsSettings&gt;
+      &lt;dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings"&gt;PerMonitorV2, PerMonitor&lt;/dpiAwareness&gt;
+    &lt;/windowsSettings&gt;
+  &lt;/application&gt;
+&lt;/assembly&gt;</code></pre>
+    </section>
+
+    <section id="configure">
+      <div class="eyebrow">Step 3</div><h2>Configure the project</h2>
+      <p>Run one of these commands from the folder containing the three files.</p>
+      <pre data-title="Visual Studio 2026"><code>cmake -S . -B build -G "Visual Studio 18 2026" -A x64</code></pre>
+      <pre data-title="Visual Studio 2022"><code>cmake -S . -B build -G "Visual Studio 17 2022" -A x64</code></pre>
+      <p>The first configure needs internet access and may take a minute while Git downloads mwtl, WTL, and WIL. Success ends with:</p>
+      <pre data-title="expected result"><code>-- Configuring done
+-- Generating done
+-- Build files have been written to: .../mwtl-hello/build</code></pre>
+      <div class="callout"><strong>Do not mix Visual Studio generators in one build folder.</strong> If you switch between VS 2022 and VS 2026, use a different folder such as <code>build-vs2022</code>.</div>
+    </section>
+
+    <section id="build">
+      <div class="eyebrow">Step 4</div><h2>Build and run</h2>
+      <pre data-title="Developer PowerShell"><code>cmake --build build --config Debug --parallel 2
+&amp; .\build\Debug\mwtl_hello.exe</code></pre>
+      <p>A resizable native Windows window should open with a label and a Close button. Resize it to see the retained layout update the real child controls.</p>
+      <p>If the build succeeds but the executable path differs, locate it with:</p>
+      <pre data-title="Developer PowerShell"><code>Get-ChildItem build -Recurse -Filter mwtl_hello.exe</code></pre>
+      <h3>Run in Visual Studio</h3>
+      <ol>
+        <li>Choose <strong>File → Open → Folder</strong> and select <code>mwtl-hello</code>.</li>
+        <li>Wait for CMake generation to finish.</li>
+        <li>Select <code>mwtl_hello.exe</code> as the startup item.</li>
+        <li>Press <strong>F5</strong> to debug or <strong>Ctrl+F5</strong> to run without the debugger.</li>
+      </ol>
+    </section>
+
+    <section id="edit">
+      <div class="eyebrow">Step 5</div><h2>Make and verify a change</h2>
+      <p>Change the title or label in <code>main.cpp</code>, save the file, then rebuild:</p>
+      <pre data-title="Developer PowerShell"><code>cmake --build build --config Debug --parallel 2
+&amp; .\build\Debug\mwtl_hello.exe</code></pre>
+      <p>You normally configure once and rebuild after source edits. Run the configure command again only after changing CMake options or dependency settings.</p>
+    </section>
+
+    <section id="troubleshooting">
+      <div class="eyebrow">When something fails</div><h2>Troubleshooting</h2>
+      <h3>“Could not find any instance of Visual Studio”</h3>
+      <p>Install the Desktop development with C++ workload, use the generator matching your installed Visual Studio version, and reopen Developer PowerShell.</p>
+      <h3>ATL headers are missing</h3>
+      <p>Open Visual Studio Installer → Modify → Individual components and install C++ ATL for your MSVC toolset. ATL is not always selected by the base workload.</p>
+      <h3>Git clone or FetchContent fails</h3>
+      <p>Confirm <code>git --version</code> works and that GitHub is reachable. Corporate proxies may require Git proxy configuration. Retry the configure command after connectivity is restored.</p>
+      <h3>Generator does not match the previous generator</h3>
+      <p>You reused a build directory with another Visual Studio version. Create a new directory, for example <code>build-vs2022</code> or <code>build-vs2026</code>.</p>
+      <h3>Linker cannot find wWinMain</h3>
+      <p>Keep <code>WIN32</code> in <code>add_executable</code> and use the exact <code>wWinMain</code> signature shown above.</p>
+      <h3>The window is blurry or controls look old</h3>
+      <p>Ensure <code>app.manifest</code> is listed in the executable sources and retains the Common Controls and DPI declarations.</p>
+      <h3>x86 configuration is rejected</h3>
+      <p>mwtl intentionally supports only x64 and ARM64. Use <code>-A x64</code> for a normal PC.</p>
+      <h3>Start over safely</h3>
+      <p>Close Visual Studio, remove only the project’s generated <code>build</code> directory, and repeat Configure and Build. Do not delete your three source files.</p>
+    </section>
+
+    <section id="next">
+      <div class="eyebrow">Continue learning</div><h2>Next steps</h2>
+      <ul>
+        <li><a href="components/index.html">Browse every component</a> with screenshots and source.</li>
+        <li><a href="https://github.com/everettjf/mwtl/tree/main/templates">Copy a maintained starter template</a>.</li>
+        <li><a href="building.html">Read the build reference</a> for installed packages, ARM64, VS Code, repository development, and offline dependencies.</li>
+        <li><a href="https://github.com/everettjf/mwtl/tree/main/examples">Explore all runnable examples</a>.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer">
+      <span>Modern Windows Thin Layer · MIT licensed · Windows 10 1809+ · x64 / ARM64</span>
+      <nav aria-label="Footer"><a href="components/index.html">Components</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a></nav>
+    </div>
+  </footer>
+</body>
+</html>

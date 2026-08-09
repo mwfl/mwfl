@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Install and use mwtl with CMake, Visual Studio, or VS Code on Windows x64 and ARM64.">
   <link rel="canonical" href="https://everettjf.github.io/mwtl/building.html">
-  <title>Get started — mwtl</title>
+  <title>Build reference — mwtl</title>
   <meta name="theme-color" content="#f7f9ff">
   <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
   <link rel="stylesheet" href="styles.css?v=20260808k">
@@ -19,7 +19,8 @@
       <a class="brand" href="index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="components/index.html">Components</a>
-        <a class="active" href="building.html" aria-current="page">Get started</a>
+        <a href="tutorial.html">Get started</a>
+        <a class="active" href="building.html" aria-current="page">Build reference</a>
         <a href="changelog.html">Changelog</a>
         <a href="https://github.com/everettjf/mwtl">GitHub</a>
         <button class="theme-toggle" type="button" aria-label="Toggle color theme"></button>
@@ -28,9 +29,10 @@
   </header>
   <main id="main" class="shell prose guide">
     <div class="hero">
-      <div class="eyebrow">Installation guide</div>
-      <h1>From zero to a native window.</h1>
-      <p class="lede">Choose the workflow you already use. Every path builds the same C++20 x64 or ARM64 library and links the exported <code>mwtl::mwtl</code> target.</p>
+      <div class="eyebrow">Build reference</div>
+      <h1>Choose and configure your build workflow.</h1>
+      <p class="lede">This page is the reference for CMake, IDE, installed-package, repository, and offline workflows. Every path builds the same C++20 x64 or ARM64 library and links the exported <code>mwtl::mwtl</code> target.</p>
+      <div class="callout"><strong>Building your first Windows application?</strong> Follow the <a href="tutorial.html">15-minute beginner tutorial</a> first. It starts with installing Visual Studio and ends with a running window.</div>
       <nav class="page-toc" aria-label="On this page">
         <a href="#cmake">CMake</a>
         <a href="#installed-package">find_package</a>
@@ -146,10 +148,17 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
       <div class="eyebrow">Contributors</div><h2>Build this repository</h2>
       <pre data-title="PowerShell"><code>git clone https://github.com/everettjf/mwtl.git
 cd mwtl
+./scripts/doctor.ps1 -VisualStudio 2026
 cmake --preset vs2026-x64
 cmake --build --preset vs2026-x64-debug
 ctest --preset vs2026-x64-debug</code></pre>
-      <p>Replace <code>vs2026</code> with <code>vs2022</code> to use the minimum supported toolchain. Build a single example with <code>cmake --build build/presets/vs2026-x64 --config Debug --target mwtl_hello</code>. See the <a href="components/index.html">complete component gallery</a> for source links and screenshots.</p>
+      <p>The doctor checks Visual Studio, CMake, Git, the Windows SDK, ATL, and the selected architecture before a long build begins. Replace <code>2026</code>/<code>vs2026</code> with <code>2022</code>/<code>vs2022</code> to use the minimum supported toolchain.</p>
+      <pre data-title="Project verification"><code># Fast local checks: formatting, configuration, focused tests, and docs
+./scripts/verify.ps1 -Mode Fast -VisualStudio 2026
+
+# Full release-equivalent verification
+./scripts/verify.ps1 -Mode Full -VisualStudio 2026</code></pre>
+      <p>Build a single example with <code>cmake --build build/presets/vs2026-x64 --config Debug --target mwtl_hello</code>. Its executable is under <code>build/presets/vs2026-x64/examples/hello/Debug/</code>. See the <a href="components/index.html">complete component gallery</a> for source links and screenshots.</p>
     </section>
 
     <section id="offline">

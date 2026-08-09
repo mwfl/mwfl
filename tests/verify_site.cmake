@@ -1,5 +1,6 @@
 foreach(required IN ITEMS
         index.html
+        tutorial.html
         building.html
         changelog.html
         components/index.html
@@ -18,6 +19,35 @@ foreach(required IN ITEMS
         message(FATAL_ERROR "required Pages file is missing: ${required}")
     endif()
 endforeach()
+
+file(READ "${SITE_ROOT}/tutorial.html" tutorial)
+foreach(marker IN ITEMS
+        "15 minutes"
+        "Desktop development with C\\+\\+"
+        "C\\+\\+ ATL"
+        "Developer PowerShell"
+        "git --version"
+        "cmake --version"
+        "CMakeLists.txt"
+        "main.cpp"
+        "app.manifest"
+        "cmake -S . -B build"
+        "cmake --build build"
+        "mwtl_hello.exe"
+        "Visual Studio 18 2026"
+        "Visual Studio 17 2022"
+        "Troubleshooting")
+    if(NOT tutorial MATCHES "${marker}")
+        message(FATAL_ERROR "beginner tutorial is missing required marker: ${marker}")
+    endif()
+endforeach()
+
+file(READ "${SITE_ROOT}/building.html" building)
+if(NOT building MATCHES "tutorial.html" OR
+   NOT building MATCHES "scripts/doctor.ps1" OR
+   NOT building MATCHES "scripts/verify.ps1")
+    message(FATAL_ERROR "build reference is missing beginner or contributor guidance")
+endif()
 
 file(READ "${SITE_ROOT}/changelog.html" changelog)
 foreach(marker IN ITEMS "First public release" "0.1.0" "releases/tag/v0.1.0" "x64" "ARM64")
