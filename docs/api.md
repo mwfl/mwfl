@@ -20,6 +20,17 @@ reject a save when another process changed the destination. Results distinguish
 missing paths, access failures, malformed encoding, external changes, and other
 I/O failures without displaying UI.
 
+`FindTextMatch`, `TextMatchesAt`, and `ReplaceAllText` provide UI-independent search
+semantics for editor applications. Options cover direction, case matching, and
+whole-word boundaries. Replacement advances beyond inserted text, so replacing
+a token with text that contains the token cannot loop forever.
+
+`TextHistory` owns a bounded sequence of text snapshots for deterministic Undo
+and Redo in small document applications. It truncates the redo branch after a
+new edit and remembers the saved entry; if that entry is evicted, the document
+conservatively remains modified. Returned views remain valid only until the next
+mutating history operation.
+
 `Command` owns an application action's ID, display text, enabled/checked state,
 optional shortcut, and callback. `CommandSet::Dispatch` can be returned directly
 from `OnCommand`.

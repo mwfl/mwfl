@@ -75,6 +75,8 @@ add_library(mwtl STATIC
     src/module.cpp
     src/timer.cpp
     src/text_file.cpp
+    src/text_history.cpp
+    src/text_search.cpp
     src/window_options.cpp)
 add_library(mwtl::mwtl ALIAS mwtl)
 

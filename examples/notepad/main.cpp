@@ -17,6 +17,9 @@ constexpr mwtl::ControlId kCut{711};
 constexpr mwtl::ControlId kCopy{712};
 constexpr mwtl::ControlId kPaste{713};
 constexpr mwtl::ControlId kSelectAll{714};
+constexpr mwtl::ControlId kFind{715};
+constexpr mwtl::ControlId kReplace{716};
+constexpr mwtl::ControlId kRedo{717};
 
 class NotepadWindow final : public mwtl::WindowBase {
 public:
@@ -51,7 +54,8 @@ public:
 
     mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
         if (event.Is(editor_, EN_CHANGE) && !updating_editor_) {
-            document_.MarkChanged();
+            history_.Record(editor_.GetText());
+            SyncDirtyFromHistory();
             SyncPresentation(L"Modified");
             return mwtl::EventResult::Handled();
         }
@@ -59,6 +63,10 @@ public:
     }
 
     mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
+        if (event.id == find_message_) {
+            HandleFindReplace(*reinterpret_cast<FINDREPLACEW*>(event.lparam));
+            return mwtl::EventResult::Handled();
+        }
         if (event.id != WM_DROPFILES) return mwtl::EventResult::Propagate();
         const auto files = mwtl::ReadDroppedFiles(reinterpret_cast<HDROP>(event.wparam));
         if (!files.empty() && ConfirmTransition()) OpenPath(files.front());
@@ -82,8 +90,10 @@ private:
             .Add(mwtl::Command(kSaveAs, L"Save As...", [this] { static_cast<void>(SaveDocument(true)); })
                 .SetShortcut({FVIRTKEY | FCONTROL | FSHIFT, 'S'}))
             .Add(mwtl::Command(kExit, L"Exit", [this] { static_cast<void>(Close()); }))
-            .Add(mwtl::Command(kUndo, L"Undo", [this] { ::SendMessageW(editor_.GetHwnd(), WM_UNDO, 0, 0); })
+            .Add(mwtl::Command(kUndo, L"Undo", [this] { ApplyHistory(history_.Undo(), L"Undo"); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'Z'}))
+            .Add(mwtl::Command(kRedo, L"Redo", [this] { ApplyHistory(history_.Redo(), L"Redo"); })
+                .SetShortcut({FVIRTKEY | FCONTROL, 'Y'}))
             .Add(mwtl::Command(kCut, L"Cut", [this] { ::SendMessageW(editor_.GetHwnd(), WM_CUT, 0, 0); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'X'}))
             .Add(mwtl::Command(kCopy, L"Copy", [this] { ::SendMessageW(editor_.GetHwnd(), WM_COPY, 0, 0); })
@@ -91,7 +101,11 @@ private:
             .Add(mwtl::Command(kPaste, L"Paste", [this] { ::SendMessageW(editor_.GetHwnd(), WM_PASTE, 0, 0); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'V'}))
             .Add(mwtl::Command(kSelectAll, L"Select All", [this] { editor_.SelectAll(); })
-                .SetShortcut({FVIRTKEY | FCONTROL, 'A'}));
+                .SetShortcut({FVIRTKEY | FCONTROL, 'A'}))
+            .Add(mwtl::Command(kFind, L"Find...", [this] { ShowFindDialog(false); })
+                .SetShortcut({FVIRTKEY | FCONTROL, 'F'}))
+            .Add(mwtl::Command(kReplace, L"Replace...", [this] { ShowFindDialog(true); })
+                .SetShortcut({FVIRTKEY | FCONTROL, 'H'}));
     }
 
     void BuildMenu() {
@@ -104,7 +118,7 @@ private:
         mwtl::Must(file.AppendSeparator(), "append File separator");
         mwtl::Must(file.AppendCommand(*commands_.Find(kExit)), "append Exit command");
         mwtl::Must(edit.CreatePopup(), "create Edit menu");
-        for (const auto id : {kUndo, kCut, kCopy, kPaste, kSelectAll})
+        for (const auto id : {kUndo, kRedo, kCut, kCopy, kPaste, kSelectAll, kFind, kReplace})
             mwtl::Must(edit.AppendCommand(*commands_.Find(id)), "append Edit command");
         mwtl::Must(menu_.AppendSubmenu(std::move(file), L"File"), "append File menu");
         mwtl::Must(menu_.AppendSubmenu(std::move(edit), L"Edit"), "append Edit menu");
@@ -117,6 +131,7 @@ private:
         editor_.SetText(L"");
         updating_editor_ = false;
         document_.ResetUntitled();
+        history_.Reset();
         encoding_ = mwtl::TextEncoding::utf8;
         stamp_.reset();
         SyncPresentation(L"New document");
@@ -140,6 +155,7 @@ private:
         editor_.SetText(loaded.value->text);
         updating_editor_ = false;
         document_.MarkOpened(path);
+        history_.Reset(loaded.value->text);
         encoding_ = loaded.value->encoding;
         stamp_ = loaded.value->stamp;
         SyncPresentation(L"Opened " + path.filename().wstring());
@@ -162,6 +178,7 @@ private:
                                                      same_path ? stamp_ : std::nullopt);
         if (!saved.Succeeded()) { ShowTextFileFailure(L"Could not save the file.", saved.status, saved.native_error); return false; }
         document_.MarkSavedAs(path);
+        history_.MarkSaved();
         stamp_ = saved.stamp;
         SyncPresentation(L"Saved " + path.filename().wstring());
         return true;
@@ -178,11 +195,117 @@ private:
         return answer == IDYES && SaveDocument(false);
     }
 
-    void SyncPresentation(std::wstring message) {
+    void ApplyHistory(std::optional<std::wstring_view> value, std::wstring_view action) {
+        if (!value) return;
+        updating_editor_ = true;
+        editor_.SetText(*value);
+        updating_editor_ = false;
+        SyncDirtyFromHistory();
+        SyncPresentation(action);
+        editor_.Focus();
+    }
+
+    void SyncDirtyFromHistory() {
+        if (history_.IsModified()) document_.MarkChanged();
+        else document_.MarkSaved();
+    }
+
+    void ShowFindDialog(bool replace) {
+        if (find_dialog_) {
+            ::SetForegroundWindow(find_dialog_);
+            return;
+        }
+        find_replace_ = {};
+        find_replace_.lStructSize = sizeof(find_replace_);
+        find_replace_.hwndOwner = GetHwnd();
+        find_replace_.lpstrFindWhat = find_text_.data();
+        find_replace_.wFindWhatLen = static_cast<WORD>(find_text_.size());
+        find_replace_.Flags = FR_DOWN;
+        if (replace) {
+            find_replace_.lpstrReplaceWith = replace_text_.data();
+            find_replace_.wReplaceWithLen = static_cast<WORD>(replace_text_.size());
+            find_dialog_ = ::ReplaceTextW(&find_replace_);
+        } else {
+            find_dialog_ = ::FindTextW(&find_replace_);
+        }
+        if (!find_dialog_) ShowFailure(L"Could not open the Find dialog.", ::CommDlgExtendedError());
+    }
+
+    void HandleFindReplace(const FINDREPLACEW& request) {
+        if (request.Flags & FR_DIALOGTERM) {
+            find_dialog_ = nullptr;
+            return;
+        }
+        if (request.Flags & FR_FINDNEXT) {
+            FindNext(request);
+        } else if (request.Flags & FR_REPLACE) {
+            ReplaceSelection(request);
+            FindNext(request);
+        } else if (request.Flags & FR_REPLACEALL) {
+            ReplaceAll(request);
+        }
+    }
+
+    void FindNext(const FINDREPLACEW& request) {
+        const std::wstring text = editor_.GetText();
+        const std::wstring_view query{request.lpstrFindWhat};
+        DWORD selection_start{}, selection_end{};
+        ::SendMessageW(editor_.GetHwnd(), EM_GETSEL,
+                       reinterpret_cast<WPARAM>(&selection_start),
+                       reinterpret_cast<LPARAM>(&selection_end));
+        const bool down = (request.Flags & FR_DOWN) != 0;
+        const mwtl::TextSearchOptions options{
+            .match_case = (request.Flags & FR_MATCHCASE) != 0,
+            .whole_word = (request.Flags & FR_WHOLEWORD) != 0,
+            .backwards = !down};
+        const auto match = mwtl::FindTextMatch(
+            text, query, down ? selection_end : selection_start, options);
+        if (!match) {
+            status_.SetPartText(0, L"No further match");
+            ::MessageBeep(MB_ICONINFORMATION);
+            return;
+        }
+        ::SendMessageW(editor_.GetHwnd(), EM_SETSEL, *match, *match + query.size());
+        ::SendMessageW(editor_.GetHwnd(), EM_SCROLLCARET, 0, 0);
+        status_.SetPartText(0, L"Match found");
+    }
+
+    void ReplaceSelection(const FINDREPLACEW& request) {
+        const std::wstring text = editor_.GetText();
+        const std::wstring_view query{request.lpstrFindWhat};
+        DWORD start{}, end{};
+        ::SendMessageW(editor_.GetHwnd(), EM_GETSEL,
+                       reinterpret_cast<WPARAM>(&start), reinterpret_cast<LPARAM>(&end));
+        const mwtl::TextSearchOptions options{
+            .match_case = (request.Flags & FR_MATCHCASE) != 0,
+            .whole_word = (request.Flags & FR_WHOLEWORD) != 0};
+        if (end >= start && end - start == query.size() &&
+            mwtl::TextMatchesAt(text, query, start, options)) {
+            ::SendMessageW(editor_.GetHwnd(), EM_REPLACESEL, TRUE,
+                           reinterpret_cast<LPARAM>(request.lpstrReplaceWith));
+        }
+    }
+
+    void ReplaceAll(const FINDREPLACEW& request) {
+        std::wstring text = editor_.GetText();
+        const std::wstring query{request.lpstrFindWhat};
+        const std::wstring replacement{request.lpstrReplaceWith};
+        const std::size_t count = mwtl::ReplaceAllText(text, query, replacement, {
+            .match_case = (request.Flags & FR_MATCHCASE) != 0,
+            .whole_word = (request.Flags & FR_WHOLEWORD) != 0});
+        if (count) editor_.SetText(text);
+        status_.SetPartText(0, L"Replaced " + std::to_wstring(count) + L" occurrence(s)");
+    }
+
+    void SyncPresentation(std::wstring_view message) {
         auto* save = commands_.Find(kSave);
+        auto* undo = commands_.Find(kUndo);
+        auto* redo = commands_.Find(kRedo);
         save->SetEnabled(document_.IsDirty());
+        undo->SetEnabled(history_.CanUndo());
+        redo->SetEnabled(history_.CanRedo());
         toolbar_.UpdateCommand(*save);
-        menu_.UpdateCommand(*save);
+        for (const auto* command : {save, undo, redo}) menu_.UpdateCommand(*command);
         std::wstring title = document_.GetDisplayName();
         if (document_.IsDirty()) title += L" *";
         title += L" — mwtl Notepad";
@@ -207,6 +330,7 @@ private:
     }
 
     mwtl::DocumentState document_;
+    mwtl::TextHistory history_;
     mwtl::TextEncoding encoding_ = mwtl::TextEncoding::utf8;
     std::optional<mwtl::FileStamp> stamp_;
     bool updating_editor_{};
@@ -216,6 +340,11 @@ private:
     mwtl::Toolbar toolbar_;
     mwtl::TextBox editor_;
     mwtl::StatusBar status_;
+    UINT find_message_ = ::RegisterWindowMessageW(FINDMSGSTRING);
+    HWND find_dialog_{};
+    FINDREPLACEW find_replace_{};
+    std::array<wchar_t, 256> find_text_{};
+    std::array<wchar_t, 256> replace_text_{};
 };
 }  // namespace
 

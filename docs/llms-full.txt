@@ -40,6 +40,10 @@ at explicit Win32 boundaries.
 - Unicode text files: `mwtl/text_file.h`; preserve detected UTF-8/UTF-16
   encoding, pass the read `FileStamp` when saving, and handle `changed`
   separately from ordinary I/O failure.
+- Editor search: `mwtl/text_search.h`; use the pure helpers for deterministic
+  forward/backward, case, whole-word, and replace-all behavior.
+- Editor history: `mwtl/text_history.h`; use bounded snapshot history when an
+  application needs deterministic Undo/Redo and saved-state tracking.
 - Background work: `examples/wakeup` and `examples/hot_corners`.
 - Dialogs, clipboard, file drop, placement: `examples/desktop_integration`.
 - DPI and appearance: `examples/dpi` and `examples/appearance`.

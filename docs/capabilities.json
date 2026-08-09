@@ -54,6 +54,24 @@
       "constraints": ["malformed Unicode is rejected", "save uses a flushed sibling temporary and atomic replacement", "pass the read FileStamp to detect stale editor content"]
     },
     {
+      "id": "text-search",
+      "intent": ["find text", "replace text", "implement an editor find dialog"],
+      "symbols": ["mwtl::FindTextMatch", "mwtl::TextMatchesAt", "mwtl::ReplaceAllText"],
+      "headers": ["mwtl/text_search.h"],
+      "example": "examples/notepad/main.cpp",
+      "tests": ["mwtl.text_search"],
+      "constraints": ["empty queries never match", "whole-word treats letters, digits, and underscore as word characters", "replace-all advances after inserted text"]
+    },
+    {
+      "id": "text-history",
+      "intent": ["undo text edits", "redo text edits", "track whether undo returned to the saved text"],
+      "symbols": ["mwtl::TextHistory"],
+      "headers": ["mwtl/text_history.h"],
+      "example": "examples/notepad/main.cpp",
+      "tests": ["mwtl.text_history"],
+      "constraints": ["history stores bounded snapshots", "new edits truncate the redo branch", "returned views expire on mutation"]
+    },
+    {
       "id": "background-ui-update",
       "intent": ["background worker", "update UI from thread", "notify window"],
       "symbols": ["mwtl::WindowWakeup"],
