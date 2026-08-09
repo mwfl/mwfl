@@ -29,8 +29,18 @@ public:
         pager_ui.Add(pager_text_, {215}, L"Pager child: content can be wider than its viewport", {0.0_dip, 0.0_dip, 820.0_dip, 32.0_dip});
         ui.Add(animation_, {216}, {704.0_dip, 382.0_dip, 120.0_dip, 72.0_dip});
         ui.Add(animation_label_, {217}, L"Animation host\n(resource-driven AVI)", {836.0_dip, 390.0_dip, 260.0_dip, 56.0_dip});
-        ui.Add(scroll_, {218}, {16.0_dip, 486.0_dip, 666.0_dip, 28.0_dip});
-        ui.Add(status_, {219}, {0.0_dip, 540.0_dip, 1240.0_dip, 28.0_dip});
+        ui.Add(splitter_, {218}, mwtl::RectDip{16.0_dip, 486.0_dip, 666.0_dip, 80.0_dip},
+               mwtl::SplitterOptions{
+                   .constraints = {120.0_dip, 120.0_dip, 6.0_dip},
+                   .initial_position = 250.0_dip,
+               });
+        mwtl::ControlHost splitter_ui{splitter_};
+        splitter_ui.Add(first_pane_, {219}, L"Tree/details pane", mwtl::RectDip{});
+        splitter_ui.Add(second_pane_, {220}, L"Preview pane", mwtl::RectDip{});
+        mwtl::Must(splitter_.AttachPanes(first_pane_.GetHwnd(), second_pane_.GetHwnd()),
+                   "attach split panes");
+        ui.Add(scroll_, {221}, {16.0_dip, 580.0_dip, 666.0_dip, 28.0_dip});
+        ui.Add(status_, {222}, {0.0_dip, 630.0_dip, 1240.0_dip, 28.0_dip});
         mwtl::Must(tooltip_.Create(rebar_.GetHwnd()), "create Tooltip");
         mwtl::Must(images_.Create(16, 16), "create ImageList");
 
@@ -89,6 +99,14 @@ public:
         return mwtl::EventResult::Propagate();
     }
 
+    mwtl::EventResult OnNotify(const mwtl::NotifyEvent& event) override {
+        if (event.Is(splitter_, mwtl::kSplitterPositionChanged)) {
+            status_.SetPartText(2, L"Splitter position changed");
+            return mwtl::EventResult::Handled();
+        }
+        return mwtl::EventResult::Propagate();
+    }
+
 private:
     static constexpr mwtl::ControlId kAbout{500};
     static constexpr mwtl::ControlId kRefresh{501};
@@ -97,10 +115,12 @@ private:
     mwtl::DateTimePicker date_; mwtl::MonthCalendar calendar_; mwtl::HotKey hot_key_;
     mwtl::IpAddress ip_; mwtl::TextBox number_; mwtl::UpDown spin_; mwtl::SysLink link_;
     mwtl::Pager pager_; mwtl::Label pager_text_; mwtl::Animation animation_;
-    mwtl::Label animation_label_; mwtl::ScrollBar scroll_; mwtl::StatusBar status_;
+    mwtl::Label animation_label_; mwtl::Splitter splitter_;
+    mwtl::Label first_pane_; mwtl::Label second_pane_;
+    mwtl::ScrollBar scroll_; mwtl::StatusBar status_;
     mwtl::Tooltip tooltip_; mwtl::ImageList images_;
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
-    return mwtl::RunApplication<CommonControlsWindow>(instance, show, {.title = L"Windows Common Controls gallery", .initial_bounds = {{0.0_dip, 0.0_dip}, {1260.0_dip, 620.0_dip}}, .use_default_bounds = false});
+    return mwtl::RunApplication<CommonControlsWindow>(instance, show, {.title = L"Windows Common Controls gallery", .initial_bounds = {{0.0_dip, 0.0_dip}, {1260.0_dip, 720.0_dip}}, .use_default_bounds = false});
 }

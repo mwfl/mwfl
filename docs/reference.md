@@ -29,6 +29,7 @@ is more important than compile-time isolation.
 | `mwtl/recent_files.h` | bounded recent-file model and versioned registry persistence |
 | `mwtl/single_instance.h` | named-instance ownership and bounded activation forwarding |
 | `mwtl/tab_workspace.h` | stable-ID tab state, selection, ordering, and dirty metadata |
+| `mwtl/splitter.h` | native two-pane composition, keyboard/mouse movement, constraints, and pure geometry |
 | `mwtl/text_file.h` | Unicode text detection, file stamps, and atomic save |
 | `mwtl/text_history.h` | bounded text undo/redo history with saved-state tracking |
 | `mwtl/text_search.h` | deterministic forward/backward find and replace-all helpers |

@@ -39,6 +39,11 @@ at explicit Win32 boundaries.
   ordering, selection, title, dirty, and closable metadata but never documents
   or HWNDs. `TabControl::Synchronize` projects it into native items;
   `GetSelectedTabId` reads the real native selection.
+- Split panes: `mwtl/splitter.h`; create `Splitter`, create both pane HWNDs as
+  direct children of its HWND, then call `AttachPanes`. The splitter owns only
+  its container and borrows pane identities. Geometry and constraints are DIPs;
+  arrows and Home/End move the focused bar and `WM_NOTIFY` reports changes. Use
+  the exact retained-layout pattern in `docs/recipes/split-pane.md`.
 - Document state: `mwtl/document.h`; contents and I/O remain application-owned,
   and transitions distinguish proceed, save-required, and cancelled outcomes.
 - Unicode text files: `mwtl/text_file.h`; preserve detected UTF-8/UTF-16

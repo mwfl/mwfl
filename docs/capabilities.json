@@ -56,6 +56,15 @@
       "constraints": ["zero is not a valid TabId", "the model does not own documents or page HWNDs", "returned views expire on mutation", "use GetSelectedTabId to read native selection"]
     },
     {
+      "id": "split-pane-composition",
+      "intent": ["compose two resizable panes", "enforce pane minimum sizes", "support keyboard splitter movement"],
+      "symbols": ["mwtl::Splitter", "mwtl::SplitterModel", "mwtl::SplitterNotification"],
+      "headers": ["mwtl/splitter.h"],
+      "example": "examples/common_controls/main.cpp",
+      "tests": ["mwtl.splitter", "mwtl.splitter_native"],
+      "constraints": ["positions and constraints are DIPs", "the splitter owns its container HWND and borrows direct-child pane HWNDs", "all native operations belong to the creating UI thread"]
+    },
+    {
       "id": "unicode-text-file",
       "intent": ["open a text document", "save a text document safely", "detect an external file change"],
       "symbols": ["mwtl::ReadTextFile", "mwtl::WriteTextFileAtomic", "mwtl::TextFile", "mwtl::FileStamp"],

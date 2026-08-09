@@ -74,6 +74,7 @@ add_library(mwtl STATIC
     src/message_pump.cpp
     src/recent_files.cpp
     src/single_instance.cpp
+    src/splitter.cpp
     src/tab_workspace.cpp
     src/module.cpp
     src/timer.cpp
@@ -152,6 +153,7 @@ install(FILES
     docs/announcement-v0.1.md
     docs/tutorials/notepad.md
     docs/recipes/notepad-command-setting.md
+    docs/recipes/split-pane.md
     DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl)
 install(FILES cmake/Dependencies.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mwtl)

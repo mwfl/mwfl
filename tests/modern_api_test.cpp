@@ -135,6 +135,11 @@ public:
         mwtl::Must(tab_model_.Add({{902}, L"second", true, true}), "add second stable tab");
         mwtl::Must(tab_model_.Select({902}), "select stable tab");
         mwtl::Must(tabs_.Synchronize(tab_model_), "synchronize native tabs");
+        mwtl::Must(tabs_.SetSelection(mwtl::TabId{901}), "select first tab for keyboard test");
+        ::SendMessageW(tabs_.GetHwnd(), WM_KEYDOWN, VK_RIGHT, 0);
+        if (tabs_.GetSelectedTabId() != mwtl::TabId{902}) {
+            throw std::runtime_error("native tab keyboard navigation failed");
+        }
         TCITEMW native_tab{};
         native_tab.mask = TCIF_PARAM;
         if (tabs_.GetSelectedTabId() != mwtl::TabId{902} ||

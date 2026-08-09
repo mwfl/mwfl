@@ -85,6 +85,19 @@ may leave a partial native projection; the caller retains the authoritative
 model and can retry. The common-controls gallery is the canonical compact
 example.
 
+`Splitter` owns a focusable native child container and borrows two distinct
+pane HWNDs created as its direct children. The application must detach panes
+before destroying them independently; destroying the splitter naturally
+destroys its child windows. Split positions, minimum sizes, bar thickness, and
+keyboard steps are DIPs. Arrow keys move the bar, Home/End select its bounded
+extremes, and mouse dragging emits `kSplitterPositionChanged` through
+`WM_NOTIFY`. `Arrange` returns `false` with a Win32 last-error when the host or
+borrowed panes are invalid; `SetPosition` and `SetConstraints` propagate that
+result. `SplitterModel` exposes the same constraint math
+without HWNDs; when both minimums cannot fit, it divides the available space
+proportionally and reports `constraints_satisfied == false`. The
+common-controls gallery is the compact native composition example.
+
 `WindowOptions::appearance` applies system/light/dark color preference, optional
 Mica/Acrylic/Tabbed backdrops, and corner policy after HWND creation. Unsupported
 DWM attributes are best-effort, and high-contrast mode always takes priority.

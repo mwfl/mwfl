@@ -22,6 +22,7 @@
 #include <mwtl/navigation_controls.h>
 #include <mwtl/recent_files.h>
 #include <mwtl/single_instance.h>
+#include <mwtl/splitter.h>
 #include <mwtl/tab_workspace.h>
 #include <mwtl/timer.h>
 #include <mwtl/text_file.h>
