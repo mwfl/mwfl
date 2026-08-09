@@ -161,6 +161,19 @@ target_include_directories(mwtl_ole PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(mwtl_ole PUBLIC mwtl PRIVATE ole32 shell32)
 
+add_library(mwtl_shell STATIC src/settings_store.cpp)
+add_library(mwtl::shell ALIAS mwtl_shell)
+set_target_properties(mwtl_shell PROPERTIES EXPORT_NAME shell)
+target_compile_features(mwtl_shell PUBLIC cxx_std_20)
+target_compile_options(mwtl_shell PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWTL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwtl_shell PRIVATE /WX)
+endif()
+target_include_directories(mwtl_shell PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwtl_shell PUBLIC mwtl PRIVATE advapi32 shell32 ole32)
+
 if(MWTL_BUILD_SCINTILLA)
     FetchContent_Declare(mwtl_scintilla_source
         URL https://www.scintilla.org/scintilla565.zip
@@ -273,7 +286,7 @@ target_link_libraries(mwtl
         ole32)
 target_link_libraries(mwtl PRIVATE oleacc uuid)
 
-install(TARGETS mwtl mwtl_d2d mwtl_d3d mwtl_imaging mwtl_printing mwtl_ole
+install(TARGETS mwtl mwtl_d2d mwtl_d3d mwtl_imaging mwtl_printing mwtl_ole mwtl_shell
     EXPORT mwtlTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

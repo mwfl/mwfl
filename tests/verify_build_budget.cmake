@@ -29,6 +29,7 @@ set(optional_headers
     printing.h
     printing_native.h
     printing_settings.h
+    settings_store.h
     scintilla.h
     webview2.h)
 foreach(header IN LISTS public_headers)

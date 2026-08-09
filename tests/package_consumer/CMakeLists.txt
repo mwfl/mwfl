@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(mwtl_package_consumer LANGUAGES CXX)
 
-set(mwtl_components d2d d3d imaging printing ole)
+set(mwtl_components d2d d3d imaging printing ole shell)
 if(MWTL_TEST_SCINTILLA)
     list(APPEND mwtl_components scintilla)
 endif()
@@ -43,6 +43,10 @@ target_compile_features(mwtl_printing_package_consumer PRIVATE cxx_std_20)
 add_executable(mwtl_ole_package_consumer ole_main.cpp)
 target_link_libraries(mwtl_ole_package_consumer PRIVATE mwtl::ole)
 target_compile_features(mwtl_ole_package_consumer PRIVATE cxx_std_20)
+
+add_executable(mwtl_shell_package_consumer shell_main.cpp)
+target_link_libraries(mwtl_shell_package_consumer PRIVATE mwtl::shell)
+target_compile_features(mwtl_shell_package_consumer PRIVATE cxx_std_20)
 
 if(MWTL_TEST_SCINTILLA)
     add_executable(mwtl_scintilla_package_consumer scintilla_main.cpp)

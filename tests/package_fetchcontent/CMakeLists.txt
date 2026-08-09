@@ -14,3 +14,6 @@ target_link_libraries(mwtl_fetchcontent_printing_consumer PRIVATE mwtl::printing
 add_executable(mwtl_fetchcontent_ole_consumer ../package_consumer/ole_main.cpp)
 target_compile_features(mwtl_fetchcontent_ole_consumer PRIVATE cxx_std_20)
 target_link_libraries(mwtl_fetchcontent_ole_consumer PRIVATE mwtl::ole)
+add_executable(mwtl_fetchcontent_shell_consumer ../package_consumer/shell_main.cpp)
+target_compile_features(mwtl_fetchcontent_shell_consumer PRIVATE cxx_std_20)
+target_link_libraries(mwtl_fetchcontent_shell_consumer PRIVATE mwtl::shell)
