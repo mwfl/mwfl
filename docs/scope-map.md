@@ -61,8 +61,19 @@ surrounding native window, commands, layout, and thread handoff.
 - reflection, code generation, or message-map macros;
 - automatic global data context;
 - general-purpose task scheduler;
-- MDI framework, docking framework, Ribbon framework, or document/view model;
 - 32-bit targets and non-MSVC-compatible ABIs.
+
+## Long-term parity scope
+
+Document applications, modern tabbed workspaces, docking, optional Ribbon
+integration, and legacy MDI are not part of the current public API. They are now
+long-term capability targets rather than permanently excluded features. Their
+dependency order and acceptance criteria are defined in the
+[Win32++ capability parity roadmap](win32xx-parity-roadmap.md).
+
+Parity is measured by the desktop application scenarios mwtl can implement. It
+does not imply Win32++ or MFC API compatibility, and it does not relax the
+Windows 10+, C++20, x64/ARM64, explicit-ownership design constraints.
 
 ## Candidate capabilities requiring an explicit project decision
 
@@ -70,4 +81,3 @@ Property sheets, tray abstraction, WebView2 hosting helpers, Scintilla hosting,
 print helpers, and richer UI Automation support may be evaluated in future.
 Until accepted into the public API and stability policy, agents must use the
 composition paths above rather than invent mwtl symbols.
-

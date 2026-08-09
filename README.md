@@ -239,6 +239,8 @@ For controlled environments, see the
 
 ## Documentation
 
+- [Win32++ capability parity roadmap](docs/win32xx-parity-roadmap.md)
+
 - [Using mwtl with coding agents](docs/agent-usage.md)
 - [Copyable application templates](templates/)
 - [Task recipes](docs/recipes/)
