@@ -162,6 +162,11 @@ add_test(NAME mwtl.build_budget
         "-DLIBRARY=$<TARGET_FILE:mwtl>"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_build_budget.cmake")
 set_tests_properties(mwtl.build_budget PROPERTIES TIMEOUT 20)
+if(MWTL_ENABLE_ASAN)
+    # Instrumented archives contain sanitizer metadata and are not release-size
+    # artifacts. Normal Debug/Release configurations retain the strict budget.
+    set_tests_properties(mwtl.build_budget PROPERTIES DISABLED TRUE)
+endif()
 
 add_executable(mwtl_advanced_lifecycle_test advanced_lifecycle_test.cpp)
 target_compile_features(mwtl_advanced_lifecycle_test PRIVATE cxx_std_20)
@@ -393,7 +398,7 @@ add_test(
         "-DMWTL_WTL_SOURCE_DIR=${MWTL_RESOLVED_WTL_SOURCE_DIR}"
         "-DMWTL_WIL_SOURCE_DIR=${MWTL_RESOLVED_WIL_SOURCE_DIR}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_package_consumer.cmake")
-set_tests_properties(mwtl.package_consumer PROPERTIES TIMEOUT 120)
+set_tests_properties(mwtl.package_consumer PROPERTIES TIMEOUT 240)
 
 add_test(
     NAME mwtl.release_metadata

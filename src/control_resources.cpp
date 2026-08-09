@@ -30,7 +30,8 @@ HRESULT CALLBACK DispatchTaskDialogEvent(HWND window, UINT notification, WPARAM 
                                          LPARAM lparam, LONG_PTR callback_data) noexcept {
     auto* context = reinterpret_cast<TaskDialogCallbackContext*>(callback_data);
     if (context == nullptr || context->callback == nullptr || !*context->callback) return S_OK;
-    TaskDialogEvent event{.window = window};
+    TaskDialogEvent event{};
+    event.window = window;
     switch (notification) {
         case TDN_CREATED: event.kind = TaskDialogEventKind::created; break;
         case TDN_NAVIGATED: event.kind = TaskDialogEventKind::navigated; break;
@@ -285,13 +286,17 @@ TaskDialogResult ShowTaskDialog(HWND owner, std::wstring_view title,
                                 std::wstring_view instruction, std::wstring_view content,
                                 TASKDIALOG_COMMON_BUTTON_FLAGS buttons) noexcept {
     try {
-        return ShowTaskDialog({.owner = owner,
-                               .title = std::wstring(title),
-                               .main_instruction = std::wstring(instruction),
-                               .content = std::wstring(content),
-                               .common_buttons = buttons});
+        TaskDialogOptions options{};
+        options.owner = owner;
+        options.title = std::wstring(title);
+        options.main_instruction = std::wstring(instruction);
+        options.content = std::wstring(content);
+        options.common_buttons = buttons;
+        return ShowTaskDialog(options);
     } catch (...) {
-        return {.status = E_OUTOFMEMORY};
+        TaskDialogResult failed{};
+        failed.status = E_OUTOFMEMORY;
+        return failed;
     }
 }
 
