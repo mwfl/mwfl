@@ -14,7 +14,7 @@
       "theme": "real-sdi-application",
       "acceptance": "docs/milestones/0.2.md",
       "reflection": "docs/reflections/0.2.md",
-      "evidence": ["examples/notepad", "tests/document_test.cpp"]
+      "evidence": ["examples/notepad", "tests/document_test.cpp", "mwtl.notepad_gui"]
     },
     {
       "version": "0.3",

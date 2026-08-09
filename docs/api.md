@@ -64,6 +64,14 @@ command without an image uses `ClearImageIndex`; it does not own or destroy an
 icon. Visibility affects presentation, not dispatch, so a deliberately hidden
 command may remain reachable through its accelerator while enabled.
 
+`StatusBar` is a native control with intrinsic measurement, so it can be placed
+in a DIP layout with `Auto()` and remeasured during Per-Monitor-V2 DPI changes.
+The Notepad reference application demonstrates that path, assigns MSAA names to
+its text surface, toolbar, and status bar, and responds to theme/settings changes
+using system fonts and colors. Its `mwtl.notepad_gui` test drives the real hidden
+window through open, edit, atomic save, cancel, discard, reopen, DPI refresh, and
+close without touching user settings.
+
 `WindowOptions::appearance` applies system/light/dark color preference, optional
 Mica/Acrylic/Tabbed backdrops, and corner policy after HWND creation. Unsupported
 DWM attributes are best-effort, and high-contrast mode always takes priority.

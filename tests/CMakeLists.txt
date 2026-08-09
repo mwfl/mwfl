@@ -397,6 +397,15 @@ add_test(NAME mwtl.parity_roadmap
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_parity_roadmap.cmake")
 set_tests_properties(mwtl.parity_roadmap PROPERTIES TIMEOUT 20)
 
+if(TARGET mwtl_notepad)
+    add_test(NAME mwtl.notepad_gui
+        COMMAND "${CMAKE_COMMAND}"
+            "-DNOTEPAD_EXE=$<TARGET_FILE:mwtl_notepad>"
+            "-DRESULT_FILE=$<TARGET_FILE_DIR:mwtl_notepad>/notepad-self-test.txt"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/run_notepad_gui.cmake")
+    set_tests_properties(mwtl.notepad_gui PROPERTIES TIMEOUT 30)
+endif()
+
 # Every test has semantic labels so local agents can run a predictable subset.
 get_property(mwtl_all_tests DIRECTORY PROPERTY TESTS)
 foreach(test_name IN LISTS mwtl_all_tests)
@@ -404,7 +413,8 @@ foreach(test_name IN LISTS mwtl_all_tests)
         set(labels "lifecycle;fast")
     elseif(test_name MATCHES "^mwtl\\.manifest\\.")
         set(labels "metadata;fast")
-    elseif(test_name STREQUAL "mwtl.hot_corners_self_test")
+    elseif(test_name STREQUAL "mwtl.hot_corners_self_test" OR
+           test_name STREQUAL "mwtl.notepad_gui")
         set(labels "gui;integration")
     elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap)$")
         set(labels "docs;metadata;fast")
