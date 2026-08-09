@@ -10,6 +10,27 @@ foreach(name IN ITEMS window form layout commands background dialog placement dp
     mwtl_add_agent_eval(${name})
 endforeach()
 
+mwtl_add_agent_eval(native_host)
+
+function(mwtl_add_optional_agent_eval name component)
+    if(NOT TARGET mwtl::${component})
+        return()
+    endif()
+    add_library(mwtl_agent_eval_${name} STATIC "${name}.cpp")
+    target_compile_features(mwtl_agent_eval_${name} PRIVATE cxx_std_20)
+    target_compile_options(mwtl_agent_eval_${name} PRIVATE /W4 /permissive- /EHsc /utf-8 /WX)
+    target_link_libraries(mwtl_agent_eval_${name} PRIVATE mwtl::${component})
+    if(component STREQUAL "scintilla")
+        mwtl_deploy_scintilla(mwtl_agent_eval_${name})
+    endif()
+    set_property(GLOBAL APPEND PROPERTY MWTL_AGENT_EVAL_TARGETS mwtl_agent_eval_${name})
+endfunction()
+
+mwtl_add_optional_agent_eval(webview2_navigation webview2)
+mwtl_add_optional_agent_eval(scintilla_notification scintilla)
+mwtl_add_optional_agent_eval(direct2d_scene d2d)
+mwtl_add_optional_agent_eval(direct3d_recovery d3d)
+
 get_property(mwtl_agent_eval_targets GLOBAL PROPERTY MWTL_AGENT_EVAL_TARGETS)
 add_custom_target(mwtl_agent_eval_fixtures DEPENDS ${mwtl_agent_eval_targets})
 
