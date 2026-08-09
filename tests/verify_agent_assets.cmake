@@ -34,8 +34,11 @@ endif()
 
 file(READ "${PROJECT_ROOT}/docs/examples.json" examples_json)
 string(JSON example_count LENGTH "${examples_json}" examples)
-if(NOT example_count EQUAL 27)
-    message(FATAL_ERROR "docs/examples.json must describe all 27 examples")
+file(GLOB example_sources "${PROJECT_ROOT}/examples/*/main.cpp")
+list(LENGTH example_sources source_example_count)
+if(NOT example_count EQUAL source_example_count)
+    message(FATAL_ERROR
+        "docs/examples.json describes ${example_count} examples, but ${source_example_count} exist")
 endif()
 math(EXPR last_example "${example_count} - 1")
 foreach(index RANGE 0 ${last_example})

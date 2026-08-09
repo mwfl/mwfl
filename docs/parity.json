@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "objective": "Win32++ application-scenario parity with a Windows 10+, C++20, Agent-first design",
+  "policy": {
+    "minimum_windows": "10 1809",
+    "language": "C++20",
+    "architectures": ["x64", "ARM64"],
+    "api_compatibility_target": false
+  },
+  "milestones": [
+    {
+      "version": "0.2",
+      "status": "in_progress",
+      "theme": "real-sdi-application",
+      "acceptance": "docs/milestones/0.2.md",
+      "reflection": "docs/reflections/0.2.md",
+      "evidence": ["examples/notepad", "tests/document_test.cpp"]
+    },
+    {
+      "version": "0.3",
+      "status": "planned",
+      "theme": "desktop-controls-and-window-composition",
+      "acceptance": "docs/milestones/0.3.md",
+      "reflection": "docs/reflections/0.3.md",
+      "depends_on": "0.2"
+    },
+    {
+      "version": "0.4",
+      "status": "planned",
+      "theme": "rendering-and-third-party-hwnd-integrations",
+      "acceptance": "docs/milestones/0.4.md",
+      "reflection": "docs/reflections/0.4.md",
+      "depends_on": "0.3"
+    },
+    {
+      "version": "0.5",
+      "status": "planned",
+      "theme": "printing-drag-drop-and-shell-integration",
+      "acceptance": "docs/milestones/0.5.md",
+      "reflection": "docs/reflections/0.5.md",
+      "depends_on": "0.4"
+    },
+    {
+      "version": "0.6",
+      "status": "planned",
+      "theme": "modern-multi-document-workspace",
+      "acceptance": "docs/milestones/0.6.md",
+      "reflection": "docs/reflections/0.6.md",
+      "depends_on": "0.5"
+    },
+    {
+      "version": "0.7",
+      "status": "planned",
+      "theme": "docking-workspace",
+      "acceptance": "docs/milestones/0.7.md",
+      "reflection": "docs/reflections/0.7.md",
+      "depends_on": "0.6"
+    },
+    {
+      "version": "0.8",
+      "status": "planned",
+      "theme": "optional-ribbon-and-legacy-mdi",
+      "acceptance": "docs/milestones/0.8.md",
+      "reflection": "docs/reflections/0.8.md",
+      "depends_on": "0.7"
+    }
+  ]
+}

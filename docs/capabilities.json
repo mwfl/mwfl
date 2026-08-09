@@ -36,6 +36,15 @@
       "example": "examples/commands/main.cpp"
     },
     {
+      "id": "document-state",
+      "intent": ["track an open document", "prompt for unsaved changes", "coordinate save before close"],
+      "symbols": ["mwtl::DocumentState", "mwtl::DocumentTransition", "mwtl::UnsavedChangesChoice"],
+      "headers": ["mwtl/document.h"],
+      "example": "examples/document_state/main.cpp",
+      "tests": ["mwtl.document"],
+      "constraints": ["applications own contents and perform file I/O", "record opened or saved state only after I/O succeeds", "the model belongs to the document coordination thread"]
+    },
+    {
       "id": "background-ui-update",
       "intent": ["background worker", "update UI from thread", "notify window"],
       "symbols": ["mwtl::WindowWakeup"],
@@ -60,4 +69,3 @@
     }
   ]
 }
-

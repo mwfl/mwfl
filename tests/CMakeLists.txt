@@ -25,7 +25,7 @@ foreach(mode IN ITEMS
         TIMEOUT 20)
 endforeach()
 
-foreach(header IN ITEMS application command_controls concepts control_batch control_host control_resources controls desktop dpi events input_controls layout message_pump must navigation_controls timer window window_options wakeup umbrella)
+foreach(header IN ITEMS application command_controls concepts control_batch control_host control_resources controls desktop document dpi events input_controls layout message_pump must navigation_controls timer window window_options wakeup umbrella)
     # Every public header must remain independently includable.
     add_library(mwtl_header_${header} OBJECT header_${header}.cpp)
     target_compile_features(mwtl_header_${header} PRIVATE cxx_std_20)
@@ -196,6 +196,13 @@ target_link_libraries(mwtl_desktop_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.desktop COMMAND mwtl_desktop_test --skip-clipboard)
 set_tests_properties(mwtl.desktop PROPERTIES TIMEOUT 20)
 
+add_executable(mwtl_document_test document_test.cpp)
+target_compile_features(mwtl_document_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_document_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_document_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.document COMMAND mwtl_document_test)
+set_tests_properties(mwtl.document PROPERTIES TIMEOUT 20)
+
 add_executable(mwtl_hot_corner_model_test
     hot_corner_model_test.cpp
     "${PROJECT_SOURCE_DIR}/examples/hot_corners/hot_corner_model.cpp")
@@ -244,6 +251,7 @@ if(TARGET mwtl_hello)
             mwtl_form_binding_demo
             mwtl_commands_demo
             mwtl_desktop_integration_demo
+            mwtl_document_state_demo
             mwtl_appearance_demo
             mwtl_layout_gallery_demo)
         add_test(
@@ -348,6 +356,11 @@ add_test(NAME mwtl.architecture_boundaries
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_architecture_boundaries.cmake")
 set_tests_properties(mwtl.architecture_boundaries PROPERTIES TIMEOUT 20)
 
+add_test(NAME mwtl.parity_roadmap
+    COMMAND "${CMAKE_COMMAND}" "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_parity_roadmap.cmake")
+set_tests_properties(mwtl.parity_roadmap PROPERTIES TIMEOUT 20)
+
 # Every test has semantic labels so local agents can run a predictable subset.
 get_property(mwtl_all_tests DIRECTORY PROPERTY TESTS)
 foreach(test_name IN LISTS mwtl_all_tests)
@@ -357,7 +370,7 @@ foreach(test_name IN LISTS mwtl_all_tests)
         set(labels "metadata;fast")
     elseif(test_name STREQUAL "mwtl.hot_corners_self_test")
         set(labels "gui;integration")
-    elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries)$")
+    elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap)$")
         set(labels "docs;metadata;fast")
     elseif(test_name STREQUAL "mwtl.package_consumer")
         set(labels "package;integration;slow")

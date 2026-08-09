@@ -5,6 +5,13 @@
 
 ## Commands and appearance
 
+`DocumentState` is a UI-independent identity and dirty-state model for a single
+document. Applications retain ownership of contents and file I/O. `MarkOpened`
+and `MarkSavedAs` are called only after successful I/O; `EvaluateTransition`
+returns `proceed`, `save_required`, or `cancelled` without displaying UI or
+silently discarding changes. The object is not thread-safe and belongs to the
+application's UI/document coordination thread.
+
 `Command` owns an application action's ID, display text, enabled/checked state,
 optional shortcut, and callback. `CommandSet::Dispatch` can be returned directly
 from `OnCommand`.

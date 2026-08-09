@@ -17,6 +17,7 @@ is more important than compile-time isolation.
 | `mwtl/control_resources.h` | task dialogs, tooltips, image lists, flat scroll bars |
 | `mwtl/controls.h` | core native child controls and `NativeControl` |
 | `mwtl/desktop.h` | menus, accelerators, dialogs, clipboard, shell and placement helpers |
+| `mwtl/document.h` | `DocumentState`, dirty tracking, and unsaved-transition decisions |
 | `mwtl/dpi.h` | DIP geometry and `DpiContext` |
 | `mwtl/error.h` | checked-operation `Error` and diagnostic context |
 | `mwtl/events.h` | typed message events and `EventResult` |

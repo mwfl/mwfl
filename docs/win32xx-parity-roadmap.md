@@ -50,6 +50,11 @@ capability, or intentionally unsupported.
 
 ## Version roadmap
 
+Machine-readable milestone state is tracked in [`parity.json`](parity.json).
+Detailed acceptance contracts live under [`milestones/`](milestones/), and a
+version cannot advance until its evidence-backed completion reflection exists
+under [`reflections/`](reflections/).
+
 ### 0.2 — Real SDI application foundation
 
 Prove the library with a complete, useful Notepad-class application:

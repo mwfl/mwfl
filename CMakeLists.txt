@@ -69,6 +69,7 @@ add_library(mwtl STATIC
     src/dpi.cpp
     src/error.cpp
     src/desktop.cpp
+    src/document.cpp
     src/detail/diagnostics.cpp
     src/message_pump.cpp
     src/module.cpp
@@ -139,6 +140,8 @@ install(FILES
     docs/llms.txt
     docs/llms-full.txt
     docs/scope-map.md
+    docs/parity.json
+    docs/win32xx-parity-roadmap.md
     docs/api-index.json
     docs/announcement-v0.1.md
     DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl)

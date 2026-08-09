@@ -35,6 +35,8 @@ at explicit Win32 boundaries.
 
 - Form and validation: `examples/form_binding`, `ValueBinding::Pull/Push`.
 - Commands: `examples/commands`, one CommandSet for menu/toolbar/accelerators.
+- Document state: `mwtl/document.h`; contents and I/O remain application-owned,
+  and transitions distinguish proceed, save-required, and cancelled outcomes.
 - Background work: `examples/wakeup` and `examples/hot_corners`.
 - Dialogs, clipboard, file drop, placement: `examples/desktop_integration`.
 - DPI and appearance: `examples/dpi` and `examples/appearance`.
@@ -52,4 +54,3 @@ transfer, or consume the moving `main` branch in a reproducible project.
 Compile the smallest template or `tools/api-probe` before adding features. Use
 only symbols found in public headers or `docs/agent-reference.md`. See
 `docs/recipes` for task flows and `docs/reference-apps` for composed programs.
-
