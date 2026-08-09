@@ -25,6 +25,7 @@ set(optional_headers
     d3d_host.h
     imaging.h
     ole_data.h
+    ole_drag_drop.h
     printing.h
     printing_native.h
     printing_settings.h

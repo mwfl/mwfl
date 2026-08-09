@@ -148,7 +148,7 @@ target_include_directories(mwtl_printing PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(mwtl_printing PUBLIC mwtl PRIVATE winspool gdi32 comdlg32)
 
-add_library(mwtl_ole STATIC src/ole_data.cpp)
+add_library(mwtl_ole STATIC src/ole_data.cpp src/ole_drag_drop.cpp)
 add_library(mwtl::ole ALIAS mwtl_ole)
 set_target_properties(mwtl_ole PROPERTIES EXPORT_NAME ole)
 target_compile_features(mwtl_ole PUBLIC cxx_std_20)

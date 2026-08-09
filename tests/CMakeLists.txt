@@ -410,6 +410,18 @@ target_link_libraries(mwtl_ole_data_test PRIVATE mwtl::ole)
 add_test(NAME mwtl.ole_data COMMAND mwtl_ole_data_test)
 set_tests_properties(mwtl.ole_data PROPERTIES TIMEOUT 20 LABELS "native;unit")
 
+add_library(mwtl_header_ole_drag_drop OBJECT header_ole_drag_drop.cpp)
+target_compile_features(mwtl_header_ole_drag_drop PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_ole_drag_drop PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_ole_drag_drop PRIVATE mwtl::ole)
+
+add_executable(mwtl_ole_drag_drop_test ole_drag_drop_test.cpp)
+target_compile_features(mwtl_ole_drag_drop_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_ole_drag_drop_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_ole_drag_drop_test PRIVATE mwtl::ole)
+add_test(NAME mwtl.ole_drag_drop COMMAND mwtl_ole_drag_drop_test)
+set_tests_properties(mwtl.ole_drag_drop PROPERTIES TIMEOUT 20 LABELS "native;unit")
+
 add_executable(mwtl_imaging_decode_test imaging_decode_test.cpp)
 target_compile_features(mwtl_imaging_decode_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_imaging_decode_test PRIVATE /W4 /permissive- /EHsc /utf-8)
