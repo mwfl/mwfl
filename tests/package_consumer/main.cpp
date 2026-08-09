@@ -5,6 +5,8 @@ static_assert(mwtl::WindowLike<mwtl::Label>);
 static_assert(mwtl::ControlLike<mwtl::Label>);
 
 int main() {
+    mwtl::TabWorkspaceModel tabs;
+    const bool tab_added = tabs.Add({{7}, L"Installed API", false, true});
     const auto dpi = mwtl::DpiContext::FromDpi(144);
     const mwtl::RectDip concise{
         mwtl::Dip{1.0f}, mwtl::Dip{2.0f},
@@ -12,7 +14,8 @@ int main() {
     mwtl::LayoutHost layout(
         mwtl::Column().Margin(mwtl::Dip{8.0f}));
     mwtl::Must(layout.HasRoot(), "installed layout");
-    return dpi.ToPixels(mwtl::Dip{2.0f}) == 3 &&
+    return tab_added && tabs.GetSelectedId() == mwtl::TabId{7} &&
+           dpi.ToPixels(mwtl::Dip{2.0f}) == 3 &&
            concise.size.width == mwtl::Dip{3.0f} && layout.HasRoot()
         ? 0 : 1;
 }

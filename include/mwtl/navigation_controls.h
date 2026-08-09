@@ -9,6 +9,7 @@
 
 #include <mwtl/concepts.h>
 #include <mwtl/controls.h>
+#include <mwtl/tab_workspace.h>
 
 namespace mwtl {
 
@@ -67,12 +68,18 @@ public:
     template <WindowLike Parent>
     bool Create(const Parent& parent, ControlId id, RectDip bounds, TabControlOptions options = {}) { return Create(parent.GetHwnd(), id, bounds, options); }
     int AddTab(std::wstring_view text, int index = -1);
+    int AddTab(TabId id, std::wstring_view text, int index = -1);
     int GetSelection() const noexcept;
     std::optional<int> GetSelectedIndex() const noexcept {
         const int index = GetSelection();
         return index < 0 ? std::nullopt : std::optional<int>{index};
     }
     bool SetSelection(int index) noexcept;
+    std::optional<TabId> GetTabId(int index) const noexcept;
+    std::optional<TabId> GetSelectedTabId() const noexcept;
+    bool SetSelection(TabId id) noexcept;
+    bool RemoveTab(TabId id) noexcept;
+    bool Synchronize(const TabWorkspaceModel& model);
 };
 
 struct ComboBoxExOptions {

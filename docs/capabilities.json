@@ -47,6 +47,15 @@
       "constraints": ["applications own contents and perform file I/O", "record opened or saved state only after I/O succeeds", "the model belongs to the document coordination thread"]
     },
     {
+      "id": "tab-workspace-state",
+      "intent": ["track application tabs", "keep stable tab identity", "synchronize a native tab control"],
+      "symbols": ["mwtl::TabWorkspaceModel", "mwtl::TabId", "mwtl::TabControl"],
+      "headers": ["mwtl/tab_workspace.h", "mwtl/navigation_controls.h"],
+      "example": "examples/common_controls/main.cpp",
+      "tests": ["mwtl.tab_workspace", "mwtl.modern_api"],
+      "constraints": ["zero is not a valid TabId", "the model does not own documents or page HWNDs", "returned views expire on mutation", "use GetSelectedTabId to read native selection"]
+    },
+    {
       "id": "unicode-text-file",
       "intent": ["open a text document", "save a text document safely", "detect an external file change"],
       "symbols": ["mwtl::ReadTextFile", "mwtl::WriteTextFileAtomic", "mwtl::TextFile", "mwtl::FileStamp"],

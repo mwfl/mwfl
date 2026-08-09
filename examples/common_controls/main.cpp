@@ -56,8 +56,9 @@ public:
         mwtl::Must(mwtl::AddColumns(header_, {
             {L"Standalone Header", 210}, {L"Resizable column", 180}}),
             "populate Header columns");
-        mwtl::Must(mwtl::AddTabs(tabs_, {L"Tree", L"List"}),
-            "populate Tabs");
+        mwtl::Must(tab_model_.Add({{1}, L"Tree", false, false}), "add Tree workspace tab");
+        mwtl::Must(tab_model_.Add({{2}, L"List", false, true}), "add List workspace tab");
+        mwtl::Must(tabs_.Synchronize(tab_model_), "populate stable Tabs");
         mwtl::Must(mwtl::AddItems(combo_ex_, {
             L"ComboBoxEx item", L"Image-capable item"}),
             "populate ComboBoxEx items");
@@ -92,7 +93,7 @@ private:
     static constexpr mwtl::ControlId kAbout{500};
     static constexpr mwtl::ControlId kRefresh{501};
     mwtl::Rebar rebar_; mwtl::Toolbar toolbar_; mwtl::TreeView tree_; mwtl::ListView list_;
-    mwtl::Header header_; mwtl::TabControl tabs_; mwtl::ComboBoxEx combo_ex_;
+    mwtl::Header header_; mwtl::TabControl tabs_; mwtl::TabWorkspaceModel tab_model_; mwtl::ComboBoxEx combo_ex_;
     mwtl::DateTimePicker date_; mwtl::MonthCalendar calendar_; mwtl::HotKey hot_key_;
     mwtl::IpAddress ip_; mwtl::TextBox number_; mwtl::UpDown spin_; mwtl::SysLink link_;
     mwtl::Pager pager_; mwtl::Label pager_text_; mwtl::Animation animation_;

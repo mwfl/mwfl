@@ -131,8 +131,28 @@ public:
         static_cast<void>(list_view_.SetSubItem(list_row, 0, L"updated"));
         mwtl::Must(mwtl::AddColumns(header_, {{L"header", 80}}),
                    "populate Header columns");
-        const std::array tab_names{L"tab"};
-        mwtl::Must(mwtl::AddTabs(tabs_, tab_names), "populate tabs");
+        mwtl::Must(tab_model_.Add({{901}, L"first", false, true}), "add first stable tab");
+        mwtl::Must(tab_model_.Add({{902}, L"second", true, true}), "add second stable tab");
+        mwtl::Must(tab_model_.Select({902}), "select stable tab");
+        mwtl::Must(tabs_.Synchronize(tab_model_), "synchronize native tabs");
+        TCITEMW native_tab{};
+        native_tab.mask = TCIF_PARAM;
+        if (tabs_.GetSelectedTabId() != mwtl::TabId{902} ||
+            TabCtrl_GetItem(tabs_.GetHwnd(), 1, &native_tab) == FALSE || native_tab.lParam != 902 ||
+            tabs_.SetSelection(mwtl::TabId{999})) {
+            throw std::runtime_error("stable native tab state failed");
+        }
+        if (!tabs_.RemoveTab(mwtl::TabId{901}) ||
+            tabs_.GetSelectedTabId() != mwtl::TabId{902} ||
+            !tabs_.Synchronize(tab_model_)) {
+            throw std::runtime_error("unselected native tab removal failed");
+        }
+        static_cast<void>(TabCtrl_SetCurSel(tabs_.GetHwnd(), -1));
+        if (!tabs_.SetSelection(0) || tabs_.GetSelectedTabId() != mwtl::TabId{901} ||
+            !tabs_.SetSelection(mwtl::TabId{902}) || !tabs_.RemoveTab(mwtl::TabId{902}) ||
+            tabs_.GetSelectedTabId() != mwtl::TabId{901}) {
+            throw std::runtime_error("native tab selection or removal failed");
+        }
         mwtl::Must(mwtl::AddItems(combo_ex_, {L"combo"}),
                    "populate ComboBoxEx");
         static_cast<void>(combo_ex_.SetSelection(0));
@@ -278,7 +298,8 @@ private:
     mwtl::ListBox list_;
     mwtl::Slider slider_;
     mwtl::TreeView tree_; mwtl::ListView list_view_; mwtl::Header header_;
-    mwtl::TabControl tabs_; mwtl::ComboBoxEx combo_ex_; mwtl::DateTimePicker date_;
+    mwtl::TabControl tabs_; mwtl::TabWorkspaceModel tab_model_;
+    mwtl::ComboBoxEx combo_ex_; mwtl::DateTimePicker date_;
     mwtl::MonthCalendar calendar_; mwtl::HotKey hot_key_; mwtl::IpAddress ip_;
     mwtl::ImageList images_;
     mwtl::TextBox spin_text_; mwtl::UpDown spin_; mwtl::SysLink link_; mwtl::Rebar rebar_; mwtl::Toolbar toolbar_;

@@ -10,8 +10,14 @@ AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: WithoutElse
 SortIncludes: CaseSensitive
 IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex: '^<windows[.]h>$'
+    Priority: 1
+  - Regex: '^<.*>$'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
 NamespaceIndentation: None
 FixNamespaceComments: true
 PointerAlignment: Left
 DerivePointerAlignment: false
-

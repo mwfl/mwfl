@@ -1,5 +1,6 @@
 #include <mwtl/navigation_controls.h>
 
+#include <algorithm>
 #include <string>
 
 namespace mwtl {
@@ -92,17 +93,76 @@ bool TabControl::Create(HWND parent, ControlId id, RectDip bounds, TabControlOpt
 }
 
 int TabControl::AddTab(std::wstring_view text, int index) {
+    return AddTab({}, text, index);
+}
+
+int TabControl::AddTab(TabId id, std::wstring_view text, int index) {
     if (!IsWindow()) return -1;
     std::wstring value{text};
     TCITEMW item{};
     item.mask = TCIF_TEXT;
+    if (id) {
+        item.mask |= TCIF_PARAM;
+        item.lParam = static_cast<LPARAM>(id.value);
+    }
     item.pszText = value.data();
     const int position = index < 0 ? TabCtrl_GetItemCount(GetHwnd()) : index;
     return TabCtrl_InsertItem(GetHwnd(), position, &item);
 }
 
-int TabControl::GetSelection() const noexcept { return IsWindow() ? TabCtrl_GetCurSel(GetHwnd()) : -1; }
-bool TabControl::SetSelection(int index) noexcept { return IsWindow() && TabCtrl_SetCurSel(GetHwnd(), index) != -1; }
+int TabControl::GetSelection() const noexcept {
+    return IsWindow() ? TabCtrl_GetCurSel(GetHwnd()) : -1;
+}
+bool TabControl::SetSelection(int index) noexcept {
+    if (!IsWindow() || index < 0 || index >= TabCtrl_GetItemCount(GetHwnd())) return false;
+    static_cast<void>(TabCtrl_SetCurSel(GetHwnd(), index));
+    return GetSelection() == index;
+}
+
+std::optional<TabId> TabControl::GetTabId(int index) const noexcept {
+    if (!IsWindow() || index < 0 || index >= TabCtrl_GetItemCount(GetHwnd())) return std::nullopt;
+    TCITEMW item{};
+    item.mask = TCIF_PARAM;
+    if (TabCtrl_GetItem(GetHwnd(), index, &item) == FALSE || item.lParam == 0) return std::nullopt;
+    return TabId{static_cast<std::uint64_t>(item.lParam)};
+}
+
+std::optional<TabId> TabControl::GetSelectedTabId() const noexcept {
+    return GetTabId(GetSelection());
+}
+
+bool TabControl::SetSelection(TabId id) noexcept {
+    if (!id || !IsWindow()) return false;
+    const int count = TabCtrl_GetItemCount(GetHwnd());
+    for (int index = 0; index < count; ++index) {
+        if (GetTabId(index) == id) return SetSelection(index);
+    }
+    return false;
+}
+
+bool TabControl::RemoveTab(TabId id) noexcept {
+    if (!id || !IsWindow()) return false;
+    const auto selected = GetSelectedTabId();
+    const int count = TabCtrl_GetItemCount(GetHwnd());
+    for (int index = 0; index < count; ++index) {
+        if (GetTabId(index) != id) continue;
+        if (TabCtrl_DeleteItem(GetHwnd(), index) == FALSE) return false;
+        const int remaining = TabCtrl_GetItemCount(GetHwnd());
+        if (remaining == 0 || !selected) return true;
+        if (*selected != id) return SetSelection(*selected);
+        return SetSelection((std::min)(index, remaining - 1));
+    }
+    return false;
+}
+
+bool TabControl::Synchronize(const TabWorkspaceModel& model) {
+    if (!IsWindow() || TabCtrl_DeleteAllItems(GetHwnd()) == FALSE) return false;
+    for (const auto& tab : model.GetTabs()) {
+        if (AddTab(tab.id, tab.title) < 0) return false;
+    }
+    const auto selected = model.GetSelectedId();
+    return !selected || SetSelection(*selected);
+}
 
 bool ComboBoxEx::Create(HWND parent, ControlId id, RectDip bounds, ComboBoxExOptions options) {
     return Initialize(ICC_USEREX_CLASSES) && CreateNative(WC_COMBOBOXEXW, parent, id, L"", bounds, options.style, options.extended_style);

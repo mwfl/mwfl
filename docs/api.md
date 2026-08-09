@@ -72,6 +72,19 @@ using system fonts and colors. Its `mwtl.notepad_gui` test drives the real hidde
 window through open, edit, atomic save, cancel, discard, reopen, DPI refresh, and
 close without touching user settings.
 
+`TabWorkspaceModel` gives application tabs stable nonzero `TabId` values while
+keeping document objects and page HWND ownership in the application. It tracks
+order, selection, title, dirty, and closable metadata. Removing the selected tab
+selects its successor, or its predecessor when the removed tab was last.
+Returned spans and pointers expire on the next model mutation; the model is
+intended for the UI thread. `TabControl::Synchronize` projects the model into
+native tab items and stores only numeric stable IDs in `TCITEM.lParam`.
+`GetSelectedTabId` reads the native selection rather than returning cached
+wrapper state. Synchronization returns `false` on a native insertion failure and
+may leave a partial native projection; the caller retains the authoritative
+model and can retry. The common-controls gallery is the canonical compact
+example.
+
 `WindowOptions::appearance` applies system/light/dark color preference, optional
 Mica/Acrylic/Tabbed backdrops, and corner policy after HWND creation. Unsupported
 DWM attributes are best-effort, and high-contrast mode always takes priority.
