@@ -77,5 +77,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          test -n "$(find artifacts -maxdepth 1 -type f -print -quit)"
-          gh release create "${{ github.ref_name }}" artifacts/* --generate-notes --verify-tag --repo "${{ github.repository }}"
+          test -n "$(find artifacts -maxdepth 1 -name '*.zip' -type f -print -quit)"
+          gh release create "${{ github.ref_name }}" \
+            artifacts/*.zip artifacts/SHA256SUMS-*.txt \
+            --generate-notes --verify-tag --repo "${{ github.repository }}"

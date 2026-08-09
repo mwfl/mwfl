@@ -52,6 +52,8 @@ foreach(versioned_file IN ITEMS
         message(FATAL_ERROR "${versioned_file} contains a stale pre-public version")
     endif()
 endforeach()
-if(NOT release_workflow_text MATCHES [[gh release create.*artifacts/\*]])
-    message(FATAL_ERROR "Release workflow does not publish aggregated artifacts")
+if(NOT release_workflow_text MATCHES [[gh release create]] OR
+   NOT release_workflow_text MATCHES [[artifacts/\*\.zip]] OR
+   NOT release_workflow_text MATCHES [[artifacts/SHA256SUMS-\*\.txt]])
+    message(FATAL_ERROR "Release workflow does not publish only ZIP packages and checksums")
 endif()
