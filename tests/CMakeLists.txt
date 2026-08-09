@@ -561,6 +561,13 @@ if(TARGET mwtl_hello)
             -Executable $<TARGET_FILE:mwtl_drawing_demo>
             -RuntimePath "${mwtl_test_runtime_path}")
     set_tests_properties(mwtl.drawing_gui PROPERTIES TIMEOUT 15)
+    add_test(NAME mwtl.image_viewer_gui
+        COMMAND "${mwtl_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwtl_image_viewer_demo>
+            -RuntimePath "${mwtl_test_runtime_path}")
+    set_tests_properties(mwtl.image_viewer_gui PROPERTIES TIMEOUT 15)
 endif()
 
 add_test(
@@ -663,6 +670,7 @@ foreach(test_name IN LISTS mwtl_all_tests)
            test_name STREQUAL "mwtl.settings_application_gui" OR
            test_name STREQUAL "mwtl.explorer_gui" OR
            test_name STREQUAL "mwtl.drawing_gui" OR
+           test_name STREQUAL "mwtl.image_viewer_gui" OR
            test_name STREQUAL "mwtl.notepad_gui")
         set(labels "gui;integration")
     elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap)$")

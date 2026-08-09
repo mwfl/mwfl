@@ -226,6 +226,16 @@
       "recipe": "docs/recipes/direct3d-swap-chain.md",
       "tests": ["mwtl.d3d_host_model", "mwtl.d3d_host_native", "mwtl.package_consumer"],
       "constraints": ["request the d3d package component and link mwtl::d3d", "RenderFrame is on-demand", "handle every structured frame status", "callback interfaces are borrowed and UI-thread-only", "authoritative application data remains device-independent", "hardware and WARP availability are explicit"]
+    },
+    {
+      "id": "image-viewer",
+      "intent": ["decode an image", "image viewer", "zoom and pan", "fit image", "reject huge images", "recover a GPU bitmap"],
+      "symbols": ["mwtl::DecodedImage", "mwtl::ImageDecodeOptions", "mwtl::DecodeImageFile", "mwtl::ImageViewportModel", "mwtl::D2DHost"],
+      "headers": ["mwtl/imaging.h", "mwtl/d2d_host.h"],
+      "example": "examples/image_viewer/main.cpp",
+      "recipe": "docs/tutorials/image-viewer.md",
+      "tests": ["mwtl.imaging_model", "mwtl.imaging_decode", "mwtl.image_viewer_gui", "mwtl.d2d_host_native", "mwtl.package_consumer"],
+      "constraints": ["request imaging and d2d package components", "COM must be initialized before WIC decode", "default normalized pixel budget is 256 MiB", "DecodedImage owns top-down premultiplied BGRA8 CPU pixels", "color profile presence and successful sRGB conversion are distinct", "D2D bitmap and brushes are disposable caches", "viewport units are DIPs while image units are pixels"]
     }
   ]
 }

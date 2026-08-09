@@ -221,6 +221,19 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 - Use it for operations that must succeed before the window can function.
 - Do not let resulting exceptions escape a Win32 callback.
 
+## WIC image viewing
+
+- Request `COMPONENTS imaging d2d`; link `mwtl::imaging` and `mwtl::d2d`.
+- Initialize COM (normally `ApplicationOptions{.com_apartment = sta}`) before
+  `DecodeImageFile`. Handle structured missing, unsupported, invalid, too-large,
+  COM, memory, and generic failure statuses.
+- Keep `DecodedImage` CPU pixels authoritative. Recreate `ID2D1Bitmap` inside
+  the D2D device-resource callback after target loss or a new image.
+- Image coordinates are pixels; `ImageViewportModel` outputs DIP geometry.
+- For `WM_MOUSEWHEEL`, use the DIP client point supplied by `D2DInputEvent`;
+  raw Win32 wheel coordinates are screen coordinates.
+- Follow `docs/tutorials/image-viewer.md` and `examples/image_viewer`.
+
 ## Direct2D drawing
 
 - Header: `<mwtl/d2d_host.h>`; CMake target: `mwtl::d2d`.

@@ -43,6 +43,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
     };
     options.callbacks.input = [&](const D2DInputEvent& event) {
         if (event.message == WM_LBUTTONDOWN && event.position.x.value >= 0) ++inputs;
+        if (event.message == WM_MOUSEWHEEL && event.position.x.value >= 0) ++inputs;
         return EventResult::Handled(77);
     };
     if (!host.Create(parent, ControlId{701}, {0.0_dip, 0.0_dip, 300.0_dip, 180.0_dip},
@@ -60,17 +61,23 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
     if (::SendMessageW(host.GetHwnd(), WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(12, 14)) != 77 ||
         inputs != 1 || ::GetFocus() != host.GetHwnd())
         return 7;
+    POINT wheel_point{20, 22};
+    ::ClientToScreen(host.GetHwnd(), &wheel_point);
+    if (::SendMessageW(host.GetHwnd(), WM_MOUSEWHEEL, MAKEWPARAM(0, WHEEL_DELTA),
+                       MAKELPARAM(wheel_point.x, wheel_point.y)) != 77 ||
+        inputs != 2)
+        return 8;
 
     ::SetWindowPos(host.GetHwnd(), nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOACTIVATE);
-    if (!host.Render()) return 8;
-    if (!host.SetBounds({0.0_dip, 0.0_dip, 240.0_dip, 140.0_dip})) return 9;
+    if (!host.Render()) return 9;
+    if (!host.SetBounds({0.0_dip, 0.0_dip, 240.0_dip, 140.0_dip})) return 10;
 
     host.DiscardDeviceResources();
-    if (host.GetRenderTarget() != nullptr || discards != 1) return 10;
-    if (!host.Render() || creates != 2 || paints != 3) return 11;
+    if (host.GetRenderTarget() != nullptr || discards != 1) return 11;
+    if (!host.Render() || creates != 2 || paints != 3) return 12;
 
     host.Destroy();
-    if (host.GetRenderState() != D2DRenderState::destroyed || discards != 2 || brush) return 12;
+    if (host.GetRenderState() != D2DRenderState::destroyed || discards != 2 || brush) return 13;
 
     D2DHost exceptional;
     D2DHostOptions exceptional_options;
@@ -80,10 +87,10 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
     if (!exceptional.Create(parent, ControlId{702},
                             {0.0_dip, 0.0_dip, 100.0_dip, 80.0_dip},
                             std::move(exceptional_options)))
-        return 13;
+        return 14;
     if (exceptional.Render() || exceptional.GetLastRenderError() != E_UNEXPECTED ||
         !exceptional.TakeCallbackException() || exceptional.TakeCallbackException())
-        return 14;
+        return 15;
     exceptional.Destroy();
     ::DestroyWindow(parent);
     return 0;

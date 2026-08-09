@@ -8,6 +8,7 @@ implementation.
 - [Explorer-style application](explorer-application.md)
 - [Background work and lifecycle](background-application.md)
 - [Document-style commands and desktop integration](document-application.md)
+- [Image Viewer](../tutorials/image-viewer.md)
 
 ## Release-quality evidence
 
@@ -21,6 +22,7 @@ with the repository manifest and exercised through its real Win32 entry point.
 | Hot Corners | Menu accelerators and native controls; GUI self-test reads selector/status MSAA names | DPI-specific fonts; runtime theme/settings refresh reapplies system appearance | Pure behavior and tray-state models, real Shell tests, GUI self-test, and its manifest test |
 | Notepad | One command model projects menus, toolbar, and accelerators; GUI test reads editor/toolbar/status MSAA names | Responsive DIP layout, DPI font projection, and theme/settings refresh | Document/search/history/file/single-instance models, `mwtl.notepad_gui`, package consumer, and its manifest test |
 | Drawing | Native buttons plus Delete/Ctrl+Z canvas input; the host has an explicit accessible name | Input and render coordinates are DIPs; theme, settings, DPI, and High Contrast flow through the reusable host | Pure document/SVG test, real D2D resource test, `mwtl.drawing_gui`, package component consumer, and manifest test |
+| Image Viewer | Native toolbar buttons plus F/0 and wheel/drag canvas input; viewport has an MSAA name | WIC DPI metadata, DIP viewport math, system-color background, and target recreation | WIC decode and pure viewport tests, `mwtl.image_viewer_gui`, D2D native recovery, optional package consumers, and manifest test |
 
 `mwtl.appearance` directly verifies the shared appearance policy: Windows High
 Contrast disables custom color/backdrop choices. The native control classes

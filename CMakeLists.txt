@@ -195,6 +195,7 @@ install(FILES
     docs/api-index.json
     docs/announcement-v0.1.md
     docs/tutorials/notepad.md
+    docs/tutorials/image-viewer.md
     docs/recipes/notepad-command-setting.md
     docs/recipes/split-pane.md
     docs/recipes/direct2d-drawing.md

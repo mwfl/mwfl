@@ -203,10 +203,13 @@ LRESULT D2DHost::ProcessMessage(HWND window, UINT message, WPARAM wparam,
             message == WM_RBUTTONDOWN)
             ::SetFocus(window);
         const DpiContext dpi = DpiContext::FromWindow(window);
+        POINT mouse_position{GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)};
+        if (message == WM_MOUSEWHEEL || message == WM_MOUSEHWHEEL)
+            ::ScreenToClient(window, &mouse_position);
         const D2DInputEvent event{
             message, wparam, lparam,
-            is_mouse ? PointDip{dpi.FromPixels(GET_X_LPARAM(lparam)),
-                                dpi.FromPixels(GET_Y_LPARAM(lparam))}
+            is_mouse ? PointDip{dpi.FromPixels(mouse_position.x),
+                                dpi.FromPixels(mouse_position.y)}
                      : PointDip{}};
         try {
             const EventResult result = options_.callbacks.input(event);
@@ -242,6 +245,7 @@ LRESULT D2DHost::ProcessMessage(HWND window, UINT message, WPARAM wparam,
         case WM_THEMECHANGED:
         case WM_SYSCOLORCHANGE:
         case WM_SETTINGCHANGE:
+            DiscardDeviceResources();
             Invalidate();
             return 0;
         default:

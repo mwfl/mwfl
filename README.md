@@ -190,6 +190,7 @@ multi-monitor utility.
 | Settings | [examples/property_sheet/main.cpp](examples/property_sheet/main.cpp) | Persistent property pages with validation and Apply/OK/Cancel |
 | Explorer | [examples/explorer/main.cpp](examples/explorer/main.cpp) | Rebar, commands, stable navigation, virtual data, tabs, and splitter |
 | Drawing | [examples/drawing/main.cpp](examples/drawing/main.cpp) | Optional Direct2D host, DPI-aware input, device recovery, and SVG export |
+| Image Viewer | [examples/image_viewer/main.cpp](examples/image_viewer/main.cpp) | WIC decode, color metadata, Fit/zoom/pan, and recoverable D2D pixels |
 
 </details>
 

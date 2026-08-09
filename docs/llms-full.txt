@@ -112,6 +112,11 @@ at explicit Win32 boundaries.
   minimized, occluded, recreated, or failed. GPU interfaces are borrowed;
   application data is device-independent and WARP fallback is explicit. See
   `docs/recipes/direct3d-swap-chain.md`.
+- WIC imaging is optional: request `COMPONENTS imaging d2d`, initialize COM,
+  keep bounded `DecodedImage` CPU pixels authoritative, and use
+  `ImageViewportModel` for pixel-to-DIP Fit/zoom/pan. Embedded profile presence
+  and successful sRGB conversion differ. Recreate only the D2D bitmap cache.
+  See `examples/image_viewer` and `docs/tutorials/image-viewer.md`.
 - Background work and notification-area utility: `examples/wakeup` and
   `examples/hot_corners`.
 - Dialogs, clipboard, file drop, placement: `examples/desktop_integration`.

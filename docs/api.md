@@ -367,3 +367,18 @@ auto selected = mwtl::ShowOpenFileDialog({
     },
 });
 ```
+
+## Optional WIC imaging
+
+`<mwtl/imaging.h>` belongs to `mwtl::imaging`. `DecodeImageFile` requires COM
+on the caller thread and synchronously returns a structured status plus
+application-owned, top-down premultiplied BGRA8 pixels. Dimensions and the
+default 256 MiB decoded-pixel budget are checked before allocation. Embedded
+profile presence and successful conversion to sRGB are separate flags; invalid
+profiles fall back without claiming color management.
+
+`ImageViewportModel` is HWND/GPU-free. Image units are pixels; viewport, pan,
+and output origin are DIPs. It implements bounded Fit, anchored zoom, and
+clamped pan. Keep `DecodedImage` authoritative and treat a D2D bitmap as a
+disposable device cache. See `examples/image_viewer` and
+`docs/tutorials/image-viewer.md`.
