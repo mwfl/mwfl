@@ -3,9 +3,11 @@ if(NOT EXISTS "${LIBRARY}")
 endif()
 file(SIZE "${LIBRARY}" library_bytes)
 # Debug MSVC libraries include substantial compiler metadata. This is a
-# regression ceiling, not a claim about final executable size.
-if(library_bytes GREATER 12582912)
-    message(FATAL_ERROR "mwtl static library exceeded 12 MiB: ${library_bytes}")
+# regression ceiling, not a claim about final executable size. The 0.3 custom
+# dialog implementation accounts for roughly 622 KiB of independently measured
+# object code; keep less than 0.5 MiB of headroom above the current library.
+if(library_bytes GREATER 13631488)
+    message(FATAL_ERROR "mwtl static library exceeded 13 MiB: ${library_bytes}")
 endif()
 
 file(GLOB public_headers "${PROJECT_ROOT}/include/mwtl/*.h")

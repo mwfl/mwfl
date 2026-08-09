@@ -25,7 +25,7 @@ foreach(mode IN ITEMS
         TIMEOUT 20)
 endforeach()
 
-foreach(header IN ITEMS application command_controls concepts control_batch control_host control_resources controls desktop document dpi events input_controls layout message_pump must navigation_controls property_sheet recent_files single_instance splitter tab_workspace text_file text_history text_search timer window window_options wakeup umbrella)
+foreach(header IN ITEMS application command_controls concepts control_batch control_host control_resources controls desktop dialog document dpi events input_controls layout message_pump must navigation_controls property_sheet recent_files single_instance splitter tab_workspace text_file text_history text_search timer window window_options wakeup umbrella)
     # Every public header must remain independently includable.
     add_library(mwtl_header_${header} OBJECT header_${header}.cpp)
     target_compile_features(mwtl_header_${header} PRIVATE cxx_std_20)
@@ -288,6 +288,14 @@ target_compile_options(mwtl_task_dialog_test PRIVATE /W4 /permissive- /EHsc /utf
 target_link_libraries(mwtl_task_dialog_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.task_dialog COMMAND mwtl_task_dialog_test)
 set_tests_properties(mwtl.task_dialog PROPERTIES TIMEOUT 20)
+
+add_executable(mwtl_dialog_native_test dialog_native_test.cpp)
+target_sources(mwtl_dialog_native_test PRIVATE "${PROJECT_SOURCE_DIR}/examples/example.manifest")
+target_compile_features(mwtl_dialog_native_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_dialog_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_dialog_native_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.dialog_native COMMAND mwtl_dialog_native_test)
+set_tests_properties(mwtl.dialog_native PROPERTIES TIMEOUT 20)
 
 add_executable(mwtl_hot_corner_model_test
     hot_corner_model_test.cpp

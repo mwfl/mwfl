@@ -134,6 +134,16 @@
       "example": "examples/desktop_integration/main.cpp"
     },
     {
+      "id": "custom-dialog",
+      "intent": ["custom dialog", "modal form", "modeless window", "resizable dialog"],
+      "symbols": ["mwtl::Dialog", "mwtl::DialogOptions", "mwtl::DialogCallbacks", "mwtl::DialogResult"],
+      "headers": ["mwtl/dialog.h"],
+      "example": "examples/desktop_integration/main.cpp",
+      "recipe": "docs/recipes/custom-dialog.md",
+      "tests": ["mwtl.dialog_native"],
+      "constraints": ["the owner HWND is borrowed", "the wrapper owns a modeless HWND", "callbacks and child controls stay on the creating UI thread", "cross-thread close requests require the owner thread to keep pumping messages", "callback exceptions are captured"]
+    },
+    {
       "id": "appearance-accessibility",
       "intent": ["dark mode", "mica", "high contrast", "accessible name", "DPI"],
       "symbols": ["mwtl::AppearanceOptions", "mwtl::ApplyWindowAppearance", "mwtl::SetAccessibleName"],

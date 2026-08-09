@@ -136,7 +136,8 @@ offline WTL/WIL sources, and building this repository.
 - C++20 range-based batch population;
 - DPI-aware row, column, and overlay layout;
 - menus, accelerators, modern file/folder dialogs, clipboard, shell drops,
-  window placement, task dialogs, image lists, and tooltips;
+  window placement, custom modal/modeless dialogs, task dialogs, image lists,
+  and tooltips;
 - wait-aware message pumping and lifetime-safe worker wakeups.
 
 The [component reference](https://everettjf.github.io/mwtl/components/) shows

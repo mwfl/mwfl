@@ -12,6 +12,7 @@
 #include <mwtl/controls.h>
 #include <mwtl/dpi.h>
 #include <mwtl/desktop.h>
+#include <mwtl/dialog.h>
 #include <mwtl/document.h>
 #include <mwtl/events.h>
 #include <mwtl/error.h>

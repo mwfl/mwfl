@@ -69,6 +69,7 @@ add_library(mwtl STATIC
     src/dpi.cpp
     src/error.cpp
     src/desktop.cpp
+    src/dialog.cpp
     src/document.cpp
     src/detail/diagnostics.cpp
     src/message_pump.cpp

@@ -1,6 +1,6 @@
 set(required_headers
     application appearance binding command command_controls concepts control_batch
-    control_host control_resources controls desktop document dpi error events
+    control_host control_resources controls desktop dialog document dpi error events
     input_controls layout message_pump must navigation_controls property_sheet recent_files single_instance splitter tab_workspace text_file text_history text_search timer wakeup
     window window_options)
 

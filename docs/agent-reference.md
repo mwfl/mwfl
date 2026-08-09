@@ -108,10 +108,16 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## Desktop integration
 
-- Header: `<mwtl/desktop.h>`.
+- Headers: `<mwtl/desktop.h>`, `<mwtl/dialog.h>`.
 - Includes menus, accelerator tables, file/folder dialogs, clipboard, file
   drops, and window placement.
 - Dialog results distinguish acceptance, cancellation, and failure.
+- `Dialog` is the move-only custom-content modal/modeless owner. Create child
+  controls in `initialize`, then attach the normal retained layout. Its owner
+  HWND is borrowed; `GetHwnd()` is a borrowed native escape hatch.
+- Callbacks and child controls stay on the creating UI thread. Cross-thread
+  `Accept`, `Cancel`, and destruction post work, so that thread must keep
+  pumping messages until the close completes.
 - Native handles returned or accepted by helpers retain the ownership stated by
   the corresponding API; never infer ownership from the raw handle type.
 

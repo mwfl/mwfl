@@ -13,8 +13,12 @@ RECT ResolveControlBounds(HWND parent, RectDip bounds) noexcept {
     return DpiContext::FromWindow(parent).ToPixels(bounds);
 }
 
-void ApplyDefaultFont(HWND window) noexcept {
-    const HFONT font = static_cast<HFONT>(::GetStockObject(DEFAULT_GUI_FONT));
+void ApplyDefaultFont(HWND window, HWND parent) noexcept {
+    HFONT font = parent != nullptr
+        ? reinterpret_cast<HFONT>(::SendMessageW(parent, WM_GETFONT, 0, 0))
+        : nullptr;
+    if (font == nullptr)
+        font = static_cast<HFONT>(::GetStockObject(DEFAULT_GUI_FONT));
     ::SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
 }
 
@@ -244,7 +248,7 @@ bool NativeControl::CreateNative(
     parent_ = parent;
     id_ = id;
     owner_thread_id_ = ::GetCurrentThreadId();
-    ApplyDefaultFont(window_);
+    ApplyDefaultFont(window_, parent_);
     return true;
 }
 

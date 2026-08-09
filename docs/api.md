@@ -123,6 +123,26 @@ operations stay on that UI thread. `IsTaskDialogAvailable` checks the exported
 native function; failures remain HRESULTs. The original five-argument overload
 remains the compact message-dialog path.
 
+`Dialog` is the general custom-content counterpart. It owns its native HWND
+while modeless, uses the native `DialogBoxIndirectParamW` nested loop while
+modal, and returns `DialogResult` with distinct accepted, cancelled, and failed
+states. `DialogOptions::owner` is borrowed. Native modal display disables the
+owner; a modeless dialog leaves it enabled unless
+`disable_owner_for_modeless` requests a pseudo-modal workflow, in which case
+the owner is restored exactly once during every close path. Controls are
+created in `DialogCallbacks::initialize`, and `SetLayout` accepts the same
+retained `Row`/`Column`/`Overlay` tree used by `WindowBase`.
+
+All dialog operations belong to the creating UI thread. `Accept` and `Cancel`
+may be requested from another thread and are posted to that thread, but callers
+must not otherwise access the dialog or child controls cross-thread. Callback
+exceptions are captured in `DialogResult::callback_exception`, converted to a
+failed result, and never cross the Win32 callback boundary. A user `WM_CLOSE`
+may be vetoed by the close callback; programmatic `Close` is deterministic and
+cannot be vetoed. The move-only wrapper prevents duplicate HWND ownership, and
+destruction closes an active modeless dialog. See
+`examples/desktop_integration` for the canonical modal form.
+
 `WindowOptions::appearance` applies system/light/dark color preference, optional
 Mica/Acrylic/Tabbed backdrops, and corner policy after HWND creation. Unsupported
 DWM attributes are best-effort, and high-contrast mode always takes priority.
