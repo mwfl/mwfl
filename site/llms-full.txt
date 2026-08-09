@@ -27,6 +27,9 @@ Task sources:
   D2DHost owns draw transactions and recovery while application data remains
   GPU-independent. See examples/drawing and docs/recipes/direct2d-drawing.md.
   Layout does not provide a Spacer API.
+- optional Direct3D: request COMPONENTS d3d and link mwtl::d3d. RenderFrame is
+  on-demand with structured minimized/occluded/recreated/failure outcomes;
+  callback GPU views are borrowed and WARP fallback is explicit.
 - property pages: examples/property_sheet/main.cpp and
   docs/tutorials/settings-application.md; stable nonzero page IDs, `command`
   calls `SetDirty`, validation precedes commit, persistence succeeds before

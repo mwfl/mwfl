@@ -323,6 +323,26 @@ target_compile_options(mwtl_drawing_model_test PRIVATE /W4 /permissive- /EHsc /u
 add_test(NAME mwtl.drawing_model COMMAND mwtl_drawing_model_test)
 set_tests_properties(mwtl.drawing_model PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
+add_library(mwtl_header_d3d_host OBJECT header_d3d_host.cpp)
+target_compile_features(mwtl_header_d3d_host PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_d3d_host PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_d3d_host PRIVATE mwtl::d3d)
+
+add_executable(mwtl_d3d_host_model_test d3d_host_model_test.cpp)
+target_compile_features(mwtl_d3d_host_model_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_d3d_host_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_d3d_host_model_test PRIVATE mwtl::d3d)
+add_test(NAME mwtl.d3d_host_model COMMAND mwtl_d3d_host_model_test)
+set_tests_properties(mwtl.d3d_host_model PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+add_executable(mwtl_d3d_host_native_test WIN32 d3d_host_native_test.cpp)
+target_sources(mwtl_d3d_host_native_test PRIVATE "${PROJECT_SOURCE_DIR}/examples/example.manifest")
+target_compile_features(mwtl_d3d_host_native_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_d3d_host_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_d3d_host_native_test PRIVATE mwtl::d3d)
+add_test(NAME mwtl.d3d_host_native COMMAND mwtl_d3d_host_native_test)
+set_tests_properties(mwtl.d3d_host_native PROPERTIES TIMEOUT 30 LABELS "fast;unit")
+
 add_executable(mwtl_property_sheet_model_test property_sheet_model_test.cpp)
 target_compile_features(mwtl_property_sheet_model_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_property_sheet_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)

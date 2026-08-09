@@ -216,6 +216,16 @@
       "recipe": "docs/recipes/direct2d-drawing.md",
       "tests": ["mwtl.d2d_host_model", "mwtl.d2d_host_native", "mwtl.drawing_model", "mwtl.drawing_gui", "mwtl.package_consumer"],
       "constraints": ["request the d2d package component and link mwtl::d2d", "the core target does not link Direct2D", "D2DHost owns BeginDraw and EndDraw", "paint context and render target are callback-scoped borrowed views", "keep document data independent of device resources", "render and input coordinates are DIPs"]
+    },
+    {
+      "id": "direct3d-swap-chain",
+      "intent": ["Direct3D rendering", "swap chain", "on-demand GPU frame", "device-loss recovery", "WARP fallback"],
+      "symbols": ["mwtl::D3DHost", "mwtl::D3DHostOptions", "mwtl::D3DFrameContext", "mwtl::D3DFrameResult", "mwtl::D3DRenderStateModel"],
+      "headers": ["mwtl/d3d_host.h"],
+      "example": "tests/d3d_host_native_test.cpp",
+      "recipe": "docs/recipes/direct3d-swap-chain.md",
+      "tests": ["mwtl.d3d_host_model", "mwtl.d3d_host_native", "mwtl.package_consumer"],
+      "constraints": ["request the d3d package component and link mwtl::d3d", "RenderFrame is on-demand", "handle every structured frame status", "callback interfaces are borrowed and UI-thread-only", "authoritative application data remains device-independent", "hardware and WARP availability are explicit"]
     }
   ]
 }

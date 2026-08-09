@@ -9,5 +9,8 @@ set_property(TARGET mwtl::mwtl APPEND PROPERTY
 if(TARGET mwtl::d2d)
     set(mwtl_d2d_FOUND TRUE)
 endif()
+if(TARGET mwtl::d3d)
+    set(mwtl_d3d_FOUND TRUE)
+endif()
 
 check_required_components(mwtl)

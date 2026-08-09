@@ -107,6 +107,11 @@ at explicit Win32 boundaries.
   callbacks receive borrowed views, coordinates are DIPs, and application data
   stays GPU-independent. Use `examples/drawing` and
   `docs/recipes/direct2d-drawing.md`. There is no `mwtl::Spacer` API.
+- Direct3D is optional: request `COMPONENTS d3d`, link `mwtl::d3d`, and include
+  `<mwtl/d3d_host.h>`. `RenderFrame` is on-demand and returns presented,
+  minimized, occluded, recreated, or failed. GPU interfaces are borrowed;
+  application data is device-independent and WARP fallback is explicit. See
+  `docs/recipes/direct3d-swap-chain.md`.
 - Background work and notification-area utility: `examples/wakeup` and
   `examples/hot_corners`.
 - Dialogs, clipboard, file drop, placement: `examples/desktop_integration`.

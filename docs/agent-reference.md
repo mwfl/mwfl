@@ -234,3 +234,17 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 - Layout has no `Spacer()` helper. Use only `Row`, `Column`, `Margin`, `Gap`,
   `Auto`, `Fixed`, and `Stretch` APIs present in `<mwtl/layout.h>`.
 - Start from `examples/drawing` and `docs/recipes/direct2d-drawing.md`.
+
+## Direct3D swap chain
+
+- Header: `<mwtl/d3d_host.h>`; CMake target: `mwtl::d3d`; installed packages
+  require `COMPONENTS d3d`.
+- Call `RenderFrame` when the application needs a frame. Do not add an implicit
+  timer or game loop unless the application explicitly requires one.
+- Handle every `D3DFrameStatus`: minimized is a successful no-op, occluded
+  should be retried only after later activity, and `device_recreated` means the
+  requested frame was not presented.
+- Device/context/swap-chain/RTV pointers are borrowed escape hatches. Put GPU
+  resources in create/discard callbacks and keep authoritative data outside.
+- `allow_warp_fallback` controls software rendering; never silently claim
+  hardware acceleration. See `docs/recipes/direct3d-swap-chain.md`.

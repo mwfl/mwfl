@@ -16,4 +16,5 @@ canonical code instead of duplicating a second, drifting implementation.
 - [Add a public control wrapper](add-control-wrapper.md)
 - [Use native message interop](native-message-interop.md)
 - [Add a DPI-aware Direct2D drawing surface](direct2d-drawing.md)
+- [Render an on-demand Direct3D frame](direct3d-swap-chain.md)
 - [Change the public API safely](public-api-change.md)

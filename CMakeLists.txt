@@ -101,6 +101,19 @@ target_include_directories(mwtl_d2d PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(mwtl_d2d PUBLIC mwtl PRIVATE d2d1)
 
+add_library(mwtl_d3d STATIC src/d3d_host.cpp)
+add_library(mwtl::d3d ALIAS mwtl_d3d)
+set_target_properties(mwtl_d3d PROPERTIES EXPORT_NAME d3d)
+target_compile_features(mwtl_d3d PUBLIC cxx_std_20)
+target_compile_options(mwtl_d3d PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWTL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwtl_d3d PRIVATE /WX)
+endif()
+target_include_directories(mwtl_d3d PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwtl_d3d PUBLIC mwtl PRIVATE d3d11 dxgi)
+
 get_target_property(mwtl_wtl_include_dirs WTL::WTL INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(mwtl_wil_include_dirs WIL::WIL INTERFACE_INCLUDE_DIRECTORIES)
 
@@ -139,7 +152,7 @@ target_link_libraries(mwtl
         ole32)
 target_link_libraries(mwtl PRIVATE oleacc uuid)
 
-install(TARGETS mwtl mwtl_d2d
+install(TARGETS mwtl mwtl_d2d mwtl_d3d
     EXPORT mwtlTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
@@ -172,6 +185,7 @@ install(FILES
     docs/recipes/notepad-command-setting.md
     docs/recipes/split-pane.md
     docs/recipes/direct2d-drawing.md
+    docs/recipes/direct3d-swap-chain.md
     DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl)
 install(FILES cmake/Dependencies.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mwtl)

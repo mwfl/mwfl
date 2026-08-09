@@ -282,6 +282,21 @@ no-op. Keep document/stroke/image data application-owned so GPU resource loss
 never loses user content. See `examples/drawing` and
 `docs/recipes/direct2d-drawing.md`.
 
+## Optional Direct3D swap-chain host
+
+`<mwtl/d3d_host.h>` belongs to the optional `mwtl::d3d` target. Installed
+consumers request `COMPONENTS d3d`; the core target exposes no `d3d11` or
+`dxgi` linkage. `D3DHost` owns its child HWND, D3D11 device/context, flip-model
+BGRA8 swap chain, and render-target view. `RenderFrame` renders one requested
+frame and never creates a hidden game loop.
+
+`D3DFrameResult` distinguishes presented, minimized, occluded, recreated, and
+failed outcomes. Hardware creation may fall back to WARP only when enabled;
+query `UsesSoftwareAdapter`. Resize during a render callback is deferred until
+the frame ends. Device removal discards callback-owned device resources and
+recreates the device/swap chain. Callback views are borrowed, UI-thread-only,
+and invalid after return or teardown. See `docs/recipes/direct3d-swap-chain.md`.
+
 ## Concise ownership defaults
 
 `ControlHost::Add(control, ...)` allocates a host-local control ID starting
