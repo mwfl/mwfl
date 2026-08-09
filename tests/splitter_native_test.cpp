@@ -12,6 +12,9 @@ namespace {
 struct NotificationState {
     int count = 0;
     mwtl::Dip position{};
+    HWND forwarded_source = nullptr;
+    int command_count = 0;
+    int context_count = 0;
 };
 
 LRESULT CALLBACK ParentSubclass(HWND window, UINT message, WPARAM wparam, LPARAM lparam,
@@ -25,6 +28,20 @@ LRESULT CALLBACK ParentSubclass(HWND window, UINT message, WPARAM wparam, LPARAM
             state->position = notification->position;
             return 0;
         }
+        if (header != nullptr && header->code == NM_CLICK) {
+            state->forwarded_source = header->hwndFrom;
+            return 123;
+        }
+    }
+    if (message == WM_COMMAND && state != nullptr) {
+        ++state->command_count;
+        state->forwarded_source = reinterpret_cast<HWND>(lparam);
+        return 124;
+    }
+    if (message == WM_CONTEXTMENU && state != nullptr) {
+        ++state->context_count;
+        state->forwarded_source = reinterpret_cast<HWND>(wparam);
+        return 125;
     }
     if (message == WM_NCDESTROY) {
         ::RemoveWindowSubclass(window, ParentSubclass, subclass_id);
@@ -116,6 +133,20 @@ int main() {
     if (first == nullptr || second == nullptr || !splitter.AttachPanes(first, second)) {
         return 8;
     }
+
+    NMHDR child_notification{first, 901, NM_CLICK};
+    if (::SendMessageW(splitter.GetHwnd(), WM_NOTIFY, child_notification.idFrom,
+                       reinterpret_cast<LPARAM>(&child_notification)) != 123 ||
+        notifications.forwarded_source != first)
+        return 80;
+    if (::SendMessageW(splitter.GetHwnd(), WM_COMMAND, MAKEWPARAM(902, BN_CLICKED),
+                       reinterpret_cast<LPARAM>(second)) != 124 ||
+        notifications.command_count != 1 || notifications.forwarded_source != second)
+        return 81;
+    if (::SendMessageW(splitter.GetHwnd(), WM_CONTEXTMENU, reinterpret_cast<WPARAM>(first),
+                       MAKELPARAM(10, 20)) != 125 || notifications.context_count != 1 ||
+        notifications.forwarded_source != first)
+        return 82;
 
     const DpiContext dpi = DpiContext::FromWindow(splitter.GetHwnd());
     RECT first_bounds = ChildBounds(splitter.GetHwnd(), first);

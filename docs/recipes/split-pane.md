@@ -44,6 +44,12 @@ path then arranges both pane HWNDs, so no second anchor-based layout system is
 introduced. Do not create panes under the top-level window and then reparent
 them; `AttachPanes` deliberately rejects non-child HWNDs.
 
+The container forwards `WM_NOTIFY`, control-originated `WM_COMMAND`, and
+`WM_CONTEXTMENU` from either attached pane to its own parent. A virtual
+ListView can therefore remain a direct splitter child while its
+`LVN_GETDISPINFO` reaches the top-level `OnNotify`; do not add a second manual
+forwarder in the application.
+
 ## 3. Observe position changes
 
 ```cpp
@@ -63,6 +69,6 @@ the native host or an attached pane became invalid. Users can drag the bar or
 focus it with Tab and use the relevant arrow keys; Home and End select the
 bounded extremes. The native MSAA surface exposes a named, focusable slider.
 
-See `examples/common_controls/main.cpp`, `tests/splitter_test.cpp`, and
+See `examples/explorer/main.cpp`, `tests/splitter_test.cpp`, and
 `tests/splitter_native_test.cpp` for the compiled canonical path and its pure,
 native, accessibility, mouse, keyboard, and resource-lifetime evidence.

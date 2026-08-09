@@ -271,6 +271,34 @@ LRESULT Splitter::ProcessMessage(HWND window, UINT message, WPARAM wparam, LPARA
         return dpi.FromPixels(coordinate);
     };
     switch (message) {
+        case WM_NOTIFY: {
+            const auto* header = reinterpret_cast<const NMHDR*>(lparam);
+            if (header != nullptr &&
+                (header->hwndFrom == first_ || header->hwndFrom == second_)) {
+                const HWND parent = ::GetParent(window);
+                return parent == nullptr ? 0
+                                         : ::SendMessageW(parent, message, wparam, lparam);
+            }
+            break;
+        }
+        case WM_COMMAND: {
+            const HWND source = reinterpret_cast<HWND>(lparam);
+            if (source != nullptr && (source == first_ || source == second_)) {
+                const HWND parent = ::GetParent(window);
+                return parent == nullptr ? 0
+                                         : ::SendMessageW(parent, message, wparam, lparam);
+            }
+            break;
+        }
+        case WM_CONTEXTMENU: {
+            const HWND source = reinterpret_cast<HWND>(wparam);
+            if (source == first_ || source == second_) {
+                const HWND parent = ::GetParent(window);
+                return parent == nullptr ? 0
+                                         : ::SendMessageW(parent, message, wparam, lparam);
+            }
+            break;
+        }
         case WM_SIZE:
             static_cast<void>(Arrange());
             return 0;

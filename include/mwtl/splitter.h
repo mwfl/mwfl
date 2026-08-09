@@ -71,7 +71,10 @@ struct SplitterOptions {
 // Owns one native child container and borrows its two pane HWNDs. Attached
 // panes must be distinct direct children of the splitter and must remain valid
 // until detached or until the splitter is destroyed. All window operations
-// belong to the creating UI thread. Failure returns false and sets last-error.
+// belong to the creating UI thread. WM_NOTIFY, control-originated WM_COMMAND,
+// and WM_CONTEXTMENU from attached panes are forwarded to the splitter's
+// parent with their original parameters and result. Failure returns false and
+// sets last-error.
 class Splitter final : public NativeControl {
 public:
     Splitter() noexcept = default;

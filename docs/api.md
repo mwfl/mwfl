@@ -166,10 +166,14 @@ keyboard steps are DIPs. Arrow keys move the bar, Home/End select its bounded
 extremes, and mouse dragging emits `kSplitterPositionChanged` through
 `WM_NOTIFY`. `Arrange` returns `false` with a Win32 last-error when the host or
 borrowed panes are invalid; `SetPosition` and `SetConstraints` propagate that
-result. `SplitterModel` exposes the same constraint math
+result. `WM_NOTIFY`, control-originated `WM_COMMAND`, and `WM_CONTEXTMENU` from
+either attached direct-child pane are synchronously forwarded to the
+splitter's parent with their original parameters and result. This lets ordinary
+top-level `OnNotify`, `OnCommand`, and context-menu routing work without
+subclassing the panes. `SplitterModel` exposes the same constraint math
 without HWNDs; when both minimums cannot fit, it divides the available space
 proportionally and reports `constraints_satisfied == false`. The
-common-controls gallery is the compact native composition example.
+Explorer reference application is the complete native composition example.
 
 `PropertyPage` owns the C++ state and callbacks for one native page; the native
 page HWND exists only while a sheet has created it. `PropertySheetDialog`
