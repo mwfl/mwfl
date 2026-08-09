@@ -17,6 +17,43 @@ enum class TrayIconState {
     recovery_pending,
 };
 
+// HWND-free state machine used by TrayIcon. It makes initial registration,
+// Explorer recovery, successful registration, and deterministic detach
+// explicit and independently testable. Invalid transitions return false and
+// preserve the current state.
+class TrayIconStateModel final {
+public:
+    constexpr TrayIconState GetState() const noexcept { return state_; }
+    constexpr bool CanAdd() const noexcept { return state_ == TrayIconState::detached; }
+    constexpr bool CanModify() const noexcept { return state_ == TrayIconState::added; }
+    constexpr bool CanRecreate() const noexcept { return state_ != TrayIconState::detached; }
+
+    constexpr bool BeginAdd() noexcept {
+        if (state_ != TrayIconState::detached) return false;
+        state_ = TrayIconState::recovery_pending;
+        return true;
+    }
+    constexpr bool BeginRecovery() noexcept {
+        if (state_ == TrayIconState::detached) return false;
+        state_ = TrayIconState::recovery_pending;
+        return true;
+    }
+    constexpr bool RegistrationSucceeded() noexcept {
+        if (state_ != TrayIconState::recovery_pending) return false;
+        state_ = TrayIconState::added;
+        return true;
+    }
+    constexpr bool InitialRegistrationFailed() noexcept {
+        if (state_ != TrayIconState::recovery_pending) return false;
+        state_ = TrayIconState::detached;
+        return true;
+    }
+    constexpr void Detach() noexcept { state_ = TrayIconState::detached; }
+
+private:
+    TrayIconState state_ = TrayIconState::detached;
+};
+
 enum class TrayIconEventKind {
     primary_activate,
     context_menu,
@@ -80,8 +117,8 @@ class TrayIcon final {
     std::optional<TrayIconEvent> Decode(const WindowMessage& message) const noexcept;
 
     void Remove() noexcept;
-    TrayIconState GetState() const noexcept { return state_; }
-    bool IsAdded() const noexcept { return state_ == TrayIconState::added; }
+    TrayIconState GetState() const noexcept { return state_.GetState(); }
+    bool IsAdded() const noexcept { return state_.CanModify(); }
     bool IsOwnerThread() const noexcept;
     const TrayIconOptions& GetOptions() const noexcept { return options_; }
 
@@ -94,7 +131,7 @@ class TrayIcon final {
     NOTIFYICONDATAW BaseData() const noexcept;
 
     TrayIconOptions options_;
-    TrayIconState state_ = TrayIconState::detached;
+    TrayIconStateModel state_;
     DWORD owner_thread_ = 0;
 };
 

@@ -191,6 +191,9 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 - Header: `<mwtl/tray_icon.h>`.
 - `TrayIcon` owns the shell registration but borrows its owner HWND and HICON.
+- `TrayIconStateModel` is the pure state machine behind initial add, retryable
+  Explorer recovery, successful registration, and detach; use it when business
+  logic must be tested without a live notification area.
 - Use a stable application GUID, an `WM_APP` callback message, and a nonzero
   16-bit callback ID. Keep every mutation and destruction on the creating UI
   thread.

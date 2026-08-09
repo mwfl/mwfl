@@ -39,7 +39,9 @@ Task sources:
   menus to its parent; route `LVN_GETDISPINFO` through `HandleNotification`.
 - tray utilities: move-only `TrayIcon` borrows its owner and HICON, uses a
   stable GUID, decodes v4 callbacks, and recreates after `TaskbarCreated`; see
-  `examples/hot_corners` and `docs/recipes/tray-icon.md`
+  `examples/hot_corners` and `docs/recipes/tray-icon.md`. The HWND-free
+  `TrayIconStateModel` makes initial add, retryable recovery, and detach directly
+  unit-testable
 - resources: `ImageList` owns its native list while toolbars borrow it;
   `Tooltip` owns copied text/HWND while borrowing owner/tools; `Menu::TrackResult`
   distinguishes selected, cancelled, and failed context-menu outcomes

@@ -228,6 +228,11 @@ borrowed; the owner and icon must outlive the registration. `Add` selects
 keyboard, context-menu, balloon, and popup messages to `TrayIconEvent` with
 screen coordinates. Tooltip, icon, visibility, and balloon-notification updates
 change cached state only after `Shell_NotifyIconW` succeeds.
+`TrayIconStateModel` is the HWND-free state machine used by the wrapper; it
+distinguishes initial add, retryable Explorer recovery, successful
+registration, and deterministic detach. Applications normally inspect
+`TrayIcon::GetState`; the model is public for deterministic orchestration and
+unit testing without depending on the notification area.
 
 Explorer does not retain notification registrations across a restart. Route
 the registered message recognized by `IsTaskbarCreated` to `Recreate`; a failed
@@ -236,7 +241,8 @@ exists. `Remove` and destruction are idempotent and abandon local identity even
 if an already-destroyed owner makes the shell deletion fail. All mutation and
 destruction belong to the creating UI thread. The GUID and callback ID are
 application identity, not owned resources. Hot Corners is the canonical
-Windows 10+ tray utility and `mwtl.tray_icon_native` exercises the real shell
+Windows 10+ tray utility; `mwtl.tray_icon_state` proves every state transition
+without HWNDs and `mwtl.tray_icon_native` exercises the real shell
 protocol.
 
 `WindowOptions::appearance` applies system/light/dark color preference, optional

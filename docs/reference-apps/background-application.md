@@ -17,6 +17,11 @@ behavior.
 5. Shutdown stops workers before dependent member state is destroyed.
 6. A GUI self-test exercises startup and controlled termination.
 
+The self-test also reads MSAA names from the monitor/action/status controls,
+proves the Ctrl+E command projection, checks DPI-specific fonts and retained
+geometry, and drives theme/settings refresh. `mwtl.tray_icon_state` proves the
+Shell-independent state machine; `mwtl.tray_icon_native` covers real add,
+modify, Explorer recovery, and teardown, including 40-cycle resource bounds.
+
 Use this shape for sync clients, monitors, launchers, progress applications, and
 utilities with tray or multi-monitor behavior.
-

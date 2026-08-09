@@ -2,6 +2,7 @@
 
 #include "settings_model.h"
 
+#include <oleacc.h>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -15,6 +16,23 @@ namespace {
 constexpr UINT kRunSelfTest = WM_APP + 0x130;
 bool g_self_test = false;
 std::wstring g_settings_key = L"Software\\mwtl\\Examples\\Settings\\1";
+
+bool HasAccessibleName(HWND window, std::wstring_view expected) {
+    IAccessible* accessible = nullptr;
+    if (FAILED(::AccessibleObjectFromWindow(window, static_cast<DWORD>(OBJID_CLIENT),
+                                            IID_IAccessible,
+                                            reinterpret_cast<void**>(&accessible))))
+        return false;
+    VARIANT child{};
+    child.vt = VT_I4;
+    child.lVal = CHILDID_SELF;
+    BSTR name = nullptr;
+    const bool matches = SUCCEEDED(accessible->get_accName(child, &name)) && name != nullptr &&
+                         std::wstring_view{name, ::SysStringLen(name)} == expected;
+    if (name != nullptr) ::SysFreeString(name);
+    accessible->Release();
+    return matches;
+}
 
 class PropertySheetWindow final : public mwtl::WindowBase {
 public:
@@ -53,6 +71,12 @@ public:
     }
 
     mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
+        if (event.id == WM_THEMECHANGED || event.id == WM_SETTINGCHANGE) {
+            static_cast<void>(mwtl::ApplyWindowAppearance(GetHwnd()));
+            ::RedrawWindow(GetHwnd(), nullptr, nullptr,
+                           RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+            return mwtl::EventResult::Handled();
+        }
         if (event.id != kRunSelfTest) return mwtl::EventResult::Propagate();
         try {
             RunSelfTest();
@@ -164,9 +188,13 @@ private:
     }
 
     void RunSelfTest() {
+        if (!HasAccessibleName(open_.GetHwnd(), L"Open application settings"))
+            throw std::runtime_error("Settings launcher accessible name mismatch");
         OpenSettings();
         if (!sheet_.IsWindow() || pages_.size() != 2 || pages_[0].GetHwnd() == nullptr)
             throw std::runtime_error("Settings sheet did not create its profile page");
+        if (!HasAccessibleName(name_.GetHwnd(), L"Display name"))
+            throw std::runtime_error("Settings page accessible name mismatch");
 
         name_.SetText(L"Grace Hopper");
         ::SendMessageW(pages_[0].GetHwnd(), WM_COMMAND, MAKEWPARAM(102, EN_CHANGE),
@@ -190,6 +218,11 @@ private:
         if (!notifications.Succeeded() || notifications.value->show_notifications ||
             summary_.GetText().find(L"notifications off") == std::wstring::npos)
             throw std::runtime_error("notification Apply did not update persisted presentation");
+
+        ::SendMessageW(GetHwnd(), WM_THEMECHANGED, 0, 0);
+        ::SendMessageW(GetHwnd(), WM_SETTINGCHANGE, 0, 0);
+        if (!open_.IsWindow() || !sheet_.IsWindow())
+            throw std::runtime_error("Settings appearance refresh destroyed controls");
 
         ::SendMessageW(sheet_.GetHwnd(), PSM_PRESSBUTTON, PSBTN_CANCEL, 0);
         if (sheet_.IsWindow()) throw std::runtime_error("Settings Cancel did not close the sheet");

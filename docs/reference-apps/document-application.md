@@ -1,9 +1,11 @@
 # Document-style commands and desktop integration
 
-Canonical sources: `examples/commands/main.cpp` and
-`examples/desktop_integration/main.cpp`.
+Canonical source: `examples/notepad/main.cpp`. The smaller
+`examples/commands/main.cpp` and `examples/desktop_integration/main.cpp` remain
+focused supporting examples.
 
-Together these demonstrate the conventional native document-window surface:
+The Notepad reference application demonstrates the conventional native
+document-window surface:
 one command model shared by menu, toolbar, and keyboard shortcuts; editable
 content and dirty state; open/save/folder dialogs; clipboard; file drops; task
 dialogs; and persistent window placement.
@@ -18,7 +20,8 @@ dialogs; and persistent window placement.
 5. Treat cancellation separately from failure.
 6. Capture placement in `OnClose()` and then propagate normal closing.
 
-Use this pair when generating editors, viewers, small IDE-like tools, and
-document utilities. Replace demo save callbacks with an explicit document model
-and persistence layer; do not put file I/O directly into every UI surface.
-
+Use this shape when generating editors, viewers, small IDE-like tools, and
+document utilities. `mwtl.notepad_gui` drives command/accelerator routing,
+MSAA names, theme refresh, responsive geometry, resource bounds, and real file
+state; the focused model suites prove encoding, atomic save, search, history,
+recent files, and single-instance activation without HWNDs.

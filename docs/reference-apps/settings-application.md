@@ -23,5 +23,10 @@ keeps the page dirty.
 6. The model test uses a unique temporary registry key. The GUI self-test drives
    the real executable through both pages and verifies persisted presentation.
 
+The GUI path also reads the explicit launcher/editor MSAA names and drives
+runtime theme/settings refresh. Native property-sheet and dialog suites cover
+keyboard traversal, DIP resize, cancellation, modal/modeless lifetime, and
+bounded resource stress; the executable manifest is checked independently.
+
 For a from-scratch walkthrough, follow
 [`docs/tutorials/settings-application.md`](../tutorials/settings-application.md).

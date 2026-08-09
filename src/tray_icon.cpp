@@ -67,14 +67,14 @@ TrayIcon::~TrayIcon() noexcept {
 
 TrayIcon::TrayIcon(TrayIcon&& other) noexcept
     : options_(std::move(other.options_)),
-      state_(std::exchange(other.state_, TrayIconState::detached)),
+      state_(std::exchange(other.state_, TrayIconStateModel{})),
       owner_thread_(std::exchange(other.owner_thread_, 0)) {}
 
 TrayIcon& TrayIcon::operator=(TrayIcon&& other) noexcept {
     if (this == &other) return *this;
     Remove();
     options_ = std::move(other.options_);
-    state_ = std::exchange(other.state_, TrayIconState::detached);
+    state_ = std::exchange(other.state_, TrayIconStateModel{});
     owner_thread_ = std::exchange(other.owner_thread_, 0);
     return *this;
 }
@@ -100,7 +100,7 @@ NOTIFYICONDATAW TrayIcon::BaseData() const noexcept {
 }
 
 bool TrayIcon::Add(TrayIconOptions options) noexcept {
-    if (state_ != TrayIconState::detached) {
+    if (!state_.CanAdd()) {
         ::SetLastError(ERROR_ALREADY_EXISTS);
         return false;
     }
@@ -112,12 +112,12 @@ bool TrayIcon::Add(TrayIconOptions options) noexcept {
         ::SetLastError(ERROR_INVALID_PARAMETER);
         return false;
     }
+    static_cast<void>(state_.BeginAdd());
     options_ = std::move(options);
     owner_thread_ = ::GetCurrentThreadId();
-    state_ = TrayIconState::recovery_pending;
     if (AddNative()) return true;
     options_ = {};
-    state_ = TrayIconState::detached;
+    static_cast<void>(state_.InitialRegistrationFailed());
     owner_thread_ = 0;
     return false;
 }
@@ -131,22 +131,22 @@ bool TrayIcon::AddNative() noexcept {
     data.dwStateMask = NIS_HIDDEN;
     data.dwState = options_.hidden ? NIS_HIDDEN : 0;
     if (!CopyText(data.szTip, options_.tooltip) || !ShellNotify(NIM_ADD, data)) {
-        state_ = TrayIconState::recovery_pending;
+        static_cast<void>(state_.BeginRecovery());
         return false;
     }
     data.uVersion = NOTIFYICON_VERSION_4;
     if (!ShellNotify(NIM_SETVERSION, data)) {
         static_cast<void>(ShellNotify(NIM_DELETE, data));
-        state_ = TrayIconState::recovery_pending;
+        static_cast<void>(state_.BeginRecovery());
         return false;
     }
-    state_ = TrayIconState::added;
+    static_cast<void>(state_.RegistrationSucceeded());
     return true;
 }
 
 bool TrayIcon::Modify(NOTIFYICONDATAW& data) noexcept {
-    if (!ValidateThread() || state_ != TrayIconState::added) {
-        if (state_ != TrayIconState::added) ::SetLastError(ERROR_INVALID_STATE);
+    if (!ValidateThread() || !state_.CanModify()) {
+        if (!state_.CanModify()) ::SetLastError(ERROR_INVALID_STATE);
         return false;
     }
     return ShellNotify(NIM_MODIFY, data);
@@ -204,13 +204,13 @@ bool TrayIcon::ShowNotification(const TrayNotification& notification) noexcept {
 }
 
 bool TrayIcon::Recreate() noexcept {
-    if (!ValidateThread() || state_ == TrayIconState::detached) {
-        if (state_ == TrayIconState::detached) ::SetLastError(ERROR_INVALID_STATE);
+    if (!ValidateThread() || !state_.CanRecreate()) {
+        if (!state_.CanRecreate()) ::SetLastError(ERROR_INVALID_STATE);
         return false;
     }
     NOTIFYICONDATAW stale = BaseData();
     static_cast<void>(ShellNotify(NIM_DELETE, stale));
-    state_ = TrayIconState::recovery_pending;
+    static_cast<void>(state_.BeginRecovery());
     return AddNative();
 }
 
@@ -220,7 +220,7 @@ bool TrayIcon::IsTaskbarCreated(const WindowMessage& message) const noexcept {
 }
 
 std::optional<TrayIconEvent> TrayIcon::Decode(const WindowMessage& message) const noexcept {
-    if (state_ != TrayIconState::added || message.id != options_.callback_message) {
+    if (!state_.CanModify() || message.id != options_.callback_message) {
         return std::nullopt;
     }
     const UINT code = LOWORD(message.lparam);
@@ -233,11 +233,11 @@ std::optional<TrayIconEvent> TrayIcon::Decode(const WindowMessage& message) cons
 }
 
 void TrayIcon::Remove() noexcept {
-    if (state_ == TrayIconState::detached) return;
+    if (!state_.CanRecreate()) return;
     NOTIFYICONDATAW data = BaseData();
     static_cast<void>(ShellNotify(NIM_DELETE, data));
     options_ = {};
-    state_ = TrayIconState::detached;
+    state_.Detach();
     owner_thread_ = 0;
 }
 

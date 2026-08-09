@@ -3,6 +3,7 @@
 #include "hot_corner_model.h"
 
 #include <shellapi.h>
+#include <oleacc.h>
 
 #include <algorithm>
 #include <array>
@@ -38,6 +39,23 @@ constexpr std::array<LONG, 4> kToleranceValues{1, 2, 4, 8};
 
 bool g_test_mode = false;
 bool g_self_test = false;
+
+bool HasAccessibleName(HWND window, std::wstring_view expected) {
+    IAccessible* accessible = nullptr;
+    if (FAILED(::AccessibleObjectFromWindow(window, static_cast<DWORD>(OBJID_CLIENT),
+                                            IID_IAccessible,
+                                            reinterpret_cast<void**>(&accessible))))
+        return false;
+    VARIANT child{};
+    child.vt = VT_I4;
+    child.lVal = CHILDID_SELF;
+    BSTR name = nullptr;
+    const bool matches = SUCCEEDED(accessible->get_accName(child, &name)) && name != nullptr &&
+                         std::wstring_view{name, ::SysStringLen(name)} == expected;
+    if (name != nullptr) ::SysFreeString(name);
+    accessible->Release();
+    return matches;
+}
 
 const wchar_t* ActionName(hot_corners::Action action) noexcept {
     switch (action) {
@@ -156,8 +174,11 @@ public:
     EventResult OnTimer(TimerId id) override {
         if (id == kSelfTest) {
             ::KillTimer(GetHwnd(), kSelfTest.value);
-            Activate({0, hot_corners::Corner::top_left});
-            Close();
+            try {
+                RunSelfTest();
+            } catch (...) {
+                ::PostQuitMessage(self_test_step_);
+            }
             return EventResult::Handled();
         }
         if (id != kPoll) return EventResult::Propagate();
@@ -178,10 +199,17 @@ public:
     }
 
     EventResult OnMessage(const WindowMessage& event) override {
+        if (event.id == WM_SETTINGCHANGE || event.id == WM_THEMECHANGED) {
+            static_cast<void>(ApplyWindowAppearance(
+                GetHwnd(), {ColorMode::system, Backdrop::mica}));
+            ::RedrawWindow(GetHwnd(), nullptr, nullptr,
+                           RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+        }
         if (event.id == WM_DISPLAYCHANGE || event.id == WM_SETTINGCHANGE) {
             StoreVisibleMonitor(); RefreshMonitors(); PopulateMonitorList(); LoadVisibleMonitor();
             return EventResult::Handled();
         }
+        if (event.id == WM_THEMECHANGED) return EventResult::Handled();
         if (tray_.IsTaskbarCreated(event)) {
             static_cast<void>(tray_.Recreate());
             return EventResult::Handled();
@@ -248,6 +276,63 @@ private:
         ui.Add(tolerance_, kTolerance, {360_dip, 242_dip, 140_dip, 150_dip});
         for (auto value : kToleranceValues) tolerance_.AddItem(std::to_wstring(value) + L" px");
         ui.Add(status_, kStatus, L"Starting...", {16_dip, 302_dip, 650_dip, 48_dip});
+        Must(SetAccessibleName(monitor_.GetHwnd(), L"Display monitor"), "name monitor selector");
+        Must(SetAccessibleName(dwell_.GetHwnd(), L"Activation dwell time"), "name dwell selector");
+        Must(SetAccessibleName(tolerance_.GetHwnd(), L"Corner tolerance"),
+             "name tolerance selector");
+        Must(SetAccessibleName(status_.GetHwnd(), L"Hot Corners status"), "name status");
+        for (std::size_t i = 0; i < actions_.size(); ++i) {
+            const std::wstring accessible_name = std::wstring(corners[i]) + L" action";
+            Must(SetAccessibleName(actions_[i].GetHwnd(), accessible_name.c_str()),
+                 "name corner action selector");
+        }
+    }
+
+    void RunSelfTest() {
+        self_test_step_ = 2;
+        if (!HasAccessibleName(monitor_.GetHwnd(), L"Display monitor") ||
+            !HasAccessibleName(dwell_.GetHwnd(), L"Activation dwell time") ||
+            !HasAccessibleName(actions_[0].GetHwnd(), L"Top left action") ||
+            !HasAccessibleName(status_.GetHwnd(), L"Hot Corners status"))
+            throw std::runtime_error("Hot Corners accessible names mismatch");
+
+        self_test_step_ = 3;
+        std::array<ACCEL, 2> entries{};
+        const int accelerator_count =
+            ::CopyAcceleratorTableW(accelerators_.GetHandle(), entries.data(),
+                                    static_cast<int>(entries.size()));
+        const bool has_toggle = std::ranges::any_of(entries.begin(),
+                                                    entries.begin() + accelerator_count,
+                                                    [](const ACCEL& entry) {
+                                                        return entry.cmd == kToggleCommand &&
+                                                               entry.key == 'E' &&
+                                                               (entry.fVirt & FCONTROL) != 0;
+                                                    });
+        if (!has_toggle ||
+            ::SendMessageW(GetHwnd(), WM_COMMAND, kToggleCommand, 0) != 0 ||
+            !manual_paused_ || status_.GetText().find(L"Paused") == std::wstring::npos)
+            throw std::runtime_error("Hot Corners keyboard command failed");
+        if (::SendMessageW(GetHwnd(), WM_COMMAND, kToggleCommand, 0) != 0 ||
+            manual_paused_)
+            throw std::runtime_error("Hot Corners keyboard command did not restore state");
+
+        self_test_step_ = 4;
+        ApplyFont(GetDpiContext().GetDpi());
+        if (::SendMessageW(enabled_.GetHwnd(), WM_GETFONT, 0, 0) == 0 ||
+            ::SendMessageW(actions_[0].GetHwnd(), WM_GETFONT, 0, 0) == 0)
+            throw std::runtime_error("Hot Corners DPI font projection failed");
+        ::SendMessageW(GetHwnd(), WM_THEMECHANGED, 0, 0);
+        ::SendMessageW(GetHwnd(), WM_SETTINGCHANGE, 0, 0);
+        if (!enabled_.IsWindow() || !monitor_.IsWindow() || !status_.IsWindow())
+            throw std::runtime_error("Hot Corners appearance refresh destroyed controls");
+
+        self_test_step_ = 5;
+        RECT status_bounds{};
+        if (::GetWindowRect(status_.GetHwnd(), &status_bounds) == FALSE ||
+            status_bounds.right <= status_bounds.left || status_bounds.bottom <= status_bounds.top)
+            throw std::runtime_error("Hot Corners retained layout is invalid");
+        Activate({0, hot_corners::Corner::top_left});
+        Close();
     }
 
     void RefreshMonitors() {
@@ -392,6 +477,7 @@ private:
     hot_corners::DwellTracker tracker_;
     std::size_t shown_monitor_ = 0;
     bool manual_paused_ = false, last_fullscreen_paused_ = false;
+    int self_test_step_ = 1;
 };
 
 }  // namespace

@@ -324,6 +324,13 @@ target_link_libraries(mwtl_tray_icon_native_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.tray_icon_native COMMAND mwtl_tray_icon_native_test)
 set_tests_properties(mwtl.tray_icon_native PROPERTIES TIMEOUT 30)
 
+add_executable(mwtl_tray_icon_state_test tray_icon_state_test.cpp)
+target_compile_features(mwtl_tray_icon_state_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_tray_icon_state_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_tray_icon_state_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.tray_icon_state COMMAND mwtl_tray_icon_state_test)
+set_tests_properties(mwtl.tray_icon_state PROPERTIES LABELS "fast;unit")
+
 add_executable(mwtl_control_resources_native_test control_resources_native_test.cpp)
 target_sources(mwtl_control_resources_native_test PRIVATE
     "${PROJECT_SOURCE_DIR}/examples/example.manifest")

@@ -20,5 +20,9 @@ image-list borrowing, MSAA names, TreeView navigation, virtual mapping, sorting,
 keyboard Refresh, tabs, context routing, responsive pane geometry, theme/system
 messages, and 40-cycle menu resource bounds.
 
+Theme and system-setting changes reapply system appearance at runtime, so the
+shared High Contrast precedence is preserved. The executable manifest test and
+installed package consumer keep this composition on the distributable path.
+
 Follow the beginner walkthrough in
 [`docs/tutorials/explorer-application.md`](../tutorials/explorer-application.md).

@@ -158,6 +158,12 @@ public:
     }
 
     mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
+        if (event.id == WM_THEMECHANGED || event.id == WM_SETTINGCHANGE) {
+            static_cast<void>(mwtl::ApplyWindowAppearance(GetHwnd()));
+            ::RedrawWindow(GetHwnd(), nullptr, nullptr,
+                           RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+            return mwtl::EventResult::Handled();
+        }
         if (event.id == WM_CONTEXTMENU) {
             const HWND source = reinterpret_cast<HWND>(event.wparam);
             if (source == tree_.GetHwnd() || source == list_.GetHwnd()) {
@@ -343,7 +349,8 @@ private:
         self_test_step_ = 3;
         if (!HasAccessibleName(toolbar_.GetHwnd(), L"Explorer commands") ||
             !HasAccessibleName(tree_.GetHwnd(), L"Folders") ||
-            !HasAccessibleName(list_.GetHwnd(), L"Folder contents"))
+            !HasAccessibleName(list_.GetHwnd(), L"Folder contents") ||
+            !HasAccessibleName(tabs_.GetHwnd(), L"Explorer views"))
             throw std::runtime_error("Explorer accessible names mismatch");
 
         self_test_step_ = 4;
