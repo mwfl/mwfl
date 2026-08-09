@@ -305,6 +305,16 @@ target_link_libraries(mwtl_tray_icon_native_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.tray_icon_native COMMAND mwtl_tray_icon_native_test)
 set_tests_properties(mwtl.tray_icon_native PROPERTIES TIMEOUT 30)
 
+add_executable(mwtl_control_resources_native_test control_resources_native_test.cpp)
+target_sources(mwtl_control_resources_native_test PRIVATE
+    "${PROJECT_SOURCE_DIR}/examples/example.manifest")
+target_compile_features(mwtl_control_resources_native_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_control_resources_native_test PRIVATE
+    /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_control_resources_native_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.control_resources_native COMMAND mwtl_control_resources_native_test)
+set_tests_properties(mwtl.control_resources_native PROPERTIES TIMEOUT 30)
+
 add_executable(mwtl_hot_corner_model_test
     hot_corner_model_test.cpp
     "${PROJECT_SOURCE_DIR}/examples/hot_corners/hot_corner_model.cpp")

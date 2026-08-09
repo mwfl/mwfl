@@ -9,10 +9,13 @@
 #include <functional>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 namespace mwtl {
 
+// Move-only owner of one HIMAGELIST. HICON inputs are borrowed for each call;
+// GetHandle returns a borrowed view. Coordinate mutations on one UI thread.
 class ImageList final {
 public:
     ImageList() noexcept = default;
@@ -21,15 +24,42 @@ public:
     ImageList& operator=(const ImageList&) = delete;
     ImageList(ImageList&& other) noexcept;
     ImageList& operator=(ImageList&& other) noexcept;
-    bool Create(int width, int height, UINT flags = ILC_COLOR32 | ILC_MASK, int initial = 4, int grow = 4) noexcept;
+    bool Create(int width, int height, UINT flags = ILC_COLOR32 | ILC_MASK, int initial = 4,
+                int grow = 4) noexcept;
     int AddIcon(HICON icon) noexcept;
+    bool ReplaceIcon(int index, HICON icon) noexcept;
+    bool Remove(int index) noexcept;
+    bool RemoveAll() noexcept;
+    bool SetOverlayImage(int image_index, int overlay_index) noexcept;
+    bool SetBackgroundColor(COLORREF color) noexcept;
+    COLORREF GetBackgroundColor() const noexcept;
+    bool GetIconSize(SIZE& size) const noexcept;
     int GetCount() const noexcept;
+    bool IsCreated() const noexcept { return handle_ != nullptr; }
+    // Borrowed escape hatch. ImageList retains ownership.
     HIMAGELIST GetHandle() const noexcept { return handle_; }
     void Reset() noexcept;
+
 private:
     HIMAGELIST handle_ = nullptr;
 };
 
+struct TooltipOptions {
+    bool always_tip = true;
+    bool no_prefix = true;
+    bool balloon = false;
+    bool close_button = false;
+    int max_width = 0;
+};
+
+struct TooltipToolOptions {
+    bool subclass = true;
+    bool center_tip = false;
+    bool transparent = false;
+};
+
+// Move-only owner of a tooltip HWND and its copied text. The owner/tool HWNDs
+// are borrowed, and all operations belong to their UI thread.
 class Tooltip final {
 public:
     Tooltip() noexcept = default;
@@ -38,14 +68,29 @@ public:
     Tooltip& operator=(const Tooltip&) = delete;
     Tooltip(Tooltip&& other) noexcept;
     Tooltip& operator=(Tooltip&& other) noexcept;
-    bool Create(HWND owner);
-    bool AddTool(HWND tool, std::wstring_view text);
+    bool Create(HWND owner, TooltipOptions options = {});
+    bool AddTool(HWND tool, std::wstring_view text, TooltipToolOptions options = {});
+    bool UpdateTool(HWND tool, std::wstring_view text);
+    bool RemoveTool(HWND tool) noexcept;
+    bool HasTool(HWND tool) const noexcept;
+    int GetToolCount() const noexcept;
+    bool SetActive(bool active) noexcept;
+    bool SetTitle(UINT icon, std::wstring_view title);
+    bool SetMaxWidth(int width) noexcept;
+    bool SetDelayTime(UINT duration, int milliseconds) noexcept;
+    bool RelayEvent(const MSG& message) noexcept;
+    void Pop() noexcept;
+    void Update() noexcept;
+    bool IsWindow() const noexcept;
+    HWND GetOwner() const noexcept { return owner_; }
+    // Owned tooltip HWND; borrowed by callers.
     HWND GetHwnd() const noexcept { return window_; }
     void Destroy() noexcept;
+
 private:
     HWND window_ = nullptr;
     HWND owner_ = nullptr;
-    std::vector<std::unique_ptr<std::wstring>> texts_;
+    std::unordered_map<HWND, std::unique_ptr<std::wstring>> texts_;
 };
 
 struct TaskDialogButton {

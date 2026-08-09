@@ -278,12 +278,16 @@ SetLayout(
       </section>
 
       <section id="resources" class="doc-section">
-        <div class="doc-heading"><div><span class="tag">Common Controls</span><h2>Resources and dialogs</h2></div><p>Move-only <code>ImageList</code>, owned <code>Tooltip</code>, modal <code>TaskDialog</code>, and explicit Flat Scroll Bar integration.</p></div>
+        <div class="doc-heading"><div><span class="tag">Common Controls</span><h2>Resources and dialogs</h2></div><p>Owned <code>ImageList</code> with explicit toolbar borrowing, owned/updateable <code>Tooltip</code> text with borrowed tools, structured popup-menu results, modal <code>TaskDialog</code>, and Flat Scroll Bar integration.</p></div>
         <div class="code-panel compact"><pre data-title="resources.cpp"><code>images_.Create(16, 16);
 images_.AddIcon(::LoadIconW(nullptr, IDI_INFORMATION));
 
-tooltip_.Create(GetHwnd());
+tooltip_.Create(GetHwnd(), {.balloon = true, .max_width = 320});
 tooltip_.AddTool(button_.GetHwnd(), L"Native tooltip");
+tooltip_.UpdateTool(button_.GetHwnd(), L"Updated text owned by Tooltip");
+
+const auto selected = popup_.TrackResult(GetHwnd(), screen_point);
+if (selected) PostMessageW(GetHwnd(), WM_COMMAND, selected.command, 0);
 
 const auto result = mwtl::ShowTaskDialog(
     GetHwnd(), L"mwtl", L"Native Task Dialog", L"Real Common Controls UI.");</code></pre></div>

@@ -35,6 +35,12 @@ at explicit Win32 boundaries.
 
 - Form and validation: `examples/form_binding`, `ValueBinding::Pull/Push`.
 - Commands: `examples/notepad`, one CommandSet owns text/enabled/checked/visible/image/shortcut/action state for menu, toolbar, and accelerators. Toolbar image lists are borrowed; rebuild a menu to reinsert a hidden command.
+- Tooltips and image lists: `ImageList` owns its HIMAGELIST while toolbars borrow
+  it. `Tooltip` owns its popup but borrows owner/tool HWNDs and owns copied
+  text; tooltip text never replaces a visible label or accessible name.
+- Context menus: create an owned popup `Menu`, append the same `Command` objects
+  used elsewhere, call `TrackResult`, and distinguish selected, cancelled, and
+  failed results before posting `WM_COMMAND`.
 - Tab workspace state: `mwtl/tab_workspace.h` owns stable nonzero `TabId`
   ordering, selection, title, dirty, and closable metadata but never documents
   or HWNDs. `TabControl::Synchronize` projects it into native items;

@@ -41,7 +41,9 @@ public:
                    "attach split panes");
         ui.Add(scroll_, {221}, {16.0_dip, 580.0_dip, 666.0_dip, 28.0_dip});
         ui.Add(status_, {222}, {0.0_dip, 630.0_dip, 1240.0_dip, 28.0_dip});
-        mwtl::Must(tooltip_.Create(rebar_.GetHwnd()), "create Tooltip");
+        mwtl::Must(tooltip_.Create(rebar_.GetHwnd(),
+                                   {.balloon = true, .max_width = 320}),
+                   "create Tooltip");
         mwtl::Must(images_.Create(16, 16), "create ImageList");
 
         mwtl::Must(mwtl::AddButtons(toolbar_, {
@@ -49,7 +51,16 @@ public:
             "populate Toolbar buttons");
         toolbar_.AutoSize();
         rebar_.AddBand(toolbar_, L"", 360);
-        tooltip_.AddTool(toolbar_.GetHwnd(), L"Native Toolbar hosted by a Rebar");
+        mwtl::Must(tooltip_.SetTitle(TTI_INFO, L"Command toolbar"),
+                   "set Tooltip title");
+        mwtl::Must(tooltip_.AddTool(toolbar_.GetHwnd(),
+                                   L"Native Toolbar hosted by a Rebar"),
+                   "add Tooltip tool");
+        mwtl::Must(tooltip_.UpdateTool(
+                       toolbar_.GetHwnd(),
+                       L"Task Dialog and Refresh commands; keyboard shortcuts remain available"),
+                   "update Tooltip tool");
+        mwtl::SetAccessibleName(toolbar_.GetHwnd(), L"Common Controls command toolbar");
 
         const HTREEITEM root = tree_.AddItem(L"Common Controls");
         tree_.AddItem(L"Navigation", root);
@@ -84,7 +95,9 @@ public:
         mwtl::Must(mwtl::SetPartTexts(status_, {
             {0, L"All specialized control families are native"},
             {1, L"Unicode + DPI aware"}}), "populate Status text");
-        images_.AddIcon(::LoadIconW(nullptr, IDI_INFORMATION));
+        const int information = images_.AddIcon(::LoadIconW(nullptr, IDI_INFORMATION));
+        mwtl::Must(information >= 0 && images_.SetOverlayImage(information, 1),
+                   "configure ImageList overlay");
     }
 
     mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {

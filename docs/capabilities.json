@@ -179,6 +179,15 @@
       "example": "examples/common_controls/main.cpp",
       "tests": ["mwtl.task_dialog"],
       "constraints": ["the owner HWND is borrowed", "the controller is callback-scoped and UI-thread-only", "keep_open only changes button-close handling", "callback exceptions are captured", "check IsTaskDialogAvailable when availability matters"]
+    },
+    {
+      "id": "control-resources",
+      "intent": ["tooltip", "balloon tooltip", "image list", "context menu", "popup command"],
+      "symbols": ["mwtl::Tooltip", "mwtl::TooltipOptions", "mwtl::ImageList", "mwtl::Menu", "mwtl::PopupMenuResult"],
+      "headers": ["mwtl/control_resources.h", "mwtl/desktop.h"],
+      "example": "examples/common_controls/main.cpp",
+      "tests": ["mwtl.control_resources_native", "mwtl.modern_api", "mwtl.desktop"],
+      "constraints": ["ImageList owns its HIMAGELIST and toolbar borrowing requires it to outlive the toolbar", "Tooltip owns text and its HWND but borrows owner and tools", "tooltip text does not replace an accessible name", "command ID zero is invalid for popup selection", "distinguish selected cancelled and failed popup results"]
     }
   ]
 }

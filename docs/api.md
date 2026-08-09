@@ -64,6 +64,31 @@ command without an image uses `ClearImageIndex`; it does not own or destroy an
 icon. Visibility affects presentation, not dispatch, so a deliberately hidden
 command may remain reachable through its accelerator while enabled.
 
+`ImageList` exclusively owns the `HIMAGELIST` returned by `Create`; its
+`GetHandle` result is borrowed and becomes invalid after move, `Reset`, or
+destruction. Icons passed to add/replace are borrowed for the call because the
+native list copies their pixels. Replace, remove, overlay, background-color,
+count, and pixel-size operations read or mutate the native image list. Image
+sizes are pixels at this Win32 boundary; an application chooses the appropriate
+size when rebuilding resources for a new DPI. `Toolbar::SetImageList` borrows
+the complete `ImageList`, which must outlive the toolbar.
+
+`Tooltip` owns its tooltip HWND and borrows the owner plus every registered tool
+HWND. Tools may be descendants of the owner and must be removed or destroyed
+before the owner. Text is owned by `Tooltip`, so temporary strings are safe.
+The API supports add/update/remove, active state, balloon title, maximum width,
+delay times, explicit event relay, pop, and native refresh. Tooltips supplement
+rather than replace visible labels and `SetAccessibleName`; assistive
+technology does not depend on hover text.
+
+`Menu` owns a newly created menu bar or popup until it transfers a submenu or
+attaches a bar to a window. `MenuKind` and `IsOwned` expose that state, and
+`GetHandle` is always borrowed. `PopupMenuResult` distinguishes a selected
+command from user cancellation and native failure. Command ID zero is rejected
+because native popup tracking reserves zero for no selection. Build menus from
+`Command` to project text, enabled, checked, and visible state, then dispatch
+the selected ID through the same `CommandSet`.
+
 `StatusBar` is a native control with intrinsic measurement, so it can be placed
 in a DIP layout with `Auto()` and remeasured during Per-Monitor-V2 DPI changes.
 The Notepad reference application demonstrates that path, assigns MSAA names to

@@ -16,6 +16,28 @@
 
 namespace mwtl {
 
+enum class MenuKind {
+    none,
+    menu_bar,
+    popup,
+    attached,
+};
+
+enum class PopupMenuStatus {
+    selected,
+    cancelled,
+    failed,
+};
+
+struct PopupMenuResult {
+    PopupMenuStatus status = PopupMenuStatus::failed;
+    UINT command = 0;
+    DWORD error = ERROR_SUCCESS;
+
+    explicit operator bool() const noexcept { return status == PopupMenuStatus::selected; }
+    bool Cancelled() const noexcept { return status == PopupMenuStatus::cancelled; }
+};
+
 class Menu final {
 public:
     Menu() noexcept = default;
@@ -35,14 +57,21 @@ public:
     bool AppendSubmenu(Menu&& submenu, std::wstring_view text,
                                      bool enabled = true);
     bool AttachToWindow(HWND window) noexcept;
+    PopupMenuResult TrackResult(
+        HWND owner, POINT screen_position,
+        UINT flags = TPM_RIGHTBUTTON | TPM_RETURNCMD) const noexcept;
     UINT Track(HWND owner, POINT screen_position,
                              UINT flags = TPM_RIGHTBUTTON | TPM_RETURNCMD) const noexcept;
+    MenuKind GetKind() const noexcept { return kind_; }
+    bool IsOwned() const noexcept { return owns_menu_; }
+    // Borrowed escape hatch. Ownership is reported by IsOwned/GetKind.
     HMENU GetHandle() const noexcept { return menu_; }
     void Reset() noexcept;
 
 private:
     HMENU menu_ = nullptr;
     bool owns_menu_ = false;
+    MenuKind kind_ = MenuKind::none;
 };
 
 class AcceleratorTable final {

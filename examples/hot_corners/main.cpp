@@ -366,8 +366,8 @@ private:
             !menu.AppendSeparator() || !menu.AppendCommand(*exit)) return;
         if (point.x == -1 && point.y == -1) ::GetCursorPos(&point);
         ::SetForegroundWindow(GetHwnd());
-        const UINT command = menu.Track(GetHwnd(), point);
-        if (command != 0) ::PostMessageW(GetHwnd(), WM_COMMAND, command, 0);
+        const PopupMenuResult selected = menu.TrackResult(GetHwnd(), point);
+        if (selected) ::PostMessageW(GetHwnd(), WM_COMMAND, selected.command, 0);
     }
 
     void ApplyFont(UINT dpi) {

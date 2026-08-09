@@ -89,6 +89,21 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 - `CommandSet` stores commands and dispatches a `CommandEvent`.
 - Native menu and toolbar presentations do not automatically redraw after all
   state changes; synchronize them as shown in `examples/commands`.
+- A created `Menu` owns its handle until submenu transfer or window attachment.
+  Use `TrackResult` for context menus so cancellation is not confused with
+  native failure, then post its selected command through `WM_COMMAND`.
+
+## Tooltips and image lists
+
+- Header: `<mwtl/control_resources.h>`.
+- `ImageList` owns its native list. `GetHandle()` and toolbar attachment are
+  borrowed; the list must outlive every borrowing toolbar. Icon inputs are
+  copied by the native list.
+- `Tooltip` owns its popup HWND but borrows the owner and tool HWNDs. It owns
+  copied text and supports update/removal, title, width, delay, activation, and
+  event relay.
+- Tooltip text is not an accessible name. Keep a visible label or call
+  `SetAccessibleName` independently for an ambiguous control.
 
 ## `WindowWakeup`
 
