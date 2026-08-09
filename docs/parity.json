@@ -29,15 +29,16 @@
     },
     {
       "version": "0.4",
-      "status": "in_progress",
+      "status": "complete",
       "theme": "rendering-and-third-party-hwnd-integrations",
       "acceptance": "docs/milestones/0.4.md",
       "reflection": "docs/reflections/0.4.md",
-      "depends_on": "0.3"
+      "depends_on": "0.3",
+      "evidence": ["examples/browser", "examples/code_editor", "examples/drawing", "examples/image_viewer", "mwtl.webview2_native", "mwtl.scintilla_native", "mwtl.d2d_host_native", "mwtl.d3d_host_native", "mwtl.package_consumer"]
     },
     {
       "version": "0.5",
-      "status": "planned",
+      "status": "in_progress",
       "theme": "printing-drag-drop-and-shell-integration",
       "acceptance": "docs/milestones/0.5.md",
       "reflection": "docs/reflections/0.5.md",

@@ -293,6 +293,7 @@ install(FILES
     docs/tutorials/image-viewer.md
     docs/tutorials/browser.md
     docs/tutorials/code-editor.md
+    docs/reflections/0.4.md
     docs/recipes/notepad-command-setting.md
     docs/recipes/split-pane.md
     docs/recipes/direct2d-drawing.md
