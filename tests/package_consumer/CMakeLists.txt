@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(mwtl_package_consumer LANGUAGES CXX)
 
-set(mwtl_components d2d d3d imaging)
+set(mwtl_components d2d d3d imaging printing)
 if(MWTL_TEST_SCINTILLA)
     list(APPEND mwtl_components scintilla)
 endif()
@@ -11,7 +11,7 @@ endif()
 find_package(mwtl 0.1 CONFIG REQUIRED COMPONENTS ${mwtl_components})
 
 get_target_property(mwtl_core_links mwtl::mwtl INTERFACE_LINK_LIBRARIES)
-if("${mwtl_core_links}" MATCHES "d2d|d3d|dxgi|windowscodecs|scintilla|webview")
+if("${mwtl_core_links}" MATCHES "d2d|d3d|dxgi|windowscodecs|winspool|scintilla|webview")
     message(FATAL_ERROR "core mwtl::mwtl unexpectedly exposes optional rendering linkage")
 endif()
 if(MWTL_TEST_WEBVIEW2)
@@ -35,6 +35,10 @@ target_compile_features(mwtl_d3d_package_consumer PRIVATE cxx_std_20)
 add_executable(mwtl_imaging_package_consumer imaging_main.cpp)
 target_link_libraries(mwtl_imaging_package_consumer PRIVATE mwtl::imaging)
 target_compile_features(mwtl_imaging_package_consumer PRIVATE cxx_std_20)
+
+add_executable(mwtl_printing_package_consumer printing_main.cpp)
+target_link_libraries(mwtl_printing_package_consumer PRIVATE mwtl::printing)
+target_compile_features(mwtl_printing_package_consumer PRIVATE cxx_std_20)
 
 if(MWTL_TEST_SCINTILLA)
     add_executable(mwtl_scintilla_package_consumer scintilla_main.cpp)

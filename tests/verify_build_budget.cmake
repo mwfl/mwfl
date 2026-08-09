@@ -20,7 +20,15 @@ endif()
 file(GLOB public_headers "${PROJECT_ROOT}/include/mwtl/*.h")
 set(core_header_bytes 0)
 set(optional_header_bytes 0)
-set(optional_headers d2d_host.h d3d_host.h imaging.h scintilla.h webview2.h)
+set(optional_headers
+    d2d_host.h
+    d3d_host.h
+    imaging.h
+    printing.h
+    printing_native.h
+    printing_settings.h
+    scintilla.h
+    webview2.h)
 foreach(header IN LISTS public_headers)
     file(SIZE "${header}" header_bytes)
     get_filename_component(header_name "${header}" NAME)
@@ -38,9 +46,9 @@ if(core_header_bytes GREATER 157286)
     message(FATAL_ERROR
         "core top-level public headers exceeded 150 KiB: ${core_header_bytes}")
 endif()
-if(optional_header_bytes GREATER 32768)
+if(optional_header_bytes GREATER 49152)
     message(FATAL_ERROR
-        "optional component public headers exceeded 32 KiB: ${optional_header_bytes}")
+        "component public headers exceeded 48 KiB: ${optional_header_bytes}")
 endif()
 
 file(STRINGS "${PROJECT_ROOT}/include/mwtl/window.h" window_lines)

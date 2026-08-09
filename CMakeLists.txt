@@ -132,7 +132,10 @@ target_include_directories(mwtl_imaging PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(mwtl_imaging PUBLIC mwtl PRIVATE windowscodecs)
 
-add_library(mwtl_printing STATIC src/printing.cpp)
+add_library(mwtl_printing STATIC
+    src/printing.cpp
+    src/printing_native.cpp
+    src/printing_settings.cpp)
 add_library(mwtl::printing ALIAS mwtl_printing)
 set_target_properties(mwtl_printing PROPERTIES EXPORT_NAME printing)
 target_compile_features(mwtl_printing PUBLIC cxx_std_20)
@@ -143,7 +146,7 @@ endif()
 target_include_directories(mwtl_printing PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(mwtl_printing PUBLIC mwtl PRIVATE winspool)
+target_link_libraries(mwtl_printing PUBLIC mwtl PRIVATE winspool gdi32 comdlg32)
 
 if(MWTL_BUILD_SCINTILLA)
     FetchContent_Declare(mwtl_scintilla_source
