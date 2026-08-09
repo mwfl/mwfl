@@ -276,6 +276,14 @@ set_tests_properties(mwtl.property_sheet_native PROPERTIES
     ENVIRONMENT "MWTL_TEST_NO_DIALOGS=1"
     TIMEOUT 20)
 
+add_executable(mwtl_task_dialog_test task_dialog_test.cpp)
+target_sources(mwtl_task_dialog_test PRIVATE "${PROJECT_SOURCE_DIR}/examples/example.manifest")
+target_compile_features(mwtl_task_dialog_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_task_dialog_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_task_dialog_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.task_dialog COMMAND mwtl_task_dialog_test)
+set_tests_properties(mwtl.task_dialog PROPERTIES TIMEOUT 20)
+
 add_executable(mwtl_hot_corner_model_test
     hot_corner_model_test.cpp
     "${PROJECT_SOURCE_DIR}/examples/hot_corners/hot_corner_model.cpp")

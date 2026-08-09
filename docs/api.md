@@ -110,6 +110,19 @@ failed validation or apply keeps the page dirty. Resizable sheets use the normal
 `LayoutHost` page layout and keep tabs, pages, and buttons anchored. See the
 property-sheet reference application and `docs/recipes/property-page.md`.
 
+`ShowTaskDialog(TaskDialogOptions)` exposes native common/custom buttons, radio
+buttons, verification state, expandable/footer text, flags, width, and a
+structured `TaskDialogResult`. Its callback maps created, navigation, button,
+radio, verification, hyperlink, timer, help, expando, and destruction events.
+The callback-scoped `TaskDialogController` can enable or click choices, update
+text, and drive determinate or marquee progress. Returning `keep_open` from a
+button event rejects that close attempt. Callback exceptions are captured in
+the result and trigger safe cancellation; no exception crosses comctl32. The
+owner HWND is borrowed for the synchronous modal call, and callback/controller
+operations stay on that UI thread. `IsTaskDialogAvailable` checks the exported
+native function; failures remain HRESULTs. The original five-argument overload
+remains the compact message-dialog path.
+
 `WindowOptions::appearance` applies system/light/dark color preference, optional
 Mica/Acrylic/Tabbed backdrops, and corner policy after HWND creation. Unsupported
 DWM attributes are best-effort, and high-contrast mode always takes priority.

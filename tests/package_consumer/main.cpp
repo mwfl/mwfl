@@ -15,12 +15,14 @@ int main() {
     const auto split = splitter.Arrange({mwtl::Dip{400.0f}, mwtl::Dip{200.0f}});
     mwtl::PropertySheetModel property_pages;
     const bool property_page_added = property_pages.Add({{1}, L"Installed property page"});
+    mwtl::TaskDialogOptions task_dialog{.title = L"Installed Task Dialog API"};
     mwtl::Must(layout.HasRoot(), "installed layout");
     return tab_added && tabs.GetSelectedId() == mwtl::TabId{7} &&
                    dpi.ToPixels(mwtl::Dip{2.0f}) == 3 && concise.size.width == mwtl::Dip{3.0f} &&
                    layout.HasRoot() && split.constraints_satisfied &&
                    split.first.size.width.value > 0.0f && property_page_added &&
-                   property_pages.GetSelectedId() == mwtl::PropertyPageId{1}
+                   property_pages.GetSelectedId() == mwtl::PropertyPageId{1} &&
+                   task_dialog.title == L"Installed Task Dialog API"
                ? 0
                : 1;
 }

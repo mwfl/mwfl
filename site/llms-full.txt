@@ -27,6 +27,9 @@ Task sources:
   docs/recipes/property-page.md; stable nonzero page IDs, `command` calls
   `SetDirty`, validation precedes commit, and modeless sheets stay on the UI
   thread
+- task dialogs: `TaskDialogOptions` provides buttons, radios, verification,
+  progress, links and callbacks; controller values are callback-scoped and
+  errors/exceptions are returned through `TaskDialogResult`
 
 Notepad tutorial and compiled Agent recipe:
 https://everettjf.github.io/mwtl/notepad.html

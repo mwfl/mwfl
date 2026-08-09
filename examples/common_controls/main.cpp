@@ -89,7 +89,28 @@ public:
 
     mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
         if (event.id == kAbout) {
-            mwtl::ShowTaskDialog(GetHwnd(), L"mwtl", L"Native Task Dialog", L"This modal control is wrapped as a function, not a child HWND.");
+            mwtl::ShowTaskDialog({
+                .owner = GetHwnd(),
+                .title = L"mwtl",
+                .main_instruction = L"Native Task Dialog",
+                .content = L"Buttons, radios, verification, progress, links, and callbacks use a structured result.",
+                .verification_text = L"Remember this choice",
+                .expanded_information = L"The callback receives a callback-scoped controller for progress and dynamic text.",
+                .expanded_control_text = L"Show implementation note",
+                .collapsed_control_text = L"Hide implementation note",
+                .common_buttons = TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON,
+                .flags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_SHOW_PROGRESS_BAR,
+                .radio_buttons = {{301, L"Normal priority"}, {302, L"High priority"}},
+                .default_radio_button = 301,
+                .callback = [](const mwtl::TaskDialogEvent& task_event,
+                               const mwtl::TaskDialogController& dialog) {
+                    if (task_event.kind == mwtl::TaskDialogEventKind::created) {
+                        dialog.SetProgressRange(0, 100);
+                        dialog.SetProgressPosition(70);
+                    }
+                    return mwtl::TaskDialogCallbackResult::continue_default;
+                },
+            });
             return mwtl::EventResult::Handled();
         }
         if (event.id == kRefresh) {
