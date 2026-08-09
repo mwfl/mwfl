@@ -394,6 +394,37 @@ if(MWTL_BUILD_SCINTILLA)
     set_tests_properties(mwtl.code_editor_gui PROPERTIES TIMEOUT 20 LABELS "gui;integration")
 endif()
 
+if(MWTL_BUILD_WEBVIEW2)
+    add_library(mwtl_header_webview2 OBJECT header_webview2.cpp)
+    target_compile_features(mwtl_header_webview2 PRIVATE cxx_std_20)
+    target_compile_options(mwtl_header_webview2 PRIVATE /W4 /permissive- /EHsc /utf-8)
+    target_link_libraries(mwtl_header_webview2 PRIVATE mwtl::webview2)
+
+    add_executable(mwtl_webview2_model_test webview2_model_test.cpp)
+    target_compile_features(mwtl_webview2_model_test PRIVATE cxx_std_20)
+    target_compile_options(mwtl_webview2_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+    target_link_libraries(mwtl_webview2_model_test PRIVATE mwtl::webview2)
+    add_test(NAME mwtl.webview2_model COMMAND mwtl_webview2_model_test)
+    set_tests_properties(mwtl.webview2_model PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+    add_executable(mwtl_webview2_native_test WIN32 webview2_native_test.cpp)
+    target_sources(mwtl_webview2_native_test PRIVATE "${PROJECT_SOURCE_DIR}/examples/example.manifest")
+    target_compile_features(mwtl_webview2_native_test PRIVATE cxx_std_20)
+    target_compile_options(mwtl_webview2_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+    target_link_libraries(mwtl_webview2_native_test PRIVATE mwtl::webview2)
+    add_test(NAME mwtl.webview2_native COMMAND mwtl_webview2_native_test)
+    set_tests_properties(mwtl.webview2_native PROPERTIES TIMEOUT 45 LABELS "integration;native")
+
+    find_program(mwtl_webview2_test_powershell NAMES pwsh powershell REQUIRED)
+    add_test(NAME mwtl.browser_gui
+        COMMAND "${mwtl_webview2_test_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwtl_browser_demo>
+            -RuntimePath "$<TARGET_FILE_DIR:mwtl_browser_demo>")
+    set_tests_properties(mwtl.browser_gui PROPERTIES TIMEOUT 45 LABELS "gui;integration")
+endif()
+
 add_executable(mwtl_property_sheet_model_test property_sheet_model_test.cpp)
 target_compile_features(mwtl_property_sheet_model_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_property_sheet_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -628,6 +659,7 @@ add_test(
         "-DMWTL_ENABLE_ASAN=${MWTL_ENABLE_ASAN}"
         "-DMWTL_EXPECT_NOTEPAD=$<BOOL:$<TARGET_EXISTS:mwtl_notepad>>"
         "-DMWTL_EXPECT_SCINTILLA=$<BOOL:$<TARGET_EXISTS:mwtl_scintilla>>"
+        "-DMWTL_EXPECT_WEBVIEW2=$<BOOL:$<TARGET_EXISTS:mwtl_webview2>>"
         "-DMWTL_WTL_SOURCE_DIR=${MWTL_RESOLVED_WTL_SOURCE_DIR}"
         "-DMWTL_WIL_SOURCE_DIR=${MWTL_RESOLVED_WIL_SOURCE_DIR}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_package_consumer.cmake")
@@ -697,6 +729,8 @@ get_property(mwtl_all_tests DIRECTORY PROPERTY TESTS)
 foreach(test_name IN LISTS mwtl_all_tests)
     if(test_name MATCHES "^mwtl\\.(lifecycle|advanced\\.)")
         set(labels "lifecycle;fast")
+    elseif(test_name STREQUAL "mwtl.webview2_native")
+        set(labels "integration;native")
     elseif(test_name MATCHES "^mwtl\\.manifest\\.")
         set(labels "metadata;fast")
     elseif(test_name STREQUAL "mwtl.hot_corners_self_test" OR
@@ -705,6 +739,7 @@ foreach(test_name IN LISTS mwtl_all_tests)
            test_name STREQUAL "mwtl.drawing_gui" OR
            test_name STREQUAL "mwtl.image_viewer_gui" OR
            test_name STREQUAL "mwtl.code_editor_gui" OR
+           test_name STREQUAL "mwtl.browser_gui" OR
            test_name STREQUAL "mwtl.notepad_gui")
         set(labels "gui;integration")
     elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap)$")

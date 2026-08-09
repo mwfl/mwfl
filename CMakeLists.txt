@@ -35,12 +35,14 @@ if(PROJECT_IS_TOP_LEVEL)
     option(MWTL_WARNINGS_AS_ERRORS "Treat mwtl warnings as errors" ON)
     option(MWTL_ENABLE_ASAN "Enable AddressSanitizer for repository validation" OFF)
     option(MWTL_BUILD_SCINTILLA "Build the optional pinned Scintilla component" OFF)
+    option(MWTL_BUILD_WEBVIEW2 "Build the optional pinned WebView2 component" OFF)
 else()
     option(MWTL_BUILD_EXAMPLES "Build mwtl examples" OFF)
     option(MWTL_BUILD_TESTS "Build mwtl tests" OFF)
     option(MWTL_WARNINGS_AS_ERRORS "Treat mwtl warnings as errors" OFF)
     option(MWTL_ENABLE_ASAN "Enable AddressSanitizer for repository validation" OFF)
     option(MWTL_BUILD_SCINTILLA "Build the optional pinned Scintilla component" OFF)
+    option(MWTL_BUILD_WEBVIEW2 "Build the optional pinned WebView2 component" OFF)
 endif()
 
 if(MWTL_ENABLE_ASAN)
@@ -172,6 +174,38 @@ if(MWTL_BUILD_SCINTILLA)
     endfunction()
 endif()
 
+if(MWTL_BUILD_WEBVIEW2)
+    FetchContent_Declare(mwtl_webview2_sdk
+        URL https://api.nuget.org/v3-flatcontainer/microsoft.web.webview2/1.0.4129.50/microsoft.web.webview2.1.0.4129.50.nupkg
+        URL_HASH SHA256=D3934F482D484B89FB4825DF720C710664E1143A1E90F7B3A60794EF33F473D2
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+    FetchContent_MakeAvailable(mwtl_webview2_sdk)
+    set(MWTL_WEBVIEW2_INCLUDE_DIR
+        "${mwtl_webview2_sdk_SOURCE_DIR}/build/native/include")
+    set(MWTL_WEBVIEW2_LOADER
+        "${mwtl_webview2_sdk_SOURCE_DIR}/build/native/x64/WebView2LoaderStatic.lib")
+    if(NOT EXISTS "${MWTL_WEBVIEW2_INCLUDE_DIR}/WebView2.h" OR
+       NOT EXISTS "${MWTL_WEBVIEW2_LOADER}")
+        message(FATAL_ERROR "Pinned WebView2 1.0.4129.50 x64 SDK layout is invalid")
+    endif()
+
+    add_library(mwtl_webview2 STATIC src/webview2.cpp)
+    add_library(mwtl::webview2 ALIAS mwtl_webview2)
+    set_target_properties(mwtl_webview2 PROPERTIES EXPORT_NAME webview2)
+    target_compile_features(mwtl_webview2 PUBLIC cxx_std_20)
+    target_compile_options(mwtl_webview2 PRIVATE /W4 /permissive- /EHsc /utf-8)
+    if(MWTL_WARNINGS_AS_ERRORS)
+        target_compile_options(mwtl_webview2 PRIVATE /WX)
+    endif()
+    target_include_directories(mwtl_webview2
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+        PRIVATE "${MWTL_WEBVIEW2_INCLUDE_DIR}")
+    target_link_libraries(mwtl_webview2 PUBLIC mwtl PRIVATE
+        "$<BUILD_INTERFACE:${MWTL_WEBVIEW2_LOADER}>" runtimeobject)
+endif()
+
 get_target_property(mwtl_wtl_include_dirs WTL::WTL INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(mwtl_wil_include_dirs WIL::WIL INTERFACE_INCLUDE_DIRECTORIES)
 
@@ -221,6 +255,14 @@ if(MWTL_BUILD_SCINTILLA)
     install(FILES "${MWTL_SCINTILLA_RUNTIME}" DESTINATION ${CMAKE_INSTALL_BINDIR})
     install(FILES "${mwtl_scintilla_source_SOURCE_DIR}/License.txt"
         DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl/scintilla-5.6.5)
+endif()
+if(MWTL_BUILD_WEBVIEW2)
+    install(TARGETS mwtl_webview2 EXPORT mwtlTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    install(FILES "${mwtl_webview2_sdk_SOURCE_DIR}/LICENSE.txt"
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl/webview2-1.0.4129.50)
+    install(FILES "${MWTL_WEBVIEW2_LOADER}" DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(FILES

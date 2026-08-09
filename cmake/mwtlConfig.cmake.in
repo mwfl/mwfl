@@ -27,5 +27,16 @@ if(TARGET mwtl::scintilla)
                 "${MWTL_SCINTILLA_RUNTIME}" "$<TARGET_FILE_DIR:${target}>/Scintilla.dll")
     endfunction()
 endif()
+if(TARGET mwtl::webview2)
+    set(mwtl_webview2_FOUND TRUE)
+    if(NOT TARGET mwtl::webview2_loader)
+        add_library(mwtl::webview2_loader STATIC IMPORTED)
+        set_target_properties(mwtl::webview2_loader PROPERTIES
+            IMPORTED_LOCATION
+                "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_LIBDIR@/WebView2LoaderStatic.lib")
+    endif()
+    set_property(TARGET mwtl::webview2 APPEND PROPERTY
+        INTERFACE_LINK_LIBRARIES mwtl::webview2_loader runtimeobject)
+endif()
 
 check_required_components(mwtl)

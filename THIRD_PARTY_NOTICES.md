@@ -40,3 +40,17 @@ WIL is consumed from source and is not copied into this repository.
 The core target does not download, link, or deploy Scintilla. The optional
 package installs the official `Scintilla.dll`; applications opt into deployment
 with `mwtl_deploy_scintilla(target)`.
+
+## Microsoft Edge WebView2 SDK (optional)
+
+- Official package: <https://www.nuget.org/packages/Microsoft.Web.WebView2>
+- SDK release: `1.0.4129.50`
+- Package SHA-256: `d3934f482d484b89fb4825df720c710664e1143a1e90f7b3a60794ef33f473d2`
+- License: Microsoft software license terms included as `LICENSE.txt` in the
+  official NuGet package and installed with the optional component
+- Acquisition: hash-verified CMake `FetchContent` only when
+  `MWTL_BUILD_WEBVIEW2=ON`
+
+The core target does not download or link WebView2. The optional component
+links the official x64 static loader; applications use an installed Evergreen
+WebView2 Runtime, whose absence is reported as a structured runtime result.
