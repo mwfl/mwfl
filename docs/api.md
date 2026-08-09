@@ -98,6 +98,18 @@ without HWNDs; when both minimums cannot fit, it divides the available space
 proportionally and reports `constraints_satisfied == false`. The
 common-controls gallery is the compact native composition example.
 
+`PropertyPage` owns the C++ state and callbacks for one native page; the native
+page HWND exists only while a sheet has created it. `PropertySheetDialog`
+retains page state even if the caller's page wrappers leave scope. Its modeless
+form is a move-only HWND owner and integrates `PropSheet_IsDialogMessage` with
+an initialized mwtl message loop. All operations belong to the creating UI
+thread. Page callbacks cover initialization, commands, validation, apply, and
+reset; exceptions are captured in `PropertySheetResult` and never cross the
+Win32 callback boundary. `SetDirty` controls the native Apply button, and a
+failed validation or apply keeps the page dirty. Resizable sheets use the normal
+`LayoutHost` page layout and keep tabs, pages, and buttons anchored. See the
+property-sheet reference application and `docs/recipes/property-page.md`.
+
 `WindowOptions::appearance` applies system/light/dark color preference, optional
 Mica/Acrylic/Tabbed backdrops, and corner policy after HWND creation. Unsupported
 DWM attributes are best-effort, and high-contrast mode always takes priority.

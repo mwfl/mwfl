@@ -140,6 +140,16 @@
       "headers": ["mwtl/appearance.h", "mwtl/dpi.h"],
       "example": "examples/appearance/main.cpp",
       "constraints": ["appearance is best effort", "High Contrast takes precedence"]
+    },
+    {
+      "id": "property-sheet-settings",
+      "intent": ["property sheet", "settings pages", "Apply OK Cancel", "modeless settings"],
+      "symbols": ["mwtl::PropertyPage", "mwtl::PropertySheetModel", "mwtl::PropertySheetDialog", "mwtl::PropertySheetResult"],
+      "headers": ["mwtl/property_sheet.h"],
+      "example": "examples/property_sheet/main.cpp",
+      "recipe": "docs/recipes/property-page.md",
+      "tests": ["mwtl.property_sheet_model", "mwtl.property_sheet_native"],
+      "constraints": ["page IDs are stable and nonzero", "page HWNDs are borrowed and lazily created", "modeless operations stay on the creating UI thread", "callback exceptions are captured in the result"]
     }
   ]
 }

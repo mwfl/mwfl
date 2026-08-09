@@ -26,6 +26,7 @@ is more important than compile-time isolation.
 | `mwtl/message_pump.h` | default and wait-aware message pumps |
 | `mwtl/must.h` | `Must` and `MustInvoke` checked adapters |
 | `mwtl/navigation_controls.h` | tree, list, header, tab and extended combo controls |
+| `mwtl/property_sheet.h` | stable page state plus modal/modeless native property sheets |
 | `mwtl/recent_files.h` | bounded recent-file model and versioned registry persistence |
 | `mwtl/single_instance.h` | named-instance ownership and bounded activation forwarding |
 | `mwtl/tab_workspace.h` | stable-ID tab state, selection, ordering, and dirty metadata |

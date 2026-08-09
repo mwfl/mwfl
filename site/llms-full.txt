@@ -23,6 +23,10 @@ Task sources:
 - desktop integration: examples/desktop_integration/main.cpp
 - DPI/appearance: examples/dpi/main.cpp and examples/appearance/main.cpp
 - complete SDI editor: examples/notepad/main.cpp
+- property pages: examples/property_sheet/main.cpp and
+  docs/recipes/property-page.md; stable nonzero page IDs, `command` calls
+  `SetDirty`, validation precedes commit, and modeless sheets stay on the UI
+  thread
 
 Notepad tutorial and compiled Agent recipe:
 https://everettjf.github.io/mwtl/notepad.html

@@ -1,0 +1,1 @@
+mwtl_add_example(mwtl_property_sheet_demo main.cpp)

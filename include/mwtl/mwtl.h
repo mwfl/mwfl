@@ -20,6 +20,7 @@
 #include <mwtl/message_pump.h>
 #include <mwtl/must.h>
 #include <mwtl/navigation_controls.h>
+#include <mwtl/property_sheet.h>
 #include <mwtl/recent_files.h>
 #include <mwtl/single_instance.h>
 #include <mwtl/splitter.h>

@@ -29,6 +29,7 @@
     {"directory":"document_state","intent":"document dirty state and safe transition decisions","symbols":["DocumentState","DocumentTransition"],"complexity":"focused"},
     {"directory":"notepad","intent":"accessible DPI-aware SDI text editor with safe Unicode open and atomic save","symbols":["DocumentState","ReadTextFile","WriteTextFileAtomic","CommandSet","StatusBar","SetAccessibleName"],"tests":["mwtl.notepad_gui"],"complexity":"reference"},
     {"directory":"appearance","intent":"theme backdrop and accessibility","symbols":["AppearanceOptions","SetAccessibleName"],"complexity":"reference"},
-    {"directory":"layout_gallery","intent":"responsive nested native layout","symbols":["Row","Column","Overlay"],"complexity":"reference"}
+    {"directory":"layout_gallery","intent":"responsive nested native layout","symbols":["Row","Column","Overlay"],"complexity":"reference"},
+    {"directory":"property_sheet","intent":"modeless multi-page settings with validation and Apply/Cancel","symbols":["PropertyPage","PropertySheetDialog","PropertySheetResult"],"tests":["mwtl.property_sheet_model","mwtl.property_sheet_native"],"complexity":"reference"}
   ]
 }
