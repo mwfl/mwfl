@@ -1,6 +1,7 @@
 #include <mwtl/webview2.h>
 
 #include <objbase.h>
+#include <oleacc.h>
 
 #include <chrono>
 #include <filesystem>
@@ -20,6 +21,23 @@ bool PumpUntil(const bool& finished, std::chrono::seconds timeout) {
     }
     return finished;
 }
+
+bool HasAccessibleName(HWND window, std::wstring_view expected) {
+    IAccessible* accessible = nullptr;
+    if (FAILED(::AccessibleObjectFromWindow(window, static_cast<DWORD>(OBJID_CLIENT),
+            IID_IAccessible, reinterpret_cast<void**>(&accessible))) || accessible == nullptr)
+        return false;
+    VARIANT self{};
+    self.vt = VT_I4;
+    self.lVal = static_cast<LONG>(CHILDID_SELF);
+    BSTR name = nullptr;
+    const HRESULT read = accessible->get_accName(self, &name);
+    const bool matches = SUCCEEDED(read) && name != nullptr &&
+        std::wstring_view{name, ::SysStringLen(name)} == expected;
+    if (name != nullptr) ::SysFreeString(name);
+    accessible->Release();
+    return matches;
+}
 }  // namespace
 
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
@@ -34,11 +52,12 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
 
     mwtl::WebView2Host host;
     if (!host.Create(parent, {1200}, {0.0_dip, 0.0_dip, 500.0_dip, 300.0_dip})) return 3;
-    if (host.GetState() != mwtl::WebView2HostState::created || host.IsReady()) return 4;
+    if (host.GetState() != mwtl::WebView2HostState::created || host.IsReady() ||
+        !HasAccessibleName(host.GetHwnd(), L"Web content")) return 4;
 
     const auto runtime = mwtl::QueryWebView2Runtime();
     bool initialized = false;
-    bool restarted = false;
+    bool cycle_ready = false;
     bool navigated = false;
     int initialization_count = 0;
     mwtl::WebView2InitializationResult initialization{};
@@ -49,7 +68,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
                 initialization = result;
                 initialized = true;
                 ++initialization_count;
-                restarted = initialization_count >= 2;
+                cycle_ready = true;
                 if (result.state == mwtl::WebView2HostState::ready)
                     static_cast<void>(host.NavigateToString(
                         L"<!doctype html><html><body><button autofocus>offline</button></body></html>"));
@@ -66,17 +85,21 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
         if (!PumpUntil(navigated, std::chrono::seconds{15})) return 9;
         if (!host.SetBounds({5.0_dip, 6.0_dip, 420.0_dip, 240.0_dip}) || !host.Arrange() ||
             !host.FocusContent() || !host.Reload() || !host.Stop()) return 10;
-        navigated = false;
-        if (!host.Restart() || !PumpUntil(restarted, std::chrono::seconds{20}) ||
-            !PumpUntil(navigated, std::chrono::seconds{15}) || !host.IsReady()) return 11;
+        for (int cycle = 0; cycle < 5; ++cycle) {
+            cycle_ready = false;
+            navigated = false;
+            if (!host.Restart() || !PumpUntil(cycle_ready, std::chrono::seconds{20}) ||
+                !PumpUntil(navigated, std::chrono::seconds{15}) || !host.IsReady()) return 11;
+        }
+        if (initialization_count != 6) return 12;
     } else {
-        if (initialization.state != mwtl::WebView2HostState::failed) return 12;
+        if (initialization.state != mwtl::WebView2HostState::failed) return 13;
     }
 
     host.Close();
     if (host.GetState() != mwtl::WebView2HostState::closed || host.IsReady() ||
         host.GetController() != nullptr || host.GetWebView() != nullptr ||
-        host.Navigate(L"https://example.invalid")) return 13;
+        host.Navigate(L"https://example.invalid")) return 14;
     host.Close();
 
     if (runtime.status == mwtl::WebView2RuntimeStatus::available) {
@@ -86,10 +109,10 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
         if (!cancelled.Create(parent, {1201}, {0.0_dip, 0.0_dip, 200.0_dip, 120.0_dip}) ||
             !cancelled.Initialize({.user_data_folder = cancelled_data}, {
                 .initialized = [&](mwtl::WebView2InitializationResult) { late_callback = true; }}))
-            return 14;
+            return 15;
         cancelled.Close();
         static_cast<void>(PumpUntil(late_callback, std::chrono::seconds{1}));
-        if (late_callback || cancelled.GetState() != mwtl::WebView2HostState::closed) return 15;
+        if (late_callback || cancelled.GetState() != mwtl::WebView2HostState::closed) return 16;
         std::error_code cancel_ignored;
         std::filesystem::remove_all(cancelled_data, cancel_ignored);
     }

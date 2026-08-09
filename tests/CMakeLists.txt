@@ -576,7 +576,14 @@ if(TARGET mwtl_hello)
             mwtl_appearance_demo
             mwtl_layout_gallery_demo
             mwtl_property_sheet_demo
-            mwtl_explorer_demo)
+            mwtl_explorer_demo
+            mwtl_drawing_demo
+            mwtl_image_viewer_demo
+            mwtl_code_editor_demo
+            mwtl_browser_demo)
+        if(NOT TARGET ${example_target})
+            continue()
+        endif()
         add_test(
             NAME mwtl.manifest.${example_target}
             COMMAND "${CMAKE_COMMAND}"
