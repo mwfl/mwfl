@@ -181,4 +181,9 @@ jobs:
       - name: Build
         run: cmake --build build/arm64 --config Debug --parallel
       - name: Test
-        run: ctest --test-dir build/arm64 -C Debug --output-on-failure
+        # The native ARM runner has no usable Explorer notification area, so
+        # Shell_NotifyIcon returns ERROR_CANNOT_MAKE. These targets are still
+        # built for ARM64; their real Shell protocol runs in both x64 matrices.
+        run: >-
+          ctest --test-dir build/arm64 -C Debug --output-on-failure
+          -E 'mwtl\.(tray_icon_native|hot_corners_self_test)'

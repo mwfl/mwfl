@@ -4,11 +4,17 @@ endif()
 file(SIZE "${LIBRARY}" library_bytes)
 # Debug MSVC libraries include substantial compiler metadata. This is a
 # regression ceiling, not a claim about final executable size. The 0.3 custom
-# dialog and tray implementations account for roughly 868 KiB of independently
-# measured object code. ARM64 Debug archives are larger than x64; keep less than
-# 0.7 MiB of x64 headroom while using one architecture-independent ceiling.
-if(library_bytes GREATER 14155776)
-    message(FATAL_ERROR "mwtl static library exceeded 13.5 MiB: ${library_bytes}")
+# dialog, tray, and control-resource implementations account for roughly 1 MiB
+# of independently measured object code. ARM64 Debug COFF archives are larger
+# than x64 archives even for the same source; enforce a measured ceiling for
+# each architecture instead of making the x64 budget absorb ABI padding.
+set(library_limit 15728640) # 15 MiB; current VS 2026 x64 is ~14.14 MiB.
+if(MWTL_ARCHITECTURE STREQUAL "ARM64")
+    set(library_limit 16252928) # 15.5 MiB; ARM64 COFF adds roughly 0.35 MiB.
+endif()
+if(library_bytes GREATER library_limit)
+    message(FATAL_ERROR
+        "mwtl ${MWTL_ARCHITECTURE} static library exceeded ${library_limit} bytes: ${library_bytes}")
 endif()
 
 file(GLOB public_headers "${PROJECT_ROOT}/include/mwtl/*.h")

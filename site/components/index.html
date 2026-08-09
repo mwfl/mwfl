@@ -212,18 +212,19 @@ animation_.Open(instance, resource_id);</code></pre><a href="https://github.com/
         <div class="example-grid">
           <pre data-title="TreeView + ListView"><code>mwtl::ControlHost ui{*this};
 ui.Add(tree_);
-ui.Add(list_);
+ui.Add(list_, ListViewOptions{.virtual_data = true});
 
-const auto root = tree_.AddItem(L"Common Controls");
-tree_.AddItem(L"Navigation", root);
-tree_.Expand(root);
+const auto root = tree_.AddItem({101}, L"Common Controls");
+tree_.AddChild({102}, L"Navigation", {101});
+tree_.Expand({101});
 
 mwtl::Must(mwtl::AddColumns(list_, {
     {L"Control", 170},
     {L"Ownership", 150},
 }));
-const int row = list_.AddItem(L"ListView");
-list_.SetSubItem(row, 1, L"Native HWND");</code></pre>
+list_.SetVirtualModel(model_);
+list_.SetSelected({302});
+// Route WM_NOTIFY through HandleNotification.</code></pre>
           <figure class="preview-panel common-preview"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="Complete Windows Common Controls gallery" width="1920" height="1020" loading="lazy" decoding="async"><figcaption>The complete populated gallery. Continue below for the other families.</figcaption></figure>
         </div>
       </section>

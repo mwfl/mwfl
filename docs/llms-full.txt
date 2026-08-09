@@ -50,6 +50,12 @@ at explicit Win32 boundaries.
   ordering, selection, title, dirty, and closable metadata but never documents
   or HWNDs. `TabControl::Synchronize` projects it into native items;
   `GetSelectedTabId` reads the real native selection.
+- Tree/List data: use stable nonzero `TreeItemId` and `ListItemId`, never object
+  pointers in native item data. ListView is multi-select by default. For large
+  data create with `.virtual_data = true`, attach a shared `VirtualListModel`,
+  route `WM_NOTIFY` through `HandleNotification`, check
+  `TakeVirtualException`, and mutate through `UpdateVirtualModel` (preserves
+  selected IDs) or use `RefreshVirtualModel` for a simple refresh.
 - Split panes: `mwtl/splitter.h`; create `Splitter`, create both pane HWNDs as
   direct children of its HWND, then call `AttachPanes`. The splitter owns only
   its container and borrows pane identities. Geometry and constraints are DIPs;

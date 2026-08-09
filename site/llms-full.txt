@@ -42,6 +42,11 @@ Task sources:
 - typed choices: `SelectionAdapter<Control, Value>` owns ComboBox/ListBox/
   ComboBoxEx values outside native item data, rejects invalid indices, and
   requires exclusive UI-thread item mutation
+- tree/list data: use stable nonzero TreeItemId/ListItemId values; ListView is
+  multi-select by default. Owner-data views use a shared VirtualListModel,
+  HandleNotification, TakeVirtualException, and RefreshVirtualModel without
+  storing application pointers in native items; UpdateVirtualModel preserves
+  selected IDs across reorder
 
 Notepad tutorial and compiled Agent recipe:
 https://everettjf.github.io/mwtl/notepad.html

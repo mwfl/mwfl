@@ -23,6 +23,9 @@ int main() {
     mwtl::TrayIconOptions tray_icon;
     mwtl::TooltipOptions tooltip_options{.balloon = true};
     mwtl::PopupMenuResult popup_result{mwtl::PopupMenuStatus::cancelled};
+    const mwtl::TreeItemId tree_item{8};
+    const mwtl::ListItemId list_item{9};
+    const mwtl::ListViewOptions virtual_list{.virtual_data = true};
     mwtl::Must(layout.HasRoot(), "installed layout");
     return tab_added && tabs.GetSelectedId() == mwtl::TabId{7} &&
                    dpi.ToPixels(mwtl::Dip{2.0f}) == 3 && concise.size.width == mwtl::Dip{3.0f} &&
@@ -31,7 +34,8 @@ int main() {
                    property_pages.GetSelectedId() == mwtl::PropertyPageId{1} &&
                    task_dialog.title == L"Installed Task Dialog API" &&
                    custom_dialog.title == L"Installed custom Dialog API" && tray_icon.id == 1 &&
-                   tooltip_options.balloon && popup_result.Cancelled()
+                   tooltip_options.balloon && popup_result.Cancelled() && tree_item && list_item &&
+                   virtual_list.virtual_data
                ? 0
                : 1;
 }

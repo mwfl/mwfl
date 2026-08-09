@@ -109,6 +109,24 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 - Tooltip text is not an accessible name. Keep a visible label or call
   `SetAccessibleName` independently for an ambiguous control.
 
+## TreeView and ListView data
+
+- Header: `<mwtl/navigation_controls.h>`.
+- Give tree and list rows stable nonzero `TreeItemId`/`ListItemId` values; do
+  not put application object pointers in native item data.
+- ListView is multi-select by default. Read `GetSelectedItemIds`; request
+  `LVS_SINGLESEL` explicitly when needed.
+- For owner data, create with `.virtual_data = true`, keep the authoritative
+  data in a shared `VirtualListModel`, and route the control's `WM_NOTIFY` to
+  `HandleNotification`. After handling, check `TakeVirtualException`.
+- Use `UpdateVirtualModel` for reorder so stable selected IDs are restored;
+  use `RefreshVirtualModel` for count/text-only refresh. Item insertion,
+  subitem mutation, removal, state mutation, and native sorting are rejected.
+- Sorting callbacks never cross Win32 with an exception. UI operations and the
+  model remain on the creating thread; native HWNDs are borrowed.
+- On a validated tree/list end-label notification, update the authoritative
+  model and return `EventResult::Handled(TRUE)` to accept the native text.
+
 ## `WindowWakeup`
 
 - Header: `<mwtl/wakeup.h>`

@@ -84,8 +84,10 @@ technology does not depend on hover text.
 `Menu` owns a newly created menu bar or popup until it transfers a submenu or
 attaches a bar to a window. `MenuKind` and `IsOwned` expose that state, and
 `GetHandle` is always borrowed. `PopupMenuResult` distinguishes a selected
-command from user cancellation and native failure. Command ID zero is rejected
-because native popup tracking reserves zero for no selection. Build menus from
+command from user cancellation and validated setup failure. Invalid menu/owner
+preconditions are `failed`; after valid tracking begins, native result zero is
+`cancelled` because `TrackPopupMenuEx` provides no reliable extended error.
+Command ID zero is rejected because native popup tracking reserves zero for no selection. Build menus from
 `Command` to project text, enabled, checked, and visible state, then dispatch
 the selected ID through the same `CommandSet`.
 
@@ -109,6 +111,33 @@ wrapper state. Synchronization returns `false` on a native insertion failure and
 may leave a partial native projection; the caller retains the authoritative
 model and can retry. The common-controls gallery is the canonical compact
 example.
+
+### Stable and virtual navigation data
+
+`TreeView` stores only nonzero numeric `TreeItemId` values in native item
+parameters. It can find, select, rename, remove, sort, label-edit, and set state
+images by stable ID. `DecodeNotification` copies typed selection, edit, expand,
+and state-change data while the notification is valid. Comparator exceptions
+are captured inside the Win32 callback and rethrown only after native sorting
+returns.
+
+`ListView` uses the same contract through `ListItemId`. Normal report views
+support multi-selection, stable-ID sorting, subitems, state images, label
+editing, removal, and typed notification decoding. The default is multi-select;
+add `LVS_SINGLESEL` explicitly when the product requires one selection.
+When accepting an end-label notification, persist the validated text and return
+`EventResult::Handled(TRUE)`; return zero or cancel the edit to reject it.
+
+For large data, create with `ListViewOptions{.virtual_data = true}` and attach a
+shared `VirtualListModel`. The application model remains authoritative and the
+native owner-data control stores no application pointers. IDs must be unique
+and nonzero. Route `WM_NOTIFY` to `HandleNotification`; then call
+`TakeVirtualException` and rethrow on the ordinary mwtl event path if a text
+callback failed. Mutating item APIs reject owner-data views: update the model
+through `UpdateVirtualModel` to preserve selected stable IDs across reorder, or
+call `RefreshVirtualModel` after a count/text-only change. All wrappers, models, sorting, and
+notification routing stay on the creating UI thread; `GetHwnd()` remains a
+borrowed native escape hatch.
 
 ### Typed selections
 

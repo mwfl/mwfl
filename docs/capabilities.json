@@ -65,6 +65,15 @@
       "constraints": ["positions and constraints are DIPs", "the splitter owns its container HWND and borrows direct-child pane HWNDs", "all native operations belong to the creating UI thread"]
     },
     {
+      "id": "stable-navigation-data",
+      "intent": ["tree with stable item identity", "multi-select report view", "virtual ListView", "sort or label-edit native rows"],
+      "symbols": ["mwtl::TreeItemId", "mwtl::TreeView", "mwtl::ListItemId", "mwtl::ListView", "mwtl::VirtualListModel"],
+      "headers": ["mwtl/navigation_controls.h"],
+      "example": "examples/common_controls/main.cpp",
+      "tests": ["mwtl.navigation_model", "mwtl.navigation_native", "mwtl.modern_api", "mwtl.package_consumer"],
+      "constraints": ["IDs are unique stable and nonzero", "ListView is multi-select unless LVS_SINGLESEL is requested", "virtual models are shared and authoritative", "route owner-data WM_NOTIFY through HandleNotification and check TakeVirtualException", "never store application object pointers in native item data", "all operations stay on the creating UI thread"]
+    },
+    {
       "id": "typed-selections",
       "intent": ["associate typed values with native choices", "select by application value", "avoid unsafe native item pointers"],
       "symbols": ["mwtl::SelectionAdapter", "mwtl::SelectionEntry"],
@@ -196,7 +205,7 @@
       "headers": ["mwtl/control_resources.h", "mwtl/desktop.h"],
       "example": "examples/common_controls/main.cpp",
       "tests": ["mwtl.control_resources_native", "mwtl.modern_api", "mwtl.desktop"],
-      "constraints": ["ImageList owns its HIMAGELIST and toolbar borrowing requires it to outlive the toolbar", "Tooltip owns text and its HWND but borrows owner and tools", "tooltip text does not replace an accessible name", "command ID zero is invalid for popup selection", "distinguish selected cancelled and failed popup results"]
+      "constraints": ["ImageList owns its HIMAGELIST and toolbar borrowing requires it to outlive the toolbar", "Tooltip owns text and its HWND but borrows owner and tools", "tooltip text does not replace an accessible name", "command ID zero is invalid for popup selection", "invalid menu or owner is failed while zero after valid tracking is cancelled because TrackPopupMenuEx has no extended error"]
     }
   ]
 }

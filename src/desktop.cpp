@@ -200,14 +200,14 @@ PopupMenuResult Menu::TrackResult(HWND owner, POINT point, UINT flags) const noe
     if (owner == nullptr || ::IsWindow(owner) == FALSE) {
         return {PopupMenuStatus::failed, 0, ERROR_INVALID_WINDOW_HANDLE};
     }
-    ::SetLastError(ERROR_SUCCESS);
     const UINT command = static_cast<UINT>(::TrackPopupMenuEx(
         menu_, flags | TPM_RETURNCMD, point.x, point.y, owner, nullptr));
     if (command != 0) return {PopupMenuStatus::selected, command, ERROR_SUCCESS};
-    const DWORD error = ::GetLastError();
-    return error == ERROR_SUCCESS
-               ? PopupMenuResult{PopupMenuStatus::cancelled, 0, ERROR_SUCCESS}
-               : PopupMenuResult{PopupMenuStatus::failed, 0, error};
+    // TrackPopupMenuEx documents no extended error information for a zero
+    // result. Once the menu and owner preconditions above are valid, zero is
+    // the native cancellation result; GetLastError may contain an unrelated
+    // value left by menu-window internals on older Windows runners.
+    return {PopupMenuStatus::cancelled, 0, ERROR_SUCCESS};
 }
 UINT Menu::Track(HWND owner, POINT point, UINT flags) const noexcept {
     return TrackResult(owner, point, flags).command;

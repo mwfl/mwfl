@@ -167,6 +167,7 @@ add_test(NAME mwtl.build_budget
     COMMAND "${CMAKE_COMMAND}"
         "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
         "-DLIBRARY=$<TARGET_FILE:mwtl>"
+        "-DMWTL_ARCHITECTURE=${CMAKE_GENERATOR_PLATFORM}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_build_budget.cmake")
 set_tests_properties(mwtl.build_budget PROPERTIES TIMEOUT 20)
 if(MWTL_ENABLE_ASAN)
@@ -321,6 +322,24 @@ target_compile_options(mwtl_control_resources_native_test PRIVATE
 target_link_libraries(mwtl_control_resources_native_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.control_resources_native COMMAND mwtl_control_resources_native_test)
 set_tests_properties(mwtl.control_resources_native PROPERTIES TIMEOUT 30)
+
+add_executable(mwtl_navigation_native_test navigation_native_test.cpp)
+target_sources(mwtl_navigation_native_test PRIVATE
+    "${PROJECT_SOURCE_DIR}/examples/example.manifest")
+target_compile_features(mwtl_navigation_native_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_navigation_native_test PRIVATE
+    /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_navigation_native_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.navigation_native COMMAND mwtl_navigation_native_test)
+set_tests_properties(mwtl.navigation_native PROPERTIES TIMEOUT 30)
+
+add_executable(mwtl_navigation_model_test navigation_model_test.cpp)
+target_compile_features(mwtl_navigation_model_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_navigation_model_test PRIVATE
+    /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_navigation_model_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.navigation_model COMMAND mwtl_navigation_model_test)
+set_tests_properties(mwtl.navigation_model PROPERTIES TIMEOUT 20)
 
 add_executable(mwtl_hot_corner_model_test
     hot_corner_model_test.cpp

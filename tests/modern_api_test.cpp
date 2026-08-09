@@ -134,13 +134,13 @@ public:
             throw std::runtime_error("typed ListBox state failed");
         }
         slider_.SetRange(0, 100).SetValue(73);
-        const HTREEITEM root = tree_.AddItem(L"root");
-        static_cast<void>(tree_.AddItem(L"child", root));
+        const HTREEITEM root = tree_.AddItem({1001}, L"root");
+        static_cast<void>(tree_.AddItem({1002}, L"child", root));
         static_cast<void>(tree_.Expand(root));
         const std::array list_columns{mwtl::ColumnSpec{L"name", 80}};
         mwtl::Must(mwtl::AddColumns(list_view_, list_columns),
                    "populate ListView columns");
-        const int list_row = list_view_.AddItem(L"item");
+        const int list_row = list_view_.AddItem({1101}, L"item");
         static_cast<void>(list_view_.SetSubItem(list_row, 0, L"updated"));
         mwtl::Must(mwtl::AddColumns(header_, {{L"header", 80}}),
                    "populate Header columns");

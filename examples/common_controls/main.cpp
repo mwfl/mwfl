@@ -1,8 +1,23 @@
 #include <mwtl/mwtl.h>
 
 #include <array>
+#include <memory>
 
 using mwtl::operator""_dip;
+
+class GalleryListModel final : public mwtl::VirtualListModel {
+public:
+    std::size_t GetRowCount() const noexcept override { return 3; }
+    mwtl::ListItemId GetRowId(std::size_t row) const noexcept override {
+        constexpr mwtl::ListItemId ids[]{{301}, {302}, {303}};
+        return row < std::size(ids) ? ids[row] : mwtl::ListItemId{};
+    }
+    std::wstring GetCellText(std::size_t row, int column) const override {
+        static constexpr std::wstring_view names[]{L"TreeView", L"ListView", L"TabControl"};
+        if (row >= std::size(names)) return {};
+        return column == 0 ? std::wstring{names[row]} : L"Stable model-owned ID";
+    }
+};
 
 class CommonControlsWindow final : public mwtl::WindowBase {
 public:
@@ -13,7 +28,8 @@ public:
         mwtl::ControlHost rebar_ui{rebar_};
         rebar_ui.Add(toolbar_, {201}, {0.0_dip, 0.0_dip, 420.0_dip, 34.0_dip});
         ui.Add(tree_, {202}, {16.0_dip, 76.0_dip, 250.0_dip, 310.0_dip});
-        ui.Add(list_, {203}, {282.0_dip, 76.0_dip, 400.0_dip, 180.0_dip});
+        ui.Add(list_, {203}, {282.0_dip, 76.0_dip, 400.0_dip, 180.0_dip},
+               mwtl::ListViewOptions{.virtual_data = true});
         ui.Add(header_, {204}, {282.0_dip, 270.0_dip, 400.0_dip, 34.0_dip});
         ui.Add(tabs_, {205}, {282.0_dip, 318.0_dip, 400.0_dip, 68.0_dip});
         ui.Add(combo_ex_, {206}, {704.0_dip, 76.0_dip, 250.0_dip, 150.0_dip});
@@ -62,17 +78,18 @@ public:
                    "update Tooltip tool");
         mwtl::SetAccessibleName(toolbar_.GetHwnd(), L"Common Controls command toolbar");
 
-        const HTREEITEM root = tree_.AddItem(L"Common Controls");
-        tree_.AddItem(L"Navigation", root);
-        tree_.AddItem(L"Input", root);
-        tree_.AddItem(L"Commands", root);
-        tree_.Expand(root);
+        mwtl::Must(tree_.AddItem({101}, L"Common Controls") != nullptr,
+                   "add stable TreeView root");
+        tree_.AddChild({102}, L"Navigation", {101});
+        tree_.AddChild({103}, L"Input", {101});
+        tree_.AddChild({104}, L"Commands", {101});
+        tree_.Expand({101});
 
         mwtl::Must(mwtl::AddColumns(list_, {
             {L"Control", 170}, {L"Ownership", 150}}),
             "populate ListView columns");
-        const int row = list_.AddItem(L"ListView");
-        list_.SetSubItem(row, 1, L"Native HWND");
+        mwtl::Must(list_.SetVirtualModel(list_model_), "attach virtual ListView model");
+        mwtl::Must(list_.SetSelected({302}), "select stable virtual row");
         list_.SetExtendedListStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
         mwtl::Must(mwtl::AddColumns(header_, {
             {L"Standalone Header", 210}, {L"Resizable column", 180}}),
@@ -134,6 +151,13 @@ public:
     }
 
     mwtl::EventResult OnNotify(const mwtl::NotifyEvent& event) override {
+        if (event.IsFrom(list_)) {
+            LRESULT result = 0;
+            if (list_.HandleNotification(event.header, result)) {
+                if (const auto error = list_.TakeVirtualException()) std::rethrow_exception(error);
+                return mwtl::EventResult::Handled();
+            }
+        }
         if (event.Is(splitter_, mwtl::kSplitterPositionChanged)) {
             status_.SetPartText(2, L"Splitter position changed");
             return mwtl::EventResult::Handled();
@@ -145,6 +169,7 @@ private:
     static constexpr mwtl::ControlId kAbout{500};
     static constexpr mwtl::ControlId kRefresh{501};
     mwtl::Rebar rebar_; mwtl::Toolbar toolbar_; mwtl::TreeView tree_; mwtl::ListView list_;
+    std::shared_ptr<GalleryListModel> list_model_ = std::make_shared<GalleryListModel>();
     mwtl::Header header_; mwtl::TabControl tabs_; mwtl::TabWorkspaceModel tab_model_; mwtl::ComboBoxEx combo_ex_;
     mwtl::DateTimePicker date_; mwtl::MonthCalendar calendar_; mwtl::HotKey hot_key_;
     mwtl::IpAddress ip_; mwtl::TextBox number_; mwtl::UpDown spin_; mwtl::SysLink link_;
