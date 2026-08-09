@@ -220,7 +220,7 @@ bool TreeView::SortChildren(HTREEITEM parent,
         ::SetLastError(!IsWindow() ? ERROR_INVALID_WINDOW_HANDLE : ERROR_INVALID_PARAMETER);
         return false;
     }
-    TreeSortContext context{&less};
+    TreeSortContext context{.less = &less, .exception = {}};
     TVSORTCB sort{parent, CompareTreeItems, reinterpret_cast<LPARAM>(&context)};
     const bool sorted = TreeView_SortChildrenCB(GetHwnd(), &sort, FALSE) != FALSE;
     if (context.exception) std::rethrow_exception(context.exception);
@@ -493,7 +493,7 @@ bool ListView::SortItems(const std::function<bool(ListItemId, ListItemId)>& less
                                    : IsVirtual() ? ERROR_INVALID_STATE : ERROR_INVALID_PARAMETER);
         return false;
     }
-    ListSortContext context{&less};
+    ListSortContext context{.less = &less, .exception = {}};
     const bool sorted = ListView_SortItems(GetHwnd(), CompareListItems,
                                            reinterpret_cast<LPARAM>(&context)) != FALSE;
     if (context.exception) std::rethrow_exception(context.exception);
