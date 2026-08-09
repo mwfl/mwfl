@@ -105,7 +105,9 @@ jobs:
       - name: Test
         # The hosted image cannot reliably activate clang-cl GUI executables
         # (Win32 14001); the same GUI self-test runs in the MSVC matrices.
-        run: ctest --test-dir build/clang-cl -C Release --output-on-failure -E mwtl.hot_corners_self_test
+        run: >-
+          ctest --test-dir build/clang-cl -C Release --output-on-failure
+          -E 'mwtl\.(hot_corners_self_test|notepad_gui)'
 
   address-sanitizer:
     name: VS 2026 MSVC AddressSanitizer
