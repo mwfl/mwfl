@@ -99,5 +99,22 @@ int main() {
     effect = DROPEFFECT_COPY;
     if (throwing->DragEnter(data.Get(), 0, {}, &effect) != E_UNEXPECTED ||
         effect != DROPEFFECT_NONE) return 15;
+
+    HWND closing_window = ::CreateWindowExW(0, type.lpszClassName, L"", WS_OVERLAPPED,
+                                              0, 0, 100, 100, nullptr, nullptr,
+                                              type.hInstance, nullptr);
+    if (!closing_window) return 20;
+    auto closing_target = CreateOleDropTarget({
+        .enter = [&](IDataObject&, DWORD, POINTL, DWORD) {
+            if (::IsWindow(closing_window)) ::DestroyWindow(closing_window);
+            return DROPEFFECT_NONE;
+        }});
+    auto closing_registration = RegisterOleDropTarget(closing_window, closing_target);
+    if (!closing_registration) return 21;
+    effect = DROPEFFECT_COPY;
+    if (closing_target->DragEnter(data.Get(), 0, {}, &effect) != S_OK ||
+        ::IsWindow(closing_window) || effect != DROPEFFECT_NONE ||
+        closing_registration.registration.Revoke().status != OleDragStatus::window_destroyed)
+        return 22;
     return 0;
 }

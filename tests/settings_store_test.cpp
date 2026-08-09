@@ -1,5 +1,7 @@
 #include <mwtl/settings_store.h>
 
+#include "denied_registry_root.h"
+
 #include <array>
 #include <string>
 
@@ -65,5 +67,13 @@ int main() {
     if (store.Save(duplicate).status != VersionedSettingsStatus::invalid_argument) return 11;
     const std::array<std::wstring_view, 2> invalid_owned{L"Enabled", L"SchemaVersion"};
     if (store.RemoveOwned(invalid_owned).status != VersionedSettingsStatus::invalid_argument) return 14;
+
+    DeniedRegistryRoot denied_root{L"Software\\mwtl\\Tests\\DeniedSettings-" +
+                                   std::to_wstring(::GetCurrentProcessId())};
+    if (!denied_root.IsValid()) return 15;
+    VersionedSettingsStore denied{denied_root.Get(), L"Child", 1};
+    const std::array denied_values{SettingValue{L"Value", std::uint32_t{1}}};
+    const auto denied_result = denied.Save(denied_values);
+    if (denied_result.status != VersionedSettingsStatus::access_denied) return 16;
     return 0;
 }

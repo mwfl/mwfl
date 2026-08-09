@@ -1,5 +1,7 @@
 #include <mwtl/file_association.h>
 
+#include "denied_registry_root.h"
+
 #include <cstdio>
 #include <string>
 
@@ -86,5 +88,11 @@ int main() {
     if (BuildFileAssociationPlan(invalid).valid ||
         RegisterFileAssociation(HKEY_CURRENT_USER, root.path, invalid, false).status !=
             FileAssociationStatus::invalid_argument) return 10;
+
+    DeniedRegistryRoot denied_root{L"Software\\mwtl\\Tests\\DeniedAssociation-" +
+                                   std::to_wstring(::GetCurrentProcessId())};
+    if (!denied_root.IsValid()) return 17;
+    const auto denied = RegisterFileAssociation(denied_root.Get(), L"Classes", spec, false);
+    if (denied.status != FileAssociationStatus::access_denied) return 18;
     return 0;
 }

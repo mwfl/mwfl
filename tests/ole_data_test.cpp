@@ -33,6 +33,9 @@ int main() {
     if (ReadOleBytes(*object.Get(), custom, 2).status != OleDataStatus::too_large ||
         *calls != 2)
         return 6;
+    OleDataObjectBuilder bounded{8};
+    const std::array<std::byte, 9> oversized{};
+    if (bounded.AddBytes(custom, oversized) || bounded.GetFormatCount() != 0) return 17;
 
     Microsoft::WRL::ComPtr<IEnumFORMATETC> formats;
     if (FAILED(object->EnumFormatEtc(DATADIR_GET, &formats)) || !formats) return 7;
