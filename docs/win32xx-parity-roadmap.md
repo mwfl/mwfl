@@ -196,11 +196,24 @@ Machine-readable context must state intent, symbols, headers, minimum example,
 ownership, lifetime, thread constraints, failure semantics, composition points,
 known-invalid usage, and the verification command.
 
-A feature is not complete until it passes the maintained x64/ARM64 toolchains,
-relevant Debug/Release configurations, clang-cl where supported, static
-analysis, sanitizer-compatible paths, unit and lifetime tests, DPI and keyboard
-checks, documentation checks, package-consumer tests, and raw HWND
-interoperability verification.
+### Validation phases
+
+For 0.4 through 0.8, feature completion is intentionally judged on the local
+primary matrix only: Visual Studio 2026, MSVC C++20, x64, in both Debug and
+Release. That gate includes applicable unit, lifetime, DPI, keyboard,
+documentation, package-consumer, and raw HWND interoperability checks.
+
+ARM64, Visual Studio 2022, clang-cl, static analysis, sanitizers, coverage,
+Pipeline, and GitHub Actions are deferred work during these releases. Existing
+support files may remain, but failures in that deferred matrix neither block
+feature development nor justify unrelated compatibility changes before 0.8 is
+complete.
+
+After 0.8, run a dedicated compatibility and CI stabilization phase. A feature
+is ready for the subsequent broadly supported release only after the maintained
+x64/ARM64 toolchains, relevant Debug/Release configurations, clang-cl where
+supported, static analysis, sanitizer-compatible paths, package consumers, and
+remote workflows pass again.
 
 ## Immediate execution order
 
