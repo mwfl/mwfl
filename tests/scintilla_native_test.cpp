@@ -66,7 +66,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
     ScintillaEditor editor;
     notifications.editor = &editor;
     if (!editor.Create(parent, {731}, {0.0_dip, 0.0_dip, 420.0_dip, 260.0_dip}, runtime) ||
-        !HasAccessibleName(editor.GetHwnd()))
+        !HasAccessibleName(editor.GetHwnd()) || !editor.ConfigureCodeEditing())
         return 4;
     runtime.Reset();
     if (!editor.SetText(L"alpha 世界\nbeta alpha\n") || editor.GetText() != L"alpha 世界\nbeta alpha\n")
@@ -90,21 +90,23 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
     editor.Redo();
     if (editor.GetText() != L"alpha 世界\nbeta omega\n") return 12;
     if (!editor.SetReadOnly(true) || !editor.IsReadOnly() || !editor.SetReadOnly(false)) return 13;
+    editor.SetZoom(2);
+    if (editor.GetZoom() != 2 || !editor.UpdateLineNumberMargin()) return 14;
 
     RECT client{};
     ::GetClientRect(editor.GetHwnd(), &client);
-    if (client.right <= 0 || client.bottom <= 0) return 14;
+    if (client.right <= 0 || client.bottom <= 0) return 15;
     ::SetFocus(editor.GetHwnd());
-    if (::GetFocus() != editor.GetHwnd()) return 15;
+    if (::GetFocus() != editor.GetHwnd()) return 16;
 
     for (int iteration = 0; iteration < 40; ++iteration) {
         ScintillaRuntime transient_runtime;
-        if (!transient_runtime.LoadAdjacent()) return 16;
+        if (!transient_runtime.LoadAdjacent()) return 17;
         ScintillaEditor transient;
         if (!transient.Create(parent, {800 + iteration},
                               {0.0_dip, 0.0_dip, 40.0_dip, 30.0_dip}, transient_runtime) ||
             !transient.SetText(L"stress"))
-            return 17;
+            return 18;
         transient_runtime.Reset();
         transient.Destroy();
     }

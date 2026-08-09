@@ -383,6 +383,15 @@ if(MWTL_BUILD_SCINTILLA)
     mwtl_deploy_scintilla(mwtl_scintilla_native_test)
     add_test(NAME mwtl.scintilla_native COMMAND mwtl_scintilla_native_test)
     set_tests_properties(mwtl.scintilla_native PROPERTIES TIMEOUT 30 LABELS "fast;unit")
+
+    find_program(mwtl_scintilla_test_powershell NAMES pwsh powershell REQUIRED)
+    add_test(NAME mwtl.code_editor_gui
+        COMMAND "${mwtl_scintilla_test_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwtl_code_editor_demo>
+            -RuntimePath "$<TARGET_FILE_DIR:mwtl_code_editor_demo>")
+    set_tests_properties(mwtl.code_editor_gui PROPERTIES TIMEOUT 20 LABELS "gui;integration")
 endif()
 
 add_executable(mwtl_property_sheet_model_test property_sheet_model_test.cpp)
@@ -695,6 +704,7 @@ foreach(test_name IN LISTS mwtl_all_tests)
            test_name STREQUAL "mwtl.explorer_gui" OR
            test_name STREQUAL "mwtl.drawing_gui" OR
            test_name STREQUAL "mwtl.image_viewer_gui" OR
+           test_name STREQUAL "mwtl.code_editor_gui" OR
            test_name STREQUAL "mwtl.notepad_gui")
         set(labels "gui;integration")
     elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap)$")

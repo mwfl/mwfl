@@ -104,6 +104,15 @@ struct ScintillaEditorOptions {
     DWORD extended_style = WS_EX_CLIENTEDGE;
 };
 
+struct ScintillaCodeOptions {
+    std::wstring font = L"Cascadia Mono";
+    float font_size_points = 11;
+    int tab_width = 4;
+    bool use_tabs = false;
+    bool word_wrap = false;
+    bool show_line_numbers = true;
+};
+
 // Owns the Scintilla HWND and shares its loaded module. The control owns its
 // default Scintilla document; raw document/loader handles returned through Send
 // remain Scintilla-owned unless the corresponding native message says otherwise.
@@ -144,6 +153,15 @@ public:
                                             ScintillaPosition end = -1,
                                             ScintillaSearchFlags flags = {}) noexcept;
     bool ReplaceTarget(std::wstring_view replacement) noexcept;
+    bool ConfigureCodeEditing(const ScintillaCodeOptions& options = {}) noexcept;
+    bool UpdateLineNumberMargin() noexcept;
+    void SelectAll() noexcept;
+    void Cut() noexcept;
+    void Copy() noexcept;
+    void Paste() noexcept;
+    void DeleteSelection() noexcept;
+    void SetZoom(int zoom) noexcept;
+    int GetZoom() const noexcept;
     std::optional<ScintillaNotification> DecodeNotification(const NMHDR& header) const noexcept;
 
     // Native escape hatch. Message/parameters/results follow pinned Scintilla

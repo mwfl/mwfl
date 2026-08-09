@@ -4,6 +4,7 @@
 #include <Scintilla.h>
 
 #include <algorithm>
+#include <cmath>
 #include <limits>
 #include <new>
 #include <utility>
@@ -234,6 +235,50 @@ bool ScintillaEditor::ReplaceTarget(std::wstring_view replacement) noexcept {
     if (!utf8 || !GetHwnd()) return false;
     return Send(SCI_REPLACETARGET, utf8->size(), reinterpret_cast<LPARAM>(utf8->data())) >= 0;
 }
+
+bool ScintillaEditor::ConfigureCodeEditing(const ScintillaCodeOptions& options) noexcept {
+    if (!GetHwnd() || options.font_size_points <= 0 || options.tab_width <= 0) return false;
+    const auto font = ToUtf8(options.font);
+    if (!font || font->empty()) return false;
+    Send(SCI_STYLESETFONT, STYLE_DEFAULT, reinterpret_cast<LPARAM>(font->c_str()));
+    Send(SCI_STYLESETSIZEFRACTIONAL, STYLE_DEFAULT,
+         static_cast<LPARAM>(std::lround(options.font_size_points * 100.0f)));
+    Send(SCI_STYLECLEARALL);
+    Send(SCI_SETTABWIDTH, static_cast<WPARAM>(options.tab_width));
+    Send(SCI_SETUSETABS, options.use_tabs ? 1 : 0);
+    Send(SCI_SETWRAPMODE, options.word_wrap ? SC_WRAP_WORD : SC_WRAP_NONE);
+    Send(SCI_SETMARGINTYPEN, 0, SC_MARGIN_NUMBER);
+    if (!options.show_line_numbers) {
+        Send(SCI_SETMARGINWIDTHN, 0, 0);
+        return true;
+    }
+    return UpdateLineNumberMargin();
+}
+
+bool ScintillaEditor::UpdateLineNumberMargin() noexcept {
+    if (!GetHwnd()) return false;
+    ScintillaPosition lines = Send(SCI_GETLINECOUNT);
+    int digits = 3;
+    while (lines >= 1000) {
+        ++digits;
+        lines /= 10;
+    }
+    std::string sample(static_cast<std::size_t>(digits), '9');
+    sample.push_back('_');
+    const LRESULT width = Send(SCI_TEXTWIDTH, STYLE_LINENUMBER,
+                               reinterpret_cast<LPARAM>(sample.c_str()));
+    if (width <= 0) return false;
+    Send(SCI_SETMARGINWIDTHN, 0, width);
+    return true;
+}
+
+void ScintillaEditor::SelectAll() noexcept { Send(SCI_SELECTALL); }
+void ScintillaEditor::Cut() noexcept { Send(SCI_CUT); }
+void ScintillaEditor::Copy() noexcept { Send(SCI_COPY); }
+void ScintillaEditor::Paste() noexcept { Send(SCI_PASTE); }
+void ScintillaEditor::DeleteSelection() noexcept { Send(SCI_CLEAR); }
+void ScintillaEditor::SetZoom(int zoom) noexcept { Send(SCI_SETZOOM, static_cast<WPARAM>(zoom)); }
+int ScintillaEditor::GetZoom() const noexcept { return static_cast<int>(Send(SCI_GETZOOM)); }
 
 std::optional<ScintillaNotification> ScintillaEditor::DecodeNotification(
     const NMHDR& header) const noexcept {
