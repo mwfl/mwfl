@@ -88,6 +88,19 @@ add_library(mwtl STATIC
     src/window_options.cpp)
 add_library(mwtl::mwtl ALIAS mwtl)
 
+add_library(mwtl_d2d STATIC src/d2d_host.cpp)
+add_library(mwtl::d2d ALIAS mwtl_d2d)
+set_target_properties(mwtl_d2d PROPERTIES EXPORT_NAME d2d)
+target_compile_features(mwtl_d2d PUBLIC cxx_std_20)
+target_compile_options(mwtl_d2d PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWTL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwtl_d2d PRIVATE /WX)
+endif()
+target_include_directories(mwtl_d2d PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwtl_d2d PUBLIC mwtl PRIVATE d2d1)
+
 get_target_property(mwtl_wtl_include_dirs WTL::WTL INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(mwtl_wil_include_dirs WIL::WIL INTERFACE_INCLUDE_DIRECTORIES)
 
@@ -126,7 +139,7 @@ target_link_libraries(mwtl
         ole32)
 target_link_libraries(mwtl PRIVATE oleacc uuid)
 
-install(TARGETS mwtl
+install(TARGETS mwtl mwtl_d2d
     EXPORT mwtlTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
