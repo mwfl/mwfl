@@ -37,14 +37,21 @@ Status meanings:
 | Notification-area utility | Stable-GUID `TrayIcon`, typed v4 events, Explorer restart recovery and deterministic removal | supported | Hot Corners and tray native tests |
 | Registry-backed application settings | Versioned, focused application state with structured failures; no hidden global configuration singleton | composed | Notepad and Settings model/GUI tests |
 
+## 0.4–0.5 rendering and native integration scenarios
+
+| Win32++ capability or sample family | mwtl answer | Status | Evidence |
+|---|---|---|---|
+| ScintillaDemo | Optional pinned Scintilla HWND component with strict Unicode, typed notifications, commands, search, save points, and deterministic deployment | supported | `examples/code_editor`, Scintilla native/text/GUI tests |
+| DirectX/Picture/Scribble-style rendering | Application-owned models composed with recoverable Direct2D/Direct3D hosts and bounded WIC image decode | composed | Drawing/Image Viewer examples, D2D/D3D/WIC model/native/GUI tests |
+| PrintPreview and printing samples | Shared printer-independent pagination, zoom/navigation preview, printer discovery/settings, balanced job RAII, cancellation, and structured native failure | supported | `examples/printing`, printing model/job/settings/native/GUI tests |
+| OLE drag/drop | Immutable bounded Unicode/file/custom/delayed data objects, typed effect negotiation, source/target helpers, and revoke-once registration | supported | `examples/ole_drag_drop`, OLE data/drag-drop/GUI tests |
+| Registry settings and file associations | Typed versioned HKCU settings and owner-marked reversible per-user association plans; unrelated state is preserved | supported | `examples/shell_integration`, settings/association/stress tests |
+| Jump Lists, recent destinations, and taskbar integration | Stable AppUserModel/task identity, removed-task filtering, transactional Jump Lists, recent documents, progress/overlay reset, and Explorer restart recovery | supported | `examples/shell_integration`, Shell integration/GUI/stress tests |
+
 ## Later framework scenarios
 
 | Win32++ capability or sample family | mwtl direction | Status |
 |---|---|---|
-| ScintillaDemo | Optional Scintilla HWND integration with pinned CMake component and lifecycle contract | planned for 0.4 |
-| DirectX/Picture/Scribble-style rendering | Native host plus Direct2D/Direct3D surfaces and image-viewer reference | planned for 0.4 |
-| PrintPreview and printing samples | Printer/page setup/job/pagination/preview APIs | planned for 0.5 |
-| OLE drag/drop and richer Shell integration | Typed data objects, drag source/drop target, Jump Lists and taskbar integration | planned for 0.5 |
 | Multi-document frame/workspace | Modern tabbed document manager, session restore and coordinated close before legacy MDI | planned for 0.6 |
 | `CDocker`, docking and RibbonDockFrame samples | Stable-ID serializable dock panels, floating windows and accessible drag previews | planned for 0.7 |
 | `CRibbon` / RibbonFrame samples | Optional Windows Ribbon integration, never required by the core | planned for 0.8 |

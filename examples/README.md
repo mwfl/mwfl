@@ -1,6 +1,6 @@
 # mwtl examples
 
-The repository includes 35 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Code Editor, and Browser are complete reference applications with dedicated model/native/GUI evidence.
+The repository includes 38 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, and Browser are complete reference applications with dedicated model/native/GUI evidence.
 
 | Directory | Target | Focus |
 |---|---|---|
@@ -37,6 +37,9 @@ The repository includes 35 focused executables. Each example is intentionally sm
 | `explorer` | `mwtl_explorer_demo` | Stable TreeView and virtual ListView in a complete Explorer-style shell |
 | `drawing` | `mwtl_drawing_demo` | DPI-aware Direct2D drawing, resource recovery, and SVG export |
 | `image_viewer` | `mwtl_image_viewer_demo` | WIC image decode, Fit/zoom/pan, color policy, and D2D recovery |
+| `printing` | `mwtl_printing_demo` | Shared pagination, preview zoom/navigation, printer settings, safe printing, and Esc cancellation |
+| `ole_drag_drop` | `mwtl_ole_drag_drop_demo` | Unicode, files, custom OLE data, mouse drag/drop, and keyboard alternatives |
+| `shell_integration` | `mwtl_shell_integration_demo` | Versioned settings, reversible association, Jump List, Recent, and taskbar recovery |
 | `code_editor` | `mwtl_code_editor_demo` | Optional pinned Scintilla editor with Unicode files, search/replace, notifications, and dirty state |
 | `browser` | `mwtl_browser_demo` | Optional pinned WebView2 browser with offline welcome, runtime diagnostics, navigation, and process recovery |
 
