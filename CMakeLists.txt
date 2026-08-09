@@ -73,6 +73,7 @@ add_library(mwtl STATIC
     src/document.cpp
     src/detail/diagnostics.cpp
     src/message_pump.cpp
+    src/native_host.cpp
     src/recent_files.cpp
     src/property_sheet.cpp
     src/single_instance.cpp

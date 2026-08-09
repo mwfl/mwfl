@@ -16,7 +16,7 @@ foreach(header IN LISTS required_headers)
 endforeach()
 
 set(required_api
-    "class Application" "class Window" "class WindowBase" "class NativeControl"
+    "class Application" "class Window" "class WindowBase" "class NativeControl" "class NativeHost"
     "class LayoutNode" "class MessagePump" "class WindowWakeup"
     "class Error" "class Command" "class CommandSet" "class ChangeGate")
 file(GLOB public_headers "${PROJECT_ROOT}/include/mwtl/*.h")

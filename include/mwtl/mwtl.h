@@ -20,6 +20,7 @@
 #include <mwtl/layout.h>
 #include <mwtl/message_pump.h>
 #include <mwtl/must.h>
+#include <mwtl/native_host.h>
 #include <mwtl/navigation_controls.h>
 #include <mwtl/property_sheet.h>
 #include <mwtl/recent_files.h>
