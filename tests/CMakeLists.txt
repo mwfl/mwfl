@@ -622,6 +622,7 @@ if(TARGET mwtl_hello)
             mwtl_explorer_demo
             mwtl_drawing_demo
             mwtl_image_viewer_demo
+            mwtl_printing_demo
             mwtl_code_editor_demo
             mwtl_browser_demo)
         if(NOT TARGET ${example_target})
@@ -681,6 +682,13 @@ if(TARGET mwtl_hello)
             -Executable $<TARGET_FILE:mwtl_image_viewer_demo>
             -RuntimePath "${mwtl_test_runtime_path}")
     set_tests_properties(mwtl.image_viewer_gui PROPERTIES TIMEOUT 15)
+    add_test(NAME mwtl.printing_gui
+        COMMAND "${mwtl_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwtl_printing_demo>
+            -RuntimePath "${mwtl_test_runtime_path}")
+    set_tests_properties(mwtl.printing_gui PROPERTIES TIMEOUT 15)
 endif()
 
 add_test(
@@ -788,6 +796,7 @@ foreach(test_name IN LISTS mwtl_all_tests)
            test_name STREQUAL "mwtl.explorer_gui" OR
            test_name STREQUAL "mwtl.drawing_gui" OR
            test_name STREQUAL "mwtl.image_viewer_gui" OR
+           test_name STREQUAL "mwtl.printing_gui" OR
            test_name STREQUAL "mwtl.code_editor_gui" OR
            test_name STREQUAL "mwtl.browser_gui" OR
            test_name STREQUAL "mwtl.notepad_gui")
