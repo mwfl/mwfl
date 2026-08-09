@@ -38,15 +38,16 @@
     },
     {
       "version": "0.5",
-      "status": "in_progress",
+      "status": "complete",
       "theme": "printing-drag-drop-and-shell-integration",
       "acceptance": "docs/milestones/0.5.md",
       "reflection": "docs/reflections/0.5.md",
-      "depends_on": "0.4"
+      "depends_on": "0.4",
+      "evidence": ["examples/printing", "examples/ole_drag_drop", "examples/shell_integration", "mwtl.printing_gui", "mwtl.ole_drag_drop_gui", "mwtl.shell_integration_gui", "mwtl.integration_stress", "mwtl.package_consumer"]
     },
     {
       "version": "0.6",
-      "status": "planned",
+      "status": "in_progress",
       "theme": "modern-multi-document-workspace",
       "acceptance": "docs/milestones/0.6.md",
       "reflection": "docs/reflections/0.6.md",
