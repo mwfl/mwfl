@@ -22,7 +22,7 @@
     {"directory":"common_controls","intent":"specialized common controls","symbols":["TreeView","ListView","Toolbar"],"complexity":"catalog"},
     {"directory":"self_drawn_host","intent":"worker-driven native drawing","symbols":["WindowWakeup","MessagePump"],"complexity":"advanced"},
     {"directory":"system_lifecycle","intent":"power display IME and session events","symbols":["WindowMessage"],"complexity":"advanced"},
-    {"directory":"hot_corners","intent":"complete multi-monitor utility","symbols":["WindowWakeup","CommandSet","DpiContext"],"complexity":"reference"},
+    {"directory":"hot_corners","intent":"complete multi-monitor notification-area utility","symbols":["TrayIcon","CommandSet","DpiContext"],"tests":["mwtl.tray_icon_native","mwtl.hot_corners_self_test"],"complexity":"reference"},
     {"directory":"form_binding","intent":"validated data-entry form","symbols":["ValueBinding","ValidationResult","ControlHost"],"complexity":"reference"},
     {"directory":"commands","intent":"menu toolbar and shortcut actions","symbols":["CommandSet","Toolbar","Menu"],"complexity":"reference"},
     {"directory":"desktop_integration","intent":"modal custom and shell dialogs, clipboard, drops, and placement","symbols":["Dialog","DialogResult","FileDialogOptions","SavedWindowPlacement"],"tests":["mwtl.dialog_native","mwtl.desktop"],"complexity":"reference"},

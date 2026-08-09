@@ -121,6 +121,20 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 - Native handles returned or accepted by helpers retain the ownership stated by
   the corresponding API; never infer ownership from the raw handle type.
 
+## Notification-area applications
+
+- Header: `<mwtl/tray_icon.h>`.
+- `TrayIcon` owns the shell registration but borrows its owner HWND and HICON.
+- Use a stable application GUID, an `WM_APP` callback message, and a nonzero
+  16-bit callback ID. Keep every mutation and destruction on the creating UI
+  thread.
+- In `OnMessage`, call `IsTaskbarCreated` and then `Recreate`; otherwise call
+  `Decode` and handle the returned typed activation, context-menu, balloon, or
+  popup event.
+- Build context menus from the same `CommandSet` used by the main window so
+  enabled/text state and dispatch remain authoritative.
+- See `examples/hot_corners` and `docs/recipes/tray-icon.md`.
+
 ## Appearance, DPI, and accessibility
 
 - Headers: `<mwtl/appearance.h>`, `<mwtl/dpi.h>`.

@@ -27,6 +27,7 @@
 #include <mwtl/splitter.h>
 #include <mwtl/tab_workspace.h>
 #include <mwtl/timer.h>
+#include <mwtl/tray_icon.h>
 #include <mwtl/text_file.h>
 #include <mwtl/text_history.h>
 #include <mwtl/text_search.h>

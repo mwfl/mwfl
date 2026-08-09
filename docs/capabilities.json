@@ -144,6 +144,16 @@
       "constraints": ["the owner HWND is borrowed", "the wrapper owns a modeless HWND", "callbacks and child controls stay on the creating UI thread", "cross-thread close requests require the owner thread to keep pumping messages", "callback exceptions are captured"]
     },
     {
+      "id": "tray-application",
+      "intent": ["tray icon", "notification area", "background utility", "balloon notification", "Explorer restart"],
+      "symbols": ["mwtl::TrayIcon", "mwtl::TrayIconOptions", "mwtl::TrayIconEvent", "mwtl::TrayNotification"],
+      "headers": ["mwtl/tray_icon.h"],
+      "example": "examples/hot_corners/main.cpp",
+      "recipe": "docs/recipes/tray-icon.md",
+      "tests": ["mwtl.tray_icon_native", "mwtl.hot_corners_self_test"],
+      "constraints": ["use a stable application GUID", "the owner HWND and HICON are borrowed", "mutations and destruction stay on the creating UI thread", "recreate after TaskbarCreated", "dispatch menu choices through CommandSet"]
+    },
+    {
       "id": "appearance-accessibility",
       "intent": ["dark mode", "mica", "high contrast", "accessible name", "DPI"],
       "symbols": ["mwtl::AppearanceOptions", "mwtl::ApplyWindowAppearance", "mwtl::SetAccessibleName"],

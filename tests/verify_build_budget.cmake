@@ -4,10 +4,11 @@ endif()
 file(SIZE "${LIBRARY}" library_bytes)
 # Debug MSVC libraries include substantial compiler metadata. This is a
 # regression ceiling, not a claim about final executable size. The 0.3 custom
-# dialog implementation accounts for roughly 622 KiB of independently measured
-# object code; keep less than 0.5 MiB of headroom above the current library.
-if(library_bytes GREATER 13631488)
-    message(FATAL_ERROR "mwtl static library exceeded 13 MiB: ${library_bytes}")
+# dialog and tray implementations account for roughly 868 KiB of independently
+# measured object code. ARM64 Debug archives are larger than x64; keep less than
+# 0.7 MiB of x64 headroom while using one architecture-independent ceiling.
+if(library_bytes GREATER 14155776)
+    message(FATAL_ERROR "mwtl static library exceeded 13.5 MiB: ${library_bytes}")
 endif()
 
 file(GLOB public_headers "${PROJECT_ROOT}/include/mwtl/*.h")

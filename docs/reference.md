@@ -36,6 +36,7 @@ is more important than compile-time isolation.
 | `mwtl/text_history.h` | bounded text undo/redo history with saved-state tracking |
 | `mwtl/text_search.h` | deterministic forward/backward find and replace-all helpers |
 | `mwtl/timer.h` | move-only `UiTimer` |
+| `mwtl/tray_icon.h` | RAII notification-area identity, events, notifications, and Explorer recovery |
 | `mwtl/wakeup.h` | lifetime-safe worker-to-window notification |
 | `mwtl/window.h` | `Window<T>`, `WindowBase`, typed dispatch and layout ownership |
 | `mwtl/window_options.h` | window styles, bounds, resources and appearance |

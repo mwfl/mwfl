@@ -28,6 +28,10 @@ constexpr TimerId kSelfTest{2};
 constexpr UINT kToggleCommand = 200;
 constexpr UINT kExitCommand = 201;
 constexpr UINT kTrayMessage = WM_APP + 42;
+constexpr GUID kTrayIdentity{0x6ca0ba3d,
+                             0xb00e,
+                             0x483f,
+                             {0xa0, 0xe3, 0x95, 0xe2, 0xb1, 0xad, 0x5c, 0x8f}};
 constexpr wchar_t kRegistryKey[] = L"Software\\mwtl\\Examples\\HotCorners";
 constexpr std::array<std::uint32_t, 4> kDwellValues{200, 350, 500, 750};
 constexpr std::array<LONG, 4> kToleranceValues{1, 2, 4, 8};
@@ -98,7 +102,7 @@ public:
         LoadSettings();
         PopulateSettingsControls();
         ApplyFont(GetDpiContext().GetDpi());
-        AddTrayIcon();
+        if (!AddTrayIcon()) throw std::runtime_error("tray icon creation failed");
         if (!poll_.Start(*this, kPoll, 30ms)) throw std::runtime_error("poll timer creation failed");
         if (g_self_test && ::SetTimer(GetHwnd(), kSelfTest.value, 100, nullptr) == 0)
             throw std::runtime_error("self-test timer creation failed");
@@ -142,7 +146,7 @@ public:
     }
 
     EventResult OnClose() override {
-        StoreVisibleMonitor(); SaveSettings(); RemoveTrayIcon();
+        StoreVisibleMonitor(); SaveSettings(); tray_.Remove();
         SavedWindowPlacement saved{};
         if (CaptureWindowPlacement(GetHwnd(), saved))
             SaveWindowPlacementToRegistry(HKEY_CURRENT_USER, kRegistryKey, L"MainWindow", saved);
@@ -178,15 +182,21 @@ public:
             StoreVisibleMonitor(); RefreshMonitors(); PopulateMonitorList(); LoadVisibleMonitor();
             return EventResult::Handled();
         }
-        if (event.id == kTrayMessage) {
-            if (event.lparam == WM_LBUTTONDBLCLK) {
-                manual_paused_ = !manual_paused_; tracker_.Reset(); UpdateStatus();
-            } else if (event.lparam == WM_RBUTTONUP) {
-                ShowTrayMenu();
-            }
+        if (tray_.IsTaskbarCreated(event)) {
+            static_cast<void>(tray_.Recreate());
             return EventResult::Handled();
         }
-        return EventResult::Propagate();
+        const auto tray_event = tray_.Decode(event);
+        if (!tray_event) return EventResult::Propagate();
+        if (tray_event->kind == TrayIconEventKind::primary_activate) {
+            TogglePause();
+        } else if (tray_event->kind == TrayIconEventKind::context_menu) {
+            ShowTrayMenu(tray_event->screen_position);
+        } else if (tray_event->kind == TrayIconEventKind::balloon_clicked) {
+            ::ShowWindow(GetHwnd(), SW_RESTORE);
+            ::SetForegroundWindow(GetHwnd());
+        }
+        return EventResult::Handled();
     }
 
     EventResult OnDpiChanged(const DpiChangedEvent& event) override { ApplyFont(event.dpi_x); return EventResult::Propagate(); }
@@ -195,9 +205,7 @@ private:
     void BuildMenu() {
         commands_.Add(Command({static_cast<int>(kToggleCommand)},
             L"&Pause / Resume\tCtrl+E", [this] {
-                manual_paused_ = !manual_paused_;
-                tracker_.Reset();
-                UpdateStatus();
+                TogglePause();
             }).SetShortcut({FVIRTKEY | FCONTROL, 'E'}));
         commands_.Add(Command({static_cast<int>(kExitCommand)},
             L"E&xit\tCtrl+Q", [this] { static_cast<void>(Close()); })
@@ -330,28 +338,34 @@ private:
             std::to_wstring(settings_.dwell_ms) + L" ms / " + std::to_wstring(settings_.tolerance) + L" px");
     }
 
-    void AddTrayIcon() {
-        NOTIFYICONDATAW data{}; data.cbSize = sizeof(data); data.hWnd = GetHwnd(); data.uID = 1;
-        data.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP; data.uCallbackMessage = kTrayMessage;
-        data.hIcon = ::LoadIconW(nullptr, IDI_APPLICATION);
-        wcscpy_s(data.szTip, L"mwtl Hot Corners");
-        tray_added_ = ::Shell_NotifyIconW(NIM_ADD, &data) != FALSE;
+    bool AddTrayIcon() {
+        return tray_.Add({.owner = GetHwnd(),
+                          .id = 1,
+                          .callback_message = kTrayMessage,
+                          .identity = kTrayIdentity,
+                          .icon = ::LoadIconW(nullptr, IDI_APPLICATION),
+                          .tooltip = L"mwtl Hot Corners - Watching"});
     }
 
-    void RemoveTrayIcon() noexcept {
-        if (!tray_added_) return;
-        NOTIFYICONDATAW data{}; data.cbSize = sizeof(data); data.hWnd = GetHwnd(); data.uID = 1;
-        ::Shell_NotifyIconW(NIM_DELETE, &data); tray_added_ = false;
+    void TogglePause() {
+        manual_paused_ = !manual_paused_;
+        tracker_.Reset();
+        UpdateStatus();
+        const std::wstring state = manual_paused_ ? L"Paused" : L"Watching";
+        static_cast<void>(tray_.UpdateTooltip(L"mwtl Hot Corners - " + state));
+        static_cast<void>(tray_.ShowNotification(
+            {.title = L"mwtl Hot Corners", .text = state, .respect_quiet_time = true}));
     }
 
-    void ShowTrayMenu() {
+    void ShowTrayMenu(POINT point) {
         Command* toggle = commands_.Find({static_cast<int>(kToggleCommand)});
         Command* exit = commands_.Find({static_cast<int>(kExitCommand)});
         if (toggle == nullptr || exit == nullptr) return;
         toggle->SetText(manual_paused_ ? L"Resume" : L"Pause");
         Menu menu; if (!menu.CreatePopup() || !menu.AppendCommand(*toggle) ||
             !menu.AppendSeparator() || !menu.AppendCommand(*exit)) return;
-        POINT point{}; ::GetCursorPos(&point); ::SetForegroundWindow(GetHwnd());
+        if (point.x == -1 && point.y == -1) ::GetCursorPos(&point);
+        ::SetForegroundWindow(GetHwnd());
         const UINT command = menu.Track(GetHwnd(), point);
         if (command != 0) ::PostMessageW(GetHwnd(), WM_COMMAND, command, 0);
     }
@@ -371,12 +385,13 @@ private:
     UiTimer poll_;
     UiFont font_;
     AcceleratorTable accelerators_;
+    TrayIcon tray_;
     CommandSet commands_;
     std::vector<RECT> monitors_;
     hot_corners::Settings settings_;
     hot_corners::DwellTracker tracker_;
     std::size_t shown_monitor_ = 0;
-    bool manual_paused_ = false, last_fullscreen_paused_ = false, tray_added_ = false;
+    bool manual_paused_ = false, last_fullscreen_paused_ = false;
 };
 
 }  // namespace

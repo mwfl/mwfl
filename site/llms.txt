@@ -30,3 +30,6 @@ unhandled events propagate.
 
 Property-sheet reference:
 https://github.com/everettjf/mwtl/tree/main/examples/property_sheet
+
+Notification-area reference:
+https://github.com/everettjf/mwtl/tree/main/examples/hot_corners

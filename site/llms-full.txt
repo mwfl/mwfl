@@ -30,6 +30,12 @@ Task sources:
 - task dialogs: `TaskDialogOptions` provides buttons, radios, verification,
   progress, links and callbacks; controller values are callback-scoped and
   errors/exceptions are returned through `TaskDialogResult`
+- custom dialogs: move-only `Dialog` uses the normal retained layout and
+  structured accepted/cancelled/failed results; callbacks and controls remain
+  on the creating UI thread
+- tray utilities: move-only `TrayIcon` borrows its owner and HICON, uses a
+  stable GUID, decodes v4 callbacks, and recreates after `TaskbarCreated`; see
+  `examples/hot_corners` and `docs/recipes/tray-icon.md`
 
 Notepad tutorial and compiled Agent recipe:
 https://everettjf.github.io/mwtl/notepad.html

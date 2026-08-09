@@ -137,7 +137,7 @@ offline WTL/WIL sources, and building this repository.
 - DPI-aware row, column, and overlay layout;
 - menus, accelerators, modern file/folder dialogs, clipboard, shell drops,
   window placement, custom modal/modeless dialogs, task dialogs, image lists,
-  and tooltips;
+  tooltips, and RAII notification-area icons;
 - wait-aware message pumping and lifetime-safe worker wakeups.
 
 The [component reference](https://everettjf.github.io/mwtl/components/) shows

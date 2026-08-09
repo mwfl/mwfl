@@ -6,7 +6,7 @@ function(mwtl_add_agent_eval name)
     set_property(GLOBAL APPEND PROPERTY MWTL_AGENT_EVAL_TARGETS mwtl_agent_eval_${name})
 endfunction()
 
-foreach(name IN ITEMS window form layout commands background dialog placement dpi appearance native_message notepad_setting)
+foreach(name IN ITEMS window form layout commands background dialog placement dpi appearance native_message notepad_setting tray_command)
     mwtl_add_agent_eval(${name})
 endforeach()
 

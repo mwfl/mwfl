@@ -78,6 +78,7 @@ add_library(mwtl STATIC
     src/single_instance.cpp
     src/splitter.cpp
     src/tab_workspace.cpp
+    src/tray_icon.cpp
     src/module.cpp
     src/timer.cpp
     src/text_file.cpp

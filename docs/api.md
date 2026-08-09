@@ -143,6 +143,25 @@ cannot be vetoed. The move-only wrapper prevents duplicate HWND ownership, and
 destruction closes an active modeless dialog. See
 `examples/desktop_integration` for the canonical modal form.
 
+`TrayIcon` is a move-only owner for one Windows notification-area
+registration. `TrayIconOptions` requires a stable application-defined GUID and
+a nonzero 16-bit callback ID. The owner HWND, callback message, and HICON are
+borrowed; the owner and icon must outlive the registration. `Add` selects
+`NOTIFYICON_VERSION_4`, after which `Decode(WindowMessage)` maps native mouse,
+keyboard, context-menu, balloon, and popup messages to `TrayIconEvent` with
+screen coordinates. Tooltip, icon, visibility, and balloon-notification updates
+change cached state only after `Shell_NotifyIconW` succeeds.
+
+Explorer does not retain notification registrations across a restart. Route
+the registered message recognized by `IsTaskbarCreated` to `Recreate`; a failed
+retry remains `TrayIconState::recovery_pending` instead of pretending the icon
+exists. `Remove` and destruction are idempotent and abandon local identity even
+if an already-destroyed owner makes the shell deletion fail. All mutation and
+destruction belong to the creating UI thread. The GUID and callback ID are
+application identity, not owned resources. Hot Corners is the canonical
+Windows 10+ tray utility and `mwtl.tray_icon_native` exercises the real shell
+protocol.
+
 `WindowOptions::appearance` applies system/light/dark color preference, optional
 Mica/Acrylic/Tabbed backdrops, and corner policy after HWND creation. Unsupported
 DWM attributes are best-effort, and high-contrast mode always takes priority.

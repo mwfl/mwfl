@@ -57,6 +57,10 @@ at explicit Win32 boundaries.
   controls in `initialize`, and attach the ordinary retained layout with
   `SetLayout`. Modal calls use the native nested loop; modeless calls own their
   HWND. Inspect accepted/cancelled/failed status and captured callback errors.
+- Tray utilities: use move-only `TrayIcon` with a stable GUID, borrowed owner
+  and HICON, and an `WM_APP` callback. In `OnMessage`, recreate after
+  `TaskbarCreated` or decode the v4 typed event. Keep mutations and destruction
+  on the creating UI thread; build context commands from `CommandSet`.
 - Document state: `mwtl/document.h`; contents and I/O remain application-owned,
   and transitions distinguish proceed, save-required, and cancelled outcomes.
 - Unicode text files: `mwtl/text_file.h`; preserve detected UTF-8/UTF-16
@@ -74,7 +78,8 @@ at explicit Win32 boundaries.
   GUI test covers safe transitions, persistence, accessibility, DPI, repeated
   document cycles, and packaging. Use
   `docs/recipes/notepad-command-setting.md` for a compiled command-setting task.
-- Background work: `examples/wakeup` and `examples/hot_corners`.
+- Background work and notification-area utility: `examples/wakeup` and
+  `examples/hot_corners`.
 - Dialogs, clipboard, file drop, placement: `examples/desktop_integration`.
 - DPI and appearance: `examples/dpi` and `examples/appearance`.
 - Native fallback: `GetHwnd`, `WindowMessage`, and ordinary Win32 contracts.
