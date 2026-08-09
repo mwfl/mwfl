@@ -19,15 +19,17 @@
     },
     {
       "version": "0.3",
-      "status": "in_progress",
+      "status": "complete",
       "theme": "desktop-controls-and-window-composition",
       "acceptance": "docs/milestones/0.3.md",
       "reflection": "docs/reflections/0.3.md",
-      "depends_on": "0.2"
+      "depends_on": "0.2",
+      "evidence": ["examples/property_sheet", "examples/hot_corners", "examples/explorer", "mwtl.settings_application_gui", "mwtl.hot_corners_self_test", "mwtl.explorer_gui"],
+      "ci_run": 31330590815
     },
     {
       "version": "0.4",
-      "status": "planned",
+      "status": "in_progress",
       "theme": "rendering-and-third-party-hwnd-integrations",
       "acceptance": "docs/milestones/0.4.md",
       "reflection": "docs/reflections/0.4.md",
