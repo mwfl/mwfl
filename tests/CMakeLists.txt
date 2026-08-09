@@ -458,6 +458,14 @@ target_link_libraries(mwtl_shell_integration_test PRIVATE mwtl::shell)
 add_test(NAME mwtl.shell_integration COMMAND mwtl_shell_integration_test)
 set_tests_properties(mwtl.shell_integration PROPERTIES TIMEOUT 30 LABELS "native;integration")
 
+add_executable(mwtl_integration_stress_test integration_stress_test.cpp)
+target_compile_features(mwtl_integration_stress_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_integration_stress_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_integration_stress_test PRIVATE
+    mwtl::printing mwtl::ole mwtl::shell)
+add_test(NAME mwtl.integration_stress COMMAND mwtl_integration_stress_test)
+set_tests_properties(mwtl.integration_stress PROPERTIES TIMEOUT 30 LABELS "native;lifecycle")
+
 add_executable(mwtl_imaging_decode_test imaging_decode_test.cpp)
 target_compile_features(mwtl_imaging_decode_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_imaging_decode_test PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -860,7 +868,8 @@ endif()
 # Every test has semantic labels so local agents can run a predictable subset.
 get_property(mwtl_all_tests DIRECTORY PROPERTY TESTS)
 foreach(test_name IN LISTS mwtl_all_tests)
-    if(test_name MATCHES "^mwtl\\.(lifecycle|advanced\\.)")
+    if(test_name MATCHES "^mwtl\\.(lifecycle|advanced\\.)" OR
+       test_name STREQUAL "mwtl.integration_stress")
         set(labels "lifecycle;fast")
     elseif(test_name STREQUAL "mwtl.webview2_native")
         set(labels "integration;native")

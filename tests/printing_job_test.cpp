@@ -68,6 +68,26 @@ int main() {
             native_failure.end_doc != 0)
             return 4;
     }
+    for (int failed_call = 1; failed_call <= 5; ++failed_call) {
+        Counts failure;
+        PrintJob job(std::make_unique<FakeBackend>(failure, failed_call));
+        const auto status = PrintPages(job, L"failure matrix", pages,
+            [](HDC, const PrintPage&) { return true; });
+        const int expected_aborts = failed_call == 1 ? 0 : 1;
+        if (status != PrintOperationStatus::cancelled ||
+            failure.abort_doc != expected_aborts ||
+            failure.end_doc > 1) return 8 + failed_call;
+    }
+    Counts explicit_cancel;
+    {
+        PrintJob job(std::make_unique<FakeBackend>(explicit_cancel));
+        if (job.Begin(L"cancel") != PrintOperationStatus::success ||
+            job.BeginPage() != PrintOperationStatus::success ||
+            job.Cancel() != PrintOperationStatus::cancelled ||
+            job.Cancel() != PrintOperationStatus::invalid_settings ||
+            explicit_cancel.abort_doc != 1 ||
+            explicit_cancel.end_page != 0 || explicit_cancel.end_doc != 0) return 14;
+    }
     Counts teardown;
     {
         PrintJob job(std::make_unique<FakeBackend>(teardown));
