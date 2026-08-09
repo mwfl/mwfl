@@ -23,6 +23,7 @@
 #include <mwtl/navigation_controls.h>
 #include <mwtl/property_sheet.h>
 #include <mwtl/recent_files.h>
+#include <mwtl/selection.h>
 #include <mwtl/single_instance.h>
 #include <mwtl/splitter.h>
 #include <mwtl/tab_workspace.h>

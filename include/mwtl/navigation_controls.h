@@ -93,6 +93,10 @@ public:
     template <WindowLike Parent>
     bool Create(const Parent& parent, ControlId id, RectDip bounds, ComboBoxExOptions options = {}) { return Create(parent.GetHwnd(), id, bounds, options); }
     int AddItem(std::wstring_view text, int index = -1);
+    int GetItemCount() const noexcept;
+    std::optional<std::wstring> GetItemText(int index) const;
+    bool RemoveItem(int index) noexcept;
+    bool ClearItems() noexcept;
     int GetSelection() const noexcept;
     std::optional<int> GetSelectedIndex() const noexcept {
         const int index = GetSelection();

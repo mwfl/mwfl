@@ -39,6 +39,9 @@ Task sources:
 - resources: `ImageList` owns its native list while toolbars borrow it;
   `Tooltip` owns copied text/HWND while borrowing owner/tools; `Menu::TrackResult`
   distinguishes selected, cancelled, and failed context-menu outcomes
+- typed choices: `SelectionAdapter<Control, Value>` owns ComboBox/ListBox/
+  ComboBoxEx values outside native item data, rejects invalid indices, and
+  requires exclusive UI-thread item mutation
 
 Notepad tutorial and compiled Agent recipe:
 https://everettjf.github.io/mwtl/notepad.html

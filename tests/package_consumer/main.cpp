@@ -5,6 +5,9 @@ static_assert(mwtl::WindowLike<mwtl::Label>);
 static_assert(mwtl::ControlLike<mwtl::Label>);
 
 int main() {
+    mwtl::ComboBox combo;
+    mwtl::SelectionAdapter<mwtl::ComboBox, int> selections{combo};
+    static_cast<void>(selections.Size());
     mwtl::TabWorkspaceModel tabs;
     const bool tab_added = tabs.Add({{7}, L"Installed API", false, true});
     const auto dpi = mwtl::DpiContext::FromDpi(144);

@@ -25,6 +25,11 @@ native windows. All UI use stays on the creating thread. Workers copy a
 `WindowWakeup`, call `TryWake`, and let `OnWakeup` update UI. A false wake during
 shutdown is expected. Never capture locals into long-lived asynchronous work.
 
+`SelectionAdapter<Control, Value>` owns typed ComboBox/ListBox/ComboBoxEx
+values separately from native labels. It rejects invalid indices, is
+UI-thread-only, and requires exclusive item mutation; never store application
+object pointers in native item data.
+
 ## Layout
 
 Use `_dip` literals. `Auto` measures content, `Fixed` reserves a DIP length, and

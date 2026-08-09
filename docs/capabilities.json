@@ -65,6 +65,15 @@
       "constraints": ["positions and constraints are DIPs", "the splitter owns its container HWND and borrows direct-child pane HWNDs", "all native operations belong to the creating UI thread"]
     },
     {
+      "id": "typed-selections",
+      "intent": ["associate typed values with native choices", "select by application value", "avoid unsafe native item pointers"],
+      "symbols": ["mwtl::SelectionAdapter", "mwtl::SelectionEntry"],
+      "headers": ["mwtl/selection.h", "mwtl/controls.h", "mwtl/navigation_controls.h"],
+      "example": "tests/modern_api_test.cpp",
+      "tests": ["mwtl.selection", "mwtl.modern_api", "mwtl.package_consumer"],
+      "constraints": ["the adapter owns labels and values while the control owns only native labels", "the adapter must be the exclusive item mutator", "all adapter and control operations stay on the control UI thread"]
+    },
+    {
       "id": "unicode-text-file",
       "intent": ["open a text document", "save a text document safely", "detect an external file change"],
       "symbols": ["mwtl::ReadTextFile", "mwtl::WriteTextFileAtomic", "mwtl::TextFile", "mwtl::FileStamp"],

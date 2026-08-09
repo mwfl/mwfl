@@ -178,6 +178,52 @@ int ComboBoxEx::AddItem(std::wstring_view text, int index) {
     return static_cast<int>(::SendMessageW(GetHwnd(), CBEM_INSERTITEMW, 0, reinterpret_cast<LPARAM>(&item)));
 }
 
+int ComboBoxEx::GetItemCount() const noexcept {
+    return IsWindow() ? static_cast<int>(::SendMessageW(GetHwnd(), CB_GETCOUNT, 0, 0)) : CB_ERR;
+}
+
+std::optional<std::wstring> ComboBoxEx::GetItemText(int index) const {
+    if (!IsWindow()) {
+        ::SetLastError(ERROR_INVALID_WINDOW_HANDLE);
+        return std::nullopt;
+    }
+    const int count = GetItemCount();
+    if (index < 0 || count == CB_ERR || index >= count) {
+        ::SetLastError(ERROR_INVALID_INDEX);
+        return std::nullopt;
+    }
+    const LRESULT length = ::SendMessageW(GetHwnd(), CB_GETLBTEXTLEN, index, 0);
+    if (length == CB_ERR) return std::nullopt;
+    std::wstring value(static_cast<std::size_t>(length) + 1, L'\0');
+    const LRESULT copied = ::SendMessageW(GetHwnd(), CB_GETLBTEXT, index,
+                                           reinterpret_cast<LPARAM>(value.data()));
+    if (copied == CB_ERR) return std::nullopt;
+    value.resize(static_cast<std::size_t>(copied));
+    return value;
+}
+
+bool ComboBoxEx::RemoveItem(int index) noexcept {
+    if (!IsWindow()) {
+        ::SetLastError(ERROR_INVALID_WINDOW_HANDLE);
+        return false;
+    }
+    const int count = GetItemCount();
+    if (index < 0 || count == CB_ERR || index >= count) {
+        ::SetLastError(ERROR_INVALID_INDEX);
+        return false;
+    }
+    return ::SendMessageW(GetHwnd(), CBEM_DELETEITEM, index, 0) != CB_ERR;
+}
+
+bool ComboBoxEx::ClearItems() noexcept {
+    if (!IsWindow()) {
+        ::SetLastError(ERROR_INVALID_WINDOW_HANDLE);
+        return false;
+    }
+    ::SendMessageW(GetHwnd(), CB_RESETCONTENT, 0, 0);
+    return true;
+}
+
 int ComboBoxEx::GetSelection() const noexcept { return IsWindow() ? static_cast<int>(::SendMessageW(GetHwnd(), CB_GETCURSEL, 0, 0)) : CB_ERR; }
 bool ComboBoxEx::SetSelection(int index) noexcept { return IsWindow() && ::SendMessageW(GetHwnd(), CB_SETCURSEL, index, 0) != CB_ERR; }
 

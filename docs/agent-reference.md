@@ -52,6 +52,10 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
   IDs and bounds are required.
 - Failure: most creating/mutating operations return `bool`; check them or use
   `Must` during setup.
+- Typed choices: include `mwtl/selection.h` and use
+  `SelectionAdapter<Control, Value>` with ComboBox, ListBox, or ComboBoxEx. It
+  owns values outside Win32 item data, rejects invalid indices, and must be the
+  exclusive item mutator on the control's UI thread.
 
 ## Layout
 

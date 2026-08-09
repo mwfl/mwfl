@@ -25,7 +25,7 @@ foreach(mode IN ITEMS
         TIMEOUT 20)
 endforeach()
 
-foreach(header IN ITEMS application command_controls concepts control_batch control_host control_resources controls desktop dialog document dpi events input_controls layout message_pump must navigation_controls property_sheet recent_files single_instance splitter tab_workspace text_file text_history text_search timer tray_icon window window_options wakeup umbrella)
+foreach(header IN ITEMS application command_controls concepts control_batch control_host control_resources controls desktop dialog document dpi events input_controls layout message_pump must navigation_controls property_sheet recent_files selection single_instance splitter tab_workspace text_file text_history text_search timer tray_icon window window_options wakeup umbrella)
     # Every public header must remain independently includable.
     add_library(mwtl_header_${header} OBJECT header_${header}.cpp)
     target_compile_features(mwtl_header_${header} PRIVATE cxx_std_20)
@@ -94,6 +94,13 @@ target_compile_options(mwtl_control_batch_test PRIVATE /W4 /permissive- /EHsc /u
 target_link_libraries(mwtl_control_batch_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.control_batch COMMAND mwtl_control_batch_test)
 set_tests_properties(mwtl.control_batch PROPERTIES TIMEOUT 20)
+
+add_executable(mwtl_selection_test selection_test.cpp)
+target_compile_features(mwtl_selection_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_selection_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_selection_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.selection COMMAND mwtl_selection_test)
+set_tests_properties(mwtl.selection PROPERTIES TIMEOUT 20)
 
 add_executable(mwtl_layout_test layout_test.cpp)
 target_compile_features(mwtl_layout_test PRIVATE cxx_std_20)

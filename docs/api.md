@@ -110,6 +110,25 @@ may leave a partial native projection; the caller retains the authoritative
 model and can retry. The common-controls gallery is the canonical compact
 example.
 
+### Typed selections
+
+`SelectionAdapter<Control, Value>` binds application values to `ComboBox`,
+`ListBox`, or `ComboBoxEx` labels without storing object pointers in native item
+data. The adapter owns copied labels and values, validates every index, exposes
+the selected value as an optional reference, and supports typed lookup,
+removal, and clearing. It requires exclusive ownership of item mutations: keep
+the adapter on the control's UI thread, destroy it before the control, and do
+not add or reorder native items behind it. `IsSynchronized()` detects count
+drift. Native handles remain borrowed escape hatches.
+
+```cpp
+mwtl::SelectionAdapter<mwtl::ComboBox, ThemeId> themes{theme_combo};
+mwtl::Must(themes.Add(L"System", ThemeId::system), "add theme");
+mwtl::Must(themes.Add(L"Dark", ThemeId::dark), "add theme");
+mwtl::Must(themes.SelectValue(ThemeId::system), "select theme");
+if (const auto selected = themes.GetSelectedValue()) SaveTheme(selected->get());
+```
+
 `Splitter` owns a focusable native child container and borrows two distinct
 pane HWNDs created as its direct children. The application must detach panes
 before destroying them independently; destroying the splitter naturally

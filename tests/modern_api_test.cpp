@@ -113,13 +113,26 @@ public:
         mwtl::Must(timer_.Start(*this, kTimer, 1ms), "start timer");
 
         check_.SetChecked(true).SetEnabled(true);
-        const std::array combo_items{L"first", L"second"};
-        mwtl::Must(mwtl::AddItems(combo_, combo_items),
-                   "populate ComboBox");
+        mwtl::SelectionAdapter<mwtl::ComboBox, int> combo_items{combo_};
+        mwtl::Must(combo_items.Add(L"first", 10), "add typed ComboBox item");
+        mwtl::Must(combo_items.Add(L"second", 20), "add typed ComboBox item");
+        mwtl::Must(combo_items.SelectValue(20), "select typed ComboBox value");
+        if (!combo_items.GetSelectedValue() ||
+            combo_items.GetSelectedValue()->get() != 20 ||
+            combo_.GetItemText(1) != L"second" || combo_.GetItemText(2)) {
+            throw std::runtime_error("typed ComboBox state failed");
+        }
         progress_.SetRange(0, 100).SetValue(64);
         radio_.SetChecked(true);
-        mwtl::Must(mwtl::AddItems(list_, {L"first", L"second"}),
-                   "populate ListBox");
+        mwtl::SelectionAdapter<mwtl::ListBox, std::wstring> list_items{list_};
+        mwtl::Must(list_items.Add(L"first", L"alpha"), "add typed ListBox item");
+        mwtl::Must(list_items.Add(L"second", L"beta"), "add typed ListBox item");
+        mwtl::Must(list_items.SelectValue(L"beta"), "select typed ListBox value");
+        if (!list_items.GetSelectedValue() ||
+            list_items.GetSelectedValue()->get() != L"beta" ||
+            list_.GetItemText(0) != L"first") {
+            throw std::runtime_error("typed ListBox state failed");
+        }
         slider_.SetRange(0, 100).SetValue(73);
         const HTREEITEM root = tree_.AddItem(L"root");
         static_cast<void>(tree_.AddItem(L"child", root));
@@ -158,9 +171,14 @@ public:
             tabs_.GetSelectedTabId() != mwtl::TabId{901}) {
             throw std::runtime_error("native tab selection or removal failed");
         }
-        mwtl::Must(mwtl::AddItems(combo_ex_, {L"combo"}),
-                   "populate ComboBoxEx");
-        static_cast<void>(combo_ex_.SetSelection(0));
+        mwtl::SelectionAdapter<mwtl::ComboBoxEx, int> combo_ex_items{combo_ex_};
+        mwtl::Must(combo_ex_items.Add(L"combo", 42), "add typed ComboBoxEx item");
+        mwtl::Must(combo_ex_items.Select(0), "select typed ComboBoxEx item");
+        if (!combo_ex_items.GetSelectedValue() ||
+            combo_ex_items.GetSelectedValue()->get() != 42 ||
+            combo_ex_.GetItemText(0) != L"combo") {
+            throw std::runtime_error("typed ComboBoxEx state failed");
+        }
         hot_key_.SetValue(mwtl::HotKeyValue{'K', HOTKEYF_CONTROL});
         ip_.SetValue(mwtl::IpAddressValue{{127, 0, 0, 1}});
         spin_.SetBuddy(spin_text_).SetRange(0, 100).SetValue(42);
