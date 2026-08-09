@@ -10,7 +10,7 @@
   "milestones": [
     {
       "version": "0.2",
-      "status": "in_progress",
+      "status": "complete",
       "theme": "real-sdi-application",
       "acceptance": "docs/milestones/0.2.md",
       "reflection": "docs/reflections/0.2.md",
@@ -18,7 +18,7 @@
     },
     {
       "version": "0.3",
-      "status": "planned",
+      "status": "in_progress",
       "theme": "desktop-controls-and-window-composition",
       "acceptance": "docs/milestones/0.3.md",
       "reflection": "docs/reflections/0.3.md",
