@@ -88,6 +88,27 @@ int main() {
             explicit_cancel.abort_doc != 1 ||
             explicit_cancel.end_page != 0 || explicit_cancel.end_doc != 0) return 14;
     }
+    Counts predicate_cancel;
+    {
+        PrintJob job(std::make_unique<FakeBackend>(predicate_cancel));
+        int rendered = 0;
+        const auto status = PrintPages(job, L"predicate cancel", pages,
+            [&](HDC, const PrintPage&) { ++rendered; return true; },
+            [](const PrintPage& page) { return page.index == 1; });
+        if (status != PrintOperationStatus::cancelled || rendered != 1 ||
+            predicate_cancel.start_page != 1 || predicate_cancel.end_page != 1 ||
+            predicate_cancel.abort_doc != 1 || predicate_cancel.end_doc != 0) return 15;
+    }
+    Counts predicate_exception;
+    {
+        PrintJob job(std::make_unique<FakeBackend>(predicate_exception));
+        const auto status = PrintPages(job, L"predicate exception", pages,
+            [](HDC, const PrintPage&) { return true; },
+            [](const PrintPage&) -> bool { throw std::runtime_error("cancel check"); });
+        if (status != PrintOperationStatus::render_exception ||
+            predicate_exception.start_page != 0 || predicate_exception.abort_doc != 1)
+            return 16;
+    }
     Counts teardown;
     {
         PrintJob job(std::make_unique<FakeBackend>(teardown));

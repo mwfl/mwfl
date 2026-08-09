@@ -389,7 +389,8 @@ disposable device cache. See `examples/image_viewer` and
 `<mwtl/printing_settings.h>` belong to `mwtl::printing`. Pagination and preview
 models are independent of HWNDs and printers. `PrintJob` owns the native
 StartDoc/StartPage transaction and aborts incomplete work; render callbacks
-borrow the HDC. Printer enumeration, capabilities, DEVMODE/DEVNAMES settings,
+borrow the HDC. `PrintPages` accepts a pre-page cancellation check and contains
+exceptions from both callbacks. Printer enumeration, capabilities, DEVMODE/DEVNAMES settings,
 dialog cancellation, and native failures have structured results.
 
 `<mwtl/ole_data.h>` and `<mwtl/ole_drag_drop.h>` belong to `mwtl::ole` and

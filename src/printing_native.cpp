@@ -235,11 +235,21 @@ HDC PrintJob::DeviceContext() const noexcept {
 
 PrintOperationStatus PrintPages(PrintJob& job, std::wstring_view title,
                                 std::span<const PrintPage> pages,
-                                const PrintPageRenderer& renderer) noexcept {
+                                const PrintPageRenderer& renderer,
+                                const PrintCancellationCheck& should_cancel) noexcept {
     if (pages.empty() || !renderer) return PrintOperationStatus::invalid_settings;
     auto status = job.Begin(title);
     if (status != PrintOperationStatus::success) return status;
     for (const auto& page : pages) {
+        try {
+            if (should_cancel && should_cancel(page)) {
+                job.Cancel();
+                return PrintOperationStatus::cancelled;
+            }
+        } catch (...) {
+            job.Cancel();
+            return PrintOperationStatus::render_exception;
+        }
         status = job.BeginPage();
         if (status != PrintOperationStatus::success) return status;
         try {

@@ -245,7 +245,7 @@
       "example": "examples/printing/main.cpp",
       "recipe": "docs/tutorials/printing-ole-shell.md",
       "tests": ["mwtl.printing_model", "mwtl.printing_job", "mwtl.printing_settings", "mwtl.printing_gui", "mwtl.package_consumer"],
-      "constraints": ["request the printing component and link mwtl::printing", "document and pagination remain printer independent", "printer HDCs are borrowed by render callbacks", "PrintJob balances every native transaction and aborts incomplete work", "preview state is never authoritative", "missing printers are structured results"]
+      "constraints": ["request the printing component and link mwtl::printing", "document and pagination remain printer independent", "printer HDCs are borrowed by render callbacks", "PrintJob balances every native transaction and aborts incomplete work", "the optional cancellation check runs before each page", "preview state is never authoritative", "missing printers are structured results"]
     },
     {
       "id": "ole-drag-drop",

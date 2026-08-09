@@ -101,7 +101,11 @@ public:
         mwtl::Must(mwtl::SetAccessibleName(GetHwnd(), L"Document print preview"),
                    "name print preview window");
         mwtl::ApplyWindowAppearance(GetHwnd());
-        UpdateStatus(L"Preview uses deterministic application pagination");
+        const auto printers = mwtl::EnumerateLocalPrinters();
+        const std::wstring discovery = printers
+            ? L" | " + std::to_wstring(printers.printers.size()) + L" printer(s) discovered"
+            : L" | printer discovery unavailable";
+        UpdateStatus(L"Preview uses deterministic application pagination" + discovery);
         if (g_self_test && !::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0))
             throw std::runtime_error("post printing self-test failed");
     }
@@ -261,9 +265,13 @@ private:
             [this](HDC dc, const mwtl::PrintPage& page) {
                 RECT bounds{0, 0, ::GetDeviceCaps(dc, HORZRES), ::GetDeviceCaps(dc, VERTRES)};
                 return RenderPage(dc, bounds, page, lines_, false);
+            }, [](const mwtl::PrintPage&) {
+                return (::GetAsyncKeyState(VK_ESCAPE) & 0x8000) != 0;
             });
-        UpdateStatus(result == mwtl::PrintOperationStatus::success
-                         ? L"Document printed" : L"Printing cancelled or failed");
+        if (result == mwtl::PrintOperationStatus::success) UpdateStatus(L"Document printed");
+        else if (result == mwtl::PrintOperationStatus::cancelled)
+            UpdateStatus(L"Printing cancelled safely (Esc)");
+        else UpdateStatus(L"Printing failed");
     }
 
     void RunSelfTest() noexcept {

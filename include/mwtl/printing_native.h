@@ -98,11 +98,15 @@ private:
 };
 
 using PrintPageRenderer = std::function<bool(HDC, const PrintPage&)>;
+using PrintCancellationCheck = std::function<bool(const PrintPage&)>;
 
 // Renders exactly the supplied pages. False, exceptions, or any native failure
-// abort the document. A successful return guarantees EndDoc completed.
+// abort the document. should_cancel is called before each page; true aborts and
+// returns cancelled. Callback exceptions are contained as render_exception.
+// A successful return guarantees EndDoc completed.
 PrintOperationStatus PrintPages(PrintJob& job, std::wstring_view title,
                                 std::span<const PrintPage> pages,
-                                const PrintPageRenderer& renderer) noexcept;
+                                const PrintPageRenderer& renderer,
+                                const PrintCancellationCheck& should_cancel = {}) noexcept;
 
 }  // namespace mwtl
