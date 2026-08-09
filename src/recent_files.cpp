@@ -105,7 +105,8 @@ RecentFilesLoadResult LoadRecentFilesFromRegistry(
     }
     // Registry order is most-recent first; Add inserts at the front.
     for (auto current = parsed.rbegin(); current != parsed.rend(); ++current) result.Add(*current);
-    return {.value = std::move(result), .status = SettingsStatus::success};
+    return {.value = std::move(result), .status = SettingsStatus::success,
+            .native_error = ERROR_SUCCESS};
 }
 
 SettingsWriteResult SaveRecentFilesToRegistry(
@@ -133,7 +134,8 @@ SettingsWriteResult SaveRecentFilesToRegistry(
     error = ::RegSetValueExW(key.Get(), L"RecentFiles", 0, REG_MULTI_SZ,
         reinterpret_cast<const BYTE*>(data.data()), static_cast<DWORD>(data.size() * sizeof(wchar_t)));
     return error == ERROR_SUCCESS
-        ? SettingsWriteResult{.status = SettingsStatus::success}
+        ? SettingsWriteResult{.status = SettingsStatus::success,
+                              .native_error = ERROR_SUCCESS}
         : SettingsWriteResult{.status = StatusFromError(error), .native_error = error};
 }
 

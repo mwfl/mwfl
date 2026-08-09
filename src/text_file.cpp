@@ -162,6 +162,14 @@ std::filesystem::path TemporarySibling(const std::filesystem::path& path) {
     return temporary;
 }
 
+TextFileReadResult ReadFailure(TextFileStatus status, DWORD error = ERROR_SUCCESS) {
+    return {.value = std::nullopt, .status = status, .native_error = error};
+}
+
+TextFileWriteResult WriteFailure(TextFileStatus status, DWORD error = ERROR_SUCCESS) {
+    return {.stamp = std::nullopt, .status = status, .native_error = error};
+}
+
 }  // namespace
 
 TextFileReadResult ReadTextFile(const std::filesystem::path& path) {
@@ -170,16 +178,19 @@ TextFileReadResult ReadTextFile(const std::filesystem::path& path) {
         nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, nullptr)};
     if (!file.Valid()) {
         const DWORD error = ::GetLastError();
-        return {.status = StatusFromError(error), .native_error = error};
+        return ReadFailure(StatusFromError(error), error);
     }
     FileStamp before{};
     DWORD error{};
-    if (!QueryStamp(file.Get(), before, error)) return {.status = StatusFromError(error), .native_error = error};
+    if (!QueryStamp(file.Get(), before, error))
+        return ReadFailure(StatusFromError(error), error);
     std::vector<std::byte> bytes;
-    if (!ReadAll(file.Get(), before.size, bytes, error)) return {.status = StatusFromError(error), .native_error = error};
+    if (!ReadAll(file.Get(), before.size, bytes, error))
+        return ReadFailure(StatusFromError(error), error);
     FileStamp after{};
-    if (!QueryStamp(file.Get(), after, error)) return {.status = StatusFromError(error), .native_error = error};
-    if (before != after) return {.status = TextFileStatus::changed};
+    if (!QueryStamp(file.Get(), after, error))
+        return ReadFailure(StatusFromError(error), error);
+    if (before != after) return ReadFailure(TextFileStatus::changed);
 
     TextFile result;
     result.stamp = after;
@@ -200,14 +211,18 @@ TextFileReadResult ReadTextFile(const std::filesystem::path& path) {
         result.encoding = bom ? TextEncoding::utf8_bom : TextEncoding::utf8;
         decoded = DecodeUtf8(bytes.data() + (bom ? 3 : 0), bytes.size() - (bom ? 3 : 0), result.text);
     }
-    if (!decoded) return {.status = TextFileStatus::invalid_encoding, .native_error = ERROR_NO_UNICODE_TRANSLATION};
-    return {.value = std::move(result), .status = TextFileStatus::success};
+    if (!decoded)
+        return ReadFailure(TextFileStatus::invalid_encoding,
+                           ERROR_NO_UNICODE_TRANSLATION);
+    return {.value = std::move(result), .status = TextFileStatus::success,
+            .native_error = ERROR_SUCCESS};
 }
 
 TextFileWriteResult WriteTextFileAtomic(const std::filesystem::path& path,
                                         std::wstring_view text, TextEncoding encoding,
                                         std::optional<FileStamp> expected) {
-    if (path.empty()) return {.status = TextFileStatus::io_error, .native_error = ERROR_INVALID_NAME};
+    if (path.empty())
+        return WriteFailure(TextFileStatus::io_error, ERROR_INVALID_NAME);
     if (expected) {
         FileHandle current{::CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ,
             nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr)};
@@ -215,29 +230,33 @@ TextFileWriteResult WriteTextFileAtomic(const std::filesystem::path& path,
         FileStamp actual{};
         if (!current.Valid()) {
             error = ::GetLastError();
-            return {.status = error == ERROR_FILE_NOT_FOUND ? TextFileStatus::changed : StatusFromError(error),
-                    .native_error = error};
+            return WriteFailure(
+                error == ERROR_FILE_NOT_FOUND ? TextFileStatus::changed
+                                              : StatusFromError(error),
+                error);
         }
-        if (!QueryStamp(current.Get(), actual, error)) return {.status = StatusFromError(error), .native_error = error};
-        if (actual != *expected) return {.status = TextFileStatus::changed};
+        if (!QueryStamp(current.Get(), actual, error))
+            return WriteFailure(StatusFromError(error), error);
+        if (actual != *expected) return WriteFailure(TextFileStatus::changed);
     }
     std::vector<std::byte> bytes;
     if (!Encode(text, encoding, bytes)) {
-        return {.status = TextFileStatus::invalid_encoding, .native_error = ERROR_NO_UNICODE_TRANSLATION};
+        return WriteFailure(TextFileStatus::invalid_encoding,
+                            ERROR_NO_UNICODE_TRANSLATION);
     }
     const auto temporary = TemporarySibling(path);
     FileHandle output{::CreateFileW(temporary.c_str(), GENERIC_WRITE, 0, nullptr,
         CREATE_NEW, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH, nullptr)};
     if (!output.Valid()) {
         const DWORD error = ::GetLastError();
-        return {.status = StatusFromError(error), .native_error = error};
+        return WriteFailure(StatusFromError(error), error);
     }
     DWORD error{};
     if (!WriteAll(output.Get(), bytes, error) || !::FlushFileBuffers(output.Get())) {
         if (error == ERROR_SUCCESS) error = ::GetLastError();
         output.Reset();
         ::DeleteFileW(temporary.c_str());
-        return {.status = StatusFromError(error), .native_error = error};
+        return WriteFailure(StatusFromError(error), error);
     }
     // Close the temporary before replacement.
     output.Reset();
@@ -249,23 +268,24 @@ TextFileWriteResult WriteTextFileAtomic(const std::filesystem::path& path,
             if (!current.Valid()) error = ::GetLastError();
             current.Reset();
             ::DeleteFileW(temporary.c_str());
-            return {.status = TextFileStatus::changed, .native_error = error};
+            return WriteFailure(TextFileStatus::changed, error);
         }
     }
     if (!::MoveFileExW(temporary.c_str(), path.c_str(),
                        MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
         error = ::GetLastError();
         ::DeleteFileW(temporary.c_str());
-        return {.status = StatusFromError(error), .native_error = error};
+        return WriteFailure(StatusFromError(error), error);
     }
     FileHandle saved{::CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ,
         nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr)};
     FileStamp stamp{};
     if (!saved.Valid() || !QueryStamp(saved.Get(), stamp, error)) {
         if (!saved.Valid()) error = ::GetLastError();
-        return {.status = StatusFromError(error), .native_error = error};
+        return WriteFailure(StatusFromError(error), error);
     }
-    return {.stamp = stamp, .status = TextFileStatus::success};
+    return {.stamp = stamp, .status = TextFileStatus::success,
+            .native_error = ERROR_SUCCESS};
 }
 
 }  // namespace mwtl

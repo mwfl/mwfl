@@ -86,7 +86,8 @@ ActivationResult SingleInstance::ForwardActivation(
                     reinterpret_cast<LPARAM>(&data), SMTO_ABORTIFHUNG | SMTO_BLOCK,
                     static_cast<UINT>((std::max)(timeout.count(), 1ll)), &receiver_result)) {
                 return receiver_result != 0
-                    ? ActivationResult{.status = ActivationStatus::delivered}
+                    ? ActivationResult{.status = ActivationStatus::delivered,
+                                       .native_error = ERROR_SUCCESS}
                     : ActivationResult{.status = ActivationStatus::io_error, .native_error = ERROR_INVALID_DATA};
             }
             const DWORD error = ::GetLastError();
