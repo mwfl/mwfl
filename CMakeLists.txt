@@ -114,6 +114,19 @@ target_include_directories(mwtl_d3d PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(mwtl_d3d PUBLIC mwtl PRIVATE d3d11 dxgi)
 
+add_library(mwtl_imaging STATIC src/imaging.cpp)
+add_library(mwtl::imaging ALIAS mwtl_imaging)
+set_target_properties(mwtl_imaging PROPERTIES EXPORT_NAME imaging)
+target_compile_features(mwtl_imaging PUBLIC cxx_std_20)
+target_compile_options(mwtl_imaging PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWTL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwtl_imaging PRIVATE /WX)
+endif()
+target_include_directories(mwtl_imaging PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwtl_imaging PUBLIC mwtl PRIVATE windowscodecs)
+
 get_target_property(mwtl_wtl_include_dirs WTL::WTL INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(mwtl_wil_include_dirs WIL::WIL INTERFACE_INCLUDE_DIRECTORIES)
 
@@ -152,7 +165,7 @@ target_link_libraries(mwtl
         ole32)
 target_link_libraries(mwtl PRIVATE oleacc uuid)
 
-install(TARGETS mwtl mwtl_d2d mwtl_d3d
+install(TARGETS mwtl mwtl_d2d mwtl_d3d mwtl_imaging
     EXPORT mwtlTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

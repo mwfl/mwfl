@@ -12,5 +12,8 @@ endif()
 if(TARGET mwtl::d3d)
     set(mwtl_d3d_FOUND TRUE)
 endif()
+if(TARGET mwtl::imaging)
+    set(mwtl_imaging_FOUND TRUE)
+endif()
 
 check_required_components(mwtl)
