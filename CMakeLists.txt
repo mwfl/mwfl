@@ -161,7 +161,10 @@ target_include_directories(mwtl_ole PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(mwtl_ole PUBLIC mwtl PRIVATE ole32 shell32)
 
-add_library(mwtl_shell STATIC src/settings_store.cpp src/file_association.cpp)
+add_library(mwtl_shell STATIC
+    src/settings_store.cpp
+    src/file_association.cpp
+    src/shell_integration.cpp)
 add_library(mwtl::shell ALIAS mwtl_shell)
 set_target_properties(mwtl_shell PROPERTIES EXPORT_NAME shell)
 target_compile_features(mwtl_shell PUBLIC cxx_std_20)
@@ -172,7 +175,7 @@ endif()
 target_include_directories(mwtl_shell PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(mwtl_shell PUBLIC mwtl PRIVATE advapi32 shell32 ole32)
+target_link_libraries(mwtl_shell PUBLIC mwtl PRIVATE advapi32 shell32 ole32 propsys)
 
 if(MWTL_BUILD_SCINTILLA)
     FetchContent_Declare(mwtl_scintilla_source

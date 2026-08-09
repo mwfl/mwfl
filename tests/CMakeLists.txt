@@ -446,6 +446,18 @@ target_link_libraries(mwtl_file_association_test PRIVATE mwtl::shell)
 add_test(NAME mwtl.file_association COMMAND mwtl_file_association_test)
 set_tests_properties(mwtl.file_association PROPERTIES TIMEOUT 20 LABELS "native;unit")
 
+add_library(mwtl_header_shell_integration OBJECT header_shell_integration.cpp)
+target_compile_features(mwtl_header_shell_integration PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_shell_integration PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_shell_integration PRIVATE mwtl::shell)
+
+add_executable(mwtl_shell_integration_test shell_integration_test.cpp)
+target_compile_features(mwtl_shell_integration_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_shell_integration_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_shell_integration_test PRIVATE mwtl::shell)
+add_test(NAME mwtl.shell_integration COMMAND mwtl_shell_integration_test)
+set_tests_properties(mwtl.shell_integration PROPERTIES TIMEOUT 30 LABELS "native;integration")
+
 add_executable(mwtl_imaging_decode_test imaging_decode_test.cpp)
 target_compile_features(mwtl_imaging_decode_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_imaging_decode_test PRIVATE /W4 /permissive- /EHsc /utf-8)

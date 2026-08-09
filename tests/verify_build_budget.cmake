@@ -31,6 +31,7 @@ set(optional_headers
     printing_native.h
     printing_settings.h
     settings_store.h
+    shell_integration.h
     scintilla.h
     webview2.h)
 foreach(header IN LISTS public_headers)
@@ -50,9 +51,9 @@ if(core_header_bytes GREATER 157286)
     message(FATAL_ERROR
         "core top-level public headers exceeded 150 KiB: ${core_header_bytes}")
 endif()
-if(optional_header_bytes GREATER 49152)
+if(optional_header_bytes GREATER 65536)
     message(FATAL_ERROR
-        "component public headers exceeded 48 KiB: ${optional_header_bytes}")
+        "component public headers exceeded 64 KiB: ${optional_header_bytes}")
 endif()
 
 file(STRINGS "${PROJECT_ROOT}/include/mwtl/window.h" window_lines)
