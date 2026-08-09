@@ -6,7 +6,7 @@ Public API changes need an
 independent-header compile test, runtime coverage when behavior is observable,
 and documentation of ownership, threading, and failure behavior.
 
-The 0.6 core follows [the stability policy](docs/stability.md). Breaking a stable
+The 0.1 core follows [the stability policy](docs/stability.md). Breaking a stable
 contract requires a deprecation period, migration note, and compatibility
 fixture. Provisional APIs may receive source-compatible additions.
 

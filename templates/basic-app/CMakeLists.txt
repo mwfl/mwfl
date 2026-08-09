@@ -7,7 +7,7 @@ else()
     include(FetchContent)
     FetchContent_Declare(mwtl
         GIT_REPOSITORY https://github.com/everettjf/mwtl.git
-        GIT_TAG e0c162b962ea29fda5567ae389b6fd8587907f4e)
+        GIT_TAG v0.1.0)
     FetchContent_MakeAvailable(mwtl)
 endif()
 

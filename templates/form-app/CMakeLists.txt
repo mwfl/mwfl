@@ -5,7 +5,7 @@ if(MWTL_SOURCE_DIR)
     add_subdirectory("${MWTL_SOURCE_DIR}" mwtl-source EXCLUDE_FROM_ALL)
 else()
     include(FetchContent)
-    FetchContent_Declare(mwtl GIT_REPOSITORY https://github.com/everettjf/mwtl.git GIT_TAG e0c162b962ea29fda5567ae389b6fd8587907f4e)
+    FetchContent_Declare(mwtl GIT_REPOSITORY https://github.com/everettjf/mwtl.git GIT_TAG v0.1.0)
     FetchContent_MakeAvailable(mwtl)
 endif()
 

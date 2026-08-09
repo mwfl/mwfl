@@ -6,7 +6,7 @@
 
 using mwtl::operator""_dip;
 
-// Compile-only contract for representative stable 0.5 source forms. Removing
+// Compile-only contract for representative stable 0.1 source forms. Removing
 // or changing one of these requires a deprecation period and migration entry.
 class CompatWindow final : public mwtl::WindowBase {
 public:
@@ -41,6 +41,6 @@ static_assert(requires(mwtl::Button& button, HWND parent) {
     { button.SetText(std::wstring_view{}) } -> std::same_as<bool>;
 });
 
-int Compile05Run(HINSTANCE instance, int show) {
+int Compile01Run(HINSTANCE instance, int show) {
     return mwtl::RunApplication<CompatWindow>(instance, show);
 }

@@ -106,7 +106,7 @@ project(my_app LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwtl
   GIT_REPOSITORY https://github.com/everettjf/mwtl.git
-  GIT_TAG e0c162b962ea29fda5567ae389b6fd8587907f4e
+  GIT_TAG v0.1.0
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwtl)
 
@@ -237,6 +237,7 @@ For controlled environments, see the
 
 ## Documentation
 
+- [v0.1 announcement](docs/announcement-v0.1.md)
 - [Using mwtl with coding agents](docs/agent-usage.md)
 - [Copyable application templates](templates/)
 - [Task recipes](docs/recipes/)

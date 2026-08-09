@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(mwtl VERSION 0.6.0 DESCRIPTION "Modern Windows Thin Layer" LANGUAGES CXX)
+project(mwtl VERSION 0.1.0 DESCRIPTION "Modern Windows Thin Layer" LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -140,6 +140,7 @@ install(FILES
     docs/llms-full.txt
     docs/scope-map.md
     docs/api-index.json
+    docs/announcement-v0.1.md
     DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl)
 install(FILES cmake/Dependencies.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mwtl)
