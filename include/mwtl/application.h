@@ -26,6 +26,8 @@ enum class ComApartment {
     none,
     sta,
     mta,
+    // STA initialized with OleInitialize; required by OLE drag/drop APIs.
+    ole_sta,
 };
 
 struct ApplicationOptions {
@@ -170,6 +172,7 @@ private:
     ApplicationOptions options_{};
     WTL::CMessageLoop message_loop_;
     wil::unique_couninitialize_call com_uninitialize_;
+    bool ole_initialized_ = false;
     bool module_initialized_ = false;
     bool loop_registered_ = false;
     bool running_ = false;

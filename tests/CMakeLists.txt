@@ -183,7 +183,7 @@ target_compile_definitions(mwtl_advanced_lifecycle_test PRIVATE MWTL_TESTING)
 target_include_directories(mwtl_advanced_lifecycle_test PRIVATE "${PROJECT_SOURCE_DIR}/src")
 target_link_libraries(mwtl_advanced_lifecycle_test PRIVATE mwtl::mwtl)
 foreach(mode IN ITEMS
-        custom_window wait_handle wakeup wake_stress wake_latency idle_efficiency com_sta com_conflict
+        custom_window wait_handle wakeup wake_stress wake_latency idle_efficiency com_sta ole_sta com_conflict
         pump_exception after_dispatch_exception wait_callback_exception
         wait_failure exact_exit dpi_change)
     add_test(NAME mwtl.advanced.${mode} COMMAND mwtl_advanced_lifecycle_test ${mode})
@@ -397,6 +397,18 @@ target_compile_options(mwtl_printing_settings_test PRIVATE /W4 /permissive- /EHs
 target_link_libraries(mwtl_printing_settings_test PRIVATE mwtl::printing)
 add_test(NAME mwtl.printing_settings COMMAND mwtl_printing_settings_test)
 set_tests_properties(mwtl.printing_settings PROPERTIES TIMEOUT 20 LABELS "native")
+
+add_library(mwtl_header_ole_data OBJECT header_ole_data.cpp)
+target_compile_features(mwtl_header_ole_data PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_ole_data PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_ole_data PRIVATE mwtl::ole)
+
+add_executable(mwtl_ole_data_test ole_data_test.cpp)
+target_compile_features(mwtl_ole_data_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_ole_data_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_ole_data_test PRIVATE mwtl::ole)
+add_test(NAME mwtl.ole_data COMMAND mwtl_ole_data_test)
+set_tests_properties(mwtl.ole_data PROPERTIES TIMEOUT 20 LABELS "native;unit")
 
 add_executable(mwtl_imaging_decode_test imaging_decode_test.cpp)
 target_compile_features(mwtl_imaging_decode_test PRIVATE cxx_std_20)

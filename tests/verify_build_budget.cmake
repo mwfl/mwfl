@@ -24,6 +24,7 @@ set(optional_headers
     d2d_host.h
     d3d_host.h
     imaging.h
+    ole_data.h
     printing.h
     printing_native.h
     printing_settings.h
