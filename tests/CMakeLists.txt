@@ -25,7 +25,7 @@ foreach(mode IN ITEMS
         TIMEOUT 20)
 endforeach()
 
-foreach(header IN ITEMS application command_controls concepts control_batch control_host control_resources controls desktop document dpi events input_controls layout message_pump must navigation_controls timer window window_options wakeup umbrella)
+foreach(header IN ITEMS application command_controls concepts control_batch control_host control_resources controls desktop document dpi events input_controls layout message_pump must navigation_controls text_file timer window window_options wakeup umbrella)
     # Every public header must remain independently includable.
     add_library(mwtl_header_${header} OBJECT header_${header}.cpp)
     target_compile_features(mwtl_header_${header} PRIVATE cxx_std_20)
@@ -203,6 +203,13 @@ target_link_libraries(mwtl_document_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.document COMMAND mwtl_document_test)
 set_tests_properties(mwtl.document PROPERTIES TIMEOUT 20)
 
+add_executable(mwtl_text_file_test text_file_test.cpp)
+target_compile_features(mwtl_text_file_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_text_file_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_text_file_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.text_file COMMAND mwtl_text_file_test)
+set_tests_properties(mwtl.text_file PROPERTIES TIMEOUT 30)
+
 add_executable(mwtl_hot_corner_model_test
     hot_corner_model_test.cpp
     "${PROJECT_SOURCE_DIR}/examples/hot_corners/hot_corner_model.cpp")
@@ -252,6 +259,7 @@ if(TARGET mwtl_hello)
             mwtl_commands_demo
             mwtl_desktop_integration_demo
             mwtl_document_state_demo
+            mwtl_notepad
             mwtl_appearance_demo
             mwtl_layout_gallery_demo)
         add_test(

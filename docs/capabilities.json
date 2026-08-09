@@ -45,6 +45,15 @@
       "constraints": ["applications own contents and perform file I/O", "record opened or saved state only after I/O succeeds", "the model belongs to the document coordination thread"]
     },
     {
+      "id": "unicode-text-file",
+      "intent": ["open a text document", "save a text document safely", "detect an external file change"],
+      "symbols": ["mwtl::ReadTextFile", "mwtl::WriteTextFileAtomic", "mwtl::TextFile", "mwtl::FileStamp"],
+      "headers": ["mwtl/text_file.h"],
+      "example": "examples/notepad/main.cpp",
+      "tests": ["mwtl.text_file"],
+      "constraints": ["malformed Unicode is rejected", "save uses a flushed sibling temporary and atomic replacement", "pass the read FileStamp to detect stale editor content"]
+    },
+    {
       "id": "background-ui-update",
       "intent": ["background worker", "update UI from thread", "notify window"],
       "symbols": ["mwtl::WindowWakeup"],

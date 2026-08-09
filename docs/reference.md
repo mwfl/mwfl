@@ -26,6 +26,7 @@ is more important than compile-time isolation.
 | `mwtl/message_pump.h` | default and wait-aware message pumps |
 | `mwtl/must.h` | `Must` and `MustInvoke` checked adapters |
 | `mwtl/navigation_controls.h` | tree, list, header, tab and extended combo controls |
+| `mwtl/text_file.h` | Unicode text detection, file stamps, and atomic save |
 | `mwtl/timer.h` | move-only `UiTimer` |
 | `mwtl/wakeup.h` | lifetime-safe worker-to-window notification |
 | `mwtl/window.h` | `Window<T>`, `WindowBase`, typed dispatch and layout ownership |

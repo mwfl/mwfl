@@ -1,7 +1,7 @@
 set(required_headers
     application appearance binding command command_controls concepts control_batch
     control_host control_resources controls desktop document dpi error events
-    input_controls layout message_pump must navigation_controls timer wakeup
+    input_controls layout message_pump must navigation_controls text_file timer wakeup
     window window_options)
 
 file(READ "${PROJECT_ROOT}/docs/reference.md" reference)

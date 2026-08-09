@@ -74,6 +74,7 @@ add_library(mwtl STATIC
     src/message_pump.cpp
     src/module.cpp
     src/timer.cpp
+    src/text_file.cpp
     src/window_options.cpp)
 add_library(mwtl::mwtl ALIAS mwtl)
 

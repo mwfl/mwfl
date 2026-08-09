@@ -21,6 +21,7 @@
 #include <mwtl/must.h>
 #include <mwtl/navigation_controls.h>
 #include <mwtl/timer.h>
+#include <mwtl/text_file.h>
 #include <mwtl/window.h>
 #include <mwtl/window_options.h>
 #include <mwtl/wakeup.h>

@@ -12,6 +12,14 @@ returns `proceed`, `save_required`, or `cancelled` without displaying UI or
 silently discarding changes. The object is not thread-safe and belongs to the
 application's UI/document coordination thread.
 
+`ReadTextFile` recognizes UTF-8 with or without a BOM and UTF-16 little- or
+big-endian BOMs. It rejects malformed byte sequences instead of replacing data.
+`WriteTextFileAtomic` writes and flushes a sibling temporary file before an
+atomic replacement. Pass the `FileStamp` returned by the read operation to
+reject a save when another process changed the destination. Results distinguish
+missing paths, access failures, malformed encoding, external changes, and other
+I/O failures without displaying UI.
+
 `Command` owns an application action's ID, display text, enabled/checked state,
 optional shortcut, and callback. `CommandSet::Dispatch` can be returned directly
 from `OnCommand`.
