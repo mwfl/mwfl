@@ -48,6 +48,10 @@ at explicit Win32 boundaries.
   handle missing, access-denied, and invalid-data states separately.
 - Single instance: `mwtl/single_instance.h`; the primary registers its HWND and
   decodes activation, while a secondary forwards a bounded path with a timeout.
+- Complete SDI editor: `examples/notepad` and `docs/tutorials/notepad.md`; its
+  GUI test covers safe transitions, persistence, accessibility, DPI, repeated
+  document cycles, and packaging. Use
+  `docs/recipes/notepad-command-setting.md` for a compiled command-setting task.
 - Background work: `examples/wakeup` and `examples/hot_corners`.
 - Dialogs, clipboard, file drop, placement: `examples/desktop_integration`.
 - DPI and appearance: `examples/dpi` and `examples/appearance`.

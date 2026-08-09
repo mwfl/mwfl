@@ -149,6 +149,8 @@ install(FILES
     docs/win32xx-parity-roadmap.md
     docs/api-index.json
     docs/announcement-v0.1.md
+    docs/tutorials/notepad.md
+    docs/recipes/notepad-command-setting.md
     DESTINATION ${CMAKE_INSTALL_DATADIR}/mwtl)
 install(FILES cmake/Dependencies.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mwtl)

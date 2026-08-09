@@ -13,6 +13,9 @@ execute_process(
 if(NOT install_result EQUAL 0)
     message(FATAL_ERROR "mwtl install failed: ${install_result}")
 endif()
+if(NOT EXISTS "${MWTL_INSTALL_DIR}/bin/mwtl_notepad.exe")
+    message(FATAL_ERROR "installed package is missing bin/mwtl_notepad.exe")
+endif()
 
 foreach(method IN ITEMS subdirectory fetchcontent)
     set(method_build "${MWTL_BUILD_DIR}/package-${method}-build")

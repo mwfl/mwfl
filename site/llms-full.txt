@@ -22,7 +22,10 @@ Task sources:
 - background work: examples/wakeup/main.cpp and examples/hot_corners
 - desktop integration: examples/desktop_integration/main.cpp
 - DPI/appearance: examples/dpi/main.cpp and examples/appearance/main.cpp
+- complete SDI editor: examples/notepad/main.cpp
+
+Notepad tutorial and compiled Agent recipe:
+https://everettjf.github.io/mwtl/notepad.html
 
 Detailed usage:
 https://github.com/everettjf/mwtl/blob/main/docs/agent-usage.md
-

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Build, test, and package the complete mwtl native Notepad reference application.">
+  <link rel="canonical" href="https://everettjf.github.io/mwtl/notepad.html">
+  <title>Notepad tutorial â€” mwtl</title>
+  <meta name="theme-color" content="#f7f9ff">
+  <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
+  <link rel="stylesheet" href="styles.css?v=20260808k">
+  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script defer src="assets/site.js?v=20260808k"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><div class="shell nav">
+    <a class="brand" href="index.html" aria-label="MWTL â€” Modern Windows Thin Layer"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+    <nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a class="active" href="tutorial.html">Get started</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
+  </div></header>
+
+  <main id="main" class="shell prose guide">
+    <div class="hero">
+      <div class="eyebrow">Reference application Â· Windows 10+ Â· C++20</div>
+      <h1>Build a real native Notepad.</h1>
+      <p class="lede">Start from the maintained template, then add one safe vertical slice at a time: document state, Unicode files, commands, editor workflows, persistence, accessibility, tests, and packaging.</p>
+      <div class="actions"><a class="button primary" href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/notepad.md">Open the complete tutorial</a><a class="button" href="https://github.com/everettjf/mwtl/blob/main/examples/notepad/main.cpp">Read the compiled source</a></div>
+    </div>
+
+    <div class="requirements">
+      <div><strong>Start</strong><span><code>templates/basic-app</code></span></div>
+      <div><strong>Toolchain</strong><span>Visual Studio 2026 or 2022</span></div>
+      <div><strong>Result</strong><span>Installable x64 or ARM64 executable</span></div>
+      <div><strong>Proof</strong><span>Real hidden-window GUI workflow</span></div>
+    </div>
+
+    <section><div class="eyebrow">Step 1</div><h2>Prove the untouched template first</h2>
+      <pre data-title="Developer PowerShell"><code>Copy-Item -Recurse .\templates\basic-app ..\mwtl-notepad-tutorial
+Set-Location ..\mwtl-notepad-tutorial
+cmake -S . -B build -G "Visual Studio 18 2026" -A x64 `
+  -DMWTL_SOURCE_DIR=D:/GitHub/mwtl
+cmake --build build --config Debug</code></pre>
+      <p>Visual Studio 2022 is equally supported; use generator <code>Visual Studio 17 2022</code> and a separate build directory.</p>
+    </section>
+
+    <section><div class="eyebrow">Step 2</div><h2>Compose the document surface</h2>
+      <pre data-title="retained native layout"><code>SetLayout(mwtl::Column()
+    .Add(toolbar_, mwtl::Auto())
+    .Add(editor_, mwtl::Stretch())
+    .Add(status_, mwtl::Auto()));</code></pre>
+      <p>All wrappers are window members. The edit control stretches; native toolbar and status-bar measurements are converted through the Per-Monitor-V2 DIP layout.</p>
+    </section>
+
+    <section><div class="eyebrow">Step 3</div><h2>Make destructive actions safe</h2>
+      <p><code>DocumentState</code> decides whether a transition may proceed. The application asks Save, Discard, or Cancel before New, Open, close-window, and Exit. It marks a path or saved state only after I/O succeeds.</p>
+      <p><code>ReadTextFile</code> validates UTF-8/UTF-16. <code>WriteTextFileAtomic</code> flushes a sibling temporary file, checks the original <code>FileStamp</code>, and atomically replaces the destination.</p>
+    </section>
+
+    <section><div class="eyebrow">Step 4</div><h2>Share commands, do not copy callbacks</h2>
+      <pre data-title="one source of command state"><code>commands_.Add(mwtl::Command(kSave, L"&amp;Save", [this] {
+    static_cast&lt;void&gt;(SaveDocument(false));
+}).SetShortcut({FVIRTKEY | FCONTROL, 'S'}));</code></pre>
+      <p>The same command supplies menu, toolbar, accelerator, checked/visible state, and callback. The focused Agent recipe adds the persisted <strong>Always on Top</strong> command without inventing an API.</p>
+    </section>
+
+    <section><div class="eyebrow">Step 5</div><h2>Verify the real executable</h2>
+      <pre data-title="repository checkout"><code>cmake --preset vs2026-x64
+cmake --build --preset x64-debug --target mwtl_notepad
+ctest --preset x64-debug -R "mwtl.notepad_gui" --output-on-failure</code></pre>
+      <p>The hidden-window workflow covers launch, edit notification, atomic save, cancel, discard, reopen, command state, MSAA names, theme and DPI refresh, 50 repeated document cycles, resource growth, and close.</p>
+    </section>
+
+    <section><div class="eyebrow">Step 6</div><h2>Install or package it</h2>
+      <pre data-title="Release"><code>cmake --build --preset x64-release
+cmake --install build\presets\vs2026-x64 --config Release --prefix build\install
+&amp; .\build\install\bin\mwtl_notepad.exe</code></pre>
+      <p>The CPack ZIP includes the executable, library, public headers, CMake package files, licenses, and documentation.</p>
+    </section>
+
+    <section><div class="eyebrow">Continue</div><h2>Use the detailed checklist</h2>
+      <ul><li><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/notepad.md">Full beginner tutorial and failure handling</a></li><li><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/notepad-command-setting.md">Agent recipe: command plus persisted setting</a></li><li><a href="building.html">Toolchain, ARM64, installed-package, and offline build reference</a></li></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Thin Layer Â· MIT licensed Â· Windows 10 1809+</span><nav aria-label="Footer"><a href="tutorial.html">First app</a><a href="building.html">Build reference</a><a href="https://github.com/everettjf/mwtl">GitHub</a></nav></div></footer>
+</body>
+</html>

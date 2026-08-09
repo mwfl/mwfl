@@ -92,6 +92,15 @@
       "constraints": ["register only the primary top-level window", "activation payloads are bounded copied UTF-16", "same-user UIPI access denial is reported"]
     },
     {
+      "id": "sdi-notepad-reference",
+      "intent": ["build a text editor", "build an SDI document application", "test a real native application", "package a native executable"],
+      "symbols": ["mwtl::DocumentState", "mwtl::CommandSet", "mwtl::StatusBar", "mwtl::ReadTextFile", "mwtl::SingleInstance"],
+      "headers": ["mwtl/document.h", "mwtl/command.h", "mwtl/command_controls.h", "mwtl/text_file.h", "mwtl/single_instance.h"],
+      "example": "examples/notepad/main.cpp",
+      "tests": ["mwtl.notepad_gui", "mwtl.text_file", "mwtl.document", "mwtl.package_consumer"],
+      "constraints": ["start from templates/basic-app", "mark document state only after successful I/O", "optional preference failures never discard document content", "the UI stays on its creating thread"]
+    },
+    {
       "id": "background-ui-update",
       "intent": ["background worker", "update UI from thread", "notify window"],
       "symbols": ["mwtl::WindowWakeup"],

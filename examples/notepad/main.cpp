@@ -25,9 +25,40 @@ constexpr mwtl::ControlId kSelectAll{714};
 constexpr mwtl::ControlId kFind{715};
 constexpr mwtl::ControlId kReplace{716};
 constexpr mwtl::ControlId kRedo{717};
+constexpr mwtl::ControlId kAlwaysOnTop{718};
 constexpr mwtl::ControlId kRecentBase{730};
 constexpr std::wstring_view kSettingsKey = L"Software\\mwtl\\Notepad\\1";
 constexpr UINT kRunSelfTest = WM_APP + 0x120;
+
+std::optional<bool> LoadBoolSetting(
+        HKEY root, std::wstring_view subkey, std::wstring_view name) noexcept {
+    DWORD value{};
+    DWORD bytes = sizeof(value);
+    const std::wstring key{subkey};
+    const std::wstring value_name{name};
+    const LSTATUS status = ::RegGetValueW(
+        root, key.c_str(), value_name.c_str(), RRF_RT_REG_DWORD,
+        nullptr, &value, &bytes);
+    if (status != ERROR_SUCCESS || bytes != sizeof(value)) return std::nullopt;
+    return value != 0;
+}
+
+bool SaveBoolSetting(HKEY root, std::wstring_view subkey,
+                     std::wstring_view name, bool value) noexcept {
+    const DWORD stored = value ? 1u : 0u;
+    const std::wstring key{subkey};
+    const std::wstring value_name{name};
+    HKEY opened{};
+    if (::RegCreateKeyExW(root, key.c_str(), 0, nullptr, 0, KEY_SET_VALUE,
+                          nullptr, &opened, nullptr) != ERROR_SUCCESS) {
+        return false;
+    }
+    const LSTATUS status = ::RegSetValueExW(
+        opened, value_name.c_str(), 0, REG_DWORD,
+        reinterpret_cast<const BYTE*>(&stored), sizeof(stored));
+    ::RegCloseKey(opened);
+    return status == ERROR_SUCCESS;
+}
 
 class NotepadWindow final : public mwtl::WindowBase {
 public:
@@ -43,6 +74,8 @@ public:
             const auto loaded = mwtl::LoadRecentFilesFromRegistry(
                 HKEY_CURRENT_USER, kSettingsKey, recent_.GetMaximumEntries());
             if (loaded.Succeeded()) recent_ = std::move(*loaded.value);
+            always_on_top_ = LoadBoolSetting(
+                HKEY_CURRENT_USER, kSettingsKey, L"AlwaysOnTop").value_or(false);
         }
         BuildCommands();
         RefreshRecentCommands();
@@ -69,6 +102,7 @@ public:
                    "name Notepad status for accessibility");
         ApplyFont(GetDpiContext().GetDpi());
         BuildMenu();
+        ApplyAlwaysOnTop();
         mwtl::Must(accelerators_.Create(commands_), "create Notepad accelerators");
         SetAccelerators(accelerators_.GetHandle());
         mwtl::EnableFileDrop(GetHwnd());
@@ -205,6 +239,27 @@ private:
             !HasAccessibleName(status_.GetHwnd(), L"Document status")) {
             FailSelfTest("Notepad self-test accessible name mismatch");
         }
+        const auto* always_on_top = commands_.Find(kAlwaysOnTop);
+        if (always_on_top == nullptr || always_on_top->IsChecked())
+            FailSelfTest("Notepad self-test topmost command initial state mismatch");
+        always_on_top->Invoke();
+        wchar_t status_text[64]{};
+        if ((::GetWindowLongPtrW(GetHwnd(), GWL_EXSTYLE) & WS_EX_TOPMOST) == 0 ||
+            !always_on_top->IsChecked() ||
+            ::SendMessageW(status_.GetHwnd(), SB_GETTEXTW, 0,
+                           reinterpret_cast<LPARAM>(status_text)) == 0 ||
+            std::wstring_view{status_text} != L"Always on top enabled") {
+            FailSelfTest("Notepad self-test topmost command did not propagate");
+        }
+        always_on_top->Invoke();
+        status_text[0] = L'\0';
+        if ((::GetWindowLongPtrW(GetHwnd(), GWL_EXSTYLE) & WS_EX_TOPMOST) != 0 ||
+            always_on_top->IsChecked() ||
+            ::SendMessageW(status_.GetHwnd(), SB_GETTEXTW, 0,
+                           reinterpret_cast<LPARAM>(status_text)) == 0 ||
+            std::wstring_view{status_text} != L"Always on top disabled") {
+            FailSelfTest("Notepad self-test topmost command did not restore");
+        }
         ::SendMessageW(GetHwnd(), WM_THEMECHANGED, 0, 0);
         if (!toolbar_.IsWindow() || !editor_.IsWindow() || !status_.IsWindow())
             FailSelfTest("Notepad self-test theme refresh destroyed a control");
@@ -292,6 +347,31 @@ private:
         font_ = std::move(next);
     }
 
+    void ApplyAlwaysOnTop() {
+        const HWND insert_after = always_on_top_ ? HWND_TOPMOST : HWND_NOTOPMOST;
+        mwtl::Must(::SetWindowPos(GetHwnd(), insert_after, 0, 0, 0, 0,
+                                  SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE) != FALSE,
+                   "apply Notepad topmost setting");
+        auto* command = commands_.Find(kAlwaysOnTop);
+        command->SetChecked(always_on_top_);
+        if (menu_.GetHandle() != nullptr) {
+            mwtl::Must(menu_.UpdateCommand(*command),
+                       "update Notepad topmost command");
+            ::DrawMenuBar(GetHwnd());
+        }
+    }
+
+    void ToggleAlwaysOnTop() {
+        always_on_top_ = !always_on_top_;
+        ApplyAlwaysOnTop();
+        if (!self_test_) {
+            static_cast<void>(SaveBoolSetting(
+                HKEY_CURRENT_USER, kSettingsKey, L"AlwaysOnTop", always_on_top_));
+        }
+        status_.SetPartText(0, always_on_top_ ? L"Always on top enabled"
+                                              : L"Always on top disabled");
+    }
+
     void BuildCommands() {
         commands_
             .Add(mwtl::Command(kNew, L"&New", [this] { NewDocument(); })
@@ -318,7 +398,10 @@ private:
             .Add(mwtl::Command(kFind, L"&Find...", [this] { ShowFindDialog(false); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'F'}))
             .Add(mwtl::Command(kReplace, L"&Replace...", [this] { ShowFindDialog(true); })
-                .SetShortcut({FVIRTKEY | FCONTROL, 'H'}));
+                .SetShortcut({FVIRTKEY | FCONTROL, 'H'}))
+            .Add(mwtl::Command(kAlwaysOnTop, L"Always on &Top",
+                               [this] { ToggleAlwaysOnTop(); })
+                .SetChecked(always_on_top_));
         for (std::size_t index = 0; index < recent_.GetMaximumEntries(); ++index) {
             commands_.Add(mwtl::Command(
                 {static_cast<WORD>(kRecentBase.value + index)}, L"Recent file",
@@ -333,6 +416,7 @@ private:
         mwtl::Menu next;
         mwtl::Menu file;
         mwtl::Menu edit;
+        mwtl::Menu view;
         mwtl::Must(next.Create(), "create Notepad menu");
         mwtl::Must(file.CreatePopup(), "create File menu");
         for (const auto id : {kNew, kOpen, kSave, kSaveAs})
@@ -348,8 +432,12 @@ private:
         mwtl::Must(edit.CreatePopup(), "create Edit menu");
         for (const auto id : {kUndo, kRedo, kCut, kCopy, kPaste, kSelectAll, kFind, kReplace})
             mwtl::Must(edit.AppendCommand(*commands_.Find(id)), "append Edit command");
+        mwtl::Must(view.CreatePopup(), "create View menu");
+        mwtl::Must(view.AppendCommand(*commands_.Find(kAlwaysOnTop)),
+                   "append Always on Top command");
         mwtl::Must(next.AppendSubmenu(std::move(file), L"&File"), "append File menu");
         mwtl::Must(next.AppendSubmenu(std::move(edit), L"&Edit"), "append Edit menu");
+        mwtl::Must(next.AppendSubmenu(std::move(view), L"&View"), "append View menu");
         mwtl::Must(next.AttachToWindow(GetHwnd()), "attach Notepad menu");
         menu_ = std::move(next);
     }
@@ -614,6 +702,7 @@ private:
     std::optional<mwtl::FileStamp> stamp_;
     bool updating_editor_{};
     bool self_test_{};
+    bool always_on_top_{};
     std::optional<mwtl::UnsavedChangesChoice> automated_choice_;
     std::optional<std::filesystem::path> self_test_result_;
     mwtl::CommandSet commands_;

@@ -10,7 +10,7 @@
     {"id":"07-placement","prompt":"Restore window placement at startup and save it when the window closes.","fixture":"placement.cpp","required":["SavedWindowPlacement","application registry key","OnClose propagation"]},
     {"id":"08-dpi","prompt":"Create a DPI-aware window that lays out controls in DIPs and refreshes its UI font after a DPI change.","fixture":"dpi.cpp","required":["DIP layout","DpiContext","DpiChangedEvent","propagation"]},
     {"id":"09-appearance","prompt":"Apply system appearance and give an otherwise ambiguous input an accessible name.","fixture":"appearance.cpp","required":["AppearanceOptions","SetAccessibleName","best-effort handling"]},
-    {"id":"10-native-message","prompt":"Post and handle an application-defined WM_APP message while preserving mwtl typed dispatch.","fixture":"native_message.cpp","required":["GetHwnd","WindowMessage","Handled/Propagate","no internal API"]}
+    {"id":"10-native-message","prompt":"Post and handle an application-defined WM_APP message while preserving mwtl typed dispatch.","fixture":"native_message.cpp","required":["GetHwnd","WindowMessage","Handled/Propagate","no internal API"]},
+    {"id":"11-notepad-setting","prompt":"Extend an mwtl Notepad-style window with one Always on Top command whose checked state updates the menu and whose value is persisted as a versioned HKCU REG_DWORD setting.","fixture":"notepad_setting.cpp","required":["CommandSet","Menu::UpdateCommand","SetWindowPos","explicit versioned registry key","public API only"]}
   ]
 }
-
