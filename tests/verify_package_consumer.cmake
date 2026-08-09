@@ -1,6 +1,7 @@
 if(NOT DEFINED MWTL_BUILD_DIR OR NOT DEFINED MWTL_SOURCE_DIR OR
    NOT DEFINED MWTL_INSTALL_DIR OR NOT DEFINED MWTL_CONFIGURATION OR
-   NOT DEFINED MWTL_GENERATOR OR NOT DEFINED MWTL_PLATFORM)
+   NOT DEFINED MWTL_GENERATOR OR NOT DEFINED MWTL_PLATFORM OR
+   NOT DEFINED MWTL_EXPECT_NOTEPAD)
     message(FATAL_ERROR "Package consumer verification arguments are incomplete")
 endif()
 
@@ -13,7 +14,7 @@ execute_process(
 if(NOT install_result EQUAL 0)
     message(FATAL_ERROR "mwtl install failed: ${install_result}")
 endif()
-if(NOT EXISTS "${MWTL_INSTALL_DIR}/bin/mwtl_notepad.exe")
+if(MWTL_EXPECT_NOTEPAD AND NOT EXISTS "${MWTL_INSTALL_DIR}/bin/mwtl_notepad.exe")
     message(FATAL_ERROR "installed package is missing bin/mwtl_notepad.exe")
 endif()
 
