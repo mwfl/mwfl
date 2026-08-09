@@ -24,6 +24,7 @@ set(optional_headers
     d2d_host.h
     d3d_host.h
     imaging.h
+    file_association.h
     ole_data.h
     ole_drag_drop.h
     printing.h

@@ -434,6 +434,18 @@ target_link_libraries(mwtl_settings_store_test PRIVATE mwtl::shell)
 add_test(NAME mwtl.settings_store COMMAND mwtl_settings_store_test)
 set_tests_properties(mwtl.settings_store PROPERTIES TIMEOUT 20 LABELS "native;unit")
 
+add_library(mwtl_header_file_association OBJECT header_file_association.cpp)
+target_compile_features(mwtl_header_file_association PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_file_association PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_file_association PRIVATE mwtl::shell)
+
+add_executable(mwtl_file_association_test file_association_test.cpp)
+target_compile_features(mwtl_file_association_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_file_association_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_file_association_test PRIVATE mwtl::shell)
+add_test(NAME mwtl.file_association COMMAND mwtl_file_association_test)
+set_tests_properties(mwtl.file_association PROPERTIES TIMEOUT 20 LABELS "native;unit")
+
 add_executable(mwtl_imaging_decode_test imaging_decode_test.cpp)
 target_compile_features(mwtl_imaging_decode_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_imaging_decode_test PRIVATE /W4 /permissive- /EHsc /utf-8)
