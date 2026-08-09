@@ -31,6 +31,12 @@ new edit and remembers the saved entry; if that entry is evicted, the document
 conservatively remains modified. Returned views remain valid only until the next
 mutating history operation.
 
+`RecentFileList` keeps a bounded, most-recent-first, case-insensitively
+deduplicated path list. Registry persistence uses an explicit version-1 schema
+with `SchemaVersion` (`REG_DWORD`) and `RecentFiles` (`REG_MULTI_SZ`). Load and
+save results distinguish missing settings, access denial, malformed or unknown
+schema data, and other I/O failures. The supplied root key is always borrowed.
+
 `Command` owns an application action's ID, display text, enabled/checked state,
 optional shortcut, and callback. `CommandSet::Dispatch` can be returned directly
 from `OnCommand`.

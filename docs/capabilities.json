@@ -72,6 +72,15 @@
       "constraints": ["history stores bounded snapshots", "new edits truncate the redo branch", "returned views expire on mutation"]
     },
     {
+      "id": "recent-files",
+      "intent": ["show recent files", "persist recent files", "restore editor settings"],
+      "symbols": ["mwtl::RecentFileList", "mwtl::LoadRecentFilesFromRegistry", "mwtl::SaveRecentFilesToRegistry"],
+      "headers": ["mwtl/recent_files.h"],
+      "example": "examples/notepad/main.cpp",
+      "tests": ["mwtl.recent_files"],
+      "constraints": ["root registry handles are borrowed", "schema version is validated", "paths are deduplicated with Windows case-insensitive comparison"]
+    },
+    {
       "id": "background-ui-update",
       "intent": ["background worker", "update UI from thread", "notify window"],
       "symbols": ["mwtl::WindowWakeup"],

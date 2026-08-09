@@ -25,7 +25,7 @@ foreach(mode IN ITEMS
         TIMEOUT 20)
 endforeach()
 
-foreach(header IN ITEMS application command_controls concepts control_batch control_host control_resources controls desktop document dpi events input_controls layout message_pump must navigation_controls text_file text_history text_search timer window window_options wakeup umbrella)
+foreach(header IN ITEMS application command_controls concepts control_batch control_host control_resources controls desktop document dpi events input_controls layout message_pump must navigation_controls recent_files text_file text_history text_search timer window window_options wakeup umbrella)
     # Every public header must remain independently includable.
     add_library(mwtl_header_${header} OBJECT header_${header}.cpp)
     target_compile_features(mwtl_header_${header} PRIVATE cxx_std_20)
@@ -223,6 +223,13 @@ target_compile_options(mwtl_text_history_test PRIVATE /W4 /permissive- /EHsc /ut
 target_link_libraries(mwtl_text_history_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.text_history COMMAND mwtl_text_history_test)
 set_tests_properties(mwtl.text_history PROPERTIES TIMEOUT 20)
+
+add_executable(mwtl_recent_files_test recent_files_test.cpp)
+target_compile_features(mwtl_recent_files_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_recent_files_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_recent_files_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.recent_files COMMAND mwtl_recent_files_test)
+set_tests_properties(mwtl.recent_files PROPERTIES TIMEOUT 20 SKIP_RETURN_CODE 77)
 
 add_executable(mwtl_hot_corner_model_test
     hot_corner_model_test.cpp

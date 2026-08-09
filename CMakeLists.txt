@@ -72,6 +72,7 @@ add_library(mwtl STATIC
     src/document.cpp
     src/detail/diagnostics.cpp
     src/message_pump.cpp
+    src/recent_files.cpp
     src/module.cpp
     src/timer.cpp
     src/text_file.cpp

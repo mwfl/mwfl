@@ -20,11 +20,18 @@ constexpr mwtl::ControlId kSelectAll{714};
 constexpr mwtl::ControlId kFind{715};
 constexpr mwtl::ControlId kReplace{716};
 constexpr mwtl::ControlId kRedo{717};
+constexpr mwtl::ControlId kRecentBase{730};
+constexpr std::wstring_view kSettingsKey = L"Software\\mwtl\\Notepad\\1";
 
 class NotepadWindow final : public mwtl::WindowBase {
 public:
     void BuildUI() override {
+        if (const auto loaded = mwtl::LoadRecentFilesFromRegistry(
+                HKEY_CURRENT_USER, kSettingsKey, recent_.GetMaximumEntries()); loaded.Succeeded()) {
+            recent_ = std::move(*loaded.value);
+        }
         BuildCommands();
+        RefreshRecentCommands();
         mwtl::ControlHost ui{*this};
         ui.Add(toolbar_);
         mwtl::TextBoxOptions options;
@@ -49,6 +56,10 @@ public:
             .Add(editor_, mwtl::Stretch())
             .Add(status_, mwtl::Fixed(24.0_dip)));
         editor_.Focus();
+        mwtl::SavedWindowPlacement placement;
+        if (mwtl::LoadWindowPlacementFromRegistry(
+                HKEY_CURRENT_USER, kSettingsKey, L"WindowPlacement", placement))
+            mwtl::RestoreWindowPlacement(GetHwnd(), placement);
         SyncPresentation(L"Ready");
     }
 
@@ -74,8 +85,12 @@ public:
     }
 
     mwtl::EventResult OnClose() override {
-        return ConfirmTransition() ? mwtl::EventResult::Propagate()
-                                   : mwtl::EventResult::Handled();
+        if (!ConfirmTransition()) return mwtl::EventResult::Handled();
+        mwtl::SavedWindowPlacement placement;
+        if (mwtl::CaptureWindowPlacement(GetHwnd(), placement))
+            mwtl::SaveWindowPlacementToRegistry(
+                HKEY_CURRENT_USER, kSettingsKey, L"WindowPlacement", placement);
+        return mwtl::EventResult::Propagate();
     }
 
 private:
@@ -106,23 +121,39 @@ private:
                 .SetShortcut({FVIRTKEY | FCONTROL, 'F'}))
             .Add(mwtl::Command(kReplace, L"Replace...", [this] { ShowFindDialog(true); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'H'}));
+        for (std::size_t index = 0; index < recent_.GetMaximumEntries(); ++index) {
+            commands_.Add(mwtl::Command(
+                {static_cast<WORD>(kRecentBase.value + index)}, L"Recent file",
+                [this, index] {
+                    const auto paths = recent_.GetPaths();
+                    if (index < paths.size() && ConfirmTransition()) OpenPath(paths[index]);
+                }).SetEnabled(false));
+        }
     }
 
     void BuildMenu() {
+        mwtl::Menu next;
         mwtl::Menu file;
         mwtl::Menu edit;
-        mwtl::Must(menu_.Create(), "create Notepad menu");
+        mwtl::Must(next.Create(), "create Notepad menu");
         mwtl::Must(file.CreatePopup(), "create File menu");
         for (const auto id : {kNew, kOpen, kSave, kSaveAs})
             mwtl::Must(file.AppendCommand(*commands_.Find(id)), "append File command");
         mwtl::Must(file.AppendSeparator(), "append File separator");
         mwtl::Must(file.AppendCommand(*commands_.Find(kExit)), "append Exit command");
+        if (!recent_.GetPaths().empty()) {
+            mwtl::Must(file.AppendSeparator(), "append recent separator");
+            for (std::size_t index = 0; index < recent_.GetPaths().size(); ++index)
+                mwtl::Must(file.AppendCommand(*commands_.Find(
+                    {static_cast<WORD>(kRecentBase.value + index)})), "append recent file");
+        }
         mwtl::Must(edit.CreatePopup(), "create Edit menu");
         for (const auto id : {kUndo, kRedo, kCut, kCopy, kPaste, kSelectAll, kFind, kReplace})
             mwtl::Must(edit.AppendCommand(*commands_.Find(id)), "append Edit command");
-        mwtl::Must(menu_.AppendSubmenu(std::move(file), L"File"), "append File menu");
-        mwtl::Must(menu_.AppendSubmenu(std::move(edit), L"Edit"), "append Edit menu");
-        mwtl::Must(menu_.AttachToWindow(GetHwnd()), "attach Notepad menu");
+        mwtl::Must(next.AppendSubmenu(std::move(file), L"File"), "append File menu");
+        mwtl::Must(next.AppendSubmenu(std::move(edit), L"Edit"), "append Edit menu");
+        mwtl::Must(next.AttachToWindow(GetHwnd()), "attach Notepad menu");
+        menu_ = std::move(next);
     }
 
     void NewDocument() {
@@ -150,7 +181,15 @@ private:
 
     void OpenPath(const std::filesystem::path& path) {
         const auto loaded = mwtl::ReadTextFile(path);
-        if (!loaded.Succeeded()) { ShowTextFileFailure(L"Could not open the file.", loaded.status, loaded.native_error); return; }
+        if (!loaded.Succeeded()) {
+            ShowTextFileFailure(L"Could not open the file.", loaded.status, loaded.native_error);
+            if (loaded.status == mwtl::TextFileStatus::not_found && recent_.Remove(path)) {
+                PersistRecentFiles();
+                RefreshRecentCommands();
+                BuildMenu();
+            }
+            return;
+        }
         updating_editor_ = true;
         editor_.SetText(loaded.value->text);
         updating_editor_ = false;
@@ -158,6 +197,7 @@ private:
         history_.Reset(loaded.value->text);
         encoding_ = loaded.value->encoding;
         stamp_ = loaded.value->stamp;
+        RememberPath(path);
         SyncPresentation(L"Opened " + path.filename().wstring());
         editor_.Focus();
     }
@@ -180,6 +220,7 @@ private:
         document_.MarkSavedAs(path);
         history_.MarkSaved();
         stamp_ = saved.stamp;
+        RememberPath(path);
         SyncPresentation(L"Saved " + path.filename().wstring());
         return true;
     }
@@ -208,6 +249,35 @@ private:
     void SyncDirtyFromHistory() {
         if (history_.IsModified()) document_.MarkChanged();
         else document_.MarkSaved();
+    }
+
+    static std::wstring MenuPathText(std::size_t index, const std::filesystem::path& path) {
+        std::wstring text = L"&" + std::to_wstring(index + 1) + L" ";
+        for (const wchar_t character : path.wstring()) {
+            text += character;
+            if (character == L'&') text += L'&';
+        }
+        return text;
+    }
+
+    void RefreshRecentCommands() {
+        const auto paths = recent_.GetPaths();
+        for (std::size_t index = 0; index < recent_.GetMaximumEntries(); ++index) {
+            auto* command = commands_.Find({static_cast<WORD>(kRecentBase.value + index)});
+            command->SetEnabled(index < paths.size());
+            command->SetText(index < paths.size() ? MenuPathText(index, paths[index]) : L"Recent file");
+        }
+    }
+
+    void PersistRecentFiles() const {
+        static_cast<void>(mwtl::SaveRecentFilesToRegistry(HKEY_CURRENT_USER, kSettingsKey, recent_));
+    }
+
+    void RememberPath(const std::filesystem::path& path) {
+        if (!recent_.Add(path)) return;
+        PersistRecentFiles();
+        RefreshRecentCommands();
+        BuildMenu();
     }
 
     void ShowFindDialog(bool replace) {
@@ -330,6 +400,7 @@ private:
     }
 
     mwtl::DocumentState document_;
+    mwtl::RecentFileList recent_{5};
     mwtl::TextHistory history_;
     mwtl::TextEncoding encoding_ = mwtl::TextEncoding::utf8;
     std::optional<mwtl::FileStamp> stamp_;

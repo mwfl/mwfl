@@ -26,6 +26,7 @@ is more important than compile-time isolation.
 | `mwtl/message_pump.h` | default and wait-aware message pumps |
 | `mwtl/must.h` | `Must` and `MustInvoke` checked adapters |
 | `mwtl/navigation_controls.h` | tree, list, header, tab and extended combo controls |
+| `mwtl/recent_files.h` | bounded recent-file model and versioned registry persistence |
 | `mwtl/text_file.h` | Unicode text detection, file stamps, and atomic save |
 | `mwtl/text_history.h` | bounded text undo/redo history with saved-state tracking |
 | `mwtl/text_search.h` | deterministic forward/backward find and replace-all helpers |

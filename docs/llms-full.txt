@@ -44,6 +44,8 @@ at explicit Win32 boundaries.
   forward/backward, case, whole-word, and replace-all behavior.
 - Editor history: `mwtl/text_history.h`; use bounded snapshot history when an
   application needs deterministic Undo/Redo and saved-state tracking.
+- Recent files: `mwtl/recent_files.h`; use the versioned registry helpers and
+  handle missing, access-denied, and invalid-data states separately.
 - Background work: `examples/wakeup` and `examples/hot_corners`.
 - Dialogs, clipboard, file drop, placement: `examples/desktop_integration`.
 - DPI and appearance: `examples/dpi` and `examples/appearance`.

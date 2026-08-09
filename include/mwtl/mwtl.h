@@ -20,6 +20,7 @@
 #include <mwtl/message_pump.h>
 #include <mwtl/must.h>
 #include <mwtl/navigation_controls.h>
+#include <mwtl/recent_files.h>
 #include <mwtl/timer.h>
 #include <mwtl/text_file.h>
 #include <mwtl/text_history.h>
