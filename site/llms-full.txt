@@ -33,6 +33,10 @@ Task sources:
 - custom dialogs: move-only `Dialog` uses the normal retained layout and
   structured accepted/cancelled/failed results; callbacks and controls remain
   on the creating UI thread
+- Explorer composition: `examples/explorer` combines Rebar, image-backed
+  Toolbar, stable TreeView, owner-data ListView, Tabs, Splitter, StatusBar, and
+  context menus. Splitter forwards attached-pane notifications/commands/context
+  menus to its parent; route `LVN_GETDISPINFO` through `HandleNotification`.
 - tray utilities: move-only `TrayIcon` borrows its owner and HICON, uses a
   stable GUID, decodes v4 callbacks, and recreates after `TaskbarCreated`; see
   `examples/hot_corners` and `docs/recipes/tray-icon.md`

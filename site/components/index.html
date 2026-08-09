@@ -37,6 +37,7 @@
         <a href="#timer">Timer</a>
         <a href="#desktop">Desktop integration</a>
         <a href="#hot-corners">Hot corners</a>
+        <a href="#explorer">Explorer shell</a>
         <span>Basic controls</span>
         <a href="#form-controls">Form controls</a>
         <a href="#control-catalog">All 27 controls</a>
@@ -126,6 +127,24 @@ if (tray_.IsTaskbarCreated(message)) tray_.Recreate();
 else if (auto event = tray_.Decode(message)) RouteTray(*event);</code></pre>
           <figure class="preview-panel"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/hot-corners.png" alt="mwtl multi-monitor Hot Corners utility" width="655" height="287" loading="lazy" decoding="async"><figcaption>Four actions on every attached monitor, with display-change refresh and one-shot dwell behavior.</figcaption></figure>
         </div>
+      </section>
+
+      <section id="explorer" class="doc-section">
+        <div class="doc-heading"><div><span class="tag">Reference application</span><h2>Explorer-style shell</h2></div><p>A complete native composition: Rebar and image-backed Toolbar, stable Tabs, keyboard Splitter, TreeView navigation, owner-data ListView, responsive StatusBar, accelerators, and context commands.</p></div>
+        <div class="code-panel compact"><pre data-title="explorer.cpp"><code>mwtl::ControlHost panes{splitter_};
+panes.Add(tree_, {204}, {});
+panes.Add(list_, {205}, {},
+    mwtl::ListViewOptions{.virtual_data = true});
+splitter_.AttachPanes(tree_.GetHwnd(), list_.GetHwnd());
+
+list_.SetVirtualModel(model_);
+SetLayout(mwtl::Column()
+    .Add(rebar_, mwtl::Auto())
+    .Add(tabs_, mwtl::Fixed(34.0_dip))
+    .Add(splitter_, mwtl::Stretch())
+    .Add(status_, mwtl::Auto()));</code></pre></div>
+        <div class="native-note"><strong>Owner-data notifications still reach the window.</strong> Splitter forwards attached-pane notifications, commands, and context menus to its parent with the original result.</div>
+        <p class="source-link"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/explorer-application.md">Build the complete Explorer application step by step →</a></p>
       </section>
 
       <section id="form-controls" class="doc-section">

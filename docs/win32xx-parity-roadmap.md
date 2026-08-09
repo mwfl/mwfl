@@ -43,10 +43,10 @@ macros, runtime reflection, or an MFC-style mandatory Document/View framework.
 | Docking workspace | Absent | Modern, serializable, DPI-safe docking model |
 | Windows Ribbon and legacy MDI | Absent | Optional late-stage integration modules |
 
-The detailed parity inventory should eventually live in a machine-readable
-`docs/parity.json`. It must map representative Win32++ capabilities and samples
-to one of: supported, composable, planned convenience layer, planned framework
-capability, or intentionally unsupported.
+The detailed milestone inventory lives in machine-readable `docs/parity.json`.
+[`win32xx-comparison.md`](win32xx-comparison.md) maps representative Win32++
+capabilities and samples to supported, composed, planned, or intentional
+non-goal outcomes with executable evidence.
 
 ## Version roadmap
 

@@ -146,13 +146,13 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
 
-The repository contains 27 independently buildable programs. Each link opens
+The repository contains 31 independently buildable programs. Each link opens
 the complete source. Start with **Hello** for the smallest application,
 **Controls** for the basic widget set, or **Hot corners** for a complete
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 27 runnable examples</strong></summary>
+<summary><strong>Browse all 31 runnable examples</strong></summary>
 
 <br>
 
@@ -183,8 +183,12 @@ multi-monitor utility.
 | Form binding | [examples/form_binding/main.cpp](examples/form_binding/main.cpp) | Live model binding, validation, and explicit push/pull flow |
 | Commands | [examples/commands/main.cpp](examples/commands/main.cpp) | One command model shared by menu, toolbar, and accelerators |
 | Desktop integration | [examples/desktop_integration/main.cpp](examples/desktop_integration/main.cpp) | Modern dialogs, clipboard, drag-drop, and window placement |
+| Document state | [examples/document_state/main.cpp](examples/document_state/main.cpp) | Dirty-state transitions and close decisions |
+| Notepad | [examples/notepad/main.cpp](examples/notepad/main.cpp) | Complete Unicode SDI editor with safe file operations |
 | Appearance | [examples/appearance/main.cpp](examples/appearance/main.cpp) | Color modes, DWM backdrops, corners, and accessibility |
 | Layout gallery | [examples/layout_gallery/main.cpp](examples/layout_gallery/main.cpp) | Responsive nested row, column, overlay, and sizing recipes |
+| Settings | [examples/property_sheet/main.cpp](examples/property_sheet/main.cpp) | Persistent property pages with validation and Apply/OK/Cancel |
+| Explorer | [examples/explorer/main.cpp](examples/explorer/main.cpp) | Rebar, commands, stable navigation, virtual data, tabs, and splitter |
 
 </details>
 

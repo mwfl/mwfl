@@ -59,8 +59,10 @@ at explicit Win32 boundaries.
 - Split panes: `mwtl/splitter.h`; create `Splitter`, create both pane HWNDs as
   direct children of its HWND, then call `AttachPanes`. The splitter owns only
   its container and borrows pane identities. Geometry and constraints are DIPs;
-  arrows and Home/End move the focused bar and `WM_NOTIFY` reports changes. Use
-  the exact retained-layout pattern in `docs/recipes/split-pane.md`.
+  arrows and Home/End move the focused bar and `WM_NOTIFY` reports changes.
+  Child-pane notifications, control commands, and context menus forward to the
+  splitter parent. Use the complete composition in `examples/explorer` and
+  `docs/tutorials/explorer-application.md`.
 - Property pages: `mwtl/property_sheet.h`; give every page a stable nonzero ID,
   create controls in `initialize`, route edit/click notifications through
   `command`, call `SetDirty`, validate before mutating the model, commit in

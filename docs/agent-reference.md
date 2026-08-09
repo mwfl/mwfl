@@ -85,6 +85,20 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
   `message`; `Push()` writes the model to the control.
 - Lifetime: binding, control, and model value must have compatible lifetimes.
 
+## Split panes and Explorer composition
+
+- Header: `<mwtl/splitter.h>`; canonical application: `examples/explorer`.
+- Create both pane HWNDs as direct children of `Splitter`, then call
+  `AttachPanes`. The splitter owns its container and borrows the two pane HWNDs.
+- Attached-pane `WM_NOTIFY`, control `WM_COMMAND`, and `WM_CONTEXTMENU` are
+  forwarded to the splitter parent, so route virtual ListView notifications in
+  the ordinary top-level handlers.
+- Keep the shared `VirtualListModel` application-authoritative. Use stable
+  `TreeItemId`/`ListItemId`, `UpdateVirtualModel` for mutations that preserve
+  selection, and `TakeVirtualException` after callback handling.
+- Follow `docs/tutorials/explorer-application.md`; verify with
+  `mwtl.explorer_model`, `mwtl.explorer_gui`, and `mwtl.splitter_native`.
+
 ## Property sheets and persisted Settings
 
 - Header: `<mwtl/property_sheet.h>`; canonical application:

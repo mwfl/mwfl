@@ -17,7 +17,38 @@ cmake --build --preset vs2026-x64-debug --target mwtl_property_sheet_demo
 The host window should show the committed profile summary. Select **Open
 settings** to open a resizable, modeless native property sheet.
 
-## 2. Keep application state outside HWNDs
+## 2. Copy the supported starter
+
+Create a separate tutorial project from the maintained C++20/Per-Monitor-V2
+template, then copy the canonical implementation so every later edit starts
+from a compiling baseline:
+
+```powershell
+Copy-Item -Recurse .\templates\basic-app ..\mwtl-settings-tutorial
+Copy-Item .\examples\property_sheet\main.cpp, `
+  .\examples\property_sheet\settings_model.cpp, `
+  .\examples\property_sheet\settings_model.h `
+  ..\mwtl-settings-tutorial
+Set-Location ..\mwtl-settings-tutorial
+```
+
+In `CMakeLists.txt`, change the executable sources to:
+
+```cmake
+add_executable(mwtl_basic_app WIN32
+    main.cpp settings_model.cpp settings_model.h app.manifest)
+```
+
+Configure it against the checkout and run it before making changes:
+
+```powershell
+cmake -S . -B build -G "Visual Studio 18 2026" -A x64 `
+  -DMWTL_SOURCE_DIR=D:/GitHub/mwtl
+cmake --build build --config Debug
+& .\build\Debug\mwtl_basic_app.exe
+```
+
+## 3. Keep application state outside HWNDs
 
 Start with a small value object. Controls are an editable projection; they are
 not the source of truth:
@@ -32,7 +63,7 @@ struct Settings {
 Keep one `committed_` value in the host window. Build a candidate copy in each
 Apply callback and replace `committed_` only after persistence succeeds.
 
-## 3. Add versioned persistence
+## 4. Add versioned persistence
 
 Use a per-user key such as `Software\\YourCompany\\YourApp\\Settings\\1`.
 Store a `SchemaVersion` plus explicitly typed values. Return a structured result
@@ -43,7 +74,7 @@ overwriting them. `settings_model.cpp` is the complete implementation.
 The root `HKEY` is borrowed: the helper opens and closes only its child key.
 Never delete or close `HKEY_CURRENT_USER`.
 
-## 4. Create the profile page
+## 5. Create the profile page
 
 Give every page a stable nonzero ID. Create controls in `initialize`, then attach
 the ordinary mwtl layout to the page:
@@ -67,7 +98,7 @@ blank or oversized name, show `ShowTaskDialog`, focus the text box, and return
 `PropertyPageValidation::invalid`. The sheet stays open and Apply remains
 available for correction.
 
-## 5. Apply and reset predictably
+## 6. Apply and reset predictably
 
 The Apply callback copies committed state, reads only this page's controls, and
 saves the candidate. Return `false` on a write error so the sheet reports
@@ -86,7 +117,7 @@ Use the same pattern for the notifications page. Apply commits dirty pages; OK
 applies and closes; Cancel calls reset and closes without treating edits as
 saved.
 
-## 6. Own the modeless lifetime
+## 7. Own the modeless lifetime
 
 Store pages before the `PropertySheetDialog`; page callbacks capture the host
 and therefore must not outlive it. If the sheet already exists, activate it
@@ -96,7 +127,7 @@ then propagate the close event.
 All modeless sheet operations remain on the creating UI thread. `GetHwnd()` is
 a borrowed escape hatch for native `PSM_*` messages, not an ownership transfer.
 
-## 7. Run the focused evidence
+## 8. Run the focused evidence
 
 ```powershell
 cmake --build --preset vs2026-x64-debug `

@@ -352,6 +352,17 @@ target_link_libraries(mwtl_navigation_model_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.navigation_model COMMAND mwtl_navigation_model_test)
 set_tests_properties(mwtl.navigation_model PROPERTIES TIMEOUT 20)
 
+add_executable(mwtl_explorer_model_test
+    explorer_model_test.cpp
+    "${PROJECT_SOURCE_DIR}/examples/explorer/explorer_model.cpp")
+target_include_directories(mwtl_explorer_model_test PRIVATE
+    "${PROJECT_SOURCE_DIR}/examples/explorer")
+target_compile_features(mwtl_explorer_model_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_explorer_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_explorer_model_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.explorer_model COMMAND mwtl_explorer_model_test)
+set_tests_properties(mwtl.explorer_model PROPERTIES TIMEOUT 20)
+
 add_executable(mwtl_hot_corner_model_test
     hot_corner_model_test.cpp
     "${PROJECT_SOURCE_DIR}/examples/hot_corners/hot_corner_model.cpp")
@@ -404,7 +415,8 @@ if(TARGET mwtl_hello)
             mwtl_notepad
             mwtl_appearance_demo
             mwtl_layout_gallery_demo
-            mwtl_property_sheet_demo)
+            mwtl_property_sheet_demo
+            mwtl_explorer_demo)
         add_test(
             NAME mwtl.manifest.${example_target}
             COMMAND "${CMAKE_COMMAND}"
@@ -438,6 +450,13 @@ if(TARGET mwtl_hello)
             -Executable $<TARGET_FILE:mwtl_property_sheet_demo>
             -RuntimePath "${mwtl_test_runtime_path}")
     set_tests_properties(mwtl.settings_application_gui PROPERTIES TIMEOUT 15)
+    add_test(NAME mwtl.explorer_gui
+        COMMAND "${mwtl_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwtl_explorer_demo>
+            -RuntimePath "${mwtl_test_runtime_path}")
+    set_tests_properties(mwtl.explorer_gui PROPERTIES TIMEOUT 15)
 endif()
 
 add_test(
@@ -538,6 +557,7 @@ foreach(test_name IN LISTS mwtl_all_tests)
         set(labels "metadata;fast")
     elseif(test_name STREQUAL "mwtl.hot_corners_self_test" OR
            test_name STREQUAL "mwtl.settings_application_gui" OR
+           test_name STREQUAL "mwtl.explorer_gui" OR
            test_name STREQUAL "mwtl.notepad_gui")
         set(labels "gui;integration")
     elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap)$")

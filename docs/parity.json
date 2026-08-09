@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "objective": "Win32++ application-scenario parity with a Windows 10+, C++20, Agent-first design",
+  "comparison": "docs/win32xx-comparison.md",
   "policy": {
     "minimum_windows": "10 1809",
     "language": "C++20",

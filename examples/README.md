@@ -1,6 +1,6 @@
 # mwtl examples
 
-The repository includes 27 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Hot Corners is the complete reference application: it combines commands, persistence, background polling, tray integration, accessibility-aware appearance, multi-monitor state, and DPI behavior.
+The repository includes 31 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, and Explorer are complete reference applications with dedicated model/native/GUI evidence.
 
 | Directory | Target | Focus |
 |---|---|---|
@@ -29,8 +29,12 @@ The repository includes 27 focused executables. Each example is intentionally sm
 | `form_binding` | `mwtl_form_binding_demo` | Live bindings, validation, model preview, and explicit `Push()`/`Pull()` flow |
 | `commands` | `mwtl_commands_demo` | Shared command state across menu, toolbar, and keyboard accelerators |
 | `desktop_integration` | `mwtl_desktop_integration_demo` | Modern dialogs, clipboard, file drops, task dialogs, and persistent placement |
+| `document_state` | `mwtl_document_state_demo` | Dirty document state and safe user transition decisions |
+| `notepad` | `mwtl_notepad` | Complete accessible Unicode SDI editor with atomic file operations |
 | `appearance` | `mwtl_appearance_demo` | System/light/dark title bars, backdrops, corners, and accessibility helpers |
 | `layout_gallery` | `mwtl_layout_gallery_demo` | Responsive nested rows, columns, overlays, sizing, alignment, and dynamic content |
+| `property_sheet` | `mwtl_property_sheet_demo` | Persistent multi-page Settings with validation and Apply/OK/Cancel |
+| `explorer` | `mwtl_explorer_demo` | Stable TreeView and virtual ListView in a complete Explorer-style shell |
 
 Configure with `MWTL_BUILD_EXAMPLES=ON`, then build one target or all targets:
 
@@ -72,6 +76,8 @@ The examples remain native: every component is a real child HWND and direct Win3
 | Full worker lifecycle | `hot_corners` | wakeup, commands, persistence | reference app |
 | Files and shell integration | `desktop_integration` | dialogs, clipboard, placement | composed |
 | Native look and accessibility | `appearance` | appearance and accessibility helpers | composed |
+| Persistent application settings | `property_sheet` | property pages, task dialogs, versioned state | reference app |
+| Explorer-style desktop shell | `explorer` | stable navigation, virtual data, splitter, commands | reference app |
 
 Coding agents should copy a complete example and modify it instead of merging
 unrelated fragments. See `docs/agent-usage.md` for lifetime and threading rules.
