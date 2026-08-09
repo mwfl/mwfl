@@ -13,7 +13,7 @@
 namespace mwtl {
 
 enum class SettingType { dword, qword, string, binary };
-enum class SettingsStatus {
+enum class VersionedSettingsStatus {
     success,
     not_found,
     version_mismatch,
@@ -40,15 +40,15 @@ struct SettingDefinition {
 
 struct SettingsResult {
     std::vector<SettingValue> values;
-    SettingsStatus status = SettingsStatus::failed;
+    VersionedSettingsStatus status = VersionedSettingsStatus::failed;
     LSTATUS error = ERROR_GEN_FAILURE;
-    explicit operator bool() const noexcept { return status == SettingsStatus::success; }
+    explicit operator bool() const noexcept { return status == VersionedSettingsStatus::success; }
 };
 
-struct SettingsWriteResult {
-    SettingsStatus status = SettingsStatus::failed;
+struct VersionedSettingsWriteResult {
+    VersionedSettingsStatus status = VersionedSettingsStatus::failed;
     LSTATUS error = ERROR_GEN_FAILURE;
-    explicit operator bool() const noexcept { return status == SettingsStatus::success; }
+    explicit operator bool() const noexcept { return status == VersionedSettingsStatus::success; }
 };
 
 // Focused per-user registry store. root is borrowed. Save removes the commit
@@ -59,11 +59,11 @@ public:
     VersionedSettingsStore(HKEY root, std::wstring subkey,
                            std::uint32_t schema_version);
 
-    SettingsWriteResult Save(std::span<const SettingValue> values) const noexcept;
+    VersionedSettingsWriteResult Save(std::span<const SettingValue> values) const noexcept;
     SettingsResult Load(std::span<const SettingDefinition> schema) const;
     // Removes only names in owned_values plus SchemaVersion. The key itself is
     // deleted only when empty; unrelated values/subkeys are never traversed.
-    SettingsWriteResult RemoveOwned(std::span<const std::wstring_view> owned_values) const noexcept;
+    VersionedSettingsWriteResult RemoveOwned(std::span<const std::wstring_view> owned_values) const noexcept;
 
     HKEY GetRoot() const noexcept { return root_; }
     const std::wstring& GetSubkey() const noexcept { return subkey_; }

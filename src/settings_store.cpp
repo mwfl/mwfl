@@ -10,15 +10,15 @@
 namespace mwtl {
 namespace {
 
-SettingsStatus MapError(LSTATUS error) noexcept {
-    if (error == ERROR_SUCCESS) return SettingsStatus::success;
+VersionedSettingsStatus MapError(LSTATUS error) noexcept {
+    if (error == ERROR_SUCCESS) return VersionedSettingsStatus::success;
     if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND)
-        return SettingsStatus::not_found;
-    if (error == ERROR_ACCESS_DENIED) return SettingsStatus::access_denied;
+        return VersionedSettingsStatus::not_found;
+    if (error == ERROR_ACCESS_DENIED) return VersionedSettingsStatus::access_denied;
     if (error == ERROR_INVALID_DATA || error == ERROR_DATATYPE_MISMATCH)
-        return SettingsStatus::malformed;
-    if (error == ERROR_INVALID_PARAMETER) return SettingsStatus::invalid_argument;
-    return SettingsStatus::failed;
+        return VersionedSettingsStatus::malformed;
+    if (error == ERROR_INVALID_PARAMETER) return VersionedSettingsStatus::invalid_argument;
+    return VersionedSettingsStatus::failed;
 }
 
 bool ValidName(std::wstring_view value) noexcept {
@@ -35,8 +35,8 @@ DWORD NativeType(SettingType type) noexcept {
     return REG_NONE;
 }
 
-SettingsWriteResult Invalid() noexcept {
-    return {SettingsStatus::invalid_argument, ERROR_INVALID_PARAMETER};
+VersionedSettingsWriteResult Invalid() noexcept {
+    return {VersionedSettingsStatus::invalid_argument, ERROR_INVALID_PARAMETER};
 }
 
 }  // namespace
@@ -45,7 +45,7 @@ VersionedSettingsStore::VersionedSettingsStore(HKEY root, std::wstring subkey,
                                                std::uint32_t schema_version)
     : root_(root), subkey_(std::move(subkey)), schema_version_(schema_version) {}
 
-SettingsWriteResult VersionedSettingsStore::Save(
+VersionedSettingsWriteResult VersionedSettingsStore::Save(
     std::span<const SettingValue> values) const noexcept {
     if (!root_ || !ValidName(subkey_) || schema_version_ == 0) return Invalid();
     for (std::size_t index = 0; index < values.size(); ++index) {
@@ -97,18 +97,18 @@ SettingsResult VersionedSettingsStore::Load(
     std::span<const SettingDefinition> schema) const {
     SettingsResult result;
     if (!root_ || !ValidName(subkey_) || schema_version_ == 0) {
-        result.status = SettingsStatus::invalid_argument;
+        result.status = VersionedSettingsStatus::invalid_argument;
         result.error = ERROR_INVALID_PARAMETER;
         return result;
     }
     for (std::size_t index = 0; index < schema.size(); ++index) {
         if (!ValidName(schema[index].name) || schema[index].maximum_bytes == 0) {
-            result.status = SettingsStatus::invalid_argument; result.error = ERROR_INVALID_PARAMETER;
+            result.status = VersionedSettingsStatus::invalid_argument; result.error = ERROR_INVALID_PARAMETER;
             return result;
         }
         for (std::size_t other = 0; other < index; ++other)
             if (schema[other].name == schema[index].name) {
-                result.status = SettingsStatus::invalid_argument;
+                result.status = VersionedSettingsStatus::invalid_argument;
                 result.error = ERROR_INVALID_PARAMETER;
                 return result;
             }
@@ -121,12 +121,12 @@ SettingsResult VersionedSettingsStore::Load(
     error = ::RegGetValueW(key.get(), nullptr, L"SchemaVersion", RRF_RT_REG_DWORD,
                            nullptr, &version, &version_bytes);
     if (error != ERROR_SUCCESS || version_bytes != sizeof(version)) {
-        result.status = error == ERROR_FILE_NOT_FOUND ? SettingsStatus::malformed : MapError(error);
+        result.status = error == ERROR_FILE_NOT_FOUND ? VersionedSettingsStatus::malformed : MapError(error);
         result.error = error == ERROR_SUCCESS ? ERROR_INVALID_DATA : error;
         return result;
     }
     if (version != schema_version_) {
-        result.status = SettingsStatus::version_mismatch;
+        result.status = VersionedSettingsStatus::version_mismatch;
         result.error = ERROR_REVISION_MISMATCH;
         return result;
     }
@@ -142,8 +142,8 @@ SettingsResult VersionedSettingsStore::Load(
             (definition.type == SettingType::qword && bytes != sizeof(std::uint64_t)) ||
             (definition.type == SettingType::string &&
              (bytes < sizeof(wchar_t) || bytes % sizeof(wchar_t) != 0))) {
-            result.status = bytes > definition.maximum_bytes ? SettingsStatus::malformed
-                                                              : SettingsStatus::malformed;
+            result.status = bytes > definition.maximum_bytes ? VersionedSettingsStatus::malformed
+                                                              : VersionedSettingsStatus::malformed;
             result.error = ERROR_INVALID_DATA;
             return result;
         }
@@ -161,7 +161,7 @@ SettingsResult VersionedSettingsStore::Load(
             const std::size_t count = buffer.size() / sizeof(wchar_t);
             if (text[count - 1] != L'\0' ||
                 std::find(text, text + count - 1, L'\0') != text + count - 1) {
-                result.status = SettingsStatus::malformed; result.error = ERROR_INVALID_DATA; return result;
+                result.status = VersionedSettingsStatus::malformed; result.error = ERROR_INVALID_DATA; return result;
             }
             value.data = std::wstring(text, count - 1);
         } else {
@@ -170,12 +170,12 @@ SettingsResult VersionedSettingsStore::Load(
         result.values.push_back(std::move(value));
     }
     key.reset();
-    result.status = SettingsStatus::success;
+    result.status = VersionedSettingsStatus::success;
     result.error = ERROR_SUCCESS;
     return result;
 }
 
-SettingsWriteResult VersionedSettingsStore::RemoveOwned(
+VersionedSettingsWriteResult VersionedSettingsStore::RemoveOwned(
     std::span<const std::wstring_view> owned_values) const noexcept {
     if (!root_ || !ValidName(subkey_)) return Invalid();
     for (std::size_t index = 0; index < owned_values.size(); ++index) {
@@ -187,7 +187,7 @@ SettingsWriteResult VersionedSettingsStore::RemoveOwned(
     wil::unique_hkey key;
     LSTATUS error = ::RegOpenKeyExW(root_, subkey_.c_str(), 0,
                                     KEY_QUERY_VALUE | KEY_SET_VALUE, key.put());
-    if (error == ERROR_FILE_NOT_FOUND) return {SettingsStatus::not_found, error};
+    if (error == ERROR_FILE_NOT_FOUND) return {VersionedSettingsStatus::not_found, error};
     if (error != ERROR_SUCCESS) return {MapError(error), error};
     for (const auto name : owned_values) {
         const std::wstring terminated(name);
@@ -206,10 +206,10 @@ SettingsWriteResult VersionedSettingsStore::RemoveOwned(
     key.reset();
     if (error != ERROR_SUCCESS) return {MapError(error), error};
     if (subkey_count != 0 || value_count != 0)
-        return {SettingsStatus::success, ERROR_SUCCESS};
+        return {VersionedSettingsStatus::success, ERROR_SUCCESS};
     error = ::RegDeleteKeyW(root_, subkey_.c_str());
     if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND)
-        return {SettingsStatus::success, ERROR_SUCCESS};
+        return {VersionedSettingsStatus::success, ERROR_SUCCESS};
     return {MapError(error), error};
 }
 

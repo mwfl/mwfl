@@ -757,6 +757,13 @@ if(TARGET mwtl_hello)
             -Executable $<TARGET_FILE:mwtl_ole_drag_drop_demo>
             -RuntimePath "${mwtl_test_runtime_path}")
     set_tests_properties(mwtl.ole_drag_drop_gui PROPERTIES TIMEOUT 15)
+    add_test(NAME mwtl.shell_integration_gui
+        COMMAND "${mwtl_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwtl_shell_integration_demo>
+            -RuntimePath "${mwtl_test_runtime_path}")
+    set_tests_properties(mwtl.shell_integration_gui PROPERTIES TIMEOUT 15)
 endif()
 
 add_test(
@@ -866,6 +873,7 @@ foreach(test_name IN LISTS mwtl_all_tests)
            test_name STREQUAL "mwtl.image_viewer_gui" OR
            test_name STREQUAL "mwtl.printing_gui" OR
            test_name STREQUAL "mwtl.ole_drag_drop_gui" OR
+           test_name STREQUAL "mwtl.shell_integration_gui" OR
            test_name STREQUAL "mwtl.code_editor_gui" OR
            test_name STREQUAL "mwtl.browser_gui" OR
            test_name STREQUAL "mwtl.notepad_gui")
