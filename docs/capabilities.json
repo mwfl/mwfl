@@ -238,6 +238,36 @@
       "constraints": ["request imaging and d2d package components", "COM must be initialized before WIC decode", "default normalized pixel budget is 256 MiB", "DecodedImage owns top-down premultiplied BGRA8 CPU pixels", "color profile presence and successful sRGB conversion are distinct", "D2D bitmap and brushes are disposable caches", "viewport units are DIPs while image units are pixels"]
     },
     {
+      "id": "printing-preview",
+      "intent": ["print a document", "build print preview", "enumerate printers", "cancel printing"],
+      "symbols": ["mwtl::PrintPage", "mwtl::PrintPreviewModel", "mwtl::PrinterSettings", "mwtl::PrintJob", "mwtl::PrintPages"],
+      "headers": ["mwtl/printing.h", "mwtl/printing_native.h", "mwtl/printing_settings.h"],
+      "example": "examples/printing/main.cpp",
+      "recipe": "docs/tutorials/printing-ole-shell.md",
+      "tests": ["mwtl.printing_model", "mwtl.printing_job", "mwtl.printing_settings", "mwtl.printing_gui", "mwtl.package_consumer"],
+      "constraints": ["request the printing component and link mwtl::printing", "document and pagination remain printer independent", "printer HDCs are borrowed by render callbacks", "PrintJob balances every native transaction and aborts incomplete work", "preview state is never authoritative", "missing printers are structured results"]
+    },
+    {
+      "id": "ole-drag-drop",
+      "intent": ["OLE drag and drop", "transfer Unicode text", "transfer file lists", "custom clipboard format"],
+      "symbols": ["mwtl::OleDataObjectBuilder", "mwtl::CreateOleDropSource", "mwtl::CreateOleDropTarget", "mwtl::OleDropTargetRegistration", "mwtl::DoOleDragDrop"],
+      "headers": ["mwtl/ole_data.h", "mwtl/ole_drag_drop.h"],
+      "example": "examples/ole_drag_drop/main.cpp",
+      "recipe": "docs/tutorials/printing-ole-shell.md",
+      "tests": ["mwtl.ole_data", "mwtl.ole_drag_drop", "mwtl.ole_drag_drop_gui", "mwtl.package_consumer"],
+      "constraints": ["request the ole component and link mwtl::ole", "run with ComApartment::ole_sta", "STGMEDIUM ownership follows COM transfer rules", "payloads are copied and bounded and never contain application pointers", "callbacks are reentrant UI-thread calls", "revoke drop targets before HWND teardown"]
+    },
+    {
+      "id": "shell-integration",
+      "intent": ["versioned settings", "file association", "Jump List", "recent documents", "taskbar progress"],
+      "symbols": ["mwtl::VersionedSettingsStore", "mwtl::RegisterPerUserFileAssociation", "mwtl::CommitJumpList", "mwtl::TaskbarWindowIntegration"],
+      "headers": ["mwtl/settings_store.h", "mwtl/file_association.h", "mwtl/shell_integration.h"],
+      "example": "examples/shell_integration/main.cpp",
+      "recipe": "docs/tutorials/printing-ole-shell.md",
+      "tests": ["mwtl.settings_store", "mwtl.file_association", "mwtl.shell_integration", "mwtl.shell_integration_gui", "mwtl.package_consumer"],
+      "constraints": ["request the shell component and link mwtl::shell", "persistent mutations are explicit per-user and reversible", "owner markers prevent removal of foreign registry state", "Jump List IDs and AppUserModelID are stable", "Jump Lists require STA", "taskbar calls stay on the creating UI thread and are reapplied after TaskbarCreated", "Explorer and policy failures are structured"]
+    },
+    {
       "id": "native-hwnd-host",
       "intent": ["host a third-party HWND", "forward native notifications", "manage child focus and resize"],
       "symbols": ["mwtl::NativeHost", "mwtl::NativeHostStateModel"],

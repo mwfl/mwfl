@@ -4,7 +4,7 @@ This suite measures whether a coding agent can turn a natural-language Windows
 UI request into correct, compilable mwtl code without inventing APIs or
 violating lifecycle rules.
 
-`tasks.json` contains twenty prompts and their required evidence. `fixtures/`
+`tasks.json` contains twenty-eight prompts and their required evidence. `fixtures/`
 contains minimal known-good public-API baselines compiled by the repository.
 The baselines are not supplied to an agent during a blind run. `rubric.json`
 defines a 100-point score and `score-result.ps1` calculates it from recorded
@@ -42,9 +42,9 @@ independent blind-run evidence.
 
 ## Verify the suite
 
-The normal repository build compiles the fifteen core fixtures. A 0.4 build
-with both optional components enabled also compiles the five integration
-fixtures. Asset consistency
+The normal repository build compiles the core fixtures and the printing, OLE,
+and Shell fixtures. A 0.4 build with both third-party components enabled also
+compiles the WebView2 and Scintilla integration fixtures. Asset consistency
 is checked by `mwtl.agent_evals` and by:
 
 ```powershell

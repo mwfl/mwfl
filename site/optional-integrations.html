@@ -17,7 +17,17 @@
     <nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a href="tutorial.html">Get started</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
   </div></header>
   <main id="main" class="shell prose guide">
-    <div class="hero"><div class="eyebrow">Optional native integrations</div><h1>Browser and editor, without burdening the core.</h1><p class="lede">WebView2 and Scintilla are pinned, isolated CMake components. Enable one explicitly, retain native ownership and escape hatches, and run deterministic tests without network or dialogs.</p></div>
+    <div class="hero"><div class="eyebrow">Optional native integrations</div><h1>Native capabilities, without burdening the core.</h1><p class="lede">Printing, OLE, Shell, WebView2, and Scintilla are isolated CMake components. Enable only what an application needs, retain native ownership and escape hatches, and run deterministic local tests.</p></div>
+    <section id="printing-ole-shell">
+      <div class="eyebrow">Windows workflows</div><h2>Printing, OLE drag/drop, and Shell integration</h2>
+      <p><code>mwtl::printing</code> shares printer-independent pagination between preview and safe native print transactions. <code>mwtl::ole</code> supplies bounded Unicode, file-list, custom, and delayed COM data plus revoke-once drop registration. <code>mwtl::shell</code> supplies versioned settings, reversible per-user associations, Jump Lists, recent documents, and recoverable taskbar state.</p>
+      <pre data-title="Installed CMake"><code>find_package(mwtl CONFIG REQUIRED COMPONENTS printing ole shell)
+target_link_libraries(print_view PRIVATE mwtl::printing)
+target_link_libraries(drop_window PRIVATE mwtl::ole)
+target_link_libraries(shell_window PRIVATE mwtl::shell)</code></pre>
+      <div class="callout"><strong>Explicit state:</strong> preview never owns the document, OLE payloads never carry application pointers, and registry cleanup removes only owner-marked values. Explorer and printer absence are structured outcomes.</div>
+      <p><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/printing-ole-shell.md">Follow the VS2026 x64 tutorial →</a></p>
+    </section>
     <section id="webview2">
       <div class="eyebrow">Web content</div><h2>WebView2 Browser</h2>
       <p>The <code>mwtl::webview2</code> target pins the official SDK and x64 static loader. <code>WebView2Host</code> reports an absent Evergreen Runtime as structured state, creates its environment and controller asynchronously in the application STA, resizes and transfers focus, routes accelerators, reports navigation, recovers failed processes, and closes deterministically.</p>

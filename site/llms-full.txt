@@ -90,3 +90,23 @@ thread. Reference: examples/code_editor and docs/tutorials/code-editor.md.
 
 Direct2D uses mwtl::d2d, Direct3D uses mwtl::d3d, and WIC imaging uses
 mwtl::imaging. These optional targets never belong on core mwtl::mwtl.
+
+PRINTING, OLE, AND SHELL
+
+Printing: request COMPONENTS printing and link mwtl::printing. Keep document
+content and PrintPage pagination authoritative outside printer/preview state.
+PrintJob owns native transactions and aborts incomplete work; render HDCs are
+borrowed. Preview works without a printer.
+
+OLE: request COMPONENTS ole, link mwtl::ole, and use ComApartment::ole_sta.
+Payloads are copied, bounded, and contain no application pointers. STGMEDIUM
+ownership follows COM transfer rules. Drop callbacks are reentrant UI-thread
+calls; revoke registrations before HWND teardown.
+
+Shell: request COMPONENTS shell and link mwtl::shell. VersionedSettingsStore
+writes its schema marker last. File associations are explicit per-user,
+owner-marked, and reversible. Jump Lists require an STA and stable IDs. Taskbar
+objects stay on their creating UI thread and are recreated after TaskbarCreated.
+Handle unavailable, rejected, access, and COM failures. Reference:
+examples/printing, examples/ole_drag_drop, examples/shell_integration, and
+docs/tutorials/printing-ole-shell.md.

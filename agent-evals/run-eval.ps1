@@ -21,11 +21,12 @@ $eventSemantics = $source -match 'Handled|Propagate|CommandSet[\s\S]*Dispatch|co
 $dipCorrect = if ($TaskId -in @('01-window','03-layout','08-dpi')) { $source -match '_dip|Dip\s*[({]' } else { $true }
 $failureHandled = $source -match 'Must\s*\(|if\s*\(|cancel|Cancel|accepted|status'
 $compilePassed = $false
+$component = if ($TaskId -match '^2[12]-') { 'printing' } elseif ($TaskId -match '^2[34]-') { 'ole' } elseif ($TaskId -match '^2[5-8]-') { 'shell' } else { 'mwtl' }
 
 . (Join-Path $root 'scripts/developer-tools.ps1')
 $toolchain = Resolve-MwtlToolchain -VisualStudio $VisualStudio -Architecture x64
 $presets = Get-MwtlPresetNames -Toolchain $toolchain -Architecture x64
-& $toolchain.CMake --preset $presets.Configure "-DMWTL_AGENT_EVAL_CANDIDATE=$candidatePath"
+& $toolchain.CMake --preset $presets.Configure "-DMWTL_AGENT_EVAL_CANDIDATE=$candidatePath" "-DMWTL_AGENT_EVAL_COMPONENT=$component"
 if ($LASTEXITCODE -eq 0) {
     & $toolchain.CMake --build --preset $presets.Debug --target mwtl_agent_eval_candidate --parallel 2
     $compilePassed = $LASTEXITCODE -eq 0

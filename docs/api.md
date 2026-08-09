@@ -382,6 +382,33 @@ and output origin are DIPs. It implements bounded Fit, anchored zoom, and
 clamped pan. Keep `DecodedImage` authoritative and treat a D2D bitmap as a
 disposable device cache. See `examples/image_viewer` and
 `docs/tutorials/image-viewer.md`.
+
+## Printing, OLE, and Shell components
+
+`<mwtl/printing.h>`, `<mwtl/printing_native.h>`, and
+`<mwtl/printing_settings.h>` belong to `mwtl::printing`. Pagination and preview
+models are independent of HWNDs and printers. `PrintJob` owns the native
+StartDoc/StartPage transaction and aborts incomplete work; render callbacks
+borrow the HDC. Printer enumeration, capabilities, DEVMODE/DEVNAMES settings,
+dialog cancellation, and native failures have structured results.
+
+`<mwtl/ole_data.h>` and `<mwtl/ole_drag_drop.h>` belong to `mwtl::ole` and
+require `ComApartment::ole_sta` for drag/drop. Data objects copy and bound
+Unicode, file-list, custom, and delayed payloads. COM reference counts and
+STGMEDIUM transfer determine ownership. Drop callbacks are reentrant UI-thread
+calls; revoke registrations before destroying the target HWND.
+
+`<mwtl/settings_store.h>`, `<mwtl/file_association.h>`, and
+`<mwtl/shell_integration.h>` belong to `mwtl::shell`. Settings use an explicit
+schema version written last. Associations are per-user, owner-marked, and
+reversible without removing foreign registry state. Jump Lists use stable task
+IDs and an STA transaction. `TaskbarWindowIntegration` is creating-thread-only;
+clear it on teardown and recreate/reapply after `TaskbarCreated`. Explorer,
+policy, access, and COM failures remain visible structured outcomes.
+
+See `examples/printing`, `examples/ole_drag_drop`,
+`examples/shell_integration`, and
+`docs/tutorials/printing-ole-shell.md`.
 ## Generic native host
 
 `<mwtl/native_host.h>` provides `NativeHost`, an owned container HWND that
