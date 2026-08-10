@@ -75,6 +75,7 @@ add_library(mwtl STATIC
     src/error.cpp
     src/desktop.cpp
     src/dialog.cpp
+    src/docking_monitor.cpp
     src/docking_session.cpp
     src/docking_workspace.cpp
     src/document.cpp

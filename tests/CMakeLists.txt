@@ -268,6 +268,11 @@ target_compile_features(mwtl_header_docking_session PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_docking_session PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwtl_header_docking_session PRIVATE mwtl::mwtl)
 
+add_library(mwtl_header_docking_monitor OBJECT header_docking_monitor.cpp)
+target_compile_features(mwtl_header_docking_monitor PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_docking_monitor PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_docking_monitor PRIVATE mwtl::mwtl)
+
 add_executable(mwtl_docking_workspace_test docking_workspace_test.cpp)
 target_compile_features(mwtl_docking_workspace_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_docking_workspace_test PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -281,6 +286,13 @@ target_compile_options(mwtl_docking_session_test PRIVATE /W4 /permissive- /EHsc 
 target_link_libraries(mwtl_docking_session_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.docking_session COMMAND mwtl_docking_session_test)
 set_tests_properties(mwtl.docking_session PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+add_executable(mwtl_docking_monitor_test docking_monitor_test.cpp)
+target_compile_features(mwtl_docking_monitor_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_docking_monitor_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_docking_monitor_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.docking_monitor COMMAND mwtl_docking_monitor_test)
+set_tests_properties(mwtl.docking_monitor PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
 add_library(mwtl_header_document_workspace OBJECT header_document_workspace.cpp)
 target_compile_features(mwtl_header_document_workspace PRIVATE cxx_std_20)
