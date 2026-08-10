@@ -63,7 +63,7 @@ public:
 };
 
 struct PrintBackendResult {
-    std::unique_ptr<PrintBackend> backend;
+    std::unique_ptr<PrintBackend> backend{};
     PrintOperationStatus status = PrintOperationStatus::native_failure;
     DWORD error = ERROR_GEN_FAILURE;
     explicit operator bool() const noexcept { return backend != nullptr; }

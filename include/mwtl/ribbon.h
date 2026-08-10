@@ -64,7 +64,7 @@ enum class RibbonModelStatus {
 
 struct RibbonModelResult {
     RibbonModelStatus status = RibbonModelStatus::invalid_argument;
-    std::exception_ptr error;
+    std::exception_ptr error{};
     explicit operator bool() const noexcept {
         return status == RibbonModelStatus::success;
     }
@@ -72,7 +72,7 @@ struct RibbonModelResult {
 
 struct RibbonProjectionResult {
     RibbonModelStatus status = RibbonModelStatus::invalid_argument;
-    std::vector<RibbonCommandProjection> commands;
+    std::vector<RibbonCommandProjection> commands{};
     explicit operator bool() const noexcept {
         return status == RibbonModelStatus::success;
     }

@@ -43,8 +43,8 @@ enum class MdiModelStatus {
 
 struct MdiModelResult {
     MdiModelStatus status = MdiModelStatus::invalid_argument;
-    std::optional<MdiChildId> child;
-    std::exception_ptr error;
+    std::optional<MdiChildId> child = std::nullopt;
+    std::exception_ptr error{};
     explicit operator bool() const noexcept { return status == MdiModelStatus::success; }
 };
 

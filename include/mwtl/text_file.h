@@ -28,14 +28,14 @@ struct TextFile {
 };
 
 struct TextFileReadResult {
-    std::optional<TextFile> value;
+    std::optional<TextFile> value = std::nullopt;
     TextFileStatus status = TextFileStatus::io_error;
     DWORD native_error{};
     bool Succeeded() const noexcept { return status == TextFileStatus::success; }
 };
 
 struct TextFileWriteResult {
-    std::optional<FileStamp> stamp;
+    std::optional<FileStamp> stamp = std::nullopt;
     TextFileStatus status = TextFileStatus::io_error;
     DWORD native_error{};
     bool Succeeded() const noexcept { return status == TextFileStatus::success; }

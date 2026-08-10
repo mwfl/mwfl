@@ -27,7 +27,7 @@ private:
 enum class SettingsStatus { success, not_found, access_denied, invalid_data, io_error };
 
 struct RecentFilesLoadResult {
-    std::optional<RecentFileList> value;
+    std::optional<RecentFileList> value = std::nullopt;
     SettingsStatus status = SettingsStatus::io_error;
     LSTATUS native_error = ERROR_SUCCESS;
     bool Succeeded() const noexcept { return status == SettingsStatus::success; }

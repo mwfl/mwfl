@@ -33,7 +33,7 @@ enum class DocumentTabStatus {
 
 struct DocumentTabResult {
     DocumentTabStatus status = DocumentTabStatus::invalid_argument;
-    std::optional<DocumentId> active;
+    std::optional<DocumentId> active = std::nullopt;
     explicit operator bool() const noexcept {
         return status == DocumentTabStatus::success;
     }

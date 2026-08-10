@@ -47,7 +47,7 @@ enum class DocumentSessionStatus {
 
 struct DocumentSessionResult {
     DocumentSessionStatus status = DocumentSessionStatus::malformed;
-    std::optional<DocumentSession> session;
+    std::optional<DocumentSession> session = std::nullopt;
     DWORD native_error = ERROR_SUCCESS;
     explicit operator bool() const noexcept {
         return status == DocumentSessionStatus::success && session.has_value();

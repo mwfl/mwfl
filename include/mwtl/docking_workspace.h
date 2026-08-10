@@ -132,7 +132,7 @@ enum class DockLayoutStatus {
 
 struct DockLayoutResult {
     DockLayoutStatus status = DockLayoutStatus::invalid_argument;
-    std::optional<DockPanelId> active;
+    std::optional<DockPanelId> active = std::nullopt;
     explicit operator bool() const noexcept {
         return status == DockLayoutStatus::success;
     }

@@ -54,7 +54,7 @@ enum class DocumentWorkspaceStatus {
 
 struct DocumentWorkspaceResult {
     DocumentWorkspaceStatus status = DocumentWorkspaceStatus::invalid_argument;
-    std::optional<DocumentId> active;
+    std::optional<DocumentId> active = std::nullopt;
     explicit operator bool() const noexcept {
         return status == DocumentWorkspaceStatus::success;
     }

@@ -57,8 +57,8 @@ enum class ActiveDocumentRouteStatus {
 
 struct ActiveDocumentRouteResult {
     ActiveDocumentRouteStatus status = ActiveDocumentRouteStatus::no_active_document;
-    std::optional<DocumentId> routed_document;
-    std::exception_ptr error;
+    std::optional<DocumentId> routed_document = std::nullopt;
+    std::exception_ptr error{};
     explicit operator bool() const noexcept {
         return status == ActiveDocumentRouteStatus::success;
     }
@@ -111,8 +111,8 @@ using DocumentSaveHandler = std::function<bool(DocumentId)>;
 
 struct CoordinatedCloseResult {
     CoordinatedCloseStatus status = CoordinatedCloseStatus::invalid_argument;
-    std::optional<DocumentId> failed_document;
-    std::exception_ptr error;
+    std::optional<DocumentId> failed_document = std::nullopt;
+    std::exception_ptr error{};
     explicit operator bool() const noexcept {
         return status == CoordinatedCloseStatus::success;
     }
