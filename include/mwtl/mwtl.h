@@ -16,6 +16,7 @@
 #include <mwtl/dialog.h>
 #include <mwtl/docking_drag.h>
 #include <mwtl/docking_monitor.h>
+#include <mwtl/docking_preview.h>
 #include <mwtl/docking_session.h>
 #include <mwtl/docking_workspace.h>
 #include <mwtl/document.h>
