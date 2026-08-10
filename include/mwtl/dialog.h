@@ -22,7 +22,7 @@ struct DialogResult {
     DialogStatus status = DialogStatus::failed;
     INT_PTR command_id = 0;
     DWORD error = ERROR_SUCCESS;
-    std::exception_ptr callback_exception;
+    std::exception_ptr callback_exception{};
 
     explicit operator bool() const noexcept { return status == DialogStatus::accepted; }
 };

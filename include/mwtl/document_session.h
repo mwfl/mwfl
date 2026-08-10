@@ -87,7 +87,7 @@ struct SessionRestoreResult {
     std::size_t restored_documents = 0;
     std::size_t restored_recently_closed = 0;
     std::vector<SessionRestoreIssue> issues;
-    std::exception_ptr error;
+    std::exception_ptr error{};
     explicit operator bool() const noexcept {
         return status == SessionRestoreStatus::success ||
                status == SessionRestoreStatus::partial_success;

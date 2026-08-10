@@ -175,7 +175,7 @@ struct TaskDialogResult {
     int button = 0;
     int radio_button = 0;
     bool verification_checked = false;
-    std::exception_ptr callback_exception;
+    std::exception_ptr callback_exception{};
     explicit operator bool() const noexcept { return SUCCEEDED(status); }
 };
 

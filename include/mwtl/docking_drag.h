@@ -58,7 +58,7 @@ enum class DockDragCommitStatus {
 struct DockDragCommitResult {
     DockDragCommitStatus status = DockDragCommitStatus::invalid_state;
     DockLayoutStatus layout_status = DockLayoutStatus::invalid_argument;
-    std::exception_ptr error;
+    std::exception_ptr error{};
     explicit operator bool() const noexcept {
         return status == DockDragCommitStatus::success;
     }

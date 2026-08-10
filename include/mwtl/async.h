@@ -65,7 +65,7 @@ enum class AsyncDispatchStatus { delivered, inactive, wrong_thread };
 struct AsyncInitializationResult {
     AsyncInitializationState state = AsyncInitializationState::idle;
     HRESULT error = S_OK;
-    std::exception_ptr callback_exception;
+    std::exception_ptr callback_exception{};
 };
 
 namespace detail {

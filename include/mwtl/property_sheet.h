@@ -108,7 +108,7 @@ struct PropertySheetResult {
     PropertySheetStatus status = PropertySheetStatus::failed;
     INT_PTR native_result = -1;
     DWORD error = ERROR_SUCCESS;
-    std::exception_ptr callback_exception;
+    std::exception_ptr callback_exception{};
 
     explicit operator bool() const noexcept { return status == PropertySheetStatus::accepted; }
 };

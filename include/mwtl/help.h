@@ -33,7 +33,7 @@ enum class HelpStatus {
 struct HelpResult {
     HelpStatus status = HelpStatus::invalid_argument;
     DWORD error = ERROR_INVALID_PARAMETER;
-    std::exception_ptr exception;
+    std::exception_ptr exception{};
     explicit operator bool() const noexcept { return status == HelpStatus::success; }
 };
 
