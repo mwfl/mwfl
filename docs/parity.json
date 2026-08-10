@@ -65,11 +65,12 @@
     },
     {
       "version": "0.8",
-      "status": "in_progress",
+      "status": "complete",
       "theme": "optional-ribbon-and-legacy-mdi",
       "acceptance": "docs/milestones/0.8.md",
       "reflection": "docs/reflections/0.8.md",
-      "depends_on": "0.7"
+      "depends_on": "0.7",
+      "evidence": ["examples/ribbon_workspace", "examples/mdi_workspace", "examples/graphics_interop", "examples/shell_integration", "mwtl.ribbon_model", "mwtl.ribbon_native", "mwtl.ribbon_workspace_gui", "mwtl.mdi_model", "mwtl.mdi_native", "mwtl.mdi_workspace_gui", "mwtl.graphics", "mwtl.graphics_interop_gui", "mwtl.help", "mwtl.shell_integration", "mwtl.integration_stress", "mwtl.package_consumer"]
     }
   ]
 }

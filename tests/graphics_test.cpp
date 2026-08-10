@@ -84,6 +84,24 @@ int main() {
             Gdiplus::Pen pen(Gdiplus::Color(255, 255, 255, 255), 2.0f);
             graphics.DrawRectangle(&pen, 4, 4, 55, 39);
         })) return 13;
+    bool transform_observed = false;
+    if (!ExportGdiPlusPng(png_path, 32, 32,
+            [&](Gdiplus::Graphics& graphics) {
+                Gdiplus::Matrix transform;
+                if (transform.Translate(3.0f, 5.0f) != Gdiplus::Ok ||
+                    transform.Scale(2.0f, 2.0f) != Gdiplus::Ok ||
+                    graphics.SetTransform(&transform) != Gdiplus::Ok) return;
+                Gdiplus::Matrix observed;
+                Gdiplus::REAL elements[6]{};
+                if (graphics.GetTransform(&observed) != Gdiplus::Ok ||
+                    observed.GetElements(elements) != Gdiplus::Ok) return;
+                transform_observed = graphics.GetDpiX() > 0.0f &&
+                    graphics.GetDpiY() > 0.0f && elements[0] == 2.0f &&
+                    elements[3] == 2.0f && elements[4] == 3.0f &&
+                    elements[5] == 5.0f;
+                Gdiplus::SolidBrush brush(Gdiplus::Color(255, 12, 34, 56));
+                graphics.FillRectangle(&brush, 0, 0, 8, 8);
+            }) || !transform_observed) return 19;
     std::ifstream png(png_path, std::ios::binary);
     std::array<unsigned char, 8> signature{};
     png.read(reinterpret_cast<char*>(signature.data()), signature.size());

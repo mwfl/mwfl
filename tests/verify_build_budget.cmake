@@ -34,6 +34,10 @@ set(optional_headers
     printing.h
     printing_native.h
     printing_settings.h
+    ribbon.h
+    mdi.h
+    graphics.h
+    help.h
     settings_store.h
     shell_integration.h
     scintilla.h
@@ -57,9 +61,9 @@ if(core_header_bytes GREATER 204800)
     message(FATAL_ERROR
         "core top-level public headers exceeded 200 KiB: ${core_header_bytes}")
 endif()
-if(optional_header_bytes GREATER 65536)
+if(optional_header_bytes GREATER 73728)
     message(FATAL_ERROR
-        "component public headers exceeded 64 KiB: ${optional_header_bytes}")
+        "component public headers exceeded 72 KiB: ${optional_header_bytes}")
 endif()
 
 file(STRINGS "${PROJECT_ROOT}/include/mwtl/window.h" window_lines)
