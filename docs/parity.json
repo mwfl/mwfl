@@ -56,15 +56,16 @@
     },
     {
       "version": "0.7",
-      "status": "in_progress",
+      "status": "complete",
       "theme": "docking-workspace",
       "acceptance": "docs/milestones/0.7.md",
       "reflection": "docs/reflections/0.7.md",
-      "depends_on": "0.6"
+      "depends_on": "0.6",
+      "evidence": ["examples/docking_workspace", "mwtl.docking_workspace", "mwtl.docking_session", "mwtl.docking_monitor", "mwtl.docking_drag", "mwtl.docking_preview_native", "mwtl.docking_native", "mwtl.docking_auto_hide", "mwtl.docking_keyboard", "mwtl.docking_floating_native", "mwtl.docking_stress_native", "mwtl.docking_workspace_gui", "mwtl.package_consumer"]
     },
     {
       "version": "0.8",
-      "status": "planned",
+      "status": "in_progress",
       "theme": "optional-ribbon-and-legacy-mdi",
       "acceptance": "docs/milestones/0.8.md",
       "reflection": "docs/reflections/0.8.md",

@@ -21,6 +21,8 @@ constexpr mwtl::ControlId kKeyboardDock{904};
 constexpr mwtl::ControlId kSaveLayout{905};
 constexpr mwtl::ControlId kResetLayout{906};
 constexpr mwtl::ControlId kExit{907};
+constexpr mwtl::ControlId kReorderDocuments{908};
+constexpr mwtl::ControlId kCloseReadme{909};
 constexpr mwtl::ControlId kToolbar{910};
 constexpr mwtl::ControlId kStatus{911};
 constexpr mwtl::ControlId kOuterSplitter{912};
@@ -416,6 +418,11 @@ private:
                 [this] { SaveLayout(); }).SetShortcut({FVIRTKEY | FCONTROL, 'S'}))
             .Add(mwtl::Command(kResetLayout, L"Reset Layout",
                 [this] { ApplySnapshot(DefaultLayout(), L"Default layout restored"); }))
+            .Add(mwtl::Command(kReorderDocuments, L"Move README Tab First",
+                [this] { ReorderDocuments(); })
+                .SetShortcut({FVIRTKEY | FCONTROL | FSHIFT, 'R'}))
+            .Add(mwtl::Command(kCloseReadme, L"Close README (Reset Restores)",
+                [this] { CloseReadme(); }).SetShortcut({FVIRTKEY | FCONTROL, 'W'}))
             .Add(mwtl::Command(kExit, L"Exit", [this] { Close(); }));
     }
 
@@ -423,7 +430,8 @@ private:
         mwtl::Menu bar, popup;
         mwtl::Must(bar.Create() && popup.CreatePopup(), "create docking menu");
         for (mwtl::ControlId id : {kFloatOutput, kDockOutput, kAutoHideExplorer,
-                kPinExplorer, kKeyboardDock, kSaveLayout, kResetLayout})
+                kPinExplorer, kKeyboardDock, kReorderDocuments, kCloseReadme,
+                kSaveLayout, kResetLayout})
             mwtl::Must(popup.AppendCommand(*commands_.Find(id)), "append docking command");
         popup.AppendSeparator();
         mwtl::Must(popup.AppendCommand(*commands_.Find(kExit)), "append exit command");
@@ -572,6 +580,25 @@ private:
         if (model_.FindPanelGroup(kSolutionExplorer) == kLeftTools) return true;
         return ApplyMutation(mwtl::MakePinDockMutation(kSolutionExplorer, kLeftTools),
                              L"Solution Explorer pinned");
+    }
+
+    bool ReorderDocuments() {
+        const auto* group = model_.FindGroup(kDocuments);
+        if (!group || group->panels.size() < 2) return false;
+        mwtl::DockMutation mutation;
+        mutation.kind = mwtl::DockMutationKind::move_to_group;
+        mutation.panel = kReadmeDocument;
+        mutation.target_group = kDocuments;
+        mutation.target_index = 0;
+        return ApplyMutation(mutation, L"README tab moved first");
+    }
+
+    bool CloseReadme() {
+        if (!model_.FindPanel(kReadmeDocument)) return true;
+        mwtl::DockMutation mutation;
+        mutation.kind = mwtl::DockMutationKind::close_panel;
+        mutation.panel = kReadmeDocument;
+        return ApplyMutation(mutation, L"README closed; Reset Layout restores it");
     }
 
     mwtl::DockPointDip ScreenPointDip(POINT point) const noexcept {
@@ -857,6 +884,16 @@ private:
             throw std::runtime_error("mouse docking cancellation changed layout");
         if (!RedockOutput()) throw std::runtime_error("mouse test redock failed");
         self_test_step_ = 7;
+        if (!ReorderDocuments() || !model_.FindGroup(kDocuments) ||
+            model_.FindGroup(kDocuments)->panels.front() != kReadmeDocument)
+            throw std::runtime_error("tab reorder workflow failed");
+        if (!CloseReadme() || model_.FindPanel(kReadmeDocument) ||
+            ::IsWindowVisible(readme_editor_))
+            throw std::runtime_error("close panel workflow failed");
+        if (!ApplySnapshot(DefaultLayout(), L"Self-test layout restored") ||
+            !model_.FindPanel(kReadmeDocument))
+            throw std::runtime_error("closed panel restore workflow failed");
+        self_test_step_ = 8;
         BeginKeyboardDock();
         if (!keyboard_.IsActive() || !keyboard_.Move(mwtl::DockKeyboardMove::left))
             throw std::runtime_error("keyboard docking navigation failed");
@@ -864,12 +901,12 @@ private:
         preview_.Hide();
         if (!accepted) throw std::runtime_error("keyboard docking accept failed");
         ApplyKeyboardTarget(accepted->target);
-        self_test_step_ = 8;
+        self_test_step_ = 9;
         if (!SaveLayout()) throw std::runtime_error("layout save failed");
         const auto loaded = mwtl::LoadDockingSession(SessionPath());
         if (!loaded || loaded.snapshot->panels.size() != 4)
             throw std::runtime_error("layout restore file failed");
-        self_test_step_ = 9;
+        self_test_step_ = 10;
         const std::array monitors{
             mwtl::DockMonitorWorkArea{L"primary", 0, 0, 1920, 1040, 96, true}};
         if (!mwtl::RecoverDockFloatingPlacement(

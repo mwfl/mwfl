@@ -106,7 +106,7 @@ std::optional<DockNativeAdoptionPlan> DockNativeWorkspaceAdapter::Prepare(
         DockLayoutModel::Validate(snapshot) != DockLayoutStatus::success)
         return fail(DockNativeStatus::invalid_argument);
     DockNativeAdoptionPlan plan;
-    try { plan.moves.reserve(snapshot.panels.size()); }
+    try { plan.moves.reserve(snapshot.panels.size() + panels_.size()); }
     catch (...) { return fail(DockNativeStatus::native_failure); }
     plan.original_focus = ::GetFocus();
     plan.destination_focus = snapshot.active_panel;
@@ -139,6 +139,25 @@ std::optional<DockNativeAdoptionPlan> DockNativeWorkspaceAdapter::Prepare(
                 ::GetWindowLongPtrW(window, GWL_STYLE),
                 ::GetWindowLongPtrW(window, GWL_EXSTYLE),
                 ::IsWindowVisible(window) != FALSE, visible});
+        } catch (...) { return fail(DockNativeStatus::native_failure); }
+    }
+    // Bound application HWNDs intentionally absent from the candidate snapshot
+    // are closed logically. Park and hide them as part of the same adoption so
+    // rollback can restore their exact parent/style/visibility/focus state.
+    for (const auto& binding : panels_) {
+        const bool remains = std::any_of(snapshot.panels.begin(), snapshot.panels.end(),
+            [&](const DockPanel& panel) { return panel.id == binding.id; });
+        if (remains) continue;
+        if (!IsCompatibleWindow(binding.window))
+            return fail(DockNativeStatus::stale_window);
+        const HWND original_parent = ::GetParent(binding.window);
+        if (!original_parent || !IsCompatibleWindow(original_parent))
+            return fail(DockNativeStatus::stale_window);
+        try {
+            plan.moves.push_back({binding.id, binding.window, original_parent,
+                parking_parent_, ::GetWindowLongPtrW(binding.window, GWL_STYLE),
+                ::GetWindowLongPtrW(binding.window, GWL_EXSTYLE),
+                ::IsWindowVisible(binding.window) != FALSE, false});
         } catch (...) { return fail(DockNativeStatus::native_failure); }
     }
     if (!plan.IsValid()) return fail(DockNativeStatus::invalid_argument);

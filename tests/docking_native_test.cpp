@@ -81,18 +81,33 @@ int main() {
         ::GetParent(second) != main_host || ::IsWindowVisible(second) != FALSE ||
         !model.Commit(*hidden) || !adapter.Commit(*hidden_plan)) return 11;
 
+    DockMutation close;
+    close.kind = DockMutationKind::close_panel;
+    close.panel = {1};
+    const auto closed = model.Propose(close);
+    auto closed_plan = closed ? adapter.Prepare(closed->proposed) : std::nullopt;
+    if (!closed || !closed_plan || !adapter.Adopt(*closed_plan) ||
+        ::GetParent(first) != main_host || ::IsWindowVisible(first) != FALSE)
+        return 12;
+    if (!adapter.Rollback(*closed_plan) || ::GetParent(first) != group_two ||
+        ::IsWindowVisible(first) == FALSE) return 13;
+    if (!adapter.Adopt(*closed_plan) || !model.Commit(*closed) ||
+        !adapter.Commit(*closed_plan) || model.FindPanel({1}) ||
+        ::GetParent(first) != main_host || ::IsWindowVisible(first) != FALSE)
+        return 14;
+
     auto stale_snapshot = model.GetSnapshot();
     ::DestroyWindow(first);
     if (adapter.Prepare(stale_snapshot, &failure) ||
-        failure != DockNativeStatus::stale_window) return 12;
+        failure != DockNativeStatus::stale_window) return 15;
     if (!adapter.UnbindPanel({1}) ||
         adapter.UnbindPanel({1}).status != DockNativeStatus::not_found ||
-        !adapter.UnbindGroup({20})) return 13;
+        !adapter.UnbindGroup({20})) return 16;
 
     adapter.Detach();
     if (adapter.GetParkingParent() || adapter.FindPanel({2}) || adapter.FindGroup({10}))
-        return 14;
-    if (!::IsWindow(second) || ::GetParent(second) != main_host) return 15;
+        return 17;
+    if (!::IsWindow(second) || ::GetParent(second) != main_host) return 18;
     ::DestroyWindow(main_host);
     ::DestroyWindow(floating_host);
     return 0;

@@ -26,6 +26,14 @@ Create a `move_to_group` mutation (or `MakePinDockMutation`) and set
 `target_index` when order matters. Use propose -> native prepare/adopt -> model
 commit -> native commit. Activate by stable panel ID after the move.
 
+## Close and later restore a panel
+
+Propose `close_panel`. The native adapter parks and hides the bound HWND inside
+the same rollback-capable adoption plan; your application still owns that HWND
+and decides whether to destroy or retain it. Restore by resolving the same
+stable ID into a validated candidate/default snapshot, never by serializing the
+old HWND.
+
 ## Split a panel
 
 Use `split_to_group` with new stable group, group-node, and split-node IDs, a

@@ -25,7 +25,9 @@ Output below the documents. Try these operations:
 4. Use **Auto-hide Explorer** and **Pin Explorer**.
 5. Press Ctrl+K, move with arrows or Tab, press Enter to accept, or Escape to
    cancel.
-6. Save the layout, close the application, and reopen it.
+6. Press Ctrl+Shift+R to reorder the document tabs. Press Ctrl+W to close
+   README, then use **Reset Layout** to restore the stable panel identity.
+7. Save the layout, close the application, and reopen it.
 
 Run its deterministic offline integration test with:
 
