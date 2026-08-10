@@ -201,7 +201,7 @@ endif()
 target_include_directories(mwtl_ribbon PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(mwtl_ribbon PUBLIC mwtl)
+target_link_libraries(mwtl_ribbon PUBLIC mwtl PRIVATE ole32 propsys)
 
 if(MWTL_BUILD_SCINTILLA)
     FetchContent_Declare(mwtl_scintilla_source

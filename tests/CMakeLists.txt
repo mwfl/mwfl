@@ -55,6 +55,39 @@ target_link_libraries(mwtl_ribbon_model_test PRIVATE mwtl::ribbon)
 add_test(NAME mwtl.ribbon_model COMMAND mwtl_ribbon_model_test)
 set_tests_properties(mwtl.ribbon_model PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
+find_program(MWTL_UICC_EXECUTABLE NAMES uicc.exe
+    HINTS
+        "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/x86"
+        "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_SYSTEM_VERSION}/x86")
+if(MWTL_UICC_EXECUTABLE)
+    set(mwtl_ribbon_generated_dir "${CMAKE_CURRENT_BINARY_DIR}/ribbon-generated")
+    set(mwtl_ribbon_binary "${mwtl_ribbon_generated_dir}/ribbon_test.bml")
+    set(mwtl_ribbon_resource "${mwtl_ribbon_generated_dir}/ribbon_test.rc")
+    set(mwtl_ribbon_header "${mwtl_ribbon_generated_dir}/ribbon_test.h")
+    add_custom_command(
+        OUTPUT "${mwtl_ribbon_binary}" "${mwtl_ribbon_resource}" "${mwtl_ribbon_header}"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${mwtl_ribbon_generated_dir}"
+        COMMAND "${MWTL_UICC_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/resources/ribbon_test.ribbon"
+            "${mwtl_ribbon_binary}"
+            "/header:${mwtl_ribbon_header}"
+            "/res:${mwtl_ribbon_resource}"
+            /name:TEST_RIBBON /W2
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/resources/ribbon_test.ribbon"
+        VERBATIM)
+    add_executable(mwtl_ribbon_native_test ribbon_native_test.cpp
+        "${mwtl_ribbon_resource}")
+    target_compile_features(mwtl_ribbon_native_test PRIVATE cxx_std_20)
+    target_compile_options(mwtl_ribbon_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+    target_link_libraries(mwtl_ribbon_native_test PRIVATE mwtl::ribbon)
+    add_test(NAME mwtl.ribbon_native COMMAND mwtl_ribbon_native_test)
+    set_tests_properties(mwtl.ribbon_native PROPERTIES
+        ENVIRONMENT "MWTL_TEST_NO_DIALOGS=1"
+        TIMEOUT 30 LABELS "native;integration")
+else()
+    message(WARNING "uicc.exe not found; Ribbon native integration test is unavailable")
+endif()
+
 add_library(mwtl_header_command OBJECT header_command.cpp)
 target_compile_features(mwtl_header_command PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_command PRIVATE /W4 /permissive- /EHsc /utf-8)

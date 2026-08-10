@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns="http://schemas.microsoft.com/windows/2009/Ribbon">
+  <Application.Commands>
+    <Command Name="cmdApplication" Id="1000" LabelTitle="File" />
+    <Command Name="cmdQuickAccess" Id="1003" LabelTitle="Quick Access" />
+    <Command Name="cmdTab" Id="1001" LabelTitle="Test" />
+    <Command Name="cmdGroup" Id="1002" LabelTitle="Commands" />
+    <Command Name="cmdInvoke" Id="1010" LabelTitle="Invoke" Keytip="I" />
+  </Application.Commands>
+  <Application.Views>
+    <Ribbon>
+      <Ribbon.QuickAccessToolbar>
+        <QuickAccessToolbar CommandName="cmdQuickAccess">
+          <QuickAccessToolbar.ApplicationDefaults>
+            <Button CommandName="cmdInvoke" />
+          </QuickAccessToolbar.ApplicationDefaults>
+        </QuickAccessToolbar>
+      </Ribbon.QuickAccessToolbar>
+      <Ribbon.ApplicationMenu>
+        <ApplicationMenu CommandName="cmdApplication">
+          <MenuGroup>
+            <Button CommandName="cmdInvoke" />
+          </MenuGroup>
+        </ApplicationMenu>
+      </Ribbon.ApplicationMenu>
+      <Ribbon.Tabs>
+        <Tab CommandName="cmdTab">
+          <Group CommandName="cmdGroup" SizeDefinition="OneButton">
+            <Button CommandName="cmdInvoke" />
+          </Group>
+        </Tab>
+      </Ribbon.Tabs>
+    </Ribbon>
+  </Application.Views>
+</Application>
