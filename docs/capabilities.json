@@ -332,6 +332,16 @@
       "constraints": ["enable MWTL_BUILD_SCINTILLA link mwtl::scintilla and deploy Scintilla.dll", "Scintilla 5.6.5 archives are hash-pinned", "public strings convert strictly between UTF-16 and UTF-8", "positions are UTF-8 byte offsets", "editor operations and notifications stay on the creating UI thread", "raw Send follows the pinned native API"]
     },
     {
+      "id": "markdown-editor",
+      "intent": ["edit Markdown", "preview Markdown", "syntax color Markdown", "build a local-first document editor", "compose Scintilla and WebView2"],
+      "symbols": ["mwtl::ScintillaEditor", "mwtl::WebView2Host", "mwtl::Splitter", "mwtl::DocumentState", "mwtl::ReadTextFile", "mwtl::WriteTextFileAtomic"],
+      "headers": ["mwtl/scintilla.h", "mwtl/webview2.h", "mwtl/splitter.h", "mwtl/document.h", "mwtl/text_file.h"],
+      "example": "examples/markdown_editor/main.cpp",
+      "recipe": "docs/tutorials/markdown-editor.md",
+      "tests": ["mwtl.markdown_renderer", "mwtl.markdown_editor_gui"],
+      "constraints": ["enable both MWTL_BUILD_SCINTILLA and MWTL_BUILD_WEBVIEW2", "deploy Scintilla.dll and Lexilla.dll beside the executable", "the Lexilla Markdown lexer and light/dark palettes stay application-owned", "md4c 0.5.2 is pinned to immutable commit 729e6b8b320caa96328968ab27d7db2235e4fb47 and its MIT license ships with the component", "initialize the application STA", "disable raw HTML and restrict rendered URL schemes", "keep the preview offline and preserve editing when WebView2 is unavailable", "reject stale saves instead of overwriting external changes", "all HWND access stays on the creating UI thread"]
+    },
+    {
       "id": "docking-workspace",
       "intent": ["build an IDE workspace", "dock and float tool panels", "auto-hide panels", "save and restore a docking layout"],
       "symbols": ["mwtl::DockLayoutModel", "mwtl::DockNativeWorkspaceAdapter", "mwtl::DockDragSession", "mwtl::DockPreviewWindow", "mwtl::DockKeyboardSession", "mwtl::DockFloatingWindow", "mwtl::DockAutoHideController", "mwtl::SaveDockingSessionAtomic"],

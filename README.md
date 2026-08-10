@@ -160,13 +160,13 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
 
-The repository contains 43 independently buildable programs. Each link opens
+The repository contains 44 independently buildable programs. Each link opens
 the complete source. Start with **Hello** for the smallest application,
 **Controls** for the basic widget set, or **Hot corners** for a complete
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 43 runnable examples</strong></summary>
+<summary><strong>Browse all 44 runnable examples</strong></summary>
 
 <br>
 
@@ -208,6 +208,7 @@ multi-monitor utility.
 | Image Viewer | [examples/image_viewer/main.cpp](examples/image_viewer/main.cpp) | WIC decode, color metadata, Fit/zoom/pan, and recoverable D2D pixels |
 | Code Editor | [examples/code_editor/main.cpp](examples/code_editor/main.cpp) | Optional pinned Scintilla, Unicode files, search/replace, and notifications |
 | Browser | [examples/browser/main.cpp](examples/browser/main.cpp) | Optional pinned WebView2, offline startup, process recovery, and navigation |
+| Markdown Editor | [examples/markdown_editor/main.cpp](examples/markdown_editor/main.cpp) | Product-style local Markdown editing with Scintilla, safe offline preview, atomic saves, and GUI self-test |
 | Docking Workspace | [examples/docking_workspace/main.cpp](examples/docking_workspace/main.cpp) | IDE-style documents and tools with docking, floating, auto-hide, keyboard operation, and layout restore |
 | Printing | [examples/printing/main.cpp](examples/printing/main.cpp) | Shared pagination, preview, printer settings, and balanced native print jobs |
 | OLE drag/drop | [examples/ole_drag_drop/main.cpp](examples/ole_drag_drop/main.cpp) | Unicode, files, and custom formats through native OLE drag/drop |
@@ -221,6 +222,10 @@ multi-monitor utility.
 <p align="center">
   <a href="examples/form_binding/main.cpp"><img width="48%" src="docs/images/examples/form-binding.png" alt="Form binding example"></a>
   <a href="examples/layout_gallery/main.cpp"><img width="48%" src="docs/images/examples/layout-gallery.png" alt="Responsive layout gallery example"></a>
+</p>
+
+<p align="center">
+  <a href="examples/markdown_editor/main.cpp"><img width="96%" src="docs/images/examples/markdown-editor.png" alt="mwtl Markdown Editor with native source editing and offline preview"></a>
 </p>
 
 The [examples catalog](examples/README.md) lists every target and its run
