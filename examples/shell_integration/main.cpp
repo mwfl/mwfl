@@ -1,4 +1,5 @@
 #include <mwtl/file_association.h>
+#include <mwtl/help.h>
 #include <mwtl/mwtl.h>
 #include <mwtl/settings_store.h>
 #include <mwtl/shell_integration.h>
@@ -15,6 +16,8 @@ namespace {
 constexpr wchar_t kAppId[] = L"mwtl.examples.shell-integration";
 constexpr wchar_t kSettingsKey[] = L"Software\\mwtl\\Examples\\ShellIntegration";
 constexpr UINT kRunSelfTest = WM_APP + 0x1D0;
+constexpr mwtl::ControlId kTaskbarProgress{901};
+constexpr mwtl::ControlId kTaskbarHelp{902};
 bool g_self_test = false;
 
 std::filesystem::path ExecutablePath() {
@@ -66,6 +69,7 @@ public:
         ui.Add(overlay_, L"Toggle warning overlay");
         ui.Add(save_, L"Save typed settings");
         ui.Add(clear_settings_, L"Remove owned settings");
+        ui.Add(help_, L"Open online help");
         ui.Add(status_, L"Ready. No machine-wide state is used.");
         mwtl::TextBoxOptions log_options;
         log_options.style |= ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL;
@@ -85,7 +89,8 @@ public:
                                .Add(progress_, mwtl::Auto()).Add(overlay_, mwtl::Auto()),
                            mwtl::Fixed(38.0_dip))
                       .Add(mwtl::Row().Gap(8.0_dip)
-                               .Add(save_, mwtl::Auto()).Add(clear_settings_, mwtl::Auto()),
+                               .Add(save_, mwtl::Auto()).Add(clear_settings_, mwtl::Auto())
+                               .Add(help_, mwtl::Auto()),
                            mwtl::Fixed(38.0_dip))
                       .Add(status_, mwtl::Fixed(30.0_dip)).Add(log_, mwtl::Stretch()));
         mwtl::Must(mwtl::SetAccessibleName(GetHwnd(), L"mwtl Shell integration reference"),
@@ -97,6 +102,7 @@ public:
         Log(L"Process identity: " + Describe(mwtl::SetProcessAppUserModelId(kAppId)));
         Log(L"Window identity: " + Describe(mwtl::SetWindowAppUserModelId(GetHwnd(), kAppId)));
         Log(L"Taskbar: " + Describe(taskbar_.Create(GetHwnd())));
+        ApplyThumbnailButtons();
         LoadSettings();
         if (g_self_test && !::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0))
             throw std::runtime_error("post Shell self-test failed");
@@ -124,6 +130,12 @@ public:
         if (event.IsClicked(overlay_)) { ToggleOverlay(); return mwtl::EventResult::Handled(); }
         if (event.IsClicked(save_)) { SaveSettings(); return mwtl::EventResult::Handled(); }
         if (event.IsClicked(clear_settings_)) { ClearSettings(); return mwtl::EventResult::Handled(); }
+        if (event.IsClicked(help_) || event.id == kTaskbarHelp) {
+            OpenHelp(); return mwtl::EventResult::Handled();
+        }
+        if (event.id == kTaskbarProgress) {
+            AdvanceProgress(); return mwtl::EventResult::Handled();
+        }
         return mwtl::EventResult::Propagate();
     }
 
@@ -141,6 +153,7 @@ public:
         if (event.id == mwtl::TaskbarWindowIntegration::GetTaskbarCreatedMessage()) {
             Log(L"Explorer restarted; taskbar state recreated: " + Describe(taskbar_.Recreate()));
             taskbar_.Apply(progress_model_);
+            ApplyThumbnailButtons();
             return mwtl::EventResult::Handled();
         }
         if (event.id == kRunSelfTest) {
@@ -199,6 +212,24 @@ private:
             icon, overlay_visible_ ? L"Shell integration warning" : L"")));
     }
 
+    void ApplyThumbnailButtons() {
+        const std::array buttons{
+            mwtl::TaskbarThumbnailButton{kTaskbarProgress.value, nullptr,
+                                          L"Advance progress", THBF_ENABLED},
+            mwtl::TaskbarThumbnailButton{kTaskbarHelp.value, nullptr,
+                                          L"Open help", THBF_ENABLED}};
+        Log(L"Taskbar thumbnail commands: " + Describe(taskbar_.SetThumbnailButtons(buttons)));
+    }
+
+    void OpenHelp() {
+        const mwtl::HelpRequest request{
+            mwtl::HelpTargetKind::https_uri, {}, L"https://github.com/everettjf/mwtl", L"#readme"};
+        const auto result = mwtl::LaunchHelp(GetHwnd(), request);
+        Log(result ? L"Help launched." : L"Help launch status: " +
+            std::to_wstring(static_cast<int>(result.status)) + L", error " +
+            std::to_wstring(result.error));
+    }
+
     void SaveSettings() {
         const std::array values{mwtl::SettingValue{L"ProgressStep", std::uint32_t{20}},
                                 mwtl::SettingValue{L"AppIdentity", std::wstring{kAppId}}};
@@ -248,8 +279,16 @@ private:
             if (result == 0 && applied.status != mwtl::ShellStatus::success &&
                 applied.status != mwtl::ShellStatus::unavailable &&
                 applied.status != mwtl::ShellStatus::com_failure) result = 5;
+            const mwtl::HelpRequest safe{
+                mwtl::HelpTargetKind::https_uri, {}, L"https://example.invalid/help", L"#taskbar"};
+            if (result == 0 && !mwtl::ValidateHelpRequest(safe)) result = 6;
+            const auto offline = mwtl::LaunchHelpWithBackend(GetHwnd(), safe,
+                [](HWND, const mwtl::HelpRequest&) {
+                    return mwtl::HelpResult{mwtl::HelpStatus::cancelled, ERROR_CANCELLED};
+                });
+            if (result == 0 && offline.status != mwtl::HelpStatus::cancelled) result = 7;
             taskbar_.Clear();
-        } catch (...) { result = 6; }
+        } catch (...) { result = 8; }
         ::PostQuitMessage(result);
     }
 
@@ -260,7 +299,7 @@ private:
     bool overlay_visible_ = false;
     mwtl::Label title_, summary_, status_;
     mwtl::Button register_, remove_, jump_list_, remove_jump_list_, recent_, progress_, overlay_,
-        save_, clear_settings_;
+        save_, clear_settings_, help_;
     mwtl::TextBox log_;
 };
 }  // namespace
