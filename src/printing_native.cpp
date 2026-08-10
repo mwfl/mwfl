@@ -37,7 +37,8 @@ public:
     }
     int StartDocument(std::wstring_view title) noexcept override {
         const std::wstring owned_title = NullTerminated(title);
-        DOCINFOW info{sizeof(info)};
+        DOCINFOW info{};
+        info.cbSize = sizeof(info);
         info.lpszDocName = owned_title.c_str();
         const int result = ::StartDocW(dc_, &info);
         Capture(result);

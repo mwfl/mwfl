@@ -173,7 +173,8 @@ void D2DHost::RecordCallbackException() noexcept {
 }
 
 bool D2DHost::IsHighContrast() const noexcept {
-    HIGHCONTRASTW high_contrast{sizeof(high_contrast)};
+    HIGHCONTRASTW high_contrast{};
+    high_contrast.cbSize = sizeof(high_contrast);
     return ::SystemParametersInfoW(SPI_GETHIGHCONTRAST, sizeof(high_contrast), &high_contrast, 0) !=
                FALSE &&
            (high_contrast.dwFlags & HCF_HIGHCONTRASTON) != 0;

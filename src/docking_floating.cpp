@@ -18,7 +18,8 @@ DockFloatingWindowResult Result(
 DockFloatingWindow::~DockFloatingWindow() noexcept { Destroy(); }
 
 bool DockFloatingWindow::EnsureClass() noexcept {
-    WNDCLASSEXW existing{sizeof(existing)};
+    WNDCLASSEXW existing{};
+    existing.cbSize = sizeof(existing);
     const HINSTANCE instance = ::GetModuleHandleW(nullptr);
     if (::GetClassInfoExW(instance, class_name, &existing)) return true;
     WNDCLASSEXW type{};

@@ -259,7 +259,8 @@ PrintBackendResult CreatePrinterBackend(const PrinterSettings& settings) {
 
 PrintDialogResult ShowPrintDialog(HWND owner, PrinterSettings settings, DWORD flags) noexcept {
     PrintDialogResult result;
-    PRINTDLGEXW dialog{sizeof(dialog)};
+    PRINTDLGEXW dialog{};
+    dialog.lStructSize = sizeof(dialog);
     dialog.hwndOwner = owner;
     dialog.hDevMode = settings.dev_mode_.Release();
     dialog.hDevNames = settings.dev_names_.Release();

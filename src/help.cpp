@@ -51,7 +51,8 @@ HelpResult DefaultBackend(HWND owner, const HelpRequest& request) {
     std::wstring target = request.kind == HelpTargetKind::local_html
         ? request.local_path.native() : request.uri;
     if (!request.topic.empty()) target += request.topic;
-    SHELLEXECUTEINFOW execute{sizeof(execute)};
+    SHELLEXECUTEINFOW execute{};
+    execute.cbSize = sizeof(execute);
     execute.fMask = SEE_MASK_FLAG_NO_UI;
     execute.hwnd = owner;
     execute.lpVerb = L"open";

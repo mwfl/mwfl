@@ -39,7 +39,8 @@ LRESULT CALLBACK OwnerProc(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 HWND CreateOwner(TestState& state) {
-    WNDCLASSEXW type{sizeof(type)};
+    WNDCLASSEXW type{};
+    type.cbSize = sizeof(type);
     type.lpfnWndProc = OwnerProc;
     type.hInstance = ::GetModuleHandleW(nullptr);
     type.lpszClassName = L"mwtl.navigation.native.owner";
