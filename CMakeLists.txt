@@ -388,7 +388,6 @@ install(FILES
     docs/parity.json
     docs/win32xx-parity-roadmap.md
     docs/api-index.json
-    docs/announcement-v0.1.md
     docs/tutorials/notepad.md
     docs/tutorials/image-viewer.md
     docs/tutorials/browser.md
