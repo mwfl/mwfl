@@ -17,7 +17,7 @@ fixture. Provisional APIs may receive source-compatible additions.
 
 Visual Studio 2022 is the minimum supported IDE and Visual Studio 2026 is
 recommended. The scripts accept `-VisualStudio 2022` for compatibility checks.
-CI additionally owns clang-cl, AddressSanitizer, and native ARM64 validation.
+CI additionally owns AddressSanitizer and native ARM64 validation.
 
 No exception may cross a Win32 callback. UI objects belong to their creating
 thread; cross-thread work requires an explicitly documented handoff.

@@ -177,16 +177,18 @@ target_compile_features(mwtl_consumer_cpp20 PRIVATE cxx_std_20)
 target_compile_options(mwtl_consumer_cpp20 PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwtl_consumer_cpp20 PRIVATE mwtl::mwtl)
 
+# This representative public surface becomes the v0.1 source baseline when the
+# replacement release is tagged. Keep it compiling in every repository build.
+add_library(mwtl_public_baseline OBJECT consumer_public_baseline.cpp)
+target_compile_features(mwtl_public_baseline PRIVATE cxx_std_20)
+target_compile_options(mwtl_public_baseline PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_public_baseline PRIVATE mwtl::mwtl)
+
 # Keep the coding-agent public API probe compiled with every repository build.
 add_library(mwtl_agent_api_probe OBJECT "${PROJECT_SOURCE_DIR}/tools/api-probe/main.cpp")
 target_compile_features(mwtl_agent_api_probe PRIVATE cxx_std_20)
 target_compile_options(mwtl_agent_api_probe PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwtl_agent_api_probe PRIVATE mwtl::mwtl)
-
-add_library(mwtl_01_compat OBJECT consumer_01_compat.cpp)
-target_compile_features(mwtl_01_compat PRIVATE cxx_std_20)
-target_compile_options(mwtl_01_compat PRIVATE /W4 /permissive- /EHsc /utf-8)
-target_link_libraries(mwtl_01_compat PRIVATE mwtl::mwtl)
 
 add_library(mwtl_direct_create_test OBJECT direct_create_test.cpp)
 target_compile_features(mwtl_direct_create_test PRIVATE cxx_std_20)
@@ -1006,11 +1008,6 @@ if(TARGET mwtl_hello)
     get_filename_component(
         mwtl_test_compiler_directory "${CMAKE_CXX_COMPILER}" DIRECTORY)
     set(mwtl_test_runtime_path "${mwtl_test_compiler_directory}")
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        file(GLOB mwtl_clang_runtime_directories LIST_DIRECTORIES true
-            "${mwtl_test_compiler_directory}/../lib/clang/*/lib/windows")
-        list(APPEND mwtl_test_runtime_path ${mwtl_clang_runtime_directories})
-    endif()
     list(JOIN mwtl_test_runtime_path ";" mwtl_test_runtime_path)
     find_program(mwtl_powershell NAMES pwsh powershell REQUIRED)
     add_test(NAME mwtl.hot_corners_self_test

@@ -249,11 +249,11 @@ ctest --preset vs2026-x64-release
 For repository development, `./scripts/doctor.ps1` discovers the supported
 toolchains and `./scripts/verify.ps1 -Mode Fast` runs the standard edit loop.
 
-The project rejects non-Windows, non-MSVC-compatible ABI, and 32-bit
+The project rejects non-Windows, non-MSVC, and 32-bit
 configurations. The completed 0.8 gate passes all 162 tests in both VS2026 x64
 Debug and Release, including public-header independence, package consumption,
 manifests, examples, GUI self-tests, resource lifetime, API surface, and
-deterministic property cases. VS2022, ARM64, clang-cl, sanitizers, coverage,
+deterministic property cases. VS2022, ARM64, sanitizers, coverage,
 static analysis, Pipeline, and GitHub Actions are a separate post-0.8
 compatibility pass and are not claimed by this README yet.
 
@@ -267,6 +267,7 @@ For controlled environments, see the
 ## Documentation
 
 - [Windows desktop capability roadmap](docs/win32xx-parity-roadmap.md)
+- [First public preview readiness plan](docs/release-readiness.md)
 - [Modern Windows UI API coverage plan](docs/windows-ui-modernization-plan.md)
 - [IDE-style docking workspace tutorial](docs/tutorials/docking-workspace.md)
 

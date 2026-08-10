@@ -1,5 +1,9 @@
 # Modern Windows UI API coverage plan
 
+This is the post-`0.1.0` capability plan. The active short-term gate is the
+[first public preview readiness plan](release-readiness.md); no phase below
+starts until that release gate is complete.
+
 ## Objective
 
 Make useful Windows UI and desktop APIs available through a concise, modern
@@ -109,7 +113,7 @@ commands, and pass deterministic tests without depending on internal APIs.
 ## Validation sequence
 
 The primary feature gate remains local Visual Studio 2026, MSVC C++20, x64,
-Debug and Release. VS2022, ARM64, clang-cl, sanitizers, coverage, static
+Debug and Release. VS2022, ARM64, sanitizers, coverage, static
 analysis, Pipeline, and GitHub Actions are repaired in a separate compatibility
 phase after feature slices stabilize; they are not used to dilute or redesign
 the modern C++20 API.

@@ -25,7 +25,7 @@
 target_link_libraries(ribbon_app PRIVATE mwtl::ribbon)
 target_link_libraries(legacy_mdi_app PRIVATE mwtl::mdi)</code></pre>
       <div class="callout"><strong>Lifecycle:</strong> create Ribbon on the application STA and destroy it before COM shutdown. Create and destroy MDI on one UI thread, use stable <code>MdiChildId</code> values, and collect every dirty-close decision before closing any child.</div>
-      <p><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/ribbon.md">Build the Ribbon reference step by step â†’</a><br><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/mdi.md">Build the MDI reference step by step â†’</a></p>
+      <p><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/ribbon.md">Build the Ribbon reference step by step &rarr;</a><br><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/mdi.md">Build the MDI reference step by step &rarr;</a></p>
     </section>
     <section id="graphics-help">
       <div class="eyebrow">Interop and desktop commands</div><h2>EMF, GDI+, taskbar commands, and contextual Help</h2>
@@ -33,7 +33,7 @@ target_link_libraries(legacy_mdi_app PRIVATE mwtl::mdi)</code></pre>
       <pre data-title="Installed CMake"><code>find_package(mwtl CONFIG REQUIRED COMPONENTS graphics shell)
 target_link_libraries(diagram_app PRIVATE mwtl::graphics mwtl::shell)</code></pre>
       <div class="callout"><strong>Safe boundaries:</strong> callback HDC and <code>Gdiplus::Graphics</code> values are borrowed. Pixel counts are bounded, HWND/HICON values stay borrowed, Help never constructs a shell command, and tests never require a browser or network.</div>
-      <p><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/graphics-help.md">Follow the graphics, taskbar, and Help tutorial â†’</a></p>
+      <p><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/graphics-help.md">Follow the graphics, taskbar, and Help tutorial &rarr;</a></p>
     </section>
     <section id="printing-ole-shell">
       <div class="eyebrow">Windows workflows</div><h2>Printing, OLE drag/drop, and Shell integration</h2>

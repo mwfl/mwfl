@@ -153,7 +153,7 @@ $html = @"
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Search every mwtl capability, public symbol, example, recipe, tutorial, contract, and test from one component catalog.">
   <link rel="canonical" href="https://everettjf.github.io/mwtl/components/catalog.html">
-  <title>Complete component catalog — mwtl</title>
+  <title>Complete component catalog &mdash; mwtl</title>
   <meta name="theme-color" content="#f7f9ff">
   <link rel="icon" type="image/svg+xml" href="../assets/mwtl-mark.svg">
   <link rel="stylesheet" href="../styles.css?v=20260810a">
@@ -163,7 +163,7 @@ $html = @"
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header docs-topbar"><div class="nav">
-    <a class="brand" href="../index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="../assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+    <a class="brand" href="../index.html" aria-label="MWTL &mdash; Modern Windows Thin Layer"><img src="../assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
     <nav class="nav-links" aria-label="Main navigation"><a class="active" href="index.html">Components</a><a href="../tutorial.html">Get started</a><a href="../changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
   </div></header>
   <main id="main" class="shell catalog-page">
@@ -171,7 +171,7 @@ $html = @"
       <div class="catalog-stats"><span><strong>$($capabilities.Count)</strong> capabilities</span><span><strong>43</strong> examples</span><span><strong>$($docGroups['Recipes'].Count)</strong> recipes</span><span><strong>$($docGroups['Tutorials'].Count)</strong> tutorials</span></div>
     </header>
     <section class="catalog-tools" aria-label="Filter components">
-      <label for="component-search">Find by task, symbol, or header</label><input id="component-search" type="search" placeholder="Try docking, PrintJob, mwtl/ribbon.h…" autocomplete="off">
+      <label for="component-search">Find by task, symbol, or header</label><input id="component-search" type="search" placeholder="Try docking, PrintJob, mwtl/ribbon.h..." autocomplete="off">
       <div class="catalog-filters" role="group" aria-label="Capability category"><button class="active" type="button" data-catalog-filter="all">All</button>
 $(($categoryIds.Keys | ForEach-Object { "        <button type=`"button`" data-catalog-filter=`"$(Encode-Html $_)`">$(Encode-Html $_)</button>" }) -join "`n")
       </div><p class="catalog-result" role="status" aria-live="polite">Showing all $($capabilities.Count) capabilities.</p>
@@ -188,9 +188,9 @@ target_link_libraries(my_app PRIVATE
     <section id="usage-library" class="usage-library"><div class="eyebrow">All usage paths</div><h2>From first window to native integration.</h2><p>These lists are generated from every checked-in recipe and tutorial, so specialized workflows remain discoverable even when one capability card links a broader guide.</p><div class="usage-columns">
 $usage
       </div></section>
-    <section class="catalog-next"><div><div class="eyebrow">Next coverage phase</div><h2>Bring more Windows UI APIs into a concise, ownership-safe C++20 model.</h2></div><p><a class="button primary" href="https://github.com/everettjf/mwtl/blob/main/docs/windows-ui-modernization-plan.md">Read the implementation plan</a></p></section>
+    <section class="catalog-next"><div><div class="eyebrow">Before the first public preview</div><h2>Freeze one coherent API, then publish every example and contract from the same tested commit.</h2></div><p><a class="button primary" href="https://github.com/everettjf/mwtl/blob/main/docs/release-readiness.md">Read the release plan</a></p></section>
   </main>
-  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Thin Layer · MIT licensed · Windows 10+ · x64</span><nav aria-label="Footer"><a href="../building.html">Build</a><a href="https://github.com/everettjf/mwtl">Source</a></nav></div></footer>
+  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Thin Layer &middot; MIT licensed &middot; Windows 10+ &middot; x64</span><nav aria-label="Footer"><a href="../building.html">Build</a><a href="https://github.com/everettjf/mwtl">Source</a></nav></div></footer>
 </body>
 </html>
 "@

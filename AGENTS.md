@@ -7,7 +7,7 @@ that consume mwtl, start with `docs/agent-usage.md` instead.
 ## Project constraints
 
 - Windows-only, 64-bit x64 and ARM64.
-- C++20 with an MSVC-compatible ABI.
+- C++20 with the Microsoft Visual C++ compiler.
 - Supported IDE/toolchains: Visual Studio 2022 and Visual Studio 2026.
 - Prefer Visual Studio 2026 for development; preserve Visual Studio 2022
   compatibility unless a project decision explicitly changes the minimum.

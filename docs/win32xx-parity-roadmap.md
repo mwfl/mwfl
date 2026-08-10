@@ -16,7 +16,7 @@ reflection, or a mandatory Document/View framework.
 - Windows 10 version 1809 or newer.
 - x64 and ARM64; no x86 target.
 - C++20.
-- Visual Studio 2022 and 2026 with MSVC; clang-cl on x64.
+- Visual Studio 2022 and 2026 with MSVC.
 - Modern CMake targets, `FetchContent`, and `find_package` consumption.
 - RAII, typed events, explicit ownership, explicit thread affinity, and explicit
   failure semantics.
@@ -212,7 +212,7 @@ primary matrix only: Visual Studio 2026, MSVC C++20, x64, in both Debug and
 Release. That gate includes applicable unit, lifetime, DPI, keyboard,
 documentation, package-consumer, and raw HWND interoperability checks.
 
-ARM64, Visual Studio 2022, clang-cl, static analysis, sanitizers, coverage,
+ARM64, Visual Studio 2022, static analysis, sanitizers, coverage,
 Pipeline, and GitHub Actions are deferred work during these releases. Existing
 support files may remain, but failures in that deferred matrix neither block
 feature development nor justify unrelated compatibility changes before 0.8 is
@@ -220,7 +220,7 @@ complete.
 
 After 0.8, run a dedicated compatibility and CI stabilization phase. A feature
 is ready for the subsequent broadly supported release only after the maintained
-x64/ARM64 toolchains, relevant Debug/Release configurations, clang-cl where
+x64/ARM64 toolchains and relevant Debug/Release configurations where
 supported, static analysis, sanitizer-compatible paths, package consumers, and
 remote workflows pass again.
 

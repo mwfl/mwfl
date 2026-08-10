@@ -10,8 +10,8 @@ if(NOT WIN32)
     message(FATAL_ERROR "mwtl supports Windows only.")
 endif()
 
-if(NOT MSVC)
-    message(FATAL_ERROR "mwtl requires the MSVC-compatible ABI (MSVC or clang-cl).")
+if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    message(FATAL_ERROR "mwtl requires the Microsoft Visual C++ compiler.")
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
@@ -383,6 +383,8 @@ install(FILES
     docs/llms.txt
     docs/llms-full.txt
     docs/scope-map.md
+    docs/release-readiness.md
+    docs/windows-ui-modernization-plan.md
     docs/parity.json
     docs/win32xx-parity-roadmap.md
     docs/api-index.json
