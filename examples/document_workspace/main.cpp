@@ -22,8 +22,18 @@ constexpr mwtl::ControlId kRight{805};
 constexpr mwtl::ControlId kUndo{806};
 constexpr mwtl::ControlId kRedo{807};
 constexpr mwtl::ControlId kExit{808};
+constexpr mwtl::ControlId kOpen{809};
+constexpr mwtl::ControlId kReopen{810};
 constexpr mwtl::ControlId kTabs{820};
 constexpr UINT kRunSelfTest = WM_APP + 0x160;
+
+bool SamePath(const std::filesystem::path& left,
+              const std::filesystem::path& right) {
+    auto a = left.lexically_normal().native();
+    auto b = right.lexically_normal().native();
+    return ::CompareStringOrdinal(a.c_str(), static_cast<int>(a.size()),
+        b.c_str(), static_cast<int>(b.size()), TRUE) == CSTR_EQUAL;
+}
 
 class WorkspaceWindow;
 
@@ -193,6 +203,8 @@ private:
         commands_
             .Add(mwtl::Command(kNew, L"New", [this] { NewDocument(); })
                      .SetShortcut({FVIRTKEY | FCONTROL, 'N'}))
+            .Add(mwtl::Command(kOpen, L"Open…", [this] { OpenInteractive(); })
+                     .SetShortcut({FVIRTKEY | FCONTROL, 'O'}))
             .Add(mwtl::Command(kSave, L"Save", [this] { SaveActive(); })
                      .SetShortcut({FVIRTKEY | FCONTROL, 'S'}))
             .Add(mwtl::Command(kClose, L"Close", [this] { CloseActive(); })
@@ -201,6 +213,8 @@ private:
                                [this] { coordinator_.MoveActive(index_); }))
             .Add(mwtl::Command(kLeft, L"Move tab left", [this] { Reorder(-1); }))
             .Add(mwtl::Command(kRight, L"Move tab right", [this] { Reorder(1); }))
+            .Add(mwtl::Command(kReopen, L"Reopen closed", [this] { ReopenClosed(); })
+                     .SetShortcut({FVIRTKEY | FCONTROL | FSHIFT, 'T'}))
             .Add(mwtl::Command(kUndo, L"Undo", [this] {
                 if (const HWND page = ActivePage()) ::SendMessageW(page, WM_UNDO, 0, 0);
             }).SetShortcut({FVIRTKEY | FCONTROL, 'Z'}))
@@ -214,7 +228,8 @@ private:
         mwtl::Must(bar.Create(), "create workspace menu");
         mwtl::Must(file.CreatePopup(), "create workspace popup");
         file_menu_ = file.GetHandle();
-        for (const auto id : {kNew, kSave, kClose, kMove, kLeft, kRight})
+        for (const auto id : {kNew, kOpen, kSave, kClose, kReopen,
+                              kMove, kLeft, kRight})
             mwtl::Must(file.AppendCommand(*commands_.Find(id)), "append workspace command");
         mwtl::Must(file.AppendSeparator(), "append workspace separator");
         mwtl::Must(file.AppendCommand(*commands_.Find(kExit)), "append exit command");
@@ -222,24 +237,82 @@ private:
         mwtl::Must(bar.AttachToWindow(GetHwnd()), "attach workspace menu");
     }
 
-    void NewDocument(std::wstring title = {}, std::wstring text = {}) {
-        const mwtl::DocumentId id{coordinator_.next_id++};
-        if (title.empty()) title = L"Untitled " + std::to_wstring(id.value);
-        HWND page = ::CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", text.c_str(),
+    HWND CreateEditor(mwtl::DocumentId id, std::wstring_view text) {
+        const std::wstring terminated{text};
+        return ::CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", terminated.c_str(),
             WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_MULTILINE | ES_AUTOVSCROLL |
                 ES_AUTOHSCROLL | WS_VSCROLL | WS_HSCROLL,
             0, 0, 10, 10, GetHwnd(),
             reinterpret_cast<HMENU>(static_cast<INT_PTR>(900 + id.value)),
             ::GetModuleHandleW(nullptr), nullptr);
+    }
+
+    void NewDocument(std::wstring title = {}, std::wstring text = {},
+                     std::filesystem::path path = {},
+                     std::optional<mwtl::FileStamp> stamp = {}) {
+        const mwtl::DocumentId id{coordinator_.next_id++};
+        if (title.empty()) title = L"Untitled " + std::to_wstring(id.value);
+        HWND page = CreateEditor(id, text);
         mwtl::Must(page != nullptr, "create document editor");
-        mwtl::Must(static_cast<bool>(model().Add({id, title})),
+        mwtl::Must(static_cast<bool>(model().Add({id, title, std::move(path)})),
                    "add document model");
         mwtl::Must(adapter_.BindPage(id, page) == mwtl::DocumentTabStatus::success,
                    "bind document editor");
-        coordinator_.contents[id.value].text = std::move(text);
+        coordinator_.contents[id.value] = {std::move(text), stamp};
         model().Activate(id);
         mwtl::SetAccessibleName(page, title.c_str());
         Sync(L"Created " + title);
+    }
+
+    void OpenInteractive() {
+        const auto selected = mwtl::ShowOpenFileDialog({
+            .owner = GetHwnd(), .title = L"Open document",
+            .filters = {{L"Text files", L"*.txt"}, {L"All files", L"*.*"}}});
+        if (selected.accepted) OpenPath(selected.path);
+    }
+
+    bool OpenPath(const std::filesystem::path& path) {
+        for (std::size_t workspace = 0; workspace < coordinator_.models.size(); ++workspace) {
+            if (!coordinator_.models[workspace].ContainsPath(path)) continue;
+            for (const auto& document : coordinator_.models[workspace].GetDocuments()) {
+                if (!SamePath(document.path, path)) continue;
+                coordinator_.models[workspace].Activate(document.id);
+                coordinator_.windows[workspace]->Sync(L"Already open");
+                ::SetForegroundWindow(coordinator_.windows[workspace]->GetHwnd());
+                return true;
+            }
+        }
+        const auto read = mwtl::ReadTextFile(path);
+        if (!read.Succeeded()) return false;
+        NewDocument(path.filename().wstring(), read.value->text, path, read.value->stamp);
+        Sync(L"Opened file");
+        return true;
+    }
+
+    bool ReopenClosed() {
+        if (model().GetRecentlyClosed().empty()) return false;
+        const auto metadata = model().GetRecentlyClosed().front();
+        auto content = coordinator_.contents.find(metadata.id.value);
+        if (content == coordinator_.contents.end()) {
+            if (metadata.path.empty()) return false;
+            const auto read = mwtl::ReadTextFile(metadata.path);
+            if (!read.Succeeded()) return false;
+            content = coordinator_.contents.emplace(metadata.id.value,
+                DocumentContent{read.value->text, read.value->stamp}).first;
+        }
+        HWND page = CreateEditor(metadata.id, content->second.text);
+        if (!page) return false;
+        if (!model().ReopenRecentlyClosed()) {
+            ::DestroyWindow(page);
+            return false;
+        }
+        if (adapter_.BindPage(metadata.id, page) != mwtl::DocumentTabStatus::success) {
+            ::DestroyWindow(page);
+            return false;
+        }
+        mwtl::SetAccessibleName(page, metadata.title.c_str());
+        Sync(L"Reopened closed document");
+        return true;
     }
 
     bool SaveActive() {
@@ -286,7 +359,6 @@ private:
         const HWND page = adapter_.FindPage(*id);
         if (!model().Close(*id) ||
             adapter_.UnbindPage(*id) != mwtl::DocumentTabStatus::success) return false;
-        coordinator_.contents.erase(id->value);
         if (page) ::DestroyWindow(page);
         Sync(L"Closed");
         return true;
@@ -350,6 +422,24 @@ private:
         if (!model().Find(*active)->dirty) throw std::runtime_error("dirty routing failed");
         if (!SaveActive()) throw std::runtime_error("active save failed");
         const auto saved_path = model().Find(*active)->path;
+        if (!CloseActive(true) || !ReopenClosed())
+            throw std::runtime_error("recently closed reopen failed");
+        const auto reopened = model().GetActiveId();
+        if (!reopened || *reopened != *active)
+            throw std::runtime_error("recent identity was not preserved");
+        if (!CloseActive(true)) throw std::runtime_error("second close failed");
+        model().ClearRecentlyClosed();
+        coordinator_.contents.erase(active->value);
+        if (!OpenPath(saved_path)) throw std::runtime_error("file reopen failed");
+        if (!mwtl::WriteTextFileAtomic(saved_path, L"external change").Succeeded())
+            throw std::runtime_error("external change setup failed");
+        const HWND reopened_page = ActivePage();
+        ::SetWindowTextW(reopened_page, L"local unsaved change");
+        ::SendMessageW(GetHwnd(), WM_COMMAND,
+            MAKEWPARAM(static_cast<WORD>(::GetDlgCtrlID(reopened_page)), EN_CHANGE),
+            reinterpret_cast<LPARAM>(reopened_page));
+        if (SaveActive() || !model().Find(*model().GetActiveId())->dirty)
+            throw std::runtime_error("external change protection failed");
         Reorder(-1);
         if (!coordinator_.MoveActive(0) || coordinator_.models[1].GetCount() != 2)
             throw std::runtime_error("cross-window transfer failed");
