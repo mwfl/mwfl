@@ -258,6 +258,18 @@ target_link_libraries(mwtl_tab_workspace_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.tab_workspace COMMAND mwtl_tab_workspace_test)
 set_tests_properties(mwtl.tab_workspace PROPERTIES TIMEOUT 20)
 
+add_library(mwtl_header_docking_workspace OBJECT header_docking_workspace.cpp)
+target_compile_features(mwtl_header_docking_workspace PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_docking_workspace PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_docking_workspace PRIVATE mwtl::mwtl)
+
+add_executable(mwtl_docking_workspace_test docking_workspace_test.cpp)
+target_compile_features(mwtl_docking_workspace_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_docking_workspace_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_docking_workspace_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.docking_workspace COMMAND mwtl_docking_workspace_test)
+set_tests_properties(mwtl.docking_workspace PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
 add_library(mwtl_header_document_workspace OBJECT header_document_workspace.cpp)
 target_compile_features(mwtl_header_document_workspace PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_document_workspace PRIVATE /W4 /permissive- /EHsc /utf-8)
