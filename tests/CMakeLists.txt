@@ -97,6 +97,16 @@ target_link_libraries(mwtl_graphics_test PRIVATE mwtl::graphics)
 add_test(NAME mwtl.graphics COMMAND mwtl_graphics_test)
 set_tests_properties(mwtl.graphics PROPERTIES TIMEOUT 30 LABELS "native;integration")
 
+if(TARGET mwtl_graphics_interop)
+    add_test(NAME mwtl.graphics_interop_gui
+        COMMAND "${CMAKE_COMMAND}"
+            "-DGRAPHICS_EXE=$<TARGET_FILE:mwtl_graphics_interop>"
+            "-DRESULT_FILE=${CMAKE_CURRENT_BINARY_DIR}/graphics-interop-$<CONFIG>.result"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/run_graphics_interop_gui.cmake")
+    set_tests_properties(mwtl.graphics_interop_gui PROPERTIES
+        ENVIRONMENT "MWTL_TEST_NO_DIALOGS=1" TIMEOUT 30 LABELS "gui;integration")
+endif()
+
 add_library(mwtl_header_help OBJECT header_help.cpp)
 target_compile_features(mwtl_header_help PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_help PRIVATE /W4 /permissive- /EHsc /utf-8)
