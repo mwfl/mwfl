@@ -48,7 +48,7 @@ endforeach()
 
 if(NOT component_catalog MATCHES "component-search" OR
    NOT component_catalog MATCHES "data-catalog-filter" OR
-   NOT component_catalog MATCHES "windows-ui-modernization-plan.md")
+   NOT component_catalog MATCHES "release-readiness.md")
     message(FATAL_ERROR "Pages catalog is missing search, filters, or the next plan")
 endif()
 
@@ -126,6 +126,17 @@ endif()
 file(GLOB_RECURSE html_files "${SITE_ROOT}/*.html")
 foreach(html_file IN LISTS html_files)
     file(READ "${html_file}" html)
+    file(READ "${html_file}" html_hex HEX)
+    string(TOLOWER "${html_hex}" html_hex)
+    foreach(mojibake_hex IN ITEMS
+            c3a2c282c294
+            c382c2b7
+            c3a2c280c2a6
+            c3a2c280c2a0)
+        if(html_hex MATCHES "${mojibake_hex}")
+            message(FATAL_ERROR "UTF-8 mojibake in ${html_file}: ${mojibake_hex}")
+        endif()
+    endforeach()
     if(NOT html MATCHES "styles\\.css\\?v=20260810a" OR
        NOT html MATCHES "assets/site\\.js\\?v=20260810a")
         message(FATAL_ERROR "stale or inconsistent site asset version in ${html_file}")

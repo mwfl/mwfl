@@ -1,6 +1,6 @@
 # mwtl examples
 
-The repository includes 39 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence.
+The repository includes 43 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, document/MDI/Ribbon workspaces, graphics interop, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence.
 
 | Directory | Target | Focus |
 |---|---|---|
@@ -32,6 +32,9 @@ The repository includes 39 focused executables. Each example is intentionally sm
 | `document_state` | `mwtl_document_state_demo` | Dirty document state and safe user transition decisions |
 | `notepad` | `mwtl_notepad` | Complete accessible Unicode SDI editor with atomic file operations |
 | `document_workspace` | `mwtl_document_workspace` | Two-window multi-document editor with transfer, sessions, and coordinated close |
+| `mdi_workspace` | `mwtl_mdi_workspace` | Native MDI frame/child composition with commands, coordinated close, and GUI self-test |
+| `ribbon_workspace` | `mwtl_ribbon_workspace` | Windows Ribbon command routing, modes, contextual UI, and workspace integration |
+| `graphics_interop` | `mwtl_graphics_interop` | Direct2D, Direct3D 11, WIC, and native-host interoperability in one application |
 | `appearance` | `mwtl_appearance_demo` | System/light/dark title bars, backdrops, corners, and accessibility helpers |
 | `layout_gallery` | `mwtl_layout_gallery_demo` | Responsive nested rows, columns, overlays, sizing, alignment, and dynamic content |
 | `property_sheet` | `mwtl_property_sheet_demo` | Persistent multi-page Settings with validation and Apply/OK/Cancel |

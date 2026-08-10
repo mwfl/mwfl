@@ -1,6 +1,7 @@
 #include <mwtl/docking_preview.h>
 
 #include <cstdlib>
+#include <cstdio>
 #include <string_view>
 
 namespace {
@@ -36,8 +37,14 @@ int main() {
                      WS_EX_LAYERED)) !=
         (WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT | WS_EX_LAYERED))
         return 4;
-    if (!preview.Show({10, 20, 100, 80}, 144) || !preview.IsVisible() ||
-        ::GetFocus() != focus) return 5;
+    const HWND focus_before_show = ::GetFocus();
+    const bool shown = preview.Show({10, 20, 100, 80}, 144);
+    if (!shown || !preview.IsVisible() || ::GetFocus() != focus_before_show) {
+        std::fprintf(stderr, "preview show=%d visible=%d focus=%p expected=%p error=%lu\n",
+            shown, preview.IsVisible(), static_cast<void*>(::GetFocus()),
+            static_cast<void*>(focus_before_show), static_cast<unsigned long>(::GetLastError()));
+        return 5;
+    }
     RECT bounds{};
     if (!::GetWindowRect(preview_hwnd, &bounds) || bounds.left != 15 ||
         bounds.top != 30 || bounds.right - bounds.left != 150 ||

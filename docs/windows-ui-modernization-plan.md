@@ -1,5 +1,9 @@
 # Modern Windows UI API coverage plan
 
+This is the post-`0.1.0` capability plan. The active short-term gate is the
+[first public preview readiness plan](release-readiness.md); no phase below
+starts until that release gate is complete.
+
 ## Objective
 
 Make useful Windows UI and desktop APIs available through a concise, modern

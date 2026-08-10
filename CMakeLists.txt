@@ -383,6 +383,8 @@ install(FILES
     docs/llms.txt
     docs/llms-full.txt
     docs/scope-map.md
+    docs/release-readiness.md
+    docs/windows-ui-modernization-plan.md
     docs/parity.json
     docs/win32xx-parity-roadmap.md
     docs/api-index.json

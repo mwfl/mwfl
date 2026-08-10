@@ -6,9 +6,10 @@
 
 using mwtl::operator""_dip;
 
-// Compile-only contract for representative stable 0.1 source forms. Removing
-// or changing one of these requires a deprecation period and migration entry.
-class CompatWindow final : public mwtl::WindowBase {
+// Compile-only contract for the representative v0.1 public forms. Before the
+// replacement v0.1.0 tag this is a release-candidate probe; after that tag,
+// changing one of these forms requires the documented compatibility process.
+class PublicBaselineWindow final : public mwtl::WindowBase {
 public:
     void BuildUI() override {
         mwtl::ControlHost ui{*this};
@@ -17,7 +18,7 @@ public:
         SetLayout(mwtl::Column().Margin(16.0_dip).Gap(8.0_dip)
             .Add(label_, mwtl::Auto()).Add(button_, mwtl::Fixed(32.0_dip)));
         mwtl::Must(timer_.Start(*this, {1}, std::chrono::milliseconds(100)),
-                   "compat timer");
+                   "public baseline timer");
     }
 
     mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
@@ -31,8 +32,8 @@ private:
     mwtl::UiTimer timer_;
 };
 
-static_assert(mwtl::MainWindow<CompatWindow>);
-static_assert(mwtl::WindowLike<CompatWindow>);
+static_assert(mwtl::MainWindow<PublicBaselineWindow>);
+static_assert(mwtl::WindowLike<PublicBaselineWindow>);
 static_assert(mwtl::ControlLike<mwtl::Button>);
 static_assert(requires(mwtl::Button& button, HWND parent) {
     { button.Create(parent, {42}, std::wstring_view{L"Save"},
@@ -41,6 +42,6 @@ static_assert(requires(mwtl::Button& button, HWND parent) {
     { button.SetText(std::wstring_view{}) } -> std::same_as<bool>;
 });
 
-int Compile01Run(HINSTANCE instance, int show) {
-    return mwtl::RunApplication<CompatWindow>(instance, show);
+int CompilePublicBaseline(HINSTANCE instance, int show) {
+    return mwtl::RunApplication<PublicBaselineWindow>(instance, show);
 }

@@ -14,8 +14,11 @@ endif()
 if(NOT project_version STREQUAL "0.1.0")
     message(FATAL_ERROR "First public release must use project version 0.1.0")
 endif()
-if(NOT EXISTS "${PROJECT_ROOT}/tests/consumer_01_compat.cpp")
-    message(FATAL_ERROR "0.1 source compatibility fixture is missing")
+if(NOT EXISTS "${PROJECT_ROOT}/docs/release-readiness.md")
+    message(FATAL_ERROR "First-public-preview readiness plan is missing")
+endif()
+if(NOT EXISTS "${PROJECT_ROOT}/tests/consumer_public_baseline.cpp")
+    message(FATAL_ERROR "First-public-preview source baseline is missing")
 endif()
 if(NOT EXISTS "${PROJECT_ROOT}/tests/verify_coverage.ps1" OR
    NOT ci_workflow_text MATCHES "MinimumPercent 74" OR

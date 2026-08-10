@@ -267,6 +267,7 @@ For controlled environments, see the
 ## Documentation
 
 - [Windows desktop capability roadmap](docs/win32xx-parity-roadmap.md)
+- [First public preview readiness plan](docs/release-readiness.md)
 - [Modern Windows UI API coverage plan](docs/windows-ui-modernization-plan.md)
 - [IDE-style docking workspace tutorial](docs/tutorials/docking-workspace.md)
 
