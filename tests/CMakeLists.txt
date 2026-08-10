@@ -43,6 +43,18 @@ target_compile_features(mwtl_header_binding PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_binding PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwtl_header_binding PRIVATE mwtl::mwtl)
 
+add_library(mwtl_header_ribbon OBJECT header_ribbon.cpp)
+target_compile_features(mwtl_header_ribbon PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_ribbon PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_ribbon PRIVATE mwtl::ribbon)
+
+add_executable(mwtl_ribbon_model_test ribbon_model_test.cpp)
+target_compile_features(mwtl_ribbon_model_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_ribbon_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_ribbon_model_test PRIVATE mwtl::ribbon)
+add_test(NAME mwtl.ribbon_model COMMAND mwtl_ribbon_model_test)
+set_tests_properties(mwtl.ribbon_model PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
 add_library(mwtl_header_command OBJECT header_command.cpp)
 target_compile_features(mwtl_header_command PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_command PRIVATE /W4 /permissive- /EHsc /utf-8)
