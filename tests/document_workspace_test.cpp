@@ -72,6 +72,21 @@ int main() {
     if (!batch.CloseMany(close_two) || batch.GetCount() != 1 ||
         batch.GetActiveId() != DocumentId{803} || !batch.GetRecentlyClosed().empty()) return 22;
 
+    DocumentWorkspaceModel history{{81}, 2};
+    if (!history.Add({{810}, L"Open", L"C:\\Docs\\open.txt"})) return 23;
+    const std::array restored_history{
+        WorkspaceDocument{{811}, L"Recent one", L"C:\\Docs\\one.txt"},
+        WorkspaceDocument{{812}, L"Recent two", L"C:\\Docs\\two.txt"},
+        WorkspaceDocument{{813}, L"Truncated", L"C:\\Docs\\three.txt"}};
+    if (!history.RestoreRecentlyClosed(restored_history) ||
+        history.GetRecentlyClosed().size() != 2 ||
+        history.GetRecentlyClosed()[0].id != DocumentId{811}) return 24;
+    const std::array invalid_history{
+        WorkspaceDocument{{814}, L"Conflict", L"c:/docs/OPEN.txt"}};
+    if (history.RestoreRecentlyClosed(invalid_history).status !=
+            DocumentWorkspaceStatus::duplicate_path ||
+        history.GetRecentlyClosed().size() != 2) return 25;
+
     DocumentWorkspaceModel rollback_source{{90}};
     DocumentWorkspaceModel rollback_destination{{91}};
     if (!rollback_source.Add({{900}, L"Rollback"})) return 17;

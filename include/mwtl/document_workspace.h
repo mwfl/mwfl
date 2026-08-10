@@ -96,6 +96,10 @@ public:
     DocumentWorkspaceResult Rename(DocumentId id, std::wstring title,
                                    std::filesystem::path path = {});
     DocumentWorkspaceResult ReopenRecentlyClosed(std::size_t index = 0);
+    // Replaces history after validating all entries. IDs and paths must not
+    // collide with open documents or each other. Excess entries are truncated.
+    DocumentWorkspaceResult RestoreRecentlyClosed(
+        std::span<const WorkspaceDocument> documents);
     void ClearRecentlyClosed() noexcept { recently_closed_.clear(); }
 
     std::optional<DocumentTransferPlan> PrepareTransfer(

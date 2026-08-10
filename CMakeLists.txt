@@ -77,6 +77,7 @@ add_library(mwtl STATIC
     src/dialog.cpp
     src/document.cpp
     src/document_coordination.cpp
+    src/document_session.cpp
     src/document_workspace.cpp
     src/detail/diagnostics.cpp
     src/message_pump.cpp

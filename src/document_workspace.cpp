@@ -228,6 +228,27 @@ DocumentWorkspaceResult DocumentWorkspaceModel::ReopenRecentlyClosed(std::size_t
     return Success();
 }
 
+DocumentWorkspaceResult DocumentWorkspaceModel::RestoreRecentlyClosed(
+    std::span<const WorkspaceDocument> documents) {
+    std::vector<WorkspaceDocument> restored;
+    restored.reserve((std::min)(documents.size(), maximum_recently_closed_));
+    for (const auto& document : documents) {
+        if (!IsValidDocument(document) || Find(document.id))
+            return {DocumentWorkspaceStatus::invalid_argument, active_};
+        const auto duplicate = [&](const WorkspaceDocument& item) {
+            return item.id == document.id || SamePath(item.path, document.path);
+        };
+        if ((!document.path.empty() && ContainsPath(document.path)) ||
+            std::ranges::any_of(restored, duplicate))
+            return {DocumentWorkspaceStatus::duplicate_path, active_};
+        if (restored.size() < maximum_recently_closed_)
+            restored.push_back(document);
+    }
+    recently_closed_.swap(restored);
+    ++revision_;
+    return Success();
+}
+
 std::optional<DocumentTransferPlan> DocumentWorkspaceModel::PrepareTransfer(
     DocumentId id, WorkspaceId destination,
     std::optional<std::size_t> destination_index) const {

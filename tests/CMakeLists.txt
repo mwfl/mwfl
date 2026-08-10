@@ -268,6 +268,11 @@ target_compile_features(mwtl_header_document_coordination PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_document_coordination PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwtl_header_document_coordination PRIVATE mwtl::mwtl)
 
+add_library(mwtl_header_document_session OBJECT header_document_session.cpp)
+target_compile_features(mwtl_header_document_session PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_document_session PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_document_session PRIVATE mwtl::mwtl)
+
 add_executable(mwtl_document_workspace_test document_workspace_test.cpp)
 target_compile_features(mwtl_document_workspace_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_document_workspace_test PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -281,6 +286,13 @@ target_compile_options(mwtl_document_coordination_test PRIVATE /W4 /permissive- 
 target_link_libraries(mwtl_document_coordination_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.document_coordination COMMAND mwtl_document_coordination_test)
 set_tests_properties(mwtl.document_coordination PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+add_executable(mwtl_document_session_test document_session_test.cpp)
+target_compile_features(mwtl_document_session_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_document_session_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_document_session_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.document_session COMMAND mwtl_document_session_test)
+set_tests_properties(mwtl.document_session PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
 add_executable(mwtl_splitter_test splitter_test.cpp)
 target_compile_features(mwtl_splitter_test PRIVATE cxx_std_20)

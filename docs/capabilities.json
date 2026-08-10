@@ -63,6 +63,14 @@
       "constraints": ["route stable IDs and never capture document pointers", "handlers and save I/O remain application-owned", "save callbacks run before one atomic close commit", "callback exceptions and reentrant revision changes are structured results", "any pre-commit failure leaves all documents open"]
     },
     {
+      "id": "document-session-persistence",
+      "intent": ["restore multiple documents", "persist workspace sessions", "validate changed session files", "recover recently closed documents"],
+      "symbols": ["mwtl::DocumentSession", "mwtl::WorkspaceSession", "mwtl::SaveDocumentSessionAtomic", "mwtl::LoadDocumentSession", "mwtl::RestoreWorkspaceSession"],
+      "headers": ["mwtl/document_session.h"],
+      "tests": ["mwtl.document_session", "mwtl.package_consumer"],
+      "constraints": ["schema and input sizes are bounded", "atomic replacement preserves the previous complete file", "unknown extension records are tolerated", "application validators classify missing changed and untrusted paths", "document contents remain application-owned", "restore is incremental and callback exceptions never escape"]
+    },
+    {
       "id": "tab-workspace-state",
       "intent": ["track application tabs", "keep stable tab identity", "synchronize a native tab control"],
       "symbols": ["mwtl::TabWorkspaceModel", "mwtl::TabId", "mwtl::TabControl"],

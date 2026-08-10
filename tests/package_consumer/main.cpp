@@ -14,6 +14,9 @@ int main() {
     const bool document_added = static_cast<bool>(
         documents.Add({{1}, L"Installed document", L"C:\\installed.txt"}));
     const auto document_commands = mwtl::BuildActiveDocumentCommandProjection(documents);
+    mwtl::DocumentSession document_session;
+    document_session.workspaces.push_back(mwtl::CaptureWorkspaceSession(documents));
+    const auto serialized_session = mwtl::SerializeDocumentSession(document_session);
     const auto dpi = mwtl::DpiContext::FromDpi(144);
     const mwtl::RectDip concise{mwtl::Dip{1.0f}, mwtl::Dip{2.0f}, mwtl::Dip{3.0f}, mwtl::Dip{4.0f}};
     mwtl::LayoutHost layout(mwtl::Column().Margin(mwtl::Dip{8.0f}));
@@ -34,6 +37,7 @@ int main() {
     return tab_added && tabs.GetSelectedId() == mwtl::TabId{7} && document_added &&
                    documents.GetActiveId() == mwtl::DocumentId{1} &&
                    document_commands.document == mwtl::DocumentId{1} &&
+                   !serialized_session.empty() &&
                    dpi.ToPixels(mwtl::Dip{2.0f}) == 3 && concise.size.width == mwtl::Dip{3.0f} &&
                    layout.HasRoot() && split.constraints_satisfied &&
                    split.first.size.width.value > 0.0f && property_page_added &&
