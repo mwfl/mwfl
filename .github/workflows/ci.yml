@@ -79,36 +79,6 @@ jobs:
           /p:RunCodeAnalysis=true
           /p:CodeAnalysisRuleSet=NativeRecommendedRules.ruleset
 
-  clang-cl:
-    name: clang-cl x64 Release
-    runs-on: windows-2025-vs2026
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Locate Windows SDK manifest tool
-        shell: pwsh
-        run: |
-          $mt = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin" `
-            -Recurse -Filter mt.exe |
-            Where-Object { $_.FullName -match '\\x64\\mt[.]exe$' } |
-            Sort-Object FullName -Descending |
-            Select-Object -First 1
-          if (-not $mt) { throw 'Windows SDK mt.exe was not found.' }
-          "MWTL_MT_TOOL=$($mt.FullName)" | Out-File $env:GITHUB_ENV -Append
-      - name: Configure
-        run: >-
-          cmake -S . -B build/clang-cl
-          -G "Visual Studio 18 2026" -A x64 -T ClangCL
-          -DCMAKE_MT="$env:MWTL_MT_TOOL"
-          -DMWTL_BUILD_EXAMPLES=ON -DMWTL_BUILD_TESTS=ON
-      - name: Build
-        run: cmake --build build/clang-cl --config Release --parallel
-      - name: Test
-        # The hosted image cannot reliably activate clang-cl GUI executables
-        # (Win32 14001); the same GUI self-test runs in the MSVC matrices.
-        run: >-
-          ctest --test-dir build/clang-cl -C Release --output-on-failure
-          -E 'mwtl\.(hot_corners_self_test|settings_application_gui|explorer_gui|notepad_gui)'
-
   address-sanitizer:
     name: VS 2026 MSVC AddressSanitizer
     runs-on: windows-2025-vs2026

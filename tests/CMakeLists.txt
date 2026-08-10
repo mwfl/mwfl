@@ -1008,11 +1008,6 @@ if(TARGET mwtl_hello)
     get_filename_component(
         mwtl_test_compiler_directory "${CMAKE_CXX_COMPILER}" DIRECTORY)
     set(mwtl_test_runtime_path "${mwtl_test_compiler_directory}")
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        file(GLOB mwtl_clang_runtime_directories LIST_DIRECTORIES true
-            "${mwtl_test_compiler_directory}/../lib/clang/*/lib/windows")
-        list(APPEND mwtl_test_runtime_path ${mwtl_clang_runtime_directories})
-    endif()
     list(JOIN mwtl_test_runtime_path ";" mwtl_test_runtime_path)
     find_program(mwtl_powershell NAMES pwsh powershell REQUIRED)
     add_test(NAME mwtl.hot_corners_self_test

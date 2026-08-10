@@ -25,4 +25,4 @@ release. The project does not silently change ownership, thread-affinity,
 exception, or failure semantics.
 
 The maintained configurations are 64-bit Windows 10 1809 or newer on x64
-and ARM64 using MSVC, plus clang-cl on x64. Each is enforced in CI.
+and ARM64 using the Microsoft Visual C++ compiler. Each is enforced in CI.

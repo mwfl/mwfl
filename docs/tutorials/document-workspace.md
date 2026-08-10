@@ -15,7 +15,7 @@ ctest --preset vs2026-x64-debug -R '^mwtl\.document_workspace_gui$' --output-on-
 ```
 
 The self-test is offline and non-interactive. It creates two hidden top-level
-windows and exercises the real controls. VS2022, ARM64, clang-cl, sanitizers,
+windows and exercises the real controls. VS2022, ARM64, sanitizers,
 and CI are intentionally outside the 0.6 local acceptance gate.
 
 ## 2. Separate logical documents from application contents

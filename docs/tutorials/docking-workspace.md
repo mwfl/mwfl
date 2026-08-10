@@ -205,5 +205,5 @@ cmake --build build/presets/vs2026-x64 --config Release
 ctest --test-dir build/presets/vs2026-x64 -C Release --output-on-failure
 ```
 
-Do not infer ARM64, other Visual Studio versions, clang-cl, sanitizer, coverage,
+Do not infer ARM64, other Visual Studio versions, sanitizer, coverage,
 Pipeline, or GitHub Actions status from this gate; those are audited after 0.8.

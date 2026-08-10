@@ -120,7 +120,7 @@ After a short public-preview observation period, begin Phase 1 of
 `windows-ui-modernization-plan.md`: RichEdit and scrolling composition. GDI
 ownership, remaining common dialogs, native-hosting guidance, and ecosystem
 proof follow only after each earlier phase passes its own executable exit gate.
-Compatibility work for VS2022, ARM64, clang-cl, sanitizers, coverage, and hosted
+Compatibility work for VS2022, ARM64, sanitizers, coverage, and hosted
 CI remains a separate audit and must not force a weaker C++20 API.
 
 ## Candidate verification record

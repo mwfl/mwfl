@@ -113,7 +113,7 @@ commands, and pass deterministic tests without depending on internal APIs.
 ## Validation sequence
 
 The primary feature gate remains local Visual Studio 2026, MSVC C++20, x64,
-Debug and Release. VS2022, ARM64, clang-cl, sanitizers, coverage, static
+Debug and Release. VS2022, ARM64, sanitizers, coverage, static
 analysis, Pipeline, and GitHub Actions are repaired in a separate compatibility
 phase after feature slices stabilize; they are not used to dilute or redesign
 the modern C++20 API.
