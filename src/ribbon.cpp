@@ -334,7 +334,8 @@ std::exception_ptr RibbonFrameworkHost::TakeCallbackException() noexcept {
 }
 
 void RibbonFrameworkHost::Destroy() noexcept {
-    if (framework_ && ::GetCurrentThreadId() == thread_id_) framework_->Destroy();
+    if (framework_ && ::GetCurrentThreadId() != thread_id_) return;
+    if (framework_) framework_->Destroy();
     if (callback_raw_) callback_raw_->Detach();
     framework_.Reset();
     application_.Reset();

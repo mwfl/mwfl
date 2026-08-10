@@ -2,7 +2,9 @@
 
 #include <windows.h>
 
+#include <atomic>
 #include <cstdint>
+#include <thread>
 
 namespace {
 
@@ -49,28 +51,55 @@ int main() {
         return 4;
     }
 
+    // A missing compiled markup resource is a structured load failure and the
+    // partially initialized framework remains safely destructible.
+    {
+        RibbonFrameworkHost missing_markup;
+        const auto created = missing_markup.Create(window, model, commands);
+        if (!created) {
+            ::DestroyWindow(window);
+            ::CoUninitialize();
+            return created.status == RibbonHostStatus::unavailable ? 0 : 5;
+        }
+        const auto loaded = missing_markup.Load(
+            ::GetModuleHandleW(nullptr), L"MISSING_RIBBON_RESOURCE");
+        if (loaded.status != RibbonHostStatus::com_failure) return 6;
+        missing_markup.Destroy();
+        if (missing_markup.IsCreated() || missing_markup.GetFramework()) return 7;
+    }
+
     for (int cycle = 0; cycle != 25; ++cycle) {
         RibbonFrameworkHost host;
         const auto created = host.Create(window, model, commands);
         if (!created) {
             ::DestroyWindow(window);
             ::CoUninitialize();
-            return created.status == RibbonHostStatus::unavailable ? 0 : 5;
+            return created.status == RibbonHostStatus::unavailable ? 0 : 8;
         }
         if (!host.IsCreated() || host.GetOwner() != window || !host.GetFramework())
-            return 6;
-        if (!host.Load(::GetModuleHandleW(nullptr), L"TEST_RIBBON_RIBBON")) return 7;
+            return 9;
+        if (!host.Load(::GetModuleHandleW(nullptr), L"TEST_RIBBON_RIBBON")) return 10;
         if (!host.SetModes(1) ||
             host.SetModes(0).status != RibbonHostStatus::invalid_argument)
-            return 8;
+            return 11;
         if (!host.Invalidate({1010}) || !host.InvalidateAll() ||
             host.Invalidate({9999}).status != RibbonHostStatus::invalid_argument)
-            return 9;
+            return 12;
+
+        std::atomic<RibbonHostStatus> cross_thread{RibbonHostStatus::success};
+        std::thread worker([&] {
+            cross_thread = host.InvalidateAll().status;
+            host.Destroy();
+        });
+        worker.join();
+        if (cross_thread != RibbonHostStatus::wrong_thread || !host.IsCreated())
+            return 13;
+
         host.Destroy();
         host.Destroy();
         if (host.IsCreated() || host.GetOwner() || host.GetFramework() ||
             host.GetHeight() != 0)
-            return 10;
+            return 14;
     }
 
     ::DestroyWindow(window);
@@ -85,7 +114,7 @@ int main() {
         const auto result = wrong_apartment.Create(window, model, commands);
         ::DestroyWindow(window);
         ::CoUninitialize();
-        if (result.status != RibbonHostStatus::wrong_apartment) return 11;
+        if (result.status != RibbonHostStatus::wrong_apartment) return 15;
     }
-    return invoked == 0 ? 0 : 12;
+    return invoked == 0 ? 0 : 16;
 }

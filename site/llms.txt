@@ -39,3 +39,7 @@ https://everettjf.github.io/mwtl/document-workspace.html
 
 IDE docking workspace tutorial and compiled reference:
 https://everettjf.github.io/mwtl/docking-workspace.html
+
+Optional Ribbon, MDI, graphics, taskbar, and Help guide:
+https://everettjf.github.io/mwtl/optional-integrations.html#ribbon-mdi
+https://everettjf.github.io/mwtl/optional-integrations.html#graphics-help

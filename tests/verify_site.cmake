@@ -3,6 +3,7 @@ foreach(required IN ITEMS
         tutorial.html
         building.html
         changelog.html
+        optional-integrations.html
         notepad.html
         components/index.html
         components/application.html
@@ -49,6 +50,15 @@ if(NOT building MATCHES "tutorial.html" OR
    NOT building MATCHES "scripts/verify.ps1")
     message(FATAL_ERROR "build reference is missing beginner or contributor guidance")
 endif()
+
+file(READ "${SITE_ROOT}/optional-integrations.html" optional_integrations)
+foreach(marker IN ITEMS "mwtl::ribbon" "mwtl::mdi" "mwtl::graphics"
+        "TaskbarCreated" "HelpRequest" "docs/tutorials/ribbon.md"
+        "docs/tutorials/mdi.md" "docs/tutorials/graphics-help.md")
+    if(NOT optional_integrations MATCHES "${marker}")
+        message(FATAL_ERROR "optional integration guide is missing marker: ${marker}")
+    endif()
+endforeach()
 
 file(READ "${SITE_ROOT}/notepad.html" notepad)
 foreach(marker IN ITEMS "templates/basic-app" "DocumentState" "WriteTextFileAtomic"

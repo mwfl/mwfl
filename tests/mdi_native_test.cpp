@@ -2,7 +2,9 @@
 
 #include <windows.h>
 
+#include <atomic>
 #include <stdexcept>
+#include <thread>
 
 namespace {
 
@@ -61,19 +63,36 @@ int main() {
         if (!host.TakeCallbackException() || host.TakeCallbackException()) return 7;
         if (!host.Activate({cycle * 10 + 1}) ||
             model.GetActiveId() != MdiChildId{cycle * 10 + 1}) return 8;
+
+        std::atomic<MdiHostStatus> cross_thread{MdiHostStatus::success};
+        std::thread worker([&] {
+            cross_thread = host.Activate({cycle * 10 + 2}).status;
+            host.Destroy();
+        });
+        worker.join();
+        if (cross_thread != MdiHostStatus::wrong_thread || !host.GetClient()) return 9;
         if (!host.Arrange(MdiArrange::cascade) ||
             !host.Arrange(MdiArrange::tile_horizontal) ||
             !host.Arrange(MdiArrange::tile_vertical) ||
-            !host.Arrange(MdiArrange::arrange_icons)) return 9;
+            !host.Arrange(MdiArrange::arrange_icons)) return 10;
+
+        // Native destruction outside MdiHost invalidates both the borrowed
+        // HWND lookup and the corresponding model entry without stale state.
+        const HWND stale = first.window;
+        if (!::DestroyWindow(stale) || ::IsWindow(stale) ||
+            host.GetChild({cycle * 10 + 1}) || host.GetChildId(stale) ||
+            model.Find({cycle * 10 + 1})) return 11;
         if (host.Close({cycle * 10 + 2}).status != MdiHostStatus::model_failure ||
             !host.Close({cycle * 10 + 2}, true) || model.Find({cycle * 10 + 2}) ||
-            ::IsWindow(second.window)) return 10;
-        if (!host.Close({cycle * 10 + 1}) || !model.GetChildren().empty()) return 11;
+            ::IsWindow(second.window)) return 12;
+        if (!model.GetChildren().empty()) return 13;
         host.Destroy();
         host.Destroy();
-        if (host.GetClient()) return 12;
+        if (host.GetClient()) return 14;
         ::DestroyWindow(frame);
+        MSG message{};
+        if (::PeekMessageW(&message, nullptr, WM_QUIT, WM_QUIT, PM_NOREMOVE)) return 15;
     }
     const DWORD final_user = ::GetGuiResources(::GetCurrentProcess(), GR_USEROBJECTS);
-    return final_user <= initial_user + 4 ? 0 : 13;
+    return final_user <= initial_user + 4 ? 0 : 16;
 }

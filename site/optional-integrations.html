@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Build mwtl WebView2 and Scintilla reference applications with Visual Studio 2026 x64.">
+  <meta name="description" content="Build optional mwtl Ribbon, MDI, graphics, taskbar, Help, WebView2, and Scintilla integrations with Visual Studio 2026 x64.">
   <link rel="canonical" href="https://everettjf.github.io/mwtl/optional-integrations.html">
   <title>Optional integrations — mwtl</title>
   <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
@@ -17,7 +17,24 @@
     <nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a href="tutorial.html">Get started</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
   </div></header>
   <main id="main" class="shell prose guide">
-    <div class="hero"><div class="eyebrow">Optional native integrations</div><h1>Native capabilities, without burdening the core.</h1><p class="lede">Printing, OLE, Shell, WebView2, and Scintilla are isolated CMake components. Enable only what an application needs, retain native ownership and escape hatches, and run deterministic local tests.</p></div>
+    <div class="hero"><div class="eyebrow">Optional native integrations</div><h1>Native capabilities, without burdening the core.</h1><p class="lede">Ribbon, legacy MDI, graphics, printing, OLE, Shell, WebView2, and Scintilla are isolated CMake components. Enable only what an application needs, retain native ownership and escape hatches, and run deterministic local tests.</p></div>
+    <section id="ribbon-mdi">
+      <div class="eyebrow">Traditional Windows UI</div><h2>Windows Ribbon and legacy MDI</h2>
+      <p><code>mwtl::ribbon</code> maps stable command IDs, modes, contextual tabs, and copied recent-item metadata onto a generated UICC resource. <code>mwtl::mdi</code> offers a bounded compatibility path for traditional MDI products while keeping documents and views application-owned. New applications should prefer the modern document and docking workspaces.</p>
+      <pre data-title="Installed CMake"><code>find_package(mwtl CONFIG REQUIRED COMPONENTS ribbon mdi)
+target_link_libraries(ribbon_app PRIVATE mwtl::ribbon)
+target_link_libraries(legacy_mdi_app PRIVATE mwtl::mdi)</code></pre>
+      <div class="callout"><strong>Lifecycle:</strong> create Ribbon on the application STA and destroy it before COM shutdown. Create and destroy MDI on one UI thread, use stable <code>MdiChildId</code> values, and collect every dirty-close decision before closing any child.</div>
+      <p><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/ribbon.md">Build the Ribbon reference step by step â†’</a><br><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/mdi.md">Build the MDI reference step by step â†’</a></p>
+    </section>
+    <section id="graphics-help">
+      <div class="eyebrow">Interop and desktop commands</div><h2>EMF, GDI+, taskbar commands, and contextual Help</h2>
+      <p><code>mwtl::graphics</code> provides move-only enhanced-metafile ownership, callback-scoped recording/playback, explicit GDI+ startup, and bounded atomic PNG export. <code>mwtl::shell</code> adds stable thumbnail commands and tab state that can be reapplied when <code>TaskbarCreated</code> reports an Explorer restart. <code>HelpRequest</code> accepts validated local CHM/HTML files or HTTPS targets and supports injected offline test backends.</p>
+      <pre data-title="Installed CMake"><code>find_package(mwtl CONFIG REQUIRED COMPONENTS graphics shell)
+target_link_libraries(diagram_app PRIVATE mwtl::graphics mwtl::shell)</code></pre>
+      <div class="callout"><strong>Safe boundaries:</strong> callback HDC and <code>Gdiplus::Graphics</code> values are borrowed. Pixel counts are bounded, HWND/HICON values stay borrowed, Help never constructs a shell command, and tests never require a browser or network.</div>
+      <p><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/graphics-help.md">Follow the graphics, taskbar, and Help tutorial â†’</a></p>
+    </section>
     <section id="printing-ole-shell">
       <div class="eyebrow">Windows workflows</div><h2>Printing, OLE drag/drop, and Shell integration</h2>
       <p><code>mwtl::printing</code> shares printer-independent pagination between preview and safe native print transactions. <code>mwtl::ole</code> supplies bounded Unicode, file-list, custom, and delayed COM data plus revoke-once drop registration. <code>mwtl::shell</code> supplies versioned settings, reversible per-user associations, Jump Lists, recent documents, and recoverable taskbar state.</p>
@@ -49,7 +66,7 @@ target_link_libraries(my_editor PRIVATE mwtl::scintilla)
 mwtl_deploy_scintilla(my_editor)</code></pre>
       <div class="callout"><strong>Deployment:</strong> keep <code>Scintilla.dll</code> beside the executable. Missing and wrong-architecture runtimes are structured diagnostics.</div>
     </section>
-    <section><h2>Ownership rules</h2><ul><li>All WebView2 and Scintilla operations stay on the creating UI thread; WebView2 initialization requires an STA.</li><li>The hosts own their HWND/controller subscriptions. Raw COM interfaces and native notification payloads are borrowed.</li><li>Call WebView2 <code>Close</code> before owner teardown. Post a message before <code>Restart</code> from process-failure callbacks.</li><li>Core <code>mwtl::mwtl</code> consumers do not download, link, or deploy either component.</li></ul></section>
+    <section><h2>Ownership rules</h2><ul><li>All native hosts stay on their creating UI thread; Ribbon and WebView2 initialization require an STA.</li><li>The hosts own only the native resources documented by their component. Raw COM interfaces, HWND/HICON values, callback drawing contexts, and notification payloads are borrowed.</li><li>Destroy optional hosts in reverse order before owner HWND or COM teardown. Post out of reentrant callbacks before restarting or closing native state.</li><li>Core <code>mwtl::mwtl</code> consumers do not link, download, initialize, or deploy any optional component.</li></ul></section>
   </main>
   <footer class="site-footer"><div class="shell footer"><span>Modern Windows Thin Layer · MIT licensed · Windows 10+ · x64</span><nav aria-label="Footer"><a href="building.html">Build</a><a href="https://github.com/everettjf/mwtl">Source</a></nav></div></footer>
 </body>

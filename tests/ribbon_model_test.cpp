@@ -35,6 +35,12 @@ int main() {
     if (!model.Execute({10}, commands) || invoked != 1 ||
         model.Execute({99}, commands).status != RibbonModelStatus::not_found)
         return 7;
+    commands.Find({1})->SetHandler([&] {
+        ++invoked;
+        model.SetActiveModes(2);
+    });
+    if (!model.SetActiveModes(1) || !model.Execute({10}, commands) ||
+        invoked != 2 || model.GetActiveModes() != 2) return 16;
     commands.Find({1})->SetHandler([] { throw std::runtime_error("command"); });
     const auto callback = model.Execute({10}, commands);
     if (callback.status != RibbonModelStatus::callback_failed || !callback.error)
