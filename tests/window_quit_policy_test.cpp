@@ -5,6 +5,8 @@
 
 namespace {
 
+constexpr UINT kVerifyQuitPolicy = WM_APP + 0x171;
+
 class AuxiliaryWindow final : public mwtl::WindowBase {
 public:
     void BuildUI() override {}
@@ -13,6 +15,14 @@ public:
 class MainWindow final : public mwtl::WindowBase {
 public:
     void BuildUI() override {
+        if (::PostMessageW(GetHwnd(), kVerifyQuitPolicy, 0, 0) == FALSE)
+            throw std::runtime_error("post quit policy verification failed");
+    }
+
+    mwtl::EventResult OnMessage(const mwtl::WindowMessage& message) override {
+        if (message.id != kVerifyQuitPolicy)
+            return mwtl::EventResult::Propagate();
+
         auxiliary_ = std::make_unique<AuxiliaryWindow>();
         mwtl::WindowOptions options;
         options.quit_on_destroy = false;
@@ -23,10 +33,11 @@ public:
             throw std::runtime_error("create auxiliary window failed");
         if (!::DestroyWindow(auxiliary_->GetHwnd()))
             throw std::runtime_error("destroy auxiliary window failed");
-        MSG message{};
-        if (::PeekMessageW(&message, nullptr, WM_QUIT, WM_QUIT, PM_REMOVE))
+        MSG queued_message{};
+        if (::PeekMessageW(&queued_message, nullptr, WM_QUIT, WM_QUIT, PM_REMOVE))
             throw std::runtime_error("auxiliary window posted WM_QUIT");
         ::PostQuitMessage(0);
+        return mwtl::EventResult::Handled();
     }
 
 private:

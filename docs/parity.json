@@ -47,15 +47,16 @@
     },
     {
       "version": "0.6",
-      "status": "in_progress",
+      "status": "complete",
       "theme": "modern-multi-document-workspace",
       "acceptance": "docs/milestones/0.6.md",
       "reflection": "docs/reflections/0.6.md",
-      "depends_on": "0.5"
+      "depends_on": "0.5",
+      "evidence": ["examples/document_workspace", "mwtl.document_workspace", "mwtl.document_coordination", "mwtl.document_session", "mwtl.document_tabs_native", "mwtl.document_workspace_stress", "mwtl.document_workspace_gui", "mwtl.package_consumer"]
     },
     {
       "version": "0.7",
-      "status": "planned",
+      "status": "in_progress",
       "theme": "docking-workspace",
       "acceptance": "docs/milestones/0.7.md",
       "reflection": "docs/reflections/0.7.md",

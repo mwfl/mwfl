@@ -154,13 +154,13 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
 
-The repository contains 35 independently buildable programs. Each link opens
+The repository contains 39 independently buildable programs. Each link opens
 the complete source. Start with **Hello** for the smallest application,
 **Controls** for the basic widget set, or **Hot corners** for a complete
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 35 runnable examples</strong></summary>
+<summary><strong>Browse all 39 runnable examples</strong></summary>
 
 <br>
 
@@ -193,6 +193,7 @@ multi-monitor utility.
 | Desktop integration | [examples/desktop_integration/main.cpp](examples/desktop_integration/main.cpp) | Modern dialogs, clipboard, drag-drop, and window placement |
 | Document state | [examples/document_state/main.cpp](examples/document_state/main.cpp) | Dirty-state transitions and close decisions |
 | Notepad | [examples/notepad/main.cpp](examples/notepad/main.cpp) | Complete Unicode SDI editor with safe file operations |
+| Document workspace | [examples/document_workspace/main.cpp](examples/document_workspace/main.cpp) | Multi-window documents, active command routing, transfer rollback, and session restore |
 | Appearance | [examples/appearance/main.cpp](examples/appearance/main.cpp) | Color modes, DWM backdrops, corners, and accessibility |
 | Layout gallery | [examples/layout_gallery/main.cpp](examples/layout_gallery/main.cpp) | Responsive nested row, column, overlay, and sizing recipes |
 | Settings | [examples/property_sheet/main.cpp](examples/property_sheet/main.cpp) | Persistent property pages with validation and Apply/OK/Cancel |
@@ -201,6 +202,9 @@ multi-monitor utility.
 | Image Viewer | [examples/image_viewer/main.cpp](examples/image_viewer/main.cpp) | WIC decode, color metadata, Fit/zoom/pan, and recoverable D2D pixels |
 | Code Editor | [examples/code_editor/main.cpp](examples/code_editor/main.cpp) | Optional pinned Scintilla, Unicode files, search/replace, and notifications |
 | Browser | [examples/browser/main.cpp](examples/browser/main.cpp) | Optional pinned WebView2, offline startup, process recovery, and navigation |
+| Printing | [examples/printing/main.cpp](examples/printing/main.cpp) | Shared pagination, preview, printer settings, and balanced native print jobs |
+| OLE drag/drop | [examples/ole_drag_drop/main.cpp](examples/ole_drag_drop/main.cpp) | Unicode, files, and custom formats through native OLE drag/drop |
+| Shell integration | [examples/shell_integration/main.cpp](examples/shell_integration/main.cpp) | Associations, Jump Lists, taskbar state, and versioned settings |
 
 </details>
 
