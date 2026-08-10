@@ -157,7 +157,6 @@ struct MdiHost::ChildState {
     MdiChildId id{};
     HWND window = nullptr;
     MdiChildMessageHandler message;
-    LPARAM create_parameter = 0;
 };
 
 namespace {
@@ -236,8 +235,7 @@ MdiHostResult MdiHost::CreateChild(MdiChildId child,
     std::unique_ptr<ChildState> state;
     try {
         state = std::make_unique<ChildState>(
-            ChildState{this, child, nullptr, std::move(options.message),
-                       options.create_parameter});
+            ChildState{this, child, nullptr, std::move(options.message)});
         children_.push_back(std::move(state));
     } catch (...) {
         return {MdiHostStatus::native_failure, child, nullptr, ERROR_OUTOFMEMORY,

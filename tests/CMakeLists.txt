@@ -75,6 +75,16 @@ add_test(NAME mwtl.mdi_native COMMAND mwtl_mdi_native_test)
 set_tests_properties(mwtl.mdi_native PROPERTIES
     ENVIRONMENT "MWTL_TEST_NO_DIALOGS=1" TIMEOUT 30 LABELS "native;integration")
 
+if(TARGET mwtl_mdi_workspace)
+    add_test(NAME mwtl.mdi_workspace_gui
+        COMMAND "${CMAKE_COMMAND}"
+            "-DMDI_EXE=$<TARGET_FILE:mwtl_mdi_workspace>"
+            "-DRESULT_FILE=${CMAKE_CURRENT_BINARY_DIR}/mdi-workspace-$<CONFIG>.result"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/run_mdi_workspace_gui.cmake")
+    set_tests_properties(mwtl.mdi_workspace_gui PROPERTIES
+        ENVIRONMENT "MWTL_TEST_NO_DIALOGS=1" TIMEOUT 30 LABELS "gui;integration")
+endif()
+
 find_program(MWTL_UICC_EXECUTABLE NAMES uicc.exe
     HINTS
         "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/x86"

@@ -110,7 +110,6 @@ using MdiChildMessageHandler =
 
 struct MdiChildOptions {
     DWORD style = WS_VISIBLE | WS_OVERLAPPEDWINDOW;
-    LPARAM create_parameter = 0;
     MdiChildMessageHandler message;
 };
 

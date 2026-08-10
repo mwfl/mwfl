@@ -46,7 +46,7 @@ int main() {
 
         int callback_count = 0;
         auto first = host.CreateChild({cycle * 10 + 1}, {
-            WS_VISIBLE | WS_OVERLAPPEDWINDOW, 77,
+            WS_VISIBLE | WS_OVERLAPPEDWINDOW,
             [&](HWND, UINT message, WPARAM, LPARAM) -> std::optional<LRESULT> {
                 if (message == WM_APP + 1) { ++callback_count; return 123; }
                 if (message == WM_APP + 2) throw std::runtime_error("mdi child");
