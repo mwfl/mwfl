@@ -1,10 +1,12 @@
 #include <mwtl/mwtl.h>
 
+#include <algorithm>
 #include <array>
 #include <filesystem>
 #include <fstream>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -44,7 +46,27 @@ struct DocumentContent {
 
 struct Coordinator {
     explicit Coordinator(bool test, std::optional<std::filesystem::path> result)
-        : self_test(test), result_path(std::move(result)) {}
+        : self_test(test), result_path(std::move(result)) {
+        if (self_test) {
+            session_path = std::filesystem::temp_directory_path() /
+                (L"mwtl-document-workspace-app-session-" +
+                 std::to_wstring(::GetCurrentProcessId()) + L".state");
+            std::error_code ignored;
+            std::filesystem::remove(session_path, ignored);
+        } else {
+            std::array<wchar_t, 32768> local{};
+            const DWORD length = ::GetEnvironmentVariableW(
+                L"LOCALAPPDATA", local.data(), static_cast<DWORD>(local.size()));
+            if (length > 0 && length < local.size())
+                session_path = std::filesystem::path{local.data()} /
+                    L"mwtl" / L"document-workspace.state";
+        }
+        if (!session_path.empty()) {
+            const auto loaded = mwtl::LoadDocumentSession(session_path);
+            if (loaded && loaded.session->workspaces.size() == models.size())
+                pending_session = std::move(*loaded.session);
+        }
+    }
 
     std::array<mwtl::DocumentWorkspaceModel, 2> models{
         mwtl::DocumentWorkspaceModel{{1}, 8},
@@ -55,10 +77,14 @@ struct Coordinator {
     std::uint64_t next_id = 1;
     bool self_test = false;
     std::optional<std::filesystem::path> result_path;
+    std::filesystem::path session_path;
+    std::optional<mwtl::DocumentSession> pending_session;
 
     void EnsureSecondary();
     bool MoveActive(std::size_t source);
     bool ConfirmShutdown(HWND owner);
+    void InitializeWorkspaces();
+    bool SaveSession();
     void Report(std::string_view value) const {
         if (result_path) {
             std::ofstream output(*result_path, std::ios::binary | std::ios::trunc);
@@ -98,14 +124,11 @@ public:
             .Add(tabs_, mwtl::Stretch())
             .Add(status_, mwtl::Fixed(26.0_dip)));
         if (index_ == 0) {
-            NewDocument(L"Welcome", L"This is a real multi-document workspace.\r\n");
-            NewDocument(L"Notes", L"Edit, save, reorder, close, or move this tab.\r\n");
             coordinator_.EnsureSecondary();
+            coordinator_.InitializeWorkspaces();
             if (coordinator_.self_test &&
                 !::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0))
                 throw std::runtime_error("post workspace self-test failed");
-        } else {
-            NewDocument(L"Second window", L"Documents can move between windows.\r\n");
         }
         Sync(L"Ready");
     }
@@ -198,6 +221,7 @@ public:
     }
 
 private:
+    friend struct Coordinator;
     void BuildCommands() {
         commands_
             .Add(mwtl::Command(kNew, L"New", [this] { NewDocument(); })
@@ -261,6 +285,50 @@ private:
         model().Activate(id);
         mwtl::SetAccessibleName(page, title.c_str());
         Sync(L"Created " + title);
+    }
+
+    std::size_t RestoreSnapshot(const mwtl::WorkspaceSession& snapshot) {
+        std::unordered_map<std::uint64_t, DocumentContent> restored_contents;
+        const auto validator = [&](const mwtl::SessionDocument& item) {
+            if (item.metadata.path.empty() || !item.metadata.path.is_absolute() ||
+                !item.stamp) return mwtl::SessionDocumentDisposition::untrusted;
+            const auto read = mwtl::ReadTextFile(item.metadata.path);
+            if (read.status == mwtl::TextFileStatus::not_found)
+                return mwtl::SessionDocumentDisposition::missing;
+            if (!read.Succeeded() || read.value->stamp != *item.stamp)
+                return mwtl::SessionDocumentDisposition::changed;
+            restored_contents[item.metadata.id.value] =
+                {read.value->text, read.value->stamp};
+            return mwtl::SessionDocumentDisposition::restore;
+        };
+        const auto restored = mwtl::RestoreWorkspaceSession(
+            model(), snapshot, validator,
+            [&](const mwtl::SessionDocument& item) {
+                return restored_contents.contains(item.metadata.id.value);
+            });
+        if (!restored) return 0;
+        for (const auto& document : model().GetDocuments()) {
+            auto content = restored_contents.find(document.id.value);
+            if (content == restored_contents.end()) continue;
+            HWND page = CreateEditor(document.id, content->second.text);
+            if (!page || adapter_.BindPage(document.id, page) !=
+                    mwtl::DocumentTabStatus::success)
+                throw std::runtime_error("restore document page failed");
+            coordinator_.contents[document.id.value] = std::move(content->second);
+            mwtl::SetAccessibleName(page, document.title.c_str());
+            coordinator_.next_id = (std::max)(coordinator_.next_id,
+                                               document.id.value + 1);
+        }
+        for (const auto& recent : model().GetRecentlyClosed()) {
+            auto content = restored_contents.find(recent.id.value);
+            if (content != restored_contents.end())
+                coordinator_.contents[recent.id.value] = std::move(content->second);
+            coordinator_.next_id = (std::max)(coordinator_.next_id,
+                                               recent.id.value + 1);
+        }
+        Sync(restored.issues.empty() ? L"Session restored"
+                                     : L"Session restored with skipped files");
+        return restored.restored_documents;
     }
 
     void OpenInteractive() {
@@ -439,23 +507,30 @@ private:
             reinterpret_cast<LPARAM>(reopened_page));
         if (SaveActive() || !model().Find(*model().GetActiveId())->dirty)
             throw std::runtime_error("external change protection failed");
+        const auto current_disk = mwtl::ReadTextFile(saved_path);
+        if (!current_disk.Succeeded())
+            throw std::runtime_error("read changed file failed");
+        coordinator_.contents[model().GetActiveId()->value].stamp =
+            current_disk.value->stamp;
+        if (!SaveActive()) throw std::runtime_error("reconciled save failed");
         Reorder(-1);
         if (!coordinator_.MoveActive(0) || coordinator_.models[1].GetCount() != 2)
             throw std::runtime_error("cross-window transfer failed");
-        mwtl::DocumentSession session;
-        session.workspaces.push_back(mwtl::CaptureWorkspaceSession(coordinator_.models[0]));
-        session.workspaces.push_back(mwtl::CaptureWorkspaceSession(coordinator_.models[1]));
-        const auto path = std::filesystem::temp_directory_path() /
-            (L"mwtl-document-workspace-session-" +
-             std::to_wstring(::GetCurrentProcessId()) + L".state");
-        if (mwtl::SaveDocumentSessionAtomic(path, session) !=
-                mwtl::DocumentSessionStatus::success ||
-            !mwtl::LoadDocumentSession(path))
+        if (!coordinator_.SaveSession())
             throw std::runtime_error("session persistence failed");
-        const auto loaded = mwtl::LoadDocumentSession(path);
+        const auto loaded = mwtl::LoadDocumentSession(coordinator_.session_path);
+        if (!loaded || loaded.session->workspaces.size() != 2)
+            throw std::runtime_error("saved application session failed to load");
         mwtl::DocumentWorkspaceModel restored_a{{1}, 8};
         mwtl::DocumentWorkspaceModel restored_b{{2}, 8};
-        const auto validator = [](const mwtl::SessionDocument&) {
+        const auto validator = [](const mwtl::SessionDocument& item) {
+            if (item.metadata.path.empty() || !item.metadata.path.is_absolute() ||
+                !item.stamp) return mwtl::SessionDocumentDisposition::untrusted;
+            const auto read = mwtl::ReadTextFile(item.metadata.path);
+            if (read.status == mwtl::TextFileStatus::not_found)
+                return mwtl::SessionDocumentDisposition::missing;
+            if (!read.Succeeded() || read.value->stamp != *item.stamp)
+                return mwtl::SessionDocumentDisposition::changed;
             return mwtl::SessionDocumentDisposition::restore;
         };
         const auto restore = [](const mwtl::SessionDocument&) { return true; };
@@ -463,12 +538,37 @@ private:
                 restored_a, loaded.session->workspaces[0], validator, restore) ||
             !mwtl::RestoreWorkspaceSession(
                 restored_b, loaded.session->workspaces[1], validator, restore) ||
-            restored_a.GetCount() != coordinator_.models[0].GetCount() ||
-            restored_b.GetCount() != coordinator_.models[1].GetCount())
+            restored_a.GetCount() != 0 || restored_b.GetCount() != 1)
             throw std::runtime_error("session restore failed");
+        if (!mwtl::WriteTextFileAtomic(saved_path, L"changed after session").Succeeded())
+            throw std::runtime_error("changed restore setup failed");
+        mwtl::DocumentWorkspaceModel changed_restore{{2}, 8};
+        const auto changed_result = mwtl::RestoreWorkspaceSession(
+            changed_restore, loaded.session->workspaces[1], validator, restore);
+        if (!changed_result || changed_result.issues.empty() ||
+            changed_result.issues.front().disposition !=
+                mwtl::SessionDocumentDisposition::changed ||
+            changed_restore.GetCount() != 0)
+            throw std::runtime_error("changed session path was not skipped");
         std::error_code ignored;
-        std::filesystem::remove(path, ignored);
         std::filesystem::remove(saved_path, ignored);
+        mwtl::DocumentWorkspaceModel missing_restore{{2}, 8};
+        const auto missing_result = mwtl::RestoreWorkspaceSession(
+            missing_restore, loaded.session->workspaces[1], validator, restore);
+        if (!missing_result || missing_result.issues.empty() ||
+            missing_result.issues.front().disposition !=
+                mwtl::SessionDocumentDisposition::missing)
+            throw std::runtime_error("missing session path was not skipped");
+        auto untrusted_snapshot = loaded.session->workspaces[1];
+        untrusted_snapshot.documents.front().metadata.path = L"relative.txt";
+        mwtl::DocumentWorkspaceModel untrusted_restore{{2}, 8};
+        const auto untrusted_result = mwtl::RestoreWorkspaceSession(
+            untrusted_restore, untrusted_snapshot, validator, restore);
+        if (!untrusted_result || untrusted_result.issues.empty() ||
+            untrusted_result.issues.front().disposition !=
+                mwtl::SessionDocumentDisposition::untrusted)
+            throw std::runtime_error("untrusted session path was not skipped");
+        std::filesystem::remove(coordinator_.session_path, ignored);
     }
 
     Coordinator& coordinator_;
@@ -511,6 +611,61 @@ bool Coordinator::MoveActive(std::size_t source) {
     return true;
 }
 
+void Coordinator::InitializeWorkspaces() {
+    std::size_t restored = 0;
+    if (pending_session) {
+        for (std::size_t index = 0; index < models.size(); ++index) {
+            const auto found = std::ranges::find(
+                pending_session->workspaces, models[index].GetId(),
+                &mwtl::WorkspaceSession::workspace);
+            if (found != pending_session->workspaces.end())
+                restored += windows[index]->RestoreSnapshot(*found);
+        }
+        pending_session.reset();
+    }
+    if (restored == 0) {
+        windows[0]->NewDocument(
+            L"Welcome", L"This is a real multi-document workspace.\r\n");
+        windows[0]->NewDocument(
+            L"Notes", L"Edit, save, reorder, close, or move this tab.\r\n");
+        windows[1]->NewDocument(
+            L"Second window", L"Documents can move between windows.\r\n");
+    }
+}
+
+bool Coordinator::SaveSession() {
+    if (session_path.empty()) return false;
+    mwtl::DocumentSession session;
+    for (const auto& workspace : models) {
+        auto snapshot = mwtl::CaptureWorkspaceSession(workspace);
+        const auto decorate = [&](std::vector<mwtl::SessionDocument>& documents) {
+            std::erase_if(documents, [&](mwtl::SessionDocument& item) {
+                const auto content = contents.find(item.metadata.id.value);
+                if (item.metadata.path.empty() || content == contents.end() ||
+                    !content->second.stamp) return true;
+                item.stamp = content->second.stamp;
+                // Exit decisions discard unsaved text. The next session loads
+                // the stamped on-disk version, not an unavailable dirty buffer.
+                item.metadata.dirty = false;
+                item.metadata.can_undo = false;
+                item.metadata.can_redo = false;
+                return false;
+            });
+        };
+        decorate(snapshot.documents);
+        decorate(snapshot.recently_closed);
+        if (snapshot.active && std::ranges::none_of(snapshot.documents,
+                [&](const auto& item) { return item.metadata.id == snapshot.active; }))
+            snapshot.active.reset();
+        session.workspaces.push_back(std::move(snapshot));
+    }
+    std::error_code error;
+    std::filesystem::create_directories(session_path.parent_path(), error);
+    if (error) return false;
+    return mwtl::SaveDocumentSessionAtomic(session_path, session) ==
+           mwtl::DocumentSessionStatus::success;
+}
+
 bool Coordinator::ConfirmShutdown(HWND owner) {
     bool dirty = false;
     for (const auto& workspace : models)
@@ -519,6 +674,13 @@ bool Coordinator::ConfirmShutdown(HWND owner) {
             L"Discard all unsaved changes in both workspace windows?",
             L"mwtl Documents", MB_OKCANCEL | MB_ICONWARNING) != IDOK)
         return false;
+    if (!SaveSession()) {
+        if (self_test) return false;
+        if (::MessageBoxW(owner,
+                L"The workspace session could not be saved. Close anyway?",
+                L"mwtl Documents", MB_OKCANCEL | MB_ICONWARNING) != IDOK)
+            return false;
+    }
     std::array<mwtl::CoordinatedClosePlan, 2> plans;
     for (std::size_t index = 0; index < models.size(); ++index) {
         std::vector<mwtl::DocumentCloseDecision> decisions;
