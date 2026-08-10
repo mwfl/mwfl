@@ -4,7 +4,7 @@ This suite measures whether a coding agent can turn a natural-language Windows
 UI request into correct, compilable mwtl code without inventing APIs or
 violating lifecycle rules.
 
-`tasks.json` contains twenty-eight prompts and their required evidence. `fixtures/`
+`tasks.json` contains twenty-nine prompts and their required evidence. `fixtures/`
 contains minimal known-good public-API baselines compiled by the repository.
 The baselines are not supplied to an agent during a blind run. `rubric.json`
 defines a 100-point score and `score-result.ps1` calculates it from recorded

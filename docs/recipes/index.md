@@ -8,6 +8,7 @@ canonical code instead of duplicating a second, drifting implementation.
 - [Compose responsive layout](responsive-layout.md)
 - [Add a property page](property-page.md)
 - [Share commands across UI surfaces](commands-menu-toolbar.md)
+- [Build a multi-document workspace](multi-document-workspace.md)
 - [Add a command and persistent setting to Notepad](notepad-command-setting.md)
 - [Run background work safely](background-work.md)
 - [Use file and folder dialogs](file-dialogs.md)

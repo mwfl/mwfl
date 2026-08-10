@@ -110,3 +110,13 @@ objects stay on their creating UI thread and are recreated after TaskbarCreated.
 Handle unavailable, rejected, access, and COM failures. Reference:
 examples/printing, examples/ole_drag_drop, examples/shell_integration, and
 docs/tutorials/printing-ole-shell.md.
+
+MULTI-DOCUMENT WORKSPACES
+
+Use document_workspace.h for stable metadata, document_coordination.h for
+active command routing and close plans, document_tabs.h for borrowed sibling
+page HWND projection and destination-first transfer, and document_session.h
+for bounded versioned atomic sessions. Applications own contents, undo buffers,
+file stamps, and page destruction. Never store C++ pointers in tab item data or
+use a hidden global current document. Reference and tutorial:
+https://everettjf.github.io/mwtl/document-workspace.html
