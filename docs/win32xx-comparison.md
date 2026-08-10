@@ -48,11 +48,19 @@ Status meanings:
 | Registry settings and file associations | Typed versioned HKCU settings and owner-marked reversible per-user association plans; unrelated state is preserved | supported | `examples/shell_integration`, settings/association/stress tests |
 | Jump Lists, recent destinations, and taskbar integration | Stable AppUserModel/task identity, removed-task filtering, transactional Jump Lists, recent documents, progress/overlay reset, and Explorer restart recovery | supported | `examples/shell_integration`, Shell integration/GUI/stress tests |
 
+## 0.6 modern multi-document scenarios
+
+| Win32++ capability or sample family | mwtl answer | Status | Evidence |
+|---|---|---|---|
+| Multi-document frame/workspace | Stable-ID tabbed workspaces with application-owned contents, independent dirty/undo/view state, active command projection, recently closed history, and two top-level windows | supported | `examples/document_workspace`, `mwtl.document_workspace`, `mwtl.document_workspace_gui` |
+| Moving documents between frames | Destination-first metadata adoption plus borrowed page-HWND reparent, source commit, rollback, focus restoration, and no global current document | supported | `TransferDocumentWithPage`, `mwtl.document_tabs_native`, workspace stress test |
+| Workspace persistence | Versioned bounded atomic sessions with `FileStamp` validation, incremental missing/changed/untrusted handling, and safe fallback | supported | `DocumentSession`, `mwtl.document_session`, document-workspace GUI self-test |
+| Multi-document shutdown | Inspect/decide/commit plans, synchronous convenience and asynchronous save/commit split, exception and reentrancy containment | composed | coordination and workspace stress tests |
+
 ## Later framework scenarios
 
 | Win32++ capability or sample family | mwtl direction | Status |
 |---|---|---|
-| Multi-document frame/workspace | Modern tabbed document manager, session restore and coordinated close before legacy MDI | planned for 0.6 |
 | `CDocker`, docking and RibbonDockFrame samples | Stable-ID serializable dock panels, floating windows and accessible drag previews | planned for 0.7 |
 | `CRibbon` / RibbonFrame samples | Optional Windows Ribbon integration, never required by the core | planned for 0.8 |
 | Traditional `CMDIFrame`/`CMDIChild` | Optional adapter after the modern multi-document workspace is complete | planned for 0.8 |

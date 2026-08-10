@@ -462,3 +462,50 @@ characters, and UI updates. High-level operations include code-style setup,
 line-number margins, selection, find/replace, undo/redo, clipboard commands,
 read-only state, dirty state, and zoom. HWND operations and notifications stay
 on the creating UI thread.
+
+## Multi-document workspace
+
+`<mwtl/document_workspace.h>`, `<mwtl/document_coordination.h>`,
+`<mwtl/document_tabs.h>`, and `<mwtl/document_session.h>` are core
+`mwtl::mwtl` surfaces for Windows 10+ C++20 applications. Installed,
+`add_subdirectory`, and `FetchContent` consumers acquire no rendering, OLE,
+Shell, or mandatory Document/View dependency.
+
+`DocumentWorkspaceModel` is a UI-thread-coordinated logical model. It owns
+metadata snapshots only: stable IDs, title/path, order, active ID, dirty/undo
+projection, view state, and bounded recently closed metadata. Applications own
+contents, undo buffers, file stamps, document types, and optional view objects
+keyed by `DocumentId`; no base class is required. Returned spans and pointers
+expire at the next mutation. There is no global active document.
+
+`RouteActiveDocument` snapshots an ID, contains callback exceptions, and
+reports reentrant activation. Command projection updates only text/enabled;
+application-owned checked state, shortcut, visibility, image, and handler stay
+intact. `status_text` is suitable for a status bar. Callbacks run without model
+or persistence locks.
+
+`DocumentTabWorkspaceAdapter` is creating-UI-thread-only and borrows its
+`TabControl` and page HWNDs. Pages share the TabControl parent so notifications
+reach the workspace. Unbind/detach before application-owned page destruction.
+Native items contain integer `DocumentId` values, never pointers.
+`TransferDocumentWithPage` adopts destination metadata before reparenting and
+source removal; failure restores metadata and HWND parentage. A
+`projection_failure` leaves logical ownership valid for a native rebuild.
+
+`DocumentSession` stores logical metadata, optional `FileStamp`, and view state,
+not contents. Its schema is versioned, bounded by UTF-8 bytes, strict for known
+records, tolerant of tagged extensions, and atomically replaced. Applications
+classify absolute/trusted, missing, changed, or rejected paths and restore
+contents through callbacks. Malformed, duplicate, truncated, oversized, or
+unsupported state never mutates a workspace. Restore callbacks must not mutate
+the target; revision changes reject the item and exceptions are captured.
+
+Coordinated close is inspect/decide/commit. Collect every decision before
+destroying a window. Synchronous callers use `ExecuteCoordinatedClose`;
+asynchronous callers complete every `save_before_close` ID and then call
+`CommitCoordinatedCloseAfterSaves`. Stale revisions, failed saves, exceptions,
+and cancellation preserve ownership. `WindowOptions::quit_on_destroy = false`
+is for application-coordinated auxiliary top-level windows.
+
+See `examples/document_workspace`, `docs/tutorials/document-workspace.md`, and
+`docs/recipes/multi-document-workspace.md`.
