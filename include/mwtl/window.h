@@ -132,6 +132,7 @@ public:
 
     void ConfigureWindowOptions(const WindowOptions& options) noexcept {
         apply_suggested_dpi_rect_ = options.apply_suggested_dpi_rect;
+        quit_on_destroy_ = options.quit_on_destroy;
     }
 
     void ApplyNativeResources(const WindowOptions& options) noexcept {
@@ -414,7 +415,7 @@ private:
                 self->creation_complete_ = true;
             }
             if (message == WM_DESTROY) {
-                ::PostQuitMessage(self->exit_code_);
+                if (self->quit_on_destroy_) ::PostQuitMessage(self->exit_code_);
             }
             if (message == WM_NCDESTROY) {
                 self->wake_state_->window.store(nullptr, std::memory_order_release);
@@ -449,18 +450,18 @@ private:
                 ? ::DefWindowProcW(window, message, wparam, lparam)
                 : 0;
             this->m_hWnd = nullptr;
-            ::PostQuitMessage(exit_code_);
+            if (quit_on_destroy_) ::PostQuitMessage(exit_code_);
             return result;
         }
 
         if (message == WM_DESTROY) {
-            ::PostQuitMessage(exit_code_);
+            if (quit_on_destroy_) ::PostQuitMessage(exit_code_);
             return 0;
         }
 
         recovery_requested_ = true;
-        if (this->m_hWnd == nullptr ||
-            ::PostMessageW(this->m_hWnd, WM_CLOSE, 0, 0) == FALSE) {
+        if (quit_on_destroy_ && (this->m_hWnd == nullptr ||
+            ::PostMessageW(this->m_hWnd, WM_CLOSE, 0, 0) == FALSE)) {
             ::PostQuitMessage(exit_code_);
         }
         return 0;
@@ -471,6 +472,7 @@ private:
     bool accelerator_filter_registered_ = false;
     bool recovery_requested_ = false;
     bool apply_suggested_dpi_rect_ = true;
+    bool quit_on_destroy_ = true;
     std::optional<LayoutHost> owned_layout_;
     LayoutHost* layout_ = nullptr;  // Non-owning.
     int exit_code_ = EXIT_SUCCESS;

@@ -27,6 +27,9 @@ struct WindowOptions {
     bool center_in_work_area = true;
     bool bounds_are_client_size = true;
     bool apply_suggested_dpi_rect = true;
+    // Main windows normally end the message loop. Set false for independently
+    // closable auxiliary top-level windows owned by the application.
+    bool quit_on_destroy = true;
     AppearanceOptions appearance{};
     HICON icon = nullptr;        // Non-owning; applied with WM_SETICON.
     HICON small_icon = nullptr;  // Non-owning; applied with WM_SETICON.

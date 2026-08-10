@@ -306,6 +306,13 @@ target_link_libraries(mwtl_document_tabs_native_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.document_tabs_native COMMAND mwtl_document_tabs_native_test)
 set_tests_properties(mwtl.document_tabs_native PROPERTIES TIMEOUT 20 LABELS "native;unit")
 
+add_executable(mwtl_window_quit_policy_test WIN32 window_quit_policy_test.cpp)
+target_compile_features(mwtl_window_quit_policy_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_window_quit_policy_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_window_quit_policy_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.window_quit_policy COMMAND mwtl_window_quit_policy_test)
+set_tests_properties(mwtl.window_quit_policy PROPERTIES TIMEOUT 20 LABELS "native;unit")
+
 add_executable(mwtl_splitter_test splitter_test.cpp)
 target_compile_features(mwtl_splitter_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_splitter_test PRIVATE /W4 /permissive- /EHsc /utf-8)

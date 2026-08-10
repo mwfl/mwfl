@@ -19,6 +19,8 @@ int main() {
     const auto serialized_session = mwtl::SerializeDocumentSession(document_session);
     mwtl::DocumentTabWorkspaceAdapter document_tabs;
     static_cast<void>(document_tabs.GetPages());
+    mwtl::WindowOptions auxiliary_window;
+    auxiliary_window.quit_on_destroy = false;
     const auto dpi = mwtl::DpiContext::FromDpi(144);
     const mwtl::RectDip concise{mwtl::Dip{1.0f}, mwtl::Dip{2.0f}, mwtl::Dip{3.0f}, mwtl::Dip{4.0f}};
     mwtl::LayoutHost layout(mwtl::Column().Margin(mwtl::Dip{8.0f}));
@@ -40,6 +42,7 @@ int main() {
                    documents.GetActiveId() == mwtl::DocumentId{1} &&
                    document_commands.document == mwtl::DocumentId{1} &&
                    !serialized_session.empty() &&
+                   !auxiliary_window.quit_on_destroy &&
                    dpi.ToPixels(mwtl::Dip{2.0f}) == 3 && concise.size.width == mwtl::Dip{3.0f} &&
                    layout.HasRoot() && split.constraints_satisfied &&
                    split.first.size.width.value > 0.0f && property_page_added &&
