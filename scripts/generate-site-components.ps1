@@ -17,6 +17,7 @@ function Display-Name([string]$Id) {
         'direct3d-swap-chain' = 'Direct3D Swap Chain'
         'webview2-browser' = 'WebView2 Browser'
         'scintilla-code-editor' = 'Scintilla Code Editor'
+        'markdown-editor' = 'Markdown Editor'
         'windows-ribbon' = 'Windows Ribbon'
         'legacy-mdi' = 'Legacy MDI'
         'emf-gdiplus' = 'EMF and GDI+'
@@ -68,7 +69,7 @@ $categoryIds = [ordered]@{
         'shell-integration', 'taskbar-help'
     )
     'Optional workspaces' = @(
-        'webview2-browser', 'scintilla-code-editor', 'docking-workspace',
+        'webview2-browser', 'scintilla-code-editor', 'markdown-editor', 'docking-workspace',
         'windows-ribbon', 'legacy-mdi'
     )
 }
@@ -168,7 +169,7 @@ $html = @"
   </div></header>
   <main id="main" class="shell catalog-page">
     <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all $($capabilities.Count) public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
-      <div class="catalog-stats"><span><strong>$($capabilities.Count)</strong> capabilities</span><span><strong>43</strong> examples</span><span><strong>$($docGroups['Recipes'].Count)</strong> recipes</span><span><strong>$($docGroups['Tutorials'].Count)</strong> tutorials</span></div>
+      <div class="catalog-stats"><span><strong>$($capabilities.Count)</strong> capabilities</span><span><strong>44</strong> examples</span><span><strong>$($docGroups['Recipes'].Count)</strong> recipes</span><span><strong>$($docGroups['Tutorials'].Count)</strong> tutorials</span></div>
     </header>
     <section class="catalog-tools" aria-label="Filter components">
       <label for="component-search">Find by task, symbol, or header</label><input id="component-search" type="search" placeholder="Try docking, PrintJob, mwtl/ribbon.h..." autocomplete="off">

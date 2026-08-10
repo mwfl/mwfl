@@ -19,8 +19,8 @@
     <nav class="nav-links" aria-label="Main navigation"><a class="active" href="index.html">Components</a><a href="../tutorial.html">Get started</a><a href="../changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
   </div></header>
   <main id="main" class="shell catalog-page">
-    <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all 41 public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
-      <div class="catalog-stats"><span><strong>41</strong> capabilities</span><span><strong>43</strong> examples</span><span><strong>34</strong> recipes</span><span><strong>12</strong> tutorials</span></div>
+    <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all 42 public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
+      <div class="catalog-stats"><span><strong>42</strong> capabilities</span><span><strong>44</strong> examples</span><span><strong>34</strong> recipes</span><span><strong>13</strong> tutorials</span></div>
     </header>
     <section class="catalog-tools" aria-label="Filter components">
       <label for="component-search">Find by task, symbol, or header</label><input id="component-search" type="search" placeholder="Try docking, PrintJob, mwtl/ribbon.h..." autocomplete="off">
@@ -30,7 +30,7 @@
         <button type="button" data-catalog-filter="Rendering and media">Rendering and media</button>
         <button type="button" data-catalog-filter="Desktop workflows">Desktop workflows</button>
         <button type="button" data-catalog-filter="Optional workspaces">Optional workspaces</button>
-      </div><p class="catalog-result" role="status" aria-live="polite">Showing all 41 capabilities.</p>
+      </div><p class="catalog-result" role="status" aria-live="polite">Showing all 42 capabilities.</p>
     </section>
     <div class="capability-groups">
         <section class="capability-group" data-capability-group="Foundation and UI">
@@ -513,6 +513,19 @@
                 <p><strong>Tests:</strong> <code>mwtl.scintilla_text&lt;/code&gt;, &lt;code&gt;mwtl.scintilla_native&lt;/code&gt;, &lt;code&gt;mwtl.code_editor_gui&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
               </details>
             </article>
+            <article class="capability-card" data-capability-id="markdown-editor" data-category="Optional workspaces" data-search="markdown-editor optional workspaces edit markdown preview markdown syntax color markdown build a local-first document editor compose scintilla and webview2 mwtl::scintillaeditor mwtl::webview2host mwtl::splitter mwtl::documentstate mwtl::readtextfile mwtl::writetextfileatomic mwtl/scintilla.h mwtl/webview2.h mwtl/splitter.h mwtl/document.h mwtl/text_file.h">
+              <span class="capability-kind">Optional workspaces</span><h3>Markdown Editor</h3>
+              <p>edit Markdown; preview Markdown; syntax color Markdown; build a local-first document editor; compose Scintilla and WebView2.</p><div class="capability-symbols"><code>mwtl::ScintillaEditor</code> <code>mwtl::WebView2Host</code> <code>mwtl::Splitter</code> <code>mwtl::DocumentState</code> <code>mwtl::ReadTextFile</code> <code>mwtl::WriteTextFileAtomic</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/scintilla.h&gt;</code> <code>&lt;mwtl/webview2.h&gt;</code> <code>&lt;mwtl/splitter.h&gt;</code> <code>&lt;mwtl/document.h&gt;</code> <code>&lt;mwtl/text_file.h&gt;</code></div><nav aria-label="Markdown Editor resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/markdown_editor/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/markdown-editor.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> enable both MWTL_BUILD_SCINTILLA and MWTL_BUILD_WEBVIEW2; deploy Scintilla.dll and Lexilla.dll beside the executable; the Lexilla Markdown lexer and light/dark palettes stay application-owned.</p>
+                <p><strong>Tests:</strong> <code>mwtl.markdown_renderer&lt;/code&gt;, &lt;code&gt;mwtl.markdown_editor_gui</code></p>
+              </details>
+            </article>
             <article class="capability-card" data-capability-id="docking-workspace" data-category="Optional workspaces" data-search="docking-workspace optional workspaces build an ide workspace dock and float tool panels auto-hide panels save and restore a docking layout mwtl::docklayoutmodel mwtl::docknativeworkspaceadapter mwtl::dockdragsession mwtl::dockpreviewwindow mwtl::dockkeyboardsession mwtl::dockfloatingwindow mwtl::dockautohidecontroller mwtl::savedockingsessionatomic mwtl/docking_workspace.h mwtl/docking_native.h mwtl/docking_drag.h mwtl/docking_preview.h mwtl/docking_keyboard.h mwtl/docking_floating.h mwtl/docking_auto_hide.h mwtl/docking_session.h">
               <span class="capability-kind">Optional workspaces</span><h3>Docking Workspace</h3>
               <p>build an IDE workspace; dock and float tool panels; auto-hide panels; save and restore a docking layout.</p><div class="capability-symbols"><code>mwtl::DockLayoutModel</code> <code>mwtl::DockNativeWorkspaceAdapter</code> <code>mwtl::DockDragSession</code> <code>mwtl::DockPreviewWindow</code> <code>mwtl::DockKeyboardSession</code> <code>mwtl::DockFloatingWindow</code> <code>mwtl::DockAutoHideController</code> <code>mwtl::SaveDockingSessionAtomic</code></div>
@@ -607,6 +620,7 @@ target_link_libraries(my_app PRIVATE
             <li data-usage-path="docs/tutorials/explorer-application.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/explorer-application.md">Explorer Application</a></li>
             <li data-usage-path="docs/tutorials/graphics-help.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/graphics-help.md">Graphics Help</a></li>
             <li data-usage-path="docs/tutorials/image-viewer.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/image-viewer.md">Image Viewer</a></li>
+            <li data-usage-path="docs/tutorials/markdown-editor.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/markdown-editor.md">Markdown Editor</a></li>
             <li data-usage-path="docs/tutorials/mdi.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/mdi.md">MDI</a></li>
             <li data-usage-path="docs/tutorials/notepad.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/notepad.md">Notepad</a></li>
             <li data-usage-path="docs/tutorials/printing-ole-shell.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/printing-ole-shell.md">Printing OLE Shell</a></li>

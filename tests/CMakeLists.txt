@@ -25,6 +25,24 @@ foreach(mode IN ITEMS
         TIMEOUT 20)
 endforeach()
 
+if(TARGET md4c-html)
+    add_executable(mwtl_markdown_renderer_test
+        markdown_renderer_test.cpp
+        "${PROJECT_SOURCE_DIR}/examples/markdown_editor/markdown_renderer.cpp")
+    target_include_directories(mwtl_markdown_renderer_test PRIVATE
+        "${PROJECT_SOURCE_DIR}/examples/markdown_editor")
+    target_compile_features(mwtl_markdown_renderer_test PRIVATE cxx_std_20)
+    target_compile_options(mwtl_markdown_renderer_test PRIVATE
+        /W4 /permissive- /EHsc /utf-8)
+    target_link_libraries(mwtl_markdown_renderer_test PRIVATE md4c-html)
+    get_target_property(mwtl_markdown_md4c_source_dir md4c SOURCE_DIR)
+    target_include_directories(mwtl_markdown_renderer_test PRIVATE
+        "${mwtl_markdown_md4c_source_dir}")
+    add_test(NAME mwtl.markdown_renderer COMMAND mwtl_markdown_renderer_test)
+    set_tests_properties(mwtl.markdown_renderer PROPERTIES
+        TIMEOUT 20 LABELS "fast;unit")
+endif()
+
 foreach(header IN ITEMS application async command_controls concepts control_batch control_host control_resources controls desktop dialog document dpi events input_controls layout message_pump must native_host navigation_controls property_sheet recent_files selection single_instance splitter tab_workspace text_file text_history text_search timer tray_icon window window_options wakeup umbrella)
     # Every public header must remain independently includable.
     add_library(mwtl_header_${header} OBJECT header_${header}.cpp)
@@ -832,6 +850,18 @@ if(MWTL_BUILD_WEBVIEW2)
             -Executable $<TARGET_FILE:mwtl_browser_demo>
             -RuntimePath "$<TARGET_FILE_DIR:mwtl_browser_demo>")
     set_tests_properties(mwtl.browser_gui PROPERTIES TIMEOUT 45 LABELS "gui;integration")
+endif()
+
+if(TARGET mwtl_markdown_editor)
+    find_program(mwtl_markdown_editor_test_powershell NAMES pwsh powershell REQUIRED)
+    add_test(NAME mwtl.markdown_editor_gui
+        COMMAND "${mwtl_markdown_editor_test_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwtl_markdown_editor>
+            -RuntimePath "$<TARGET_FILE_DIR:mwtl_markdown_editor>")
+    set_tests_properties(mwtl.markdown_editor_gui PROPERTIES
+        TIMEOUT 45 LABELS "gui;integration")
 endif()
 
 add_executable(mwtl_property_sheet_model_test property_sheet_model_test.cpp)

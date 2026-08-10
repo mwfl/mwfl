@@ -242,9 +242,12 @@ if(MWTL_BUILD_SCINTILLA)
     FetchContent_MakeAvailable(mwtl_scintilla_source mwtl_scintilla_binary)
     set(MWTL_SCINTILLA_RUNTIME
         "${mwtl_scintilla_binary_SOURCE_DIR}/Scintilla.dll")
+    set(MWTL_LEXILLA_RUNTIME
+        "${mwtl_scintilla_binary_SOURCE_DIR}/Lexilla.dll")
     if(NOT EXISTS "${MWTL_SCINTILLA_RUNTIME}" OR
+       NOT EXISTS "${MWTL_LEXILLA_RUNTIME}" OR
        NOT EXISTS "${mwtl_scintilla_source_SOURCE_DIR}/include/Scintilla.h")
-        message(FATAL_ERROR "Pinned Scintilla 5.6.5 package layout is invalid")
+        message(FATAL_ERROR "Pinned Scintilla/Lexilla 5.6.5 package layout is invalid")
     endif()
 
     add_library(mwtl_scintilla STATIC src/scintilla.cpp)
@@ -269,6 +272,15 @@ if(MWTL_BUILD_SCINTILLA)
         add_custom_command(TARGET "${target}" POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different
                 "${MWTL_SCINTILLA_RUNTIME}" "$<TARGET_FILE_DIR:${target}>/Scintilla.dll")
+    endfunction()
+
+    function(mwtl_deploy_lexilla target)
+        if(NOT TARGET "${target}")
+            message(FATAL_ERROR "mwtl_deploy_lexilla target does not exist: ${target}")
+        endif()
+        add_custom_command(TARGET "${target}" POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "${MWTL_LEXILLA_RUNTIME}" "$<TARGET_FILE_DIR:${target}>/Lexilla.dll")
     endfunction()
 endif()
 
