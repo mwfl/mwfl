@@ -299,6 +299,13 @@ target_link_libraries(mwtl_document_session_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.document_session COMMAND mwtl_document_session_test)
 set_tests_properties(mwtl.document_session PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
+add_executable(mwtl_document_workspace_stress_test document_workspace_stress_test.cpp)
+target_compile_features(mwtl_document_workspace_stress_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_document_workspace_stress_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_document_workspace_stress_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.document_workspace_stress COMMAND mwtl_document_workspace_stress_test)
+set_tests_properties(mwtl.document_workspace_stress PROPERTIES TIMEOUT 30 LABELS "lifecycle;unit")
+
 add_executable(mwtl_document_tabs_native_test document_tabs_native_test.cpp)
 target_compile_features(mwtl_document_tabs_native_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_document_tabs_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
