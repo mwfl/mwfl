@@ -278,6 +278,11 @@ target_compile_features(mwtl_header_docking_drag PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_docking_drag PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwtl_header_docking_drag PRIVATE mwtl::mwtl)
 
+add_library(mwtl_header_docking_auto_hide OBJECT header_docking_auto_hide.cpp)
+target_compile_features(mwtl_header_docking_auto_hide PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_docking_auto_hide PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_docking_auto_hide PRIVATE mwtl::mwtl)
+
 add_library(mwtl_header_docking_preview OBJECT header_docking_preview.cpp)
 target_compile_features(mwtl_header_docking_preview PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_docking_preview PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -329,6 +334,13 @@ target_compile_options(mwtl_docking_native_test PRIVATE /W4 /permissive- /EHsc /
 target_link_libraries(mwtl_docking_native_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.docking_native COMMAND mwtl_docking_native_test)
 set_tests_properties(mwtl.docking_native PROPERTIES TIMEOUT 20 LABELS "native;unit")
+
+add_executable(mwtl_docking_auto_hide_test docking_auto_hide_test.cpp)
+target_compile_features(mwtl_docking_auto_hide_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_docking_auto_hide_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_docking_auto_hide_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.docking_auto_hide COMMAND mwtl_docking_auto_hide_test)
+set_tests_properties(mwtl.docking_auto_hide PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
 add_library(mwtl_header_document_workspace OBJECT header_document_workspace.cpp)
 target_compile_features(mwtl_header_document_workspace PRIVATE cxx_std_20)

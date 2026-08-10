@@ -75,6 +75,7 @@ add_library(mwtl STATIC
     src/error.cpp
     src/desktop.cpp
     src/dialog.cpp
+    src/docking_auto_hide.cpp
     src/docking_drag.cpp
     src/docking_monitor.cpp
     src/docking_native.cpp
