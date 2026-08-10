@@ -16,7 +16,8 @@ bool DocumentTabWorkspaceAdapter::IsAttached() const noexcept {
 }
 
 bool DocumentTabWorkspaceAdapter::IsValidPage(HWND page) const noexcept {
-    if (!IsAttached() || !page || !::IsWindow(page) || ::GetParent(page) != tabs_)
+    if (!IsAttached() || !page || !::IsWindow(page) ||
+        ::GetParent(page) != ::GetParent(tabs_))
         return false;
     DWORD process = 0;
     return ::GetWindowThreadProcessId(page, &process) == ui_thread_ &&
@@ -63,7 +64,8 @@ DocumentTabStatus DocumentTabWorkspaceAdapter::BindPage(DocumentId document,
     if (!document || !page) return DocumentTabStatus::invalid_argument;
     if (!IsAttached()) return DocumentTabStatus::not_attached;
     if (!::IsWindow(page)) return DocumentTabStatus::stale_window;
-    if (::GetParent(page) != tabs_) return DocumentTabStatus::invalid_parent;
+    if (::GetParent(page) != ::GetParent(tabs_))
+        return DocumentTabStatus::invalid_parent;
     DWORD process = 0;
     if (::GetWindowThreadProcessId(page, &process) != ui_thread_ ||
         process != process_) return DocumentTabStatus::wrong_thread_or_process;
@@ -84,9 +86,15 @@ DocumentTabStatus DocumentTabWorkspaceAdapter::UnbindPage(
 
 DocumentTabStatus DocumentTabWorkspaceAdapter::ArrangePages() noexcept {
     if (!IsAttached()) return DocumentTabStatus::not_attached;
-    RECT bounds{};
-    if (!::GetClientRect(tabs_, &bounds)) return DocumentTabStatus::native_failure;
+    RECT tab_bounds{};
+    if (!::GetWindowRect(tabs_, &tab_bounds) ||
+        ::MapWindowPoints(nullptr, ::GetParent(tabs_),
+                          reinterpret_cast<POINT*>(&tab_bounds), 2) == 0)
+        return DocumentTabStatus::native_failure;
+    RECT bounds{0, 0, tab_bounds.right - tab_bounds.left,
+                tab_bounds.bottom - tab_bounds.top};
     TabCtrl_AdjustRect(tabs_, FALSE, &bounds);
+    ::OffsetRect(&bounds, tab_bounds.left, tab_bounds.top);
     for (const auto& item : pages_) {
         if (!IsValidPage(item.page)) return DocumentTabStatus::stale_window;
         if (!::SetWindowPos(item.page, nullptr, bounds.left, bounds.top,
@@ -183,7 +191,9 @@ DocumentTabResult TransferDocumentWithPage(
     if (!destination.AcceptTransfer(*plan))
         return {DocumentTabStatus::model_failure, source.GetActiveId()};
     ::SetLastError(ERROR_SUCCESS);
-    if (::SetParent(page, destination_tabs.tabs_) != source_tabs.tabs_) {
+    const HWND source_parent = ::GetParent(source_tabs.tabs_);
+    const HWND destination_parent = ::GetParent(destination_tabs.tabs_);
+    if (::SetParent(page, destination_parent) != source_parent) {
         const auto error = ::GetLastError();
         const bool model_restored = static_cast<bool>(destination.RollbackTransfer(*plan));
         ::SetLastError(error);
@@ -192,8 +202,8 @@ DocumentTabResult TransferDocumentWithPage(
                 source.GetActiveId()};
     }
     if (!source.CommitTransfer(*plan)) {
-        const bool parent_restored = ::SetParent(page, source_tabs.tabs_) ==
-                                     destination_tabs.tabs_;
+        const bool parent_restored = ::SetParent(page, source_parent) ==
+                                     destination_parent;
         const bool model_restored = static_cast<bool>(destination.RollbackTransfer(*plan));
         return {parent_restored && model_restored ? DocumentTabStatus::model_failure
                                                   : DocumentTabStatus::rollback_failure,

@@ -36,9 +36,9 @@ int main() {
     const RectDip tab_bounds{Dip{0}, Dip{0}, Dip{480}, Dip{300}};
     if (!left_tabs.Create(left_host, {101}, tab_bounds) ||
         !right_tabs.Create(right_host, {102}, tab_bounds)) return 3;
-    const HWND first_page = MakePage(left_tabs.GetHwnd(), 201);
-    const HWND second_page = MakePage(left_tabs.GetHwnd(), 202);
-    const HWND wrong_parent = MakePage(left_host, 203);
+    const HWND first_page = MakePage(left_host, 201);
+    const HWND second_page = MakePage(left_host, 202);
+    const HWND wrong_parent = MakePage(right_host, 203);
     if (!first_page || !second_page || !wrong_parent) return 4;
 
     DocumentWorkspaceModel left{{1}};
@@ -79,14 +79,14 @@ int main() {
         left, left_adapter, right, right_adapter, {22});
     if (rejected_transfer.status != DocumentTabStatus::model_failure ||
         !left.Find({22}) || right.Find({22}) || ::GetParent(second_page) !=
-            left_tabs.GetHwnd()) return 23;
+            left_host) return 23;
     if (!right.Close({99}, false) || !left.Rename({22}, L"Second")) return 24;
 
     const auto transferred = TransferDocumentWithPage(
         left, left_adapter, right, right_adapter, {22});
     if (!transferred || left.Find({22}) || !right.Find({22}) ||
         left_adapter.FindPage({22}) || right_adapter.FindPage({22}) != second_page ||
-        ::GetParent(second_page) != right_tabs.GetHwnd() ||
+        ::GetParent(second_page) != right_host ||
         right.GetActiveId() != DocumentId{22}) return 12;
 
     if (!left.Move({11}, 0) || !left_adapter.Synchronize(left)) return 13;

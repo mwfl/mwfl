@@ -14,7 +14,7 @@ namespace mwtl {
 
 struct DocumentPageBinding {
     DocumentId document{};
-    HWND page = nullptr;  // Borrowed direct child of the attached TabControl.
+    HWND page = nullptr;  // Borrowed sibling of the attached TabControl.
 };
 
 enum class DocumentTabStatus {
@@ -39,7 +39,8 @@ struct DocumentTabResult {
     }
 };
 
-// UI-thread adapter. It borrows the TabControl HWND and every page HWND; the
+// UI-thread adapter. It borrows the TabControl HWND and every page HWND; pages
+// share the TabControl parent so their notifications reach the workspace. The
 // application retains destruction ownership. Native tab item data contains
 // only the stable integer DocumentId, never an application pointer.
 class DocumentTabWorkspaceAdapter final {
