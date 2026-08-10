@@ -15,6 +15,7 @@
 #include <mwtl/desktop.h>
 #include <mwtl/dialog.h>
 #include <mwtl/document.h>
+#include <mwtl/document_workspace.h>
 #include <mwtl/events.h>
 #include <mwtl/error.h>
 #include <mwtl/input_controls.h>

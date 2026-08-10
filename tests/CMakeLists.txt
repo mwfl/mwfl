@@ -258,6 +258,18 @@ target_link_libraries(mwtl_tab_workspace_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.tab_workspace COMMAND mwtl_tab_workspace_test)
 set_tests_properties(mwtl.tab_workspace PROPERTIES TIMEOUT 20)
 
+add_library(mwtl_header_document_workspace OBJECT header_document_workspace.cpp)
+target_compile_features(mwtl_header_document_workspace PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_document_workspace PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_document_workspace PRIVATE mwtl::mwtl)
+
+add_executable(mwtl_document_workspace_test document_workspace_test.cpp)
+target_compile_features(mwtl_document_workspace_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_document_workspace_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_document_workspace_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.document_workspace COMMAND mwtl_document_workspace_test)
+set_tests_properties(mwtl.document_workspace PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
 add_executable(mwtl_splitter_test splitter_test.cpp)
 target_compile_features(mwtl_splitter_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_splitter_test PRIVATE /W4 /permissive- /EHsc /utf-8)

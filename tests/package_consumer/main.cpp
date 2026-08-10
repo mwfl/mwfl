@@ -10,6 +10,9 @@ int main() {
     static_cast<void>(selections.Size());
     mwtl::TabWorkspaceModel tabs;
     const bool tab_added = tabs.Add({{7}, L"Installed API", false, true});
+    mwtl::DocumentWorkspaceModel documents{{1}};
+    const bool document_added = static_cast<bool>(
+        documents.Add({{1}, L"Installed document", L"C:\\installed.txt"}));
     const auto dpi = mwtl::DpiContext::FromDpi(144);
     const mwtl::RectDip concise{mwtl::Dip{1.0f}, mwtl::Dip{2.0f}, mwtl::Dip{3.0f}, mwtl::Dip{4.0f}};
     mwtl::LayoutHost layout(mwtl::Column().Margin(mwtl::Dip{8.0f}));
@@ -27,7 +30,8 @@ int main() {
     const mwtl::ListItemId list_item{9};
     const mwtl::ListViewOptions virtual_list{.virtual_data = true};
     mwtl::Must(layout.HasRoot(), "installed layout");
-    return tab_added && tabs.GetSelectedId() == mwtl::TabId{7} &&
+    return tab_added && tabs.GetSelectedId() == mwtl::TabId{7} && document_added &&
+                   documents.GetActiveId() == mwtl::DocumentId{1} &&
                    dpi.ToPixels(mwtl::Dip{2.0f}) == 3 && concise.size.width == mwtl::Dip{3.0f} &&
                    layout.HasRoot() && split.constraints_satisfied &&
                    split.first.size.width.value > 0.0f && property_page_added &&

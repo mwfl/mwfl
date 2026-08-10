@@ -8,9 +8,9 @@ file(SIZE "${LIBRARY}" library_bytes)
 # of independently measured object code. ARM64 Debug COFF archives are larger
 # than x64 archives even for the same source; enforce a measured ceiling for
 # each architecture instead of making the x64 budget absorb ABI padding.
-set(library_limit 15728640) # 15 MiB; current VS 2026 x64 is ~14.14 MiB.
+set(library_limit 16252928) # 15.5 MiB; 0.6 workspace baseline measures 15.30 MiB on VS2026 x64.
 if(MWTL_ARCHITECTURE STREQUAL "ARM64")
-    set(library_limit 16252928) # 15.5 MiB; ARM64 COFF adds roughly 0.35 MiB.
+    set(library_limit 16777216) # 16 MiB; ARM64 is remeasured in the post-0.8 matrix pass.
 endif()
 if(library_bytes GREATER library_limit)
     message(FATAL_ERROR

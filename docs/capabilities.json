@@ -47,6 +47,14 @@
       "constraints": ["applications own contents and perform file I/O", "record opened or saved state only after I/O succeeds", "the model belongs to the document coordination thread"]
     },
     {
+      "id": "multi-document-workspace-model",
+      "intent": ["manage multiple documents", "move a document between windows", "recently closed documents", "active document state"],
+      "symbols": ["mwtl::DocumentWorkspaceModel", "mwtl::DocumentId", "mwtl::WorkspaceId", "mwtl::DocumentTransferPlan", "mwtl::TransferDocument"],
+      "headers": ["mwtl/document_workspace.h"],
+      "tests": ["mwtl.document_workspace", "mwtl.package_consumer"],
+      "constraints": ["UI-thread logical model owns metadata snapshots only", "applications own contents undo buffers and page HWNDs keyed by stable DocumentId", "Windows paths deduplicate case-insensitively after lexical normalization", "destination adoption precedes source removal", "stale source commits require destination rollback"]
+    },
+    {
       "id": "tab-workspace-state",
       "intent": ["track application tabs", "keep stable tab identity", "synchronize a native tab control"],
       "symbols": ["mwtl::TabWorkspaceModel", "mwtl::TabId", "mwtl::TabControl"],
