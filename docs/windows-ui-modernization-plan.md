@@ -1,26 +1,27 @@
-# Modern Win32++ coverage plan
+# Modern Windows UI API coverage plan
 
 ## Objective
 
-Complete the remaining useful Win32++ application surfaces without copying its
-API hierarchy or historical compatibility costs. Every addition targets
-Windows 10+, C++20, Visual Studio 2026, MSVC, and x64 first. The result should
-let an application express the same native Windows behavior with less state,
-clearer ownership, typed failures, and better coding-Agent evidence.
+Make useful Windows UI and desktop APIs available through a concise, modern
+C++20 development model. mwtl should remove repetitive setup and unsafe
+lifetime plumbing while preserving native behavior, native handles, messages,
+styles, return values, and composition with the wider Windows SDK.
 
-The audited baseline is [`win32xx-comparison.md`](win32xx-comparison.md). Major
-application categories are already covered through 0.8. This plan closes the
-remaining direct API gaps while retaining standard-library composition where a
-UI framework wrapper would add no value.
+Every addition targets Windows 10+, C++20, Visual Studio 2026, MSVC, and x64
+first. The desired result is application code with fewer hidden states, clear
+ownership, typed events, structured failures, predictable teardown, and enough
+machine-readable evidence for a coding Agent to choose the correct API.
 
 ## Product principles
 
-1. Measure scenario coverage, not class-count parity.
+1. Organize the library around developer tasks and complete applications, not
+   a class-count target.
 2. Add a wrapper only when it materially improves ownership, lifetime,
-   threading, encoding, DPI, accessibility, or failure handling.
+   threading, encoding, DPI, accessibility, failure handling, or composition.
 3. Keep raw HWND, HDC, COM, and native-message escape hatches available.
 4. Prefer values, RAII, `std::span`, `std::ranges`, `std::chrono`, concepts,
-   `std::filesystem`, and explicit result types over framework replacements.
+   `std::filesystem`, and explicit result types over framework-specific utility
+   types.
 5. Keep optional native ecosystems out of `mwtl::mwtl`.
 6. Ship every public feature as API, example, recipe/tutorial, package evidence,
    Agent metadata, Pages component entry, and automated tests.
@@ -35,9 +36,9 @@ UI framework wrapper would add no value.
   scroll state.
 - Build a rich-text editor and a large scrollable inspector reference.
 
-**Exit gate:** applications can reproduce Win32++ RichEdit and ScrollView
-samples without raw lifetime plumbing; malformed ranges, very large content,
-reentrancy, DPI changes, and teardown orders have executable coverage.
+**Exit gate:** both scenarios work without raw lifetime plumbing; malformed
+ranges, very large content, reentrancy, DPI changes, keyboard/accessibility,
+and teardown orders have executable coverage.
 
 ## Phase 2 — focused GDI ownership
 
@@ -48,46 +49,50 @@ reentrancy, DPI changes, and teardown orders have executable coverage.
 - Keep drawing operations thin and interoperable with raw GDI; do not build a
   second rendering framework beside Direct2D.
 
-**Exit gate:** the representative Win32++ GDI/bitmap/metafile scenarios have
-balanced success and failure paths, handle-budget stress tests, and direct raw
-HDC composition examples.
+**Exit gate:** representative bitmap, paint, memory-DC, region, font, palette,
+and metafile workflows have balanced success/failure paths, handle-budget
+stress tests, and direct raw-HDC composition examples.
 
 ## Phase 3 — remaining common dialogs
 
 - Add structured color and font dialog results with owner HWND, cancellation,
   custom colors, LOGFONT conversion, DPI-aware preview guidance, and hook
   exception containment.
-- Evaluate a focused Find/Replace dialog host extracted from the Notepad
-  reference so modeless ownership and registered-message routing are reusable.
+- Extract a focused Find/Replace dialog host from the Notepad reference so
+  modeless ownership and registered-message routing are reusable.
 
 **Exit gate:** cancellation is not an error, hooks cannot leak exceptions,
-owners and buffers outlive the native dialog, and all workflows have offline
-GUI self-tests.
+owners and buffers outlive the native dialog, and all workflows have
+deterministic offline GUI self-tests.
 
-## Phase 4 — native hosting decisions
+## Phase 4 — native hosting and composition guidance
 
 - Document and test the generic `NativeHost` path for uncommon controls.
 - Keep WebView2 as the web-content default. Add a generic ActiveX container only
-  if two real non-browser controls demonstrate a reusable need; otherwise retain
-  raw COM hosting as an explicit non-goal.
-- Publish migration recipes for Win32++ `CAXHost`/`CWebBrowser`, sockets, file
-  search, archives, synchronization, threads, time, and strings.
+  if two real non-browser controls demonstrate a reusable ownership contract;
+  otherwise retain raw COM hosting as an explicit composition path.
+- Publish compiled recipes for Windows APIs that should remain outside a UI
+  layer, including sockets, file enumeration, serialization, synchronization,
+  worker threads, and time-sensitive background work.
 
-**Exit gate:** every remaining Win32++ class family has either a tested direct
-surface, a compiled composition recipe, or an explicit evidence-backed non-goal.
+**Exit gate:** every targeted Windows UI scenario has either a tested direct
+surface, a compiled composition recipe, or an explicit evidence-backed
+boundary explaining why ordinary C++20 or Windows SDK APIs are the better path.
 
-## Phase 5 — ecosystem and replacement proof
+## Phase 5 — ecosystem and usability proof
 
-- Build migration guides and compile fixtures for representative Win32++ SDI,
-  MDI, docking, Ribbon, printing, drawing, browser, editor, and utility samples.
 - Complete a mini-IDE reference combining document workspace, docking,
   Scintilla, output/log RichEdit, commands, settings, printing, and Shell.
+- Add substantial reference applications for the new text, scrolling, GDI, and
+  common-dialog surfaces instead of validating them only in isolated tests.
 - Measure source size, build time, dispatch overhead, handle deltas, startup,
-  shutdown, DPI, keyboard, accessibility, and Agent task success.
+  shutdown, DPI, keyboard, accessibility, and coding-Agent task success.
+- Make the Components catalog the authoritative task-to-symbol discovery path
+  for every implemented feature and documented native composition boundary.
 
-**Exit gate:** for each representative Win32++ application category, a newcomer
-and a coding Agent can find one canonical mwtl path, build it with documented
-VS2026 x64 commands, and pass deterministic tests without internal APIs.
+**Exit gate:** a newcomer and a coding Agent can start from a Windows desktop
+task, find one canonical C++20 path, build it with documented VS2026 x64
+commands, and pass deterministic tests without depending on internal APIs.
 
 ## Definition of done for every slice
 

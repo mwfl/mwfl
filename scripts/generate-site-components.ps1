@@ -188,7 +188,7 @@ target_link_libraries(my_app PRIVATE
     <section id="usage-library" class="usage-library"><div class="eyebrow">All usage paths</div><h2>From first window to native integration.</h2><p>These lists are generated from every checked-in recipe and tutorial, so specialized workflows remain discoverable even when one capability card links a broader guide.</p><div class="usage-columns">
 $usage
       </div></section>
-    <section class="catalog-next"><div><div class="eyebrow">Next coverage phase</div><h2>Finish the remaining Win32++ convenience surfaces with modern C++20 contracts.</h2></div><p><a class="button primary" href="https://github.com/everettjf/mwtl/blob/main/docs/modern-win32xx-coverage-plan.md">Read the implementation plan</a></p></section>
+    <section class="catalog-next"><div><div class="eyebrow">Next coverage phase</div><h2>Bring more Windows UI APIs into a concise, ownership-safe C++20 model.</h2></div><p><a class="button primary" href="https://github.com/everettjf/mwtl/blob/main/docs/windows-ui-modernization-plan.md">Read the implementation plan</a></p></section>
   </main>
   <footer class="site-footer"><div class="shell footer"><span>Modern Windows Thin Layer · MIT licensed · Windows 10+ · x64</span><nav aria-label="Footer"><a href="../building.html">Build</a><a href="https://github.com/everettjf/mwtl">Source</a></nav></div></footer>
 </body>

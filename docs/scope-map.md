@@ -66,18 +66,18 @@ surrounding native window, commands, layout, and thread handoff.
 - general-purpose task scheduler;
 - 32-bit targets and non-MSVC-compatible ABIs.
 
-## Long-term parity scope
+## Long-term coverage scope
 
 Document applications, modern tabbed workspaces, docking, optional Ribbon,
 legacy MDI, EMF/GDI+, expanded taskbar behavior, and safe contextual Help are
 current public capabilities. Ribbon, MDI, graphics, and shell integrations are
 independent components; none expands the minimum `mwtl::mwtl` surface. Their
 dependency order and evidence are defined in the
-[Win32++ capability parity roadmap](win32xx-parity-roadmap.md).
+[Windows desktop capability roadmap](win32xx-parity-roadmap.md).
 
-Parity is measured by the desktop application scenarios mwtl can implement. It
-does not imply Win32++ or MFC API compatibility, and it does not relax the
-Windows 10+, C++20, x64/ARM64, explicit-ownership design constraints.
+Coverage is measured by the desktop application scenarios mwtl can implement.
+It does not imply compatibility with another framework's API, and it does not
+relax the Windows 10+, C++20, x64/ARM64, explicit-ownership design constraints.
 
 ## Candidate capabilities requiring an explicit project decision
 

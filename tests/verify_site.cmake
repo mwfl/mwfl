@@ -48,7 +48,7 @@ endforeach()
 
 if(NOT component_catalog MATCHES "component-search" OR
    NOT component_catalog MATCHES "data-catalog-filter" OR
-   NOT component_catalog MATCHES "modern-win32xx-coverage-plan.md")
+   NOT component_catalog MATCHES "windows-ui-modernization-plan.md")
     message(FATAL_ERROR "Pages catalog is missing search, filters, or the next plan")
 endif()
 

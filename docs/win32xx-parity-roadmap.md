@@ -1,15 +1,15 @@
-# Win32++ capability parity roadmap
+# Windows desktop capability roadmap
 
 ## Objective
 
-mwtl aims to cover the native Windows desktop application scenarios of
-established frameworks such as Win32++, while providing a focused Windows 10+,
-C++20, CMake-native, DPI-correct, and coding-agent-friendly development model.
+mwtl provides a focused Windows 10+, C++20, CMake-native, DPI-correct, and
+coding-Agent-friendly way to use native Windows UI and desktop APIs.
 
-Parity means **application-scenario and capability parity**, not API, class
-hierarchy, source, or binary compatibility. mwtl will not inherit compatibility
-costs for obsolete Windows versions, 32-bit targets, old compilers, message-map
-macros, runtime reflection, or an MFC-style mandatory Document/View framework.
+Coverage is measured by complete application scenarios and useful capability
+slices, not by mirroring another framework's API, class hierarchy, source, or
+binary surface. Historical compatibility must not add costs for obsolete
+Windows versions, 32-bit targets, old compilers, message-map macros, runtime
+reflection, or a mandatory Document/View framework.
 
 ## Non-negotiable constraints
 
@@ -159,10 +159,10 @@ onboarding path.
 Ribbon and MDI belong in optional components and must not enlarge the minimum
 core application model.
 
-### 0.9 — Migration, ecosystem, and hardening
+### 0.9 — Ecosystem and hardening
 
-- migration guides from Win32++, WTL, and raw Win32;
-- concept mapping without compatibility aliases;
+- modern composition guides for raw Win32 and optional native ecosystems;
+- task-to-concept mapping without compatibility aliases;
 - complete Notepad, Explorer, and mini-IDE reference applications;
 - compile-time, dispatch-performance, lifetime, shutdown, DPI, multi-monitor,
   suspend/resume, and accessibility validation;
@@ -173,7 +173,8 @@ core application model.
 
 1.0 requires scenario evidence rather than a target class count:
 
-- representative Win32++ application categories have executable mwtl answers;
+- representative Windows desktop application categories have executable mwtl
+  answers;
 - core APIs have been validated by at least three substantial applications;
 - SDI, tabbed documents, and docking have complete beginner-to-advanced paths;
 - ownership, threading, errors, exceptions, and compatibility policies are
