@@ -340,6 +340,46 @@
       "recipe": "docs/tutorials/docking-workspace.md",
       "tests": ["mwtl.docking_workspace", "mwtl.docking_session", "mwtl.docking_monitor", "mwtl.docking_drag", "mwtl.docking_preview_native", "mwtl.docking_native", "mwtl.docking_auto_hide", "mwtl.docking_keyboard", "mwtl.docking_floating_native", "mwtl.docking_stress_native", "mwtl.docking_workspace_gui", "mwtl.package_consumer"],
       "constraints": ["Windows 10+ and C++20", "stable IDs are nonzero and never derived from HWNDs or pointers", "the model owns metadata while applications own panel content and HWNDs", "all native operations use the creating UI thread", "propose before native adoption and commit only after adoption succeeds", "cancel drag on Escape capture loss destruction or failure", "persistence is versioned bounded pointer-free and atomically replaced", "recover floating DIPs against current monitor work areas", "detach native adapters before application HWND teardown"]
+    },
+    {
+      "id": "windows-ribbon",
+      "intent": ["build a Windows Ribbon application", "map Ribbon commands", "use application modes", "show contextual Ribbon state"],
+      "symbols": ["mwtl::RibbonCommandModel", "mwtl::RibbonFrameworkHost", "mwtl::RibbonCommandBinding", "mwtl::RibbonRecentItem"],
+      "headers": ["mwtl/ribbon.h"],
+      "example": "examples/ribbon_workspace/main.cpp",
+      "recipe": "docs/tutorials/ribbon.md",
+      "tests": ["mwtl.ribbon_model", "mwtl.ribbon_native", "mwtl.ribbon_workspace_gui", "mwtl.package_consumer"],
+      "constraints": ["request the ribbon component and link mwtl::ribbon", "compile UICC resources into the executable", "initialize STA on the creating UI thread", "use stable IDs and never store application pointers", "recent items are copied and bounded", "native COM interfaces are borrowed", "support framework-unavailable fallback", "destroy before COM shutdown"]
+    },
+    {
+      "id": "legacy-mdi",
+      "intent": ["build a traditional MDI application", "route an active MDI child", "arrange MDI children", "close dirty MDI documents"],
+      "symbols": ["mwtl::MdiWorkspaceModel", "mwtl::MdiHost", "mwtl::MdiChildId", "mwtl::RouteMdiActiveChild"],
+      "headers": ["mwtl/mdi.h"],
+      "example": "examples/mdi_workspace/main.cpp",
+      "recipe": "docs/tutorials/mdi.md",
+      "tests": ["mwtl.mdi_model", "mwtl.mdi_native", "mwtl.mdi_workspace_gui", "mwtl.package_consumer"],
+      "constraints": ["prefer DocumentWorkspaceModel for new products", "request the mdi component and link mwtl::mdi", "application documents and views remain application owned", "use stable IDs rather than a global current pointer", "callbacks are UI-thread reentrant and exception contained", "collect every dirty decision before closing any child", "destroy before frame teardown"]
+    },
+    {
+      "id": "emf-gdiplus",
+      "intent": ["record an enhanced metafile", "play an EMF", "export PNG with GDI plus", "manage GDI plus startup"],
+      "symbols": ["mwtl::EnhancedMetafile", "mwtl::RecordEnhancedMetafile", "mwtl::PlayEnhancedMetafile", "mwtl::GdiPlusSession", "mwtl::ExportGdiPlusPng"],
+      "headers": ["mwtl/graphics.h"],
+      "example": "examples/graphics_interop/main.cpp",
+      "recipe": "docs/tutorials/graphics-help.md",
+      "tests": ["mwtl.graphics", "mwtl.graphics_interop_gui", "mwtl.integration_stress", "mwtl.package_consumer"],
+      "constraints": ["request the graphics component and link mwtl::graphics", "EnhancedMetafile exclusively owns its handle", "recording HDC and Graphics are callback scoped", "frame units are 0.01 millimeters and playback bounds are pixels", "dimensions and pixel counts are bounded", "callback exceptions are contained", "PNG uses sibling temporary replacement"]
+    },
+    {
+      "id": "taskbar-help",
+      "intent": ["add taskbar thumbnail buttons", "register taskbar tabs", "recover after Explorer restart", "launch contextual Help safely"],
+      "symbols": ["mwtl::TaskbarWindowIntegration", "mwtl::TaskbarThumbnailButton", "mwtl::HelpRequest", "mwtl::ValidateHelpRequest", "mwtl::LaunchHelp"],
+      "headers": ["mwtl/shell_integration.h", "mwtl/help.h"],
+      "example": "examples/shell_integration/main.cpp",
+      "recipe": "docs/tutorials/graphics-help.md",
+      "tests": ["mwtl.shell_integration", "mwtl.help", "mwtl.shell_integration_gui", "mwtl.integration_stress"],
+      "constraints": ["request the shell component and link mwtl::shell", "taskbar calls stay on the creating STA UI thread", "reapply application-owned state after TaskbarCreated", "button IDs are stable and icons and HWNDs are borrowed", "Help accepts absolute local CHM or HTML and HTTPS only", "never build a shell command", "use the injected backend for offline tests"]
     }
   ]
 }

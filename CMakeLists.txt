@@ -391,10 +391,16 @@ install(FILES
     docs/tutorials/image-viewer.md
     docs/tutorials/browser.md
     docs/tutorials/code-editor.md
+    docs/tutorials/ribbon.md
+    docs/tutorials/mdi.md
+    docs/tutorials/graphics-help.md
     docs/reflections/0.4.md
     docs/recipes/notepad-command-setting.md
     docs/recipes/split-pane.md
     docs/recipes/direct2d-drawing.md
+    docs/recipes/ribbon.md
+    docs/recipes/mdi.md
+    docs/recipes/graphics-help.md
     docs/recipes/direct3d-swap-chain.md
     docs/recipes/native-host.md
     docs/recipes/webview2-navigation.md
