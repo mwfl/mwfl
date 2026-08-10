@@ -920,6 +920,15 @@ if(TARGET mwtl_notepad)
     set_tests_properties(mwtl.notepad_gui PROPERTIES TIMEOUT 30)
 endif()
 
+if(TARGET mwtl_document_workspace)
+    add_test(NAME mwtl.document_workspace_gui
+        COMMAND "${CMAKE_COMMAND}"
+            "-DWORKSPACE_EXE=$<TARGET_FILE:mwtl_document_workspace>"
+            "-DRESULT_FILE=$<TARGET_FILE_DIR:mwtl_document_workspace>/document-workspace-self-test.txt"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/run_document_workspace_gui.cmake")
+    set_tests_properties(mwtl.document_workspace_gui PROPERTIES TIMEOUT 30)
+endif()
+
 # Every test has semantic labels so local agents can run a predictable subset.
 get_property(mwtl_all_tests DIRECTORY PROPERTY TESTS)
 foreach(test_name IN LISTS mwtl_all_tests)
@@ -940,7 +949,8 @@ foreach(test_name IN LISTS mwtl_all_tests)
            test_name STREQUAL "mwtl.shell_integration_gui" OR
            test_name STREQUAL "mwtl.code_editor_gui" OR
            test_name STREQUAL "mwtl.browser_gui" OR
-           test_name STREQUAL "mwtl.notepad_gui")
+           test_name STREQUAL "mwtl.notepad_gui" OR
+           test_name STREQUAL "mwtl.document_workspace_gui")
         set(labels "gui;integration")
     elseif(test_name MATCHES "^mwtl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap)$")
         set(labels "docs;metadata;fast")

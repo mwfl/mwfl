@@ -31,6 +31,7 @@ The repository includes 38 focused executables. Each example is intentionally sm
 | `desktop_integration` | `mwtl_desktop_integration_demo` | Modern dialogs, clipboard, file drops, task dialogs, and persistent placement |
 | `document_state` | `mwtl_document_state_demo` | Dirty document state and safe user transition decisions |
 | `notepad` | `mwtl_notepad` | Complete accessible Unicode SDI editor with atomic file operations |
+| `document_workspace` | `mwtl_document_workspace` | Two-window multi-document editor with transfer, sessions, and coordinated close |
 | `appearance` | `mwtl_appearance_demo` | System/light/dark title bars, backdrops, corners, and accessibility helpers |
 | `layout_gallery` | `mwtl_layout_gallery_demo` | Responsive nested rows, columns, overlays, sizing, alignment, and dynamic content |
 | `property_sheet` | `mwtl_property_sheet_demo` | Persistent multi-page Settings with validation and Apply/OK/Cancel |

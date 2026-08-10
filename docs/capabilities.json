@@ -51,7 +51,8 @@
       "intent": ["manage multiple documents", "move a document between windows", "recently closed documents", "active document state"],
       "symbols": ["mwtl::DocumentWorkspaceModel", "mwtl::DocumentId", "mwtl::WorkspaceId", "mwtl::DocumentTransferPlan", "mwtl::TransferDocument"],
       "headers": ["mwtl/document_workspace.h"],
-      "tests": ["mwtl.document_workspace", "mwtl.package_consumer"],
+      "example": "examples/document_workspace/main.cpp",
+      "tests": ["mwtl.document_workspace", "mwtl.document_workspace_gui", "mwtl.package_consumer"],
       "constraints": ["UI-thread logical model owns metadata snapshots only", "applications own contents undo buffers and page HWNDs keyed by stable DocumentId", "Windows paths deduplicate case-insensitively after lexical normalization", "destination adoption precedes source removal", "stale source commits require destination rollback"]
     },
     {
@@ -75,8 +76,9 @@
       "intent": ["show documents in native tabs", "move a document page between windows", "route native tab selection", "arrange document pages"],
       "symbols": ["mwtl::DocumentTabWorkspaceAdapter", "mwtl::DocumentPageBinding", "mwtl::TransferDocumentWithPage"],
       "headers": ["mwtl/document_tabs.h"],
-      "tests": ["mwtl.document_tabs_native", "mwtl.package_consumer"],
-      "constraints": ["the adapter borrows all HWNDs", "pages must be direct TabControl children on the creating UI thread", "native item data stores stable integer IDs and never pointers", "application owns document contents and page destruction", "cross-window transfer rolls back metadata and parentage before reporting failure"]
+      "example": "examples/document_workspace/main.cpp",
+      "tests": ["mwtl.document_tabs_native", "mwtl.document_workspace_gui", "mwtl.package_consumer"],
+      "constraints": ["the adapter borrows all HWNDs", "pages share the TabControl parent on the creating UI thread", "native item data stores stable integer IDs and never pointers", "application owns document contents and page destruction", "cross-window transfer rolls back metadata and parentage before reporting failure"]
     },
     {
       "id": "tab-workspace-state",
