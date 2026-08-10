@@ -1,12 +1,12 @@
 # Design and scope
 
-mwtl (Modern Windows Thin Layer) is a small C++20 foundation for native Windows applications. It removes
+mwfl (Modern Windows Foundation Layer) is a small C++20 foundation for native Windows applications. It removes
 repeated setup and lifetime code while preserving HWNDs, messages, styles,
 return values, and direct Win32 interoperation. It is not a cross-platform UI
 toolkit, retained renderer, or MVVM framework.
 
 Raw operations preserve native success values and do not throw for ordinary
-Win32 failure. Checked adapters throw `mwtl::Error`, recording the operation,
+Win32 failure. Checked adapters throw `mwfl::Error`, recording the operation,
 native system error, and source location. `Application` catches exceptions that
 escape construction or message dispatch, reports them, destroys the HWND, and
 returns failure.
@@ -27,4 +27,4 @@ cosmetic preferences.
 Binding stays deliberately local and event-agnostic: it synchronizes one control
 and one model value when the application calls `Pull` or `Push`. Validation and
 change suppression are included; object graphs, reflection, and global reactive
-state are outside mwtl's scope.
+state are outside mwfl's scope.

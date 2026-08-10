@@ -1,8 +1,8 @@
-# `mwtl::WindowBase` demo
+# `mwfl::WindowBase` demo
 
 This executable demonstrates all milestone-1 window integration points:
 
-- derive from the concise `mwtl::WindowBase` form;
+- derive from the concise `mwfl::WindowBase` form;
 - initialize the attached HWND in `BuildUI()`;
 - read the non-owning HWND with `GetHwnd()`;
 - use typed C++20 convention handlers without message-map macros;

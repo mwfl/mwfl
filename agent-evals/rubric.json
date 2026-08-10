@@ -3,7 +3,7 @@
   "dimensions": [
     {"id":"first_compile","points":30,"description":"The first generated project configures and compiles."},
     {"id":"eventual_compile","points":15,"description":"The final unassisted result configures and compiles."},
-    {"id":"public_api_only","points":10,"description":"Uses real public mwtl symbols and no internal headers."},
+    {"id":"public_api_only","points":10,"description":"Uses real public mwfl symbols and no internal headers."},
     {"id":"thread_safe","points":10,"description":"Preserves UI thread affinity and safe handoff."},
     {"id":"lifetime_safe","points":10,"description":"Controls, layout, callbacks, and workers have valid lifetimes."},
     {"id":"event_semantics","points":10,"description":"Handled and Propagate semantics are correct."},

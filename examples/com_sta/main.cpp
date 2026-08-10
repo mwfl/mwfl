@@ -1,24 +1,24 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 #include <objbase.h>
 
-class ComWindow final : public mwtl::WindowBase {
+class ComWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         APTTYPE type{};
         APTTYPEQUALIFIER qualifier{};
         const bool sta = SUCCEEDED(::CoGetApartmentType(&type, &qualifier)) &&
             (type == APTTYPE_STA || type == APTTYPE_MAINSTA);
-        SetTitle(sta ? L"COM STA initialized by mwtl::Application"
+        SetTitle(sta ? L"COM STA initialized by mwfl::Application"
                      : L"Unexpected COM apartment");
     }
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<ComWindow>(
+    return mwfl::RunApplication<ComWindow>(
         instance,
         show_command,
         {},
-        {.com_apartment = mwtl::ComApartment::sta});
+        {.com_apartment = mwfl::ComApartment::sta});
 }

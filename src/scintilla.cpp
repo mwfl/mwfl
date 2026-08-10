@@ -1,5 +1,5 @@
-#include <mwtl/scintilla.h>
-#include <mwtl/appearance.h>
+#include <mwfl/scintilla.h>
+#include <mwfl/appearance.h>
 
 #include <Scintilla.h>
 
@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 
-namespace mwtl {
+namespace mwfl {
 namespace detail {
 
 struct ScintillaRuntimeState final {
@@ -303,4 +303,4 @@ std::optional<ScintillaNotification> ScintillaEditor::DecodeNotification(
     return decoded;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

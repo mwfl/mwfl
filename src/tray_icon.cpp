@@ -1,4 +1,4 @@
-#include <mwtl/tray_icon.h>
+#include <mwfl/tray_icon.h>
 
 #include <windowsx.h>
 
@@ -7,7 +7,7 @@
 #include <limits>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 bool IsNullGuid(const GUID& value) noexcept {
@@ -246,4 +246,4 @@ UINT TrayIcon::GetTaskbarCreatedMessage() noexcept {
     return message;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

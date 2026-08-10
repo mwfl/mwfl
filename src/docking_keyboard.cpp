@@ -1,10 +1,10 @@
-#include <mwtl/docking_keyboard.h>
+#include <mwfl/docking_keyboard.h>
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 bool Usable(const DockDropTarget& target) noexcept {
@@ -144,4 +144,4 @@ std::optional<DockKeyboardSelection> DockKeyboardSession::GetSelection() const {
                                  DescribeDockTarget(targets_[*selected_])};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

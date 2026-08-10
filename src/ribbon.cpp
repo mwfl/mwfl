@@ -1,4 +1,4 @@
-#include <mwtl/ribbon.h>
+#include <mwfl/ribbon.h>
 
 #include <algorithm>
 #include <propvarutil.h>
@@ -6,7 +6,7 @@
 
 #include <wrl/implements.h>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 RibbonModelResult Result(RibbonModelStatus status) noexcept { return {status}; }
@@ -347,4 +347,4 @@ void RibbonFrameworkHost::Destroy() noexcept {
     height_ = 0;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

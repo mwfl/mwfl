@@ -1,16 +1,16 @@
-#include <mwtl/mwtl.h>
-using mwtl::operator""_dip;
-class EvalDpi final : public mwtl::WindowBase {
+#include <mwfl/mwfl.h>
+using mwfl::operator""_dip;
+class EvalDpi final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        mwtl::ControlHost ui{*this}; ui.Add(label_, L"DPI aware"); ApplyFont(GetDpiContext().GetDpi());
-        SetLayout(mwtl::Column().Margin(20.0_dip).Add(label_, mwtl::Stretch()));
+        mwfl::ControlHost ui{*this}; ui.Add(label_, L"DPI aware"); ApplyFont(GetDpiContext().GetDpi());
+        SetLayout(mwfl::Column().Margin(20.0_dip).Add(label_, mwfl::Stretch()));
     }
-    mwtl::EventResult OnDpiChanged(const mwtl::DpiChangedEvent& event) override {
-        ApplyFont(event.dpi_x); return mwtl::EventResult::Propagate();
+    mwfl::EventResult OnDpiChanged(const mwfl::DpiChangedEvent& event) override {
+        ApplyFont(event.dpi_x); return mwfl::EventResult::Propagate();
     }
 private:
-    void ApplyFont(UINT dpi){ if(font_.CreateMessageFont(dpi)) mwtl::SetControlFont(label_.GetHwnd(),font_.GetHandle()); }
-    mwtl::Label label_; mwtl::UiFont font_;
+    void ApplyFont(UINT dpi){ if(font_.CreateMessageFont(dpi)) mwfl::SetControlFont(label_.GetHwnd(),font_.GetHandle()); }
+    mwfl::Label label_; mwfl::UiFont font_;
 };
 

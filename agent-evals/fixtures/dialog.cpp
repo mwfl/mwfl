@@ -1,14 +1,14 @@
-#include <mwtl/mwtl.h>
-class EvalDialog final : public mwtl::WindowBase {
+#include <mwfl/mwfl.h>
+class EvalDialog final : public mwfl::WindowBase {
 public:
-    void BuildUI() override { mwtl::ControlHost ui{*this}; ui.Add(open_, L"Open"); ui.Add(result_, L""); }
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
-        if (!event.IsClicked(open_)) return mwtl::EventResult::Propagate();
-        mwtl::FileDialogOptions options{GetHwnd(), L"Open text"}; options.filters={{L"Text",L"*.txt"}};
-        const auto value=mwtl::ShowOpenFileDialog(options);
+    void BuildUI() override { mwfl::ControlHost ui{*this}; ui.Add(open_, L"Open"); ui.Add(result_, L""); }
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
+        if (!event.IsClicked(open_)) return mwfl::EventResult::Propagate();
+        mwfl::FileDialogOptions options{GetHwnd(), L"Open text"}; options.filters={{L"Text",L"*.txt"}};
+        const auto value=mwfl::ShowOpenFileDialog(options);
         result_.SetText(value.accepted ? value.path.wstring() : (value.Cancelled() ? L"Cancelled" : L"Failed"));
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
-private: mwtl::Button open_; mwtl::Label result_;
+private: mwfl::Button open_; mwfl::Label result_;
 };
 

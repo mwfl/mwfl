@@ -4,7 +4,7 @@ Use `WindowBase`, `ControlHost`, member controls, retained layout, and
 `RunApplication`. Start with `templates/basic-app`; the complete compiled source
 is `templates/basic-app/main.cpp`.
 
-Required public surface: `<mwtl/mwtl.h>`, `WindowBase`, `Label`, `Button`,
+Required public surface: `<mwfl/mwfl.h>`, `WindowBase`, `Label`, `Button`,
 `ControlHost`, `Column`, `EventResult`, and `RunApplication`.
 
 Creation order matters: construct the C++ window, enter `BuildUI()`, create

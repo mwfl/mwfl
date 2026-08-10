@@ -7,9 +7,9 @@ members of the window and are borrowed by `AttachPanes`.
 ## 1. Store the wrappers
 
 ```cpp
-mwtl::Splitter splitter_;
-mwtl::TreeView navigation_;
-mwtl::ListView contents_;
+mwfl::Splitter splitter_;
+mwfl::TreeView navigation_;
+mwfl::ListView contents_;
 ```
 
 The declaration order makes the panes destruct first. Normally the top-level
@@ -21,21 +21,21 @@ coding agent.
 
 ```cpp
 void BuildUI() override {
-    using mwtl::operator""_dip;
+    using mwfl::operator""_dip;
 
-    mwtl::ControlHost ui{*this};
-    ui.Add(splitter_, {200}, mwtl::RectDip{}, mwtl::SplitterOptions{
+    mwfl::ControlHost ui{*this};
+    ui.Add(splitter_, {200}, mwfl::RectDip{}, mwfl::SplitterOptions{
         .constraints = {160.0_dip, 240.0_dip, 6.0_dip},
         .initial_position = 260.0_dip,
     });
 
-    mwtl::ControlHost panes{splitter_};
-    panes.Add(navigation_, {201}, mwtl::RectDip{});
-    panes.Add(contents_, {202}, mwtl::RectDip{});
-    mwtl::Must(splitter_.AttachPanes(
+    mwfl::ControlHost panes{splitter_};
+    panes.Add(navigation_, {201}, mwfl::RectDip{});
+    panes.Add(contents_, {202}, mwfl::RectDip{});
+    mwfl::Must(splitter_.AttachPanes(
         navigation_.GetHwnd(), contents_.GetHwnd()), "attach split panes");
 
-    SetLayout(mwtl::Column().Add(splitter_, mwtl::Stretch()));
+    SetLayout(mwfl::Column().Add(splitter_, mwfl::Stretch()));
 }
 ```
 
@@ -53,14 +53,14 @@ forwarder in the application.
 ## 3. Observe position changes
 
 ```cpp
-mwtl::EventResult OnNotify(const mwtl::NotifyEvent& event) override {
-    if (!event.Is(splitter_, mwtl::kSplitterPositionChanged)) {
-        return mwtl::EventResult::Propagate();
+mwfl::EventResult OnNotify(const mwfl::NotifyEvent& event) override {
+    if (!event.Is(splitter_, mwfl::kSplitterPositionChanged)) {
+        return mwfl::EventResult::Propagate();
     }
     const auto& changed =
-        reinterpret_cast<const mwtl::SplitterNotification&>(event.header);
+        reinterpret_cast<const mwfl::SplitterNotification&>(event.header);
     SaveSplitPosition(changed.position);
-    return mwtl::EventResult::Handled();
+    return mwfl::EventResult::Handled();
 }
 ```
 

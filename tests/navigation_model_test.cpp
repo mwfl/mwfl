@@ -1,21 +1,21 @@
-#include <mwtl/navigation_controls.h>
+#include <mwfl/navigation_controls.h>
 
 #include <string>
 #include <vector>
 
 namespace {
 
-class Model final : public mwtl::VirtualListModel {
+class Model final : public mwfl::VirtualListModel {
 public:
     std::size_t GetRowCount() const noexcept override { return ids.size(); }
-    mwtl::ListItemId GetRowId(std::size_t row) const noexcept override {
-        return row < ids.size() ? ids[row] : mwtl::ListItemId{};
+    mwfl::ListItemId GetRowId(std::size_t row) const noexcept override {
+        return row < ids.size() ? ids[row] : mwfl::ListItemId{};
     }
     std::wstring GetCellText(std::size_t row, int column) const override {
         return std::to_wstring(GetRowId(row).value) + L":" + std::to_wstring(column);
     }
 
-    std::vector<mwtl::ListItemId> ids{{40}, {10}, {70}};
+    std::vector<mwfl::ListItemId> ids{{40}, {10}, {70}};
 };
 
 }  // namespace

@@ -1,3 +1,3 @@
-mwtl_add_example(mwtl_docking_workspace_demo main.cpp)
-install(TARGETS mwtl_docking_workspace_demo
+mwfl_add_example(mwfl_docking_workspace_demo main.cpp)
+install(TARGETS mwfl_docking_workspace_demo
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

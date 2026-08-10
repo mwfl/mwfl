@@ -1,4 +1,4 @@
-#include <mwtl/settings_store.h>
+#include <mwfl/settings_store.h>
 
 #include <wil/resource.h>
 
@@ -7,7 +7,7 @@
 #include <limits>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 VersionedSettingsStatus MapError(LSTATUS error) noexcept {
@@ -227,4 +227,4 @@ const SettingValue* FindSetting(std::span<const SettingValue> values,
     return found == values.end() ? nullptr : &*found;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

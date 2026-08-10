@@ -10,7 +10,7 @@ $info.FileName = $Executable
 $info.Arguments = '--self-test'
 $info.UseShellExecute = $false
 $info.EnvironmentVariables['PATH'] = "$RuntimePath;$environmentPath"
-$info.EnvironmentVariables['MWTL_TEST_NO_DIALOGS'] = '1'
+$info.EnvironmentVariables['MWFL_TEST_NO_DIALOGS'] = '1'
 
 try {
     $process = [System.Diagnostics.Process]::Start($info)

@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A local-first native Windows Markdown editor built with mwtl, Scintilla, WebView2, and md4c.">
-  <link rel="canonical" href="https://everettjf.github.io/mwtl/markdown-editor.html">
-  <title>Markdown Editor &mdash; mwtl</title>
+  <meta name="description" content="A local-first native Windows Markdown editor built with mwfl, Scintilla, WebView2, and md4c.">
+  <link rel="canonical" href="https://mwfl.github.io/markdown-editor.html">
+  <title>Markdown Editor &mdash; mwfl</title>
   <meta name="theme-color" content="#f7f9ff">
-  <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
+  <link rel="icon" type="image/svg+xml" href="assets/mwfl-mark.svg">
   <link rel="stylesheet" href="styles.css?v=20260810a">
-  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
   <script defer src="assets/site.js?v=20260810a"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><div class="shell nav">
-    <a class="brand" href="index.html" aria-label="MWTL &mdash; Modern Windows Thin Layer"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
-    <nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a class="active" href="tutorial.html">Get started</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
+    <a class="brand" href="index.html" aria-label="MWFL &mdash; Modern Windows Foundation Layer"><img src="assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
+    <nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a class="active" href="tutorial.html">Get started</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/mwfl/mwfl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
   </div></header>
 
   <main id="main" class="shell prose guide">
@@ -24,10 +24,10 @@
       <div class="eyebrow">Flagship example &middot; Local first &middot; Native Windows</div>
       <h1>Write Markdown. Keep it local.</h1>
       <p class="lede">A focused Markdown editor that combines real HWND UI, Scintilla editing, an offline WebView2 preview, GitHub-flavored Markdown, safe atomic saves, and crash recovery.</p>
-      <div class="actions"><a class="button primary" href="https://github.com/everettjf/mwtl/tree/main/examples/markdown_editor">Read the complete source</a><a class="button" href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/markdown-editor.md">Build and package it</a></div>
+      <div class="actions"><a class="button primary" href="https://github.com/mwfl/mwfl/tree/main/examples/markdown_editor">Read the complete source</a><a class="button" href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/markdown-editor.md">Build and package it</a></div>
     </div>
 
-    <figure><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/markdown-editor.png" alt="mwtl Markdown Editor showing source and rendered preview" width="1400" height="900"><figcaption>The shipping application running on Windows: native commands and Scintilla on the left, offline WebView2 preview on the right.</figcaption></figure>
+    <figure><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/markdown-editor.png" alt="mwfl Markdown Editor showing source and rendered preview" width="1400" height="900"><figcaption>The shipping application running on Windows: native commands and Scintilla on the left, offline WebView2 preview on the right.</figcaption></figure>
 
     <div class="requirements">
       <div><strong>Editor</strong><span>Scintilla 5.6.5</span></div>
@@ -43,14 +43,14 @@
 
     <section><div class="eyebrow">Build</div><h2>Compile, test, and stage the product.</h2>
       <pre data-title="Developer PowerShell"><code>cmake --preset vs2026-x64-optional
-cmake --build --preset vs2026-x64-optional-release --target mwtl_markdown_editor
-ctest --test-dir build/presets/vs2026-x64-optional -C Release -R "mwtl\.markdown"
+cmake --build --preset vs2026-x64-optional-release --target mwfl_markdown_editor
+ctest --test-dir build/presets/vs2026-x64-optional -C Release -R "mwfl\.markdown"
 cmake --install build/presets/vs2026-x64-optional -C Release \
   --component markdown_editor --prefix build/markdown-editor</code></pre>
       <p>The staged component contains the executable, pinned Scintilla and Lexilla runtimes with their license, and the md4c MIT license. WebView2 uses Microsoft's Evergreen Runtime and fails gracefully when unavailable.</p>
     </section>
   </main>
 
-  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Thin Layer &middot; MIT licensed &middot; Windows 10 1809+</span><nav aria-label="Footer"><a href="tutorial.html">First app</a><a href="building.html">Build reference</a><a href="https://github.com/everettjf/mwtl">GitHub</a></nav></div></footer>
+  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Foundation Layer &middot; MIT licensed &middot; Windows 10 1809+</span><nav aria-label="Footer"><a href="tutorial.html">First app</a><a href="building.html">Build reference</a><a href="https://github.com/mwfl/mwfl">GitHub</a></nav></div></footer>
 </body>
 </html>

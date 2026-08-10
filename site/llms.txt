@@ -1,45 +1,45 @@
-# mwtl
+# mwfl
 
 Native Windows UI for C++20 with real HWND controls, typed events, explicit
 ownership, DPI-aware layout, and a direct Win32 escape hatch.
 
 Canonical coding-agent context:
-https://github.com/everettjf/mwtl/blob/main/docs/agent-usage.md
+https://github.com/mwfl/mwfl/blob/main/docs/agent-usage.md
 
 Beginner tutorial (install, create, build, run, troubleshoot):
-https://everettjf.github.io/mwtl/tutorial.html
+https://mwfl.github.io/tutorial.html
 
 Complete SDI Notepad tutorial:
-https://everettjf.github.io/mwtl/notepad.html
+https://mwfl.github.io/notepad.html
 
 Build workflow reference:
-https://everettjf.github.io/mwtl/building.html
+https://mwfl.github.io/building.html
 
 Full compact context:
-https://everettjf.github.io/mwtl/llms-full.txt
+https://mwfl.github.io/llms-full.txt
 
 Capability map:
-https://github.com/everettjf/mwtl/blob/main/docs/capabilities.json
+https://github.com/mwfl/mwfl/blob/main/docs/capabilities.json
 
 Templates:
-https://github.com/everettjf/mwtl/tree/main/templates
+https://github.com/mwfl/mwfl/tree/main/templates
 
 Rules: Windows x64/ARM64, MSVC-compatible ABI, C++20. Controls own real HWNDs,
 UI wrappers are thread-affine, workers use WindowWakeup, layout uses DIPs, and
 unhandled events propagate.
 
 Property-sheet reference:
-https://github.com/everettjf/mwtl/tree/main/examples/property_sheet
+https://github.com/mwfl/mwfl/tree/main/examples/property_sheet
 
 Notification-area reference:
-https://github.com/everettjf/mwtl/tree/main/examples/hot_corners
+https://github.com/mwfl/mwfl/tree/main/examples/hot_corners
 
 Multi-document workspace tutorial and compiled reference:
-https://everettjf.github.io/mwtl/document-workspace.html
+https://mwfl.github.io/document-workspace.html
 
 IDE docking workspace tutorial and compiled reference:
-https://everettjf.github.io/mwtl/docking-workspace.html
+https://mwfl.github.io/docking-workspace.html
 
 Optional Ribbon, MDI, graphics, taskbar, and Help guide:
-https://everettjf.github.io/mwtl/optional-integrations.html#ribbon-mdi
-https://everettjf.github.io/mwtl/optional-integrations.html#graphics-help
+https://mwfl.github.io/optional-integrations.html#ribbon-mdi
+https://mwfl.github.io/optional-integrations.html#graphics-help

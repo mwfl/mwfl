@@ -1,4 +1,4 @@
-#include <mwtl/graphics.h>
+#include <mwfl/graphics.h>
 
 #include <algorithm>
 #include <array>
@@ -8,7 +8,7 @@
 #include <utility>
 #include <vector>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 GraphicsResult Result(GraphicsStatus status, DWORD error = ERROR_SUCCESS) noexcept {
@@ -226,7 +226,7 @@ GraphicsResult ExportGdiPlusPng(const std::filesystem::path& path,
     if (!FindPngEncoder(encoder))
         return Result(GraphicsStatus::codec_unavailable, ERROR_NOT_SUPPORTED);
     std::filesystem::path temporary = path;
-    temporary += L".mwtl-" + std::to_wstring(::GetCurrentProcessId()) + L"-" +
+    temporary += L".mwfl-" + std::to_wstring(::GetCurrentProcessId()) + L"-" +
                  std::to_wstring(::GetCurrentThreadId()) + L".tmp";
     std::error_code ignored;
     std::filesystem::remove(temporary, ignored);
@@ -244,4 +244,4 @@ GraphicsResult ExportGdiPlusPng(const std::filesystem::path& path,
     return Result(GraphicsStatus::success);
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

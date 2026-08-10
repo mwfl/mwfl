@@ -1,9 +1,9 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <optional>
 #include <string>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 namespace {
 
@@ -13,12 +13,12 @@ struct ProfileSettings {
     int workspace = 1;
 };
 
-class FormBindingWindow final : public mwtl::WindowBase {
+class FormBindingWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         SetTitle(L"Profile settings - live binding and validation");
 
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(title_, L"Profile settings");
         ui.Add(subtitle_, L"Edit native controls, validate once, and keep the model explicit.");
         ui.Add(form_group_, L"Account");
@@ -36,128 +36,128 @@ public:
         ui.Add(apply_, L"Apply settings");
         ui.Add(status_, L"Ready");
 
-        mwtl::Must(mwtl::AddItems(workspace_, {
+        mwfl::Must(mwfl::AddItems(workspace_, {
             L"Personal workspace", L"Design workspace", L"Engineering workspace"}),
             "populate workspaces");
 
         name_binding_.emplace(
-            static_cast<mwtl::NativeControl&>(name_), model_.display_name,
-            [](const mwtl::NativeControl& control) { return control.GetText(); },
-            [](mwtl::NativeControl& control, const std::wstring& value) {
+            static_cast<mwfl::NativeControl&>(name_), model_.display_name,
+            [](const mwfl::NativeControl& control) { return control.GetText(); },
+            [](mwfl::NativeControl& control, const std::wstring& value) {
                 return control.SetText(value);
             },
             [](const std::wstring& value) {
                 if (value.size() < 2) {
-                    return mwtl::ValidationResult::Reject(
+                    return mwfl::ValidationResult::Reject(
                         L"Enter at least two characters.");
                 }
                 if (value.size() > 32) {
-                    return mwtl::ValidationResult::Reject(
+                    return mwfl::ValidationResult::Reject(
                         L"Keep the display name under 33 characters.");
                 }
-                return mwtl::ValidationResult::Accept();
+                return mwfl::ValidationResult::Accept();
             });
         notifications_binding_.emplace(notifications_, model_.notifications,
-            [](const mwtl::CheckBox& control) { return control.IsChecked(); },
-            [](mwtl::CheckBox& control, const bool& value) {
+            [](const mwfl::CheckBox& control) { return control.IsChecked(); },
+            [](mwfl::CheckBox& control, const bool& value) {
                 control.SetChecked(value);
                 return true;
             });
         workspace_binding_.emplace(workspace_, model_.workspace,
-            [](const mwtl::ComboBox& control) { return control.GetSelection(); },
-            [](mwtl::ComboBox& control, const int& value) {
+            [](const mwfl::ComboBox& control) { return control.GetSelection(); },
+            [](mwfl::ComboBox& control, const int& value) {
                 return control.SetSelection(value);
             });
 
         PushModel();
         ApplyFont(GetDpiContext().GetDpi());
-        mwtl::SetAccessibleName(validation_.GetHwnd(), L"Validation message");
-        mwtl::SetDialogDefaultButton(
+        mwfl::SetAccessibleName(validation_.GetHwnd(), L"Validation message");
+        mwfl::SetDialogDefaultButton(
             GetHwnd(), static_cast<UINT>(apply_.GetId().value));
 
         SetLayout(
-            mwtl::Column()
+            mwfl::Column()
                 .Margin(28.0_dip)
                 .Gap(12.0_dip)
-                .Add(title_, mwtl::Fixed(38.0_dip))
-                .Add(subtitle_, mwtl::Fixed(28.0_dip))
+                .Add(title_, mwfl::Fixed(38.0_dip))
+                .Add(subtitle_, mwfl::Fixed(28.0_dip))
                 .Add(
-                    mwtl::Row()
+                    mwfl::Row()
                         .Gap(22.0_dip)
-                        .Add(BuildFormPanel(), mwtl::Fixed(510.0_dip))
-                        .Add(BuildPreviewPanel(), mwtl::Stretch()),
-                    mwtl::Stretch(1.0f, 280.0_dip))
+                        .Add(BuildFormPanel(), mwfl::Fixed(510.0_dip))
+                        .Add(BuildPreviewPanel(), mwfl::Stretch()),
+                    mwfl::Stretch(1.0f, 280.0_dip))
                 .Add(
-                    mwtl::Row()
+                    mwfl::Row()
                         .Gap(10.0_dip)
-                        .Add(status_, mwtl::Stretch())
-                        .Add(reset_, mwtl::Fixed(110.0_dip))
-                        .Add(apply_, mwtl::Fixed(150.0_dip)),
-                    mwtl::Fixed(38.0_dip)));
+                        .Add(status_, mwfl::Stretch())
+                        .Add(reset_, mwfl::Fixed(110.0_dip))
+                        .Add(apply_, mwfl::Fixed(150.0_dip)),
+                    mwfl::Fixed(38.0_dip)));
 
         name_.SelectAll();
         name_.Focus();
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
         if (event.IsClicked(apply_)) {
             PullModel(true);
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.IsClicked(reset_)) {
             model_ = {};
             PushModel();
             validation_.SetText(L"");
             status_.SetText(L"Defaults restored with three Push() calls.");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.Is(name_, EN_CHANGE) ||
             event.Is(workspace_, CBN_SELCHANGE) ||
             event.IsClicked(notifications_)) {
             PullModel(false);
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnDpiChanged(
-        const mwtl::DpiChangedEvent& event) override {
+    mwfl::EventResult OnDpiChanged(
+        const mwfl::DpiChangedEvent& event) override {
         ApplyFont(event.dpi_x);
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
-    using TextBinding = mwtl::ValueBinding<mwtl::NativeControl, std::wstring>;
-    using CheckBinding = mwtl::ValueBinding<mwtl::CheckBox, bool>;
-    using SelectionBinding = mwtl::ValueBinding<mwtl::ComboBox, int>;
+    using TextBinding = mwfl::ValueBinding<mwfl::NativeControl, std::wstring>;
+    using CheckBinding = mwfl::ValueBinding<mwfl::CheckBox, bool>;
+    using SelectionBinding = mwfl::ValueBinding<mwfl::ComboBox, int>;
 
-    mwtl::LayoutNode BuildFormPanel() {
-        return mwtl::Overlay()
+    mwfl::LayoutNode BuildFormPanel() {
+        return mwfl::Overlay()
             .Add(form_group_)
             .Add(
-                mwtl::Column()
+                mwfl::Column()
                     .Margin({22.0_dip, 34.0_dip, 22.0_dip, 18.0_dip})
                     .Gap(8.0_dip)
-                    .Add(name_label_, mwtl::Fixed(24.0_dip))
-                    .Add(name_, mwtl::Fixed(34.0_dip))
-                    .Add(validation_, mwtl::Fixed(28.0_dip))
-                    .Add(workspace_label_, mwtl::Fixed(24.0_dip))
-                    .Add(workspace_, mwtl::Fixed(34.0_dip), {
-                        .native_size = mwtl::SizeDip{0.0_dip, 160.0_dip},
+                    .Add(name_label_, mwfl::Fixed(24.0_dip))
+                    .Add(name_, mwfl::Fixed(34.0_dip))
+                    .Add(validation_, mwfl::Fixed(28.0_dip))
+                    .Add(workspace_label_, mwfl::Fixed(24.0_dip))
+                    .Add(workspace_, mwfl::Fixed(34.0_dip), {
+                        .native_size = mwfl::SizeDip{0.0_dip, 160.0_dip},
                     })
-                    .Add(notifications_, mwtl::Fixed(30.0_dip)));
+                    .Add(notifications_, mwfl::Fixed(30.0_dip)));
     }
 
-    mwtl::LayoutNode BuildPreviewPanel() {
-        return mwtl::Overlay()
+    mwfl::LayoutNode BuildPreviewPanel() {
+        return mwfl::Overlay()
             .Add(preview_group_)
             .Add(
-                mwtl::Column()
+                mwfl::Column()
                     .Margin({24.0_dip, 40.0_dip, 24.0_dip, 22.0_dip})
                     .Gap(12.0_dip)
-                    .Add(preview_title_, mwtl::Fixed(40.0_dip))
-                    .Add(preview_detail_, mwtl::Fixed(34.0_dip))
-                    .Add(preview_hint_, mwtl::Stretch()));
+                    .Add(preview_title_, mwfl::Fixed(40.0_dip))
+                    .Add(preview_detail_, mwfl::Fixed(34.0_dip))
+                    .Add(preview_hint_, mwfl::Stretch()));
     }
 
     bool PullModel(bool committed) {
@@ -207,7 +207,7 @@ private:
                  preview_group_.GetHwnd(), preview_title_.GetHwnd(),
                  preview_detail_.GetHwnd(), preview_hint_.GetHwnd(), reset_.GetHwnd(),
                  apply_.GetHwnd(), status_.GetHwnd()}) {
-            mwtl::SetControlFont(control, font_.GetHandle());
+            mwfl::SetControlFont(control, font_.GetHandle());
         }
     }
 
@@ -215,24 +215,24 @@ private:
     std::optional<TextBinding> name_binding_;
     std::optional<CheckBinding> notifications_binding_;
     std::optional<SelectionBinding> workspace_binding_;
-    mwtl::Label title_, subtitle_, name_label_, workspace_label_, validation_;
-    mwtl::Label preview_title_, preview_detail_, preview_hint_, status_;
-    mwtl::GroupBox form_group_, preview_group_;
-    mwtl::TextBox name_;
-    mwtl::ComboBox workspace_;
-    mwtl::CheckBox notifications_;
-    mwtl::Button reset_, apply_;
-    mwtl::UiFont font_;
+    mwfl::Label title_, subtitle_, name_label_, workspace_label_, validation_;
+    mwfl::Label preview_title_, preview_detail_, preview_hint_, status_;
+    mwfl::GroupBox form_group_, preview_group_;
+    mwfl::TextBox name_;
+    mwfl::ComboBox workspace_;
+    mwfl::CheckBox notifications_;
+    mwfl::Button reset_, apply_;
+    mwfl::UiFont font_;
 };
 
 }  // namespace
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
-    return mwtl::RunApplication<FormBindingWindow>(instance, show, {
+    return mwfl::RunApplication<FormBindingWindow>(instance, show, {
         .title = L"Profile settings",
         .initial_bounds = {{0.0_dip, 0.0_dip}, {920.0_dip, 560.0_dip}},
         .use_default_bounds = false,
-        .appearance = {.color_mode = mwtl::ColorMode::system,
-                       .backdrop = mwtl::Backdrop::mica},
+        .appearance = {.color_mode = mwfl::ColorMode::system,
+                       .backdrop = mwfl::Backdrop::mica},
     });
 }

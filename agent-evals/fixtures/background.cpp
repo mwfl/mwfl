@@ -1,14 +1,14 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 #include <thread>
-class EvalBackground final : public mwtl::WindowBase {
+class EvalBackground final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        mwtl::ControlHost ui{*this}; ui.Add(status_, L"Working");
+        mwfl::ControlHost ui{*this}; ui.Add(status_, L"Working");
         const auto wake = GetWakeup(); worker_ = std::jthread([wake]{ wake.TryWake(); });
     }
-    mwtl::EventResult OnWakeup() noexcept override {
-        status_.SetText(L"Done"); return mwtl::EventResult::Handled();
+    mwfl::EventResult OnWakeup() noexcept override {
+        status_.SetText(L"Done"); return mwfl::EventResult::Handled();
     }
-private: mwtl::Label status_; std::jthread worker_;
+private: mwfl::Label status_; std::jthread worker_;
 };
 

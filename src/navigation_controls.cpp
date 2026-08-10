@@ -1,4 +1,4 @@
-#include <mwtl/navigation_controls.h>
+#include <mwfl/navigation_controls.h>
 
 #include <algorithm>
 #include <exception>
@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 bool Initialize(DWORD classes) noexcept {
@@ -811,4 +811,4 @@ bool ComboBoxEx::ClearItems() noexcept {
 int ComboBoxEx::GetSelection() const noexcept { return IsWindow() ? static_cast<int>(::SendMessageW(GetHwnd(), CB_GETCURSEL, 0, 0)) : CB_ERR; }
 bool ComboBoxEx::SetSelection(int index) noexcept { return IsWindow() && ::SendMessageW(GetHwnd(), CB_SETCURSEL, index, 0) != CB_ERR; }
 
-}  // namespace mwtl
+}  // namespace mwfl

@@ -35,6 +35,6 @@ Canonical compiled sources:
 Verify with:
 
 ```powershell
-cmake --build --preset vs2026-x64-debug --target mwtl_document_workspace
-ctest --preset vs2026-x64-debug -R '^mwtl\.(document_workspace|document_coordination|document_session|document_tabs_native|document_workspace_gui)$' --output-on-failure
+cmake --build --preset vs2026-x64-debug --target mwfl_document_workspace
+ctest --preset vs2026-x64-debug -R '^mwfl\.(document_workspace|document_coordination|document_session|document_tabs_native|document_workspace_gui)$' --output-on-failure
 ```

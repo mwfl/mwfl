@@ -1,4 +1,4 @@
-#include <mwtl/application.h>
+#include <mwfl/application.h>
 
 #include "detail/diagnostics.h"
 #include "detail/module.h"
@@ -6,9 +6,9 @@
 
 #include <stdexcept>
 
-namespace mwtl {
+namespace mwfl {
 
-#ifdef MWTL_TESTING
+#ifdef MWFL_TESTING
 namespace detail {
 namespace {
 LifecycleSnapshot lifecycle_snapshot{};
@@ -67,12 +67,12 @@ bool Application::BeginRun() noexcept {
     }
 
     const HRESULT result = _Module.Init(nullptr, instance_);
-#ifdef MWTL_TESTING
+#ifdef MWFL_TESTING
     if (SUCCEEDED(result)) {
         ++detail::lifecycle_snapshot.module_initialized;
     }
     const HRESULT effective_result =
-        SUCCEEDED(result) && detail::IsFailureInjected(L"MWTL_TEST_FAIL_MODULE_INIT")
+        SUCCEEDED(result) && detail::IsFailureInjected(L"MWFL_TEST_FAIL_MODULE_INIT")
         ? E_OUTOFMEMORY
         : result;
 #else
@@ -81,7 +81,7 @@ bool Application::BeginRun() noexcept {
     if (FAILED(effective_result)) {
         detail::ReportHresult(L"WTL CAppModule::Init", effective_result, true);
         _Module.Term();
-#ifdef MWTL_TESTING
+#ifdef MWFL_TESTING
         ++detail::lifecycle_snapshot.module_terminated;
 #endif
         if (ole_initialized_) {
@@ -96,8 +96,8 @@ bool Application::BeginRun() noexcept {
     module_initialized_ = true;
 
     const BOOL loop_added =
-#ifdef MWTL_TESTING
-        detail::IsFailureInjected(L"MWTL_TEST_FAIL_LOOP_REGISTRATION")
+#ifdef MWFL_TESTING
+        detail::IsFailureInjected(L"MWFL_TEST_FAIL_LOOP_REGISTRATION")
         ? FALSE
         :
 #endif
@@ -112,7 +112,7 @@ bool Application::BeginRun() noexcept {
         return false;
     }
     loop_registered_ = true;
-#ifdef MWTL_TESTING
+#ifdef MWFL_TESTING
     ++detail::lifecycle_snapshot.loop_registered;
 #endif
     return true;
@@ -128,14 +128,14 @@ void Application::EndRun() noexcept {
                 false);
         }
         loop_registered_ = false;
-#ifdef MWTL_TESTING
+#ifdef MWFL_TESTING
         ++detail::lifecycle_snapshot.loop_removed;
 #endif
     }
     if (module_initialized_) {
         _Module.Term();
         module_initialized_ = false;
-#ifdef MWTL_TESTING
+#ifdef MWFL_TESTING
         ++detail::lifecycle_snapshot.module_terminated;
 #endif
     }
@@ -173,4 +173,4 @@ void Application::ReportUnknownRunException() noexcept {
     detail::ReportUnknownException(L"Application::Run", 0, true);
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

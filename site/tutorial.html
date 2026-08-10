@@ -3,26 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A step-by-step beginner tutorial for building and running a first native Windows application with mwtl, CMake, and Visual Studio.">
-  <link rel="canonical" href="https://everettjf.github.io/mwtl/tutorial.html">
-  <title>First application tutorial — mwtl</title>
+  <meta name="description" content="A step-by-step beginner tutorial for building and running a first native Windows application with mwfl, CMake, and Visual Studio.">
+  <link rel="canonical" href="https://mwfl.github.io/tutorial.html">
+  <title>First application tutorial — mwfl</title>
   <meta name="theme-color" content="#f7f9ff">
-  <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
+  <link rel="icon" type="image/svg+xml" href="assets/mwfl-mark.svg">
   <link rel="stylesheet" href="styles.css?v=20260810a">
-  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
   <script defer src="assets/site.js?v=20260810a"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell nav">
-      <a class="brand" href="index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+      <a class="brand" href="index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="components/index.html">Components</a>
         <a class="active" href="tutorial.html" aria-current="page">Get started</a>
         <a href="building.html">Build reference</a>
         <a href="changelog.html">Changelog</a>
-        <a href="https://github.com/everettjf/mwtl">GitHub</a>
+        <a href="https://github.com/mwfl/mwfl">GitHub</a>
         <button class="theme-toggle" type="button" aria-label="Toggle color theme"></button>
       </nav>
     </div>
@@ -56,7 +56,7 @@
       <div class="eyebrow">Step 0</div><h2>Know what the tools do</h2>
       <ul>
         <li><strong>Visual Studio</strong> supplies the MSVC C++ compiler, Windows SDK, ATL, debugger, and CMake.</li>
-        <li><strong>Git</strong> lets CMake download mwtl and its pinned dependencies.</li>
+        <li><strong>Git</strong> lets CMake download mwfl and its pinned dependencies.</li>
         <li><strong>CMake</strong> reads <code>CMakeLists.txt</code> and creates a Visual Studio build.</li>
       </ul>
       <p>You do not need to create a <code>.sln</code> file, configure include directories, or download WTL/WIL manually.</p>
@@ -86,78 +86,78 @@ cl</code></pre>
 
     <section id="project">
       <div class="eyebrow">Step 2</div><h2>Create an empty project folder</h2>
-      <pre data-title="Developer PowerShell"><code>New-Item -ItemType Directory -Path "$HOME\source\mwtl-hello"
-Set-Location "$HOME\source\mwtl-hello"
+      <pre data-title="Developer PowerShell"><code>New-Item -ItemType Directory -Path "$HOME\source\mwfl-hello"
+Set-Location "$HOME\source\mwfl-hello"
 New-Item -ItemType File CMakeLists.txt, main.cpp, app.manifest</code></pre>
       <p>Open this folder in your editor. Its final shape is:</p>
-      <pre data-title="project layout"><code>mwtl-hello/
+      <pre data-title="project layout"><code>mwfl-hello/
 ├── CMakeLists.txt
 ├── main.cpp
 └── app.manifest</code></pre>
 
       <h3>1. CMakeLists.txt</h3>
-      <p>This downloads a tested release, creates a Windows GUI executable, enables C++20, and links mwtl.</p>
+      <p>This downloads a tested release, creates a Windows GUI executable, enables C++20, and links mwfl.</p>
       <pre data-title="CMakeLists.txt"><code>cmake_minimum_required(VERSION 3.21)
-project(mwtl_hello LANGUAGES CXX)
+project(mwfl_hello LANGUAGES CXX)
 
 include(FetchContent)
-FetchContent_Declare(mwtl
-  GIT_REPOSITORY https://github.com/everettjf/mwtl.git
+FetchContent_Declare(mwfl
+  GIT_REPOSITORY https://github.com/mwfl/mwfl.git
   GIT_TAG v0.1.0
   GIT_SHALLOW TRUE)
-FetchContent_MakeAvailable(mwtl)
+FetchContent_MakeAvailable(mwfl)
 
-add_executable(mwtl_hello WIN32 main.cpp app.manifest)
+add_executable(mwfl_hello WIN32 main.cpp app.manifest)
 set_property(SOURCE app.manifest PROPERTY VS_TOOL_OVERRIDE "Manifest")
-target_compile_features(mwtl_hello PRIVATE cxx_std_20)
-target_compile_options(mwtl_hello PRIVATE /W4 /permissive- /EHsc /utf-8)
-target_link_libraries(mwtl_hello PRIVATE mwtl::mwtl)</code></pre>
+target_compile_features(mwfl_hello PRIVATE cxx_std_20)
+target_compile_options(mwfl_hello PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwfl_hello PRIVATE mwfl::mwfl)</code></pre>
 
       <h3>2. main.cpp</h3>
-      <pre data-title="main.cpp"><code>#include &lt;mwtl/mwtl.h&gt;
+      <pre data-title="main.cpp"><code>#include &lt;mwfl/mwfl.h&gt;
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
-class MainWindow final : public mwtl::WindowBase {
+class MainWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        SetTitle(L"My first mwtl application");
+        SetTitle(L"My first mwfl application");
 
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(message_, L"Hello from a native HWND window.");
         ui.Add(close_, L"Close");
 
-        SetLayout(mwtl::Column()
+        SetLayout(mwfl::Column()
             .Margin(24_dip)
             .Gap(12_dip)
-            .Add(message_, mwtl::Stretch())
-            .Add(close_, mwtl::Fixed(38_dip)));
+            .Add(message_, mwfl::Stretch())
+            .Add(close_, mwfl::Fixed(38_dip)));
     }
 
-    mwtl::EventResult OnCommand(
-        const mwtl::CommandEvent&amp; event) override {
+    mwfl::EventResult OnCommand(
+        const mwfl::CommandEvent&amp; event) override {
         if (event.IsClicked(close_)) {
             Close();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
-    mwtl::Label message_;
-    mwtl::Button close_;
+    mwfl::Label message_;
+    mwfl::Button close_;
 };
 
 int WINAPI wWinMain(
     HINSTANCE instance, HINSTANCE, PWSTR, int show) {
-    return mwtl::RunApplication&lt;MainWindow&gt;(instance, show);
+    return mwfl::RunApplication&lt;MainWindow&gt;(instance, show);
 }</code></pre>
 
       <h3>3. app.manifest</h3>
       <p>The manifest enables current Common Controls and Per-Monitor-V2 DPI behavior.</p>
       <pre data-title="app.manifest"><code>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
 &lt;assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"&gt;
-  &lt;assemblyIdentity name="mwtl.hello" processorArchitecture="*"
+  &lt;assemblyIdentity name="mwfl.hello" processorArchitecture="*"
     version="1.0.0.0" type="win32" /&gt;
   &lt;dependency&gt;&lt;dependentAssembly&gt;
     &lt;assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls"
@@ -177,25 +177,25 @@ int WINAPI wWinMain(
       <p>Run one of these commands from the folder containing the three files.</p>
       <pre data-title="Visual Studio 2026"><code>cmake -S . -B build -G "Visual Studio 18 2026" -A x64</code></pre>
       <pre data-title="Visual Studio 2022"><code>cmake -S . -B build -G "Visual Studio 17 2022" -A x64</code></pre>
-      <p>The first configure needs internet access and may take a minute while Git downloads mwtl, WTL, and WIL. Success ends with:</p>
+      <p>The first configure needs internet access and may take a minute while Git downloads mwfl, WTL, and WIL. Success ends with:</p>
       <pre data-title="expected result"><code>-- Configuring done
 -- Generating done
--- Build files have been written to: .../mwtl-hello/build</code></pre>
+-- Build files have been written to: .../mwfl-hello/build</code></pre>
       <div class="callout"><strong>Do not mix Visual Studio generators in one build folder.</strong> If you switch between VS 2022 and VS 2026, use a different folder such as <code>build-vs2022</code>.</div>
     </section>
 
     <section id="build">
       <div class="eyebrow">Step 4</div><h2>Build and run</h2>
       <pre data-title="Developer PowerShell"><code>cmake --build build --config Debug --parallel 2
-&amp; .\build\Debug\mwtl_hello.exe</code></pre>
+&amp; .\build\Debug\mwfl_hello.exe</code></pre>
       <p>A resizable native Windows window should open with a label and a Close button. Resize it to see the retained layout update the real child controls.</p>
       <p>If the build succeeds but the executable path differs, locate it with:</p>
-      <pre data-title="Developer PowerShell"><code>Get-ChildItem build -Recurse -Filter mwtl_hello.exe</code></pre>
+      <pre data-title="Developer PowerShell"><code>Get-ChildItem build -Recurse -Filter mwfl_hello.exe</code></pre>
       <h3>Run in Visual Studio</h3>
       <ol>
-        <li>Choose <strong>File → Open → Folder</strong> and select <code>mwtl-hello</code>.</li>
+        <li>Choose <strong>File → Open → Folder</strong> and select <code>mwfl-hello</code>.</li>
         <li>Wait for CMake generation to finish.</li>
-        <li>Select <code>mwtl_hello.exe</code> as the startup item.</li>
+        <li>Select <code>mwfl_hello.exe</code> as the startup item.</li>
         <li>Press <strong>F5</strong> to debug or <strong>Ctrl+F5</strong> to run without the debugger.</li>
       </ol>
     </section>
@@ -204,7 +204,7 @@ int WINAPI wWinMain(
       <div class="eyebrow">Step 5</div><h2>Make and verify a change</h2>
       <p>Change the title or label in <code>main.cpp</code>, save the file, then rebuild:</p>
       <pre data-title="Developer PowerShell"><code>cmake --build build --config Debug --parallel 2
-&amp; .\build\Debug\mwtl_hello.exe</code></pre>
+&amp; .\build\Debug\mwfl_hello.exe</code></pre>
       <p>You normally configure once and rebuild after source edits. Run the configure command again only after changing CMake options or dependency settings.</p>
     </section>
 
@@ -223,7 +223,7 @@ int WINAPI wWinMain(
       <h3>The window is blurry or controls look old</h3>
       <p>Ensure <code>app.manifest</code> is listed in the executable sources and retains the Common Controls and DPI declarations.</p>
       <h3>x86 configuration is rejected</h3>
-      <p>mwtl intentionally supports only x64 and ARM64. Use <code>-A x64</code> for a normal PC.</p>
+      <p>mwfl intentionally supports only x64 and ARM64. Use <code>-A x64</code> for a normal PC.</p>
       <h3>Start over safely</h3>
       <p>Close Visual Studio, remove only the project’s generated <code>build</code> directory, and repeat Configure and Build. Do not delete your three source files.</p>
     </section>
@@ -233,19 +233,19 @@ int WINAPI wWinMain(
       <ul>
         <li><a href="notepad.html">Build the complete Notepad reference application</a>, including safe files, commands, GUI tests, and packaging.</li>
         <li><a href="components/index.html">Browse every component</a> with screenshots and source.</li>
-        <li><a href="https://github.com/everettjf/mwtl/tree/main/templates">Copy a maintained starter template</a>.</li>
+        <li><a href="https://github.com/mwfl/mwfl/tree/main/templates">Copy a maintained starter template</a>.</li>
         <li><a href="building.html">Read the build reference</a> for installed packages, ARM64, VS Code, repository development, and offline dependencies.</li>
-        <li><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/settings-application.md">Build the persistent Settings application step by step</a>, including Apply/OK/Cancel, validation, task-dialog feedback, and automated tests.</li>
-        <li><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/explorer-application.md">Build the Explorer-style application step by step</a>, including stable navigation, virtual data, split panes, commands, and GUI tests.</li>
-        <li><a href="https://github.com/everettjf/mwtl/tree/main/examples">Explore all runnable examples</a>.</li>
+        <li><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/settings-application.md">Build the persistent Settings application step by step</a>, including Apply/OK/Cancel, validation, task-dialog feedback, and automated tests.</li>
+        <li><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/explorer-application.md">Build the Explorer-style application step by step</a>, including stable navigation, virtual data, split panes, commands, and GUI tests.</li>
+        <li><a href="https://github.com/mwfl/mwfl/tree/main/examples">Explore all runnable examples</a>.</li>
       </ul>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="shell footer">
-      <span>Modern Windows Thin Layer · MIT licensed · Windows 10 1809+ · x64 / ARM64</span>
-      <nav aria-label="Footer"><a href="components/index.html">Components</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a></nav>
+      <span>Modern Windows Foundation Layer · MIT licensed · Windows 10 1809+ · x64 / ARM64</span>
+      <nav aria-label="Footer"><a href="components/index.html">Components</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/mwfl/mwfl">GitHub</a></nav>
     </div>
   </footer>
 </body>

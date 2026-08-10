@@ -1,1 +1,1 @@
-mwtl_add_example(mwtl_self_drawn_host_demo main.cpp)
+mwfl_add_example(mwfl_self_drawn_host_demo main.cpp)

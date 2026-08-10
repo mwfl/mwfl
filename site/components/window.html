@@ -3,25 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="mwtl::WindowBase: typed virtual event hooks and macro-free native message interoperability.">
-  <link rel="canonical" href="https://everettjf.github.io/mwtl/components/window.html">
-  <title>Window — mwtl</title>
+  <meta name="description" content="mwfl::WindowBase: typed virtual event hooks and macro-free native message interoperability.">
+  <link rel="canonical" href="https://mwfl.github.io/components/window.html">
+  <title>Window — mwfl</title>
   <meta name="theme-color" content="#f7f9ff">
-  <link rel="icon" type="image/svg+xml" href="../assets/mwtl-mark.svg">
+  <link rel="icon" type="image/svg+xml" href="../assets/mwfl-mark.svg">
   <link rel="stylesheet" href="../styles.css?v=20260810a">
-  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
   <script defer src="../assets/site.js?v=20260810a"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell nav">
-      <a class="brand" href="../index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="../assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+      <a class="brand" href="../index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="../assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
       <nav class="nav-links" aria-label="Main navigation">
         <a class="active" href="index.html">Components</a>
         <a href="../tutorial.html">Get started</a>
         <a href="../changelog.html">Changelog</a>
-        <a href="https://github.com/everettjf/mwtl">GitHub</a>
+        <a href="https://github.com/mwfl/mwfl">GitHub</a>
         <button class="theme-toggle" type="button" aria-label="Toggle color theme"></button>
       </nav>
     </div>
@@ -32,31 +32,31 @@
     <h2>Macro-free message interoperability</h2>
     <pre data-title="window/main.cpp"><code>constexpr UINT kRefresh = WM_APP + 1;
 
-class MainWindow final : public mwtl::WindowBase {
+class MainWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override { SetTitle(L"Window demo"); }
 
-    mwtl::EventResult OnLeftButtonDown(const mwtl::MouseEvent&amp;) override {
+    mwfl::EventResult OnLeftButtonDown(const mwfl::MouseEvent&amp;) override {
         ::SendMessageW(GetHwnd(), kRefresh, 0, 0);
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage&amp; message) override {
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage&amp; message) override {
         if (message.id == kRefresh) {
             SetTitle(L"Native message received");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 };</code></pre>
     <h2>Key behavior</h2>
     <ul><li><code>BuildUI()</code> runs during WM_CREATE after the HWND is attached.</li><li><code>GetHwnd()</code> returns the native handle.</li><li><code>EventResult::Propagate()</code> continues default processing.</li><li>Every typed handler remains inside the noexcept WindowProc boundary.</li></ul>
-    <p>Repository source: <a href="https://github.com/everettjf/mwtl/tree/main/examples/window">examples/window</a></p>
+    <p>Repository source: <a href="https://github.com/mwfl/mwfl/tree/main/examples/window">examples/window</a></p>
   </main>
   <footer class="site-footer">
     <div class="shell footer">
       <span>Return to the <a href="index.html">component reference</a></span>
-      <nav aria-label="Footer"><a href="index.html">Components</a><a href="https://github.com/everettjf/mwtl">GitHub</a></nav>
+      <nav aria-label="Footer"><a href="index.html">Components</a><a href="https://github.com/mwfl/mwfl">GitHub</a></nav>
     </div>
   </footer>
 </body>

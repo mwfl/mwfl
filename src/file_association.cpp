@@ -1,4 +1,4 @@
-#include <mwtl/file_association.h>
+#include <mwfl/file_association.h>
 
 #include <shlobj_core.h>
 #include <wil/resource.h>
@@ -8,10 +8,10 @@
 #include <limits>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
-constexpr wchar_t kOwnerValue[] = L"mwtl.OwnerId";
+constexpr wchar_t kOwnerValue[] = L"mwfl.OwnerId";
 
 bool Clean(std::wstring_view value) noexcept {
     return !value.empty() && value.find(L'\0') == std::wstring_view::npos;
@@ -244,4 +244,4 @@ FileAssociationResult RemoveFileAssociation(
     }
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

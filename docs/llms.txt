@@ -1,9 +1,9 @@
-# mwtl — Modern Windows Thin Layer
+# mwfl — Modern Windows Foundation Layer
 
 > Native Windows UI for C++20 with real HWND controls, typed events, explicit
 > ownership, DPI-aware retained layout, and a Win32 escape hatch.
 
-Use mwtl only for 64-bit Windows x64/ARM64 projects with an MSVC-compatible ABI.
+Use mwfl only for 64-bit Windows x64/ARM64 projects with an MSVC-compatible ABI.
 
 ## Agent entry points
 
@@ -35,10 +35,10 @@ Use mwtl only for 64-bit Windows x64/ARM64 projects with an MSVC-compatible ABI.
 - Layout uses DIPs and references already-created HWNDs.
 - Return Propagate for events not consumed by the application.
 - No exception crosses a Win32 callback.
-- Only public headers under include/mwtl are application API.
+- Only public headers under include/mwfl are application API.
 
 ## Install
 
 Use CMake FetchContent pinned to a release tag or immutable commit, or consume
-`mwtl::mwtl` through `find_package`. A correct executable is `WIN32`, uses
+`mwfl::mwfl` through `find_package`. A correct executable is `WIN32`, uses
 `wWinMain`, C++20, Unicode, and a Per-Monitor-V2 manifest.

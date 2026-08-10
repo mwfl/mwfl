@@ -1,12 +1,12 @@
-#include <mwtl/input_controls.h>
+#include <mwfl/input_controls.h>
 
 void ConsumeInputControls() {
-    mwtl::DateTimePicker date;
-    mwtl::MonthCalendar calendar;
-    mwtl::HotKey hot_key;
-    mwtl::IpAddress address;
-    mwtl::UpDown spin;
-    mwtl::SysLink link;
+    mwfl::DateTimePicker date;
+    mwfl::MonthCalendar calendar;
+    mwfl::HotKey hot_key;
+    mwfl::IpAddress address;
+    mwfl::UpDown spin;
+    mwfl::SysLink link;
     static_cast<void>(date); static_cast<void>(calendar); static_cast<void>(hot_key);
     static_cast<void>(address); static_cast<void>(spin); static_cast<void>(link);
 }

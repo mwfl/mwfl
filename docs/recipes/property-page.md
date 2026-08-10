@@ -1,6 +1,6 @@
 # Add a property page
 
-Use `mwtl/property_sheet.h` when settings need standard Windows Apply, OK, and
+Use `mwfl/property_sheet.h` when settings need standard Windows Apply, OK, and
 Cancel behavior. The compiled canonical implementation is
 `examples/property_sheet/main.cpp`.
 
@@ -23,7 +23,7 @@ created lazily; query `GetHwnd()` each time instead of caching it. A false retur
 from initialization/apply or a callback exception produces a failed structured
 result. Cancellation calls `reset` and never implies that settings were saved.
 
-For a modeless sheet inside `mwtl::Application`, keyboard dialog navigation is
+For a modeless sheet inside `mwfl::Application`, keyboard dialog navigation is
 registered automatically. The reference app demonstrates two pages, native
 navigation, dirty/apply state, validation feedback, cancellation, responsive
 layout, accessible names, and deterministic modeless ownership.

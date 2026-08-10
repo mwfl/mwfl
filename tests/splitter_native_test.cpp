@@ -1,4 +1,4 @@
-#include <mwtl/splitter.h>
+#include <mwfl/splitter.h>
 
 #include <oleacc.h>
 #include <wil/resource.h>
@@ -11,7 +11,7 @@ namespace {
 
 struct NotificationState {
     int count = 0;
-    mwtl::Dip position{};
+    mwfl::Dip position{};
     HWND forwarded_source = nullptr;
     int command_count = 0;
     int context_count = 0;
@@ -22,8 +22,8 @@ LRESULT CALLBACK ParentSubclass(HWND window, UINT message, WPARAM wparam, LPARAM
     auto* state = reinterpret_cast<NotificationState*>(reference);
     if (message == WM_NOTIFY && state != nullptr) {
         const auto* header = reinterpret_cast<const NMHDR*>(lparam);
-        if (header != nullptr && header->code == mwtl::kSplitterPositionChanged) {
-            const auto* notification = reinterpret_cast<const mwtl::SplitterNotification*>(lparam);
+        if (header != nullptr && header->code == mwfl::kSplitterPositionChanged) {
+            const auto* notification = reinterpret_cast<const mwfl::SplitterNotification*>(lparam);
             ++state->count;
             state->position = notification->position;
             return 0;
@@ -68,7 +68,7 @@ DWORD GuiResources() noexcept {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
 
     const HWND parent =
         ::CreateWindowExW(0, L"STATIC", L"splitter test parent", WS_OVERLAPPED, 0, 0, 640, 480,

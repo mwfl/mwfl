@@ -1,10 +1,10 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 #include <exception>
 #include <stdexcept>
 
-class MinMaxWindow final : public mwtl::WindowBase {
+class MinMaxWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         if (!SetTitle(L"WM_GETMINMAXINFO — minimum 480 × 280 pixels")) {
@@ -12,12 +12,12 @@ public:
         }
     }
 
-    mwtl::EventResult OnMinMaxInfo(mwtl::MinMaxInfoEvent event) override {
+    mwfl::EventResult OnMinMaxInfo(mwfl::MinMaxInfoEvent event) override {
         event.info.ptMinTrackSize = {480, 280};
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<MinMaxWindow>(instance, show_command);
+    return mwfl::RunApplication<MinMaxWindow>(instance, show_command);
 }

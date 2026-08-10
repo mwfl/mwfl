@@ -1,13 +1,13 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 #include <exception>
 #include <stdexcept>
 
-class ApplicationWindow final : public mwtl::WindowBase {
+class ApplicationWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        if (!SetTitle(L"mwtl::Application demo")) {
+        if (!SetTitle(L"mwfl::Application demo")) {
             throw std::runtime_error("SetTitle failed");
         }
     }
@@ -15,7 +15,7 @@ public:
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
     try {
-        mwtl::Application application(instance);
+        mwfl::Application application(instance);
         if (application.GetInstance() != instance) {
             return EXIT_FAILURE;
         }

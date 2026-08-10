@@ -2,7 +2,7 @@
 
 ## Objective
 
-mwtl provides a focused Windows 10+, C++20, CMake-native, DPI-correct, and
+mwfl provides a focused Windows 10+, C++20, CMake-native, DPI-correct, and
 coding-Agent-friendly way to use native Windows UI and desktop APIs.
 
 Coverage is measured by complete application scenarios and useful capability
@@ -92,8 +92,8 @@ property sheet, and Explorer-style split view.
 - reusable native-host lifecycle and focus/navigation contract;
 - optional WebView2 and Scintilla CMake components;
 
-The 0.4 implementation uses isolated `mwtl::webview2` and
-`mwtl::scintilla` targets rather than placing third-party dependencies in the
+The 0.4 implementation uses isolated `mwfl::webview2` and
+`mwfl::scintilla` targets rather than placing third-party dependencies in the
 core target. WebView2 has structured Runtime discovery, asynchronous
 environment/controller ownership, navigation, focus/accelerator routing,
 process recovery, and deterministic close. Scintilla has pinned binary/source
@@ -173,7 +173,7 @@ core application model.
 
 1.0 requires scenario evidence rather than a target class count:
 
-- representative Windows desktop application categories have executable mwtl
+- representative Windows desktop application categories have executable mwfl
   answers;
 - core APIs have been validated by at least three substantial applications;
 - SDI, tabbed documents, and docking have complete beginner-to-advanced paths;
@@ -189,7 +189,7 @@ Every public capability must ship as a vertical slice. As applicable, a change
 includes:
 
 ```text
-include/mwtl/<feature>.h
+include/mwfl/<feature>.h
 src/<feature>.cpp
 tests/<feature>_tests.cpp
 examples/<feature>/

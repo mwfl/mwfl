@@ -10,8 +10,8 @@ From a Developer PowerShell in the repository root:
 
 ```powershell
 cmake --preset vs2026-x64
-cmake --build --preset vs2026-x64-debug --target mwtl_image_viewer_demo
-./build/presets/vs2026-x64/examples/image_viewer/Debug/mwtl_image_viewer_demo.exe
+cmake --build --preset vs2026-x64-debug --target mwfl_image_viewer_demo
+./build/presets/vs2026-x64/examples/image_viewer/Debug/mwfl_image_viewer_demo.exe
 ```
 
 Select **Open...**, choose PNG, JPEG, BMP, GIF, or TIFF, then use the mouse
@@ -31,15 +31,15 @@ keyboard accessible through native buttons and canvas shortcuts.
 Installed applications request the optional components explicitly:
 
 ```cmake
-find_package(mwtl CONFIG REQUIRED COMPONENTS imaging d2d)
-target_link_libraries(my_viewer PRIVATE mwtl::imaging mwtl::d2d)
+find_package(mwfl CONFIG REQUIRED COMPONENTS imaging d2d)
+target_link_libraries(my_viewer PRIVATE mwfl::imaging mwfl::d2d)
 ```
 
 Create the application with an STA because WIC is COM-based:
 
 ```cpp
-return mwtl::RunApplication<MyViewer>(
-    instance, show, {}, {.com_apartment = mwtl::ComApartment::sta});
+return mwfl::RunApplication<MyViewer>(
+    instance, show, {}, {.com_apartment = mwfl::ComApartment::sta});
 ```
 
 ## Handle decode results
@@ -54,7 +54,7 @@ succeeded; only `color_managed_to_srgb` makes that claim.
 
 ```powershell
 ctest --test-dir build/presets/vs2026-x64 -C Debug `
-  -R "mwtl.(imaging_model|imaging_decode|image_viewer_gui|d2d_host_native)"
+  -R "mwfl.(imaging_model|imaging_decode|image_viewer_gui|d2d_host_native)"
 ```
 
 The GUI self-test creates a local BMP, decodes it, renders, zooms at a wheel

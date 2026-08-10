@@ -1,8 +1,8 @@
-#include <mwtl/native_host.h>
+#include <mwfl/native_host.h>
 
 int main() {
-    using mwtl::NativeHostState;
-    using mwtl::NativeHostStateModel;
+    using mwfl::NativeHostState;
+    using mwfl::NativeHostStateModel;
 
     NativeHostStateModel model;
     if (model.GetState() != NativeHostState::uninitialized || model.IsAttached() ||

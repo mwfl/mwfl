@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <chrono>
 #include <cstdlib>
@@ -6,16 +6,16 @@
 #include <string>
 
 using namespace std::chrono_literals;
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
-class ControlsWindow final : public mwtl::WindowBase {
+class ControlsWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         SetTitle(L"Modern native controls");
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(heading_, L"Native controls, modern C++20 ownership");
         ui.Add(name_label_, L"Your name");
-        ui.Add(name_, L"mwtl developer");
+        ui.Add(name_, L"mwfl developer");
         ui.Add(greet_, L"Say hello");
         ui.Add(enabled_, L"Keep the native button enabled");
         ui.Add(accent_);
@@ -26,17 +26,17 @@ public:
         ui.Add(cosmos_, L"Cosmic violet");
         ui.Add(items_);
         ui.Add(volume_);
-        mwtl::Must(
+        mwfl::Must(
             heartbeat_.Start(*this, kHeartbeat, 1s), "start heartbeat");
         enabled_.SetChecked(true);
-        mwtl::Must(mwtl::AddItems(
+        mwfl::Must(mwfl::AddItems(
             accent_, {L"Sunrise orange", L"Geometry blue", L"Optimistic green"}),
             "populate accent choices");
         accent_.SetSelection(0);
         progress_.SetRange(0, 100);
         progress_.SetValue(18);
         sky_.SetChecked(true);
-        mwtl::Must(mwtl::AddItems(
+        mwfl::Must(mwfl::AddItems(
             items_, {L"Label + text input", L"Buttons and choices", L"Lists and progress"}),
             "populate control topics");
         items_.SetSelection(0);
@@ -46,50 +46,50 @@ public:
         name_.Focus();
 
         SetLayout(
-            mwtl::Row()
+            mwfl::Row()
                 .Margin(28.0_dip)
                 .Gap(32.0_dip)
                 .Add(
-                    mwtl::Column()
+                    mwfl::Column()
                         .Gap(10.0_dip)
-                        .Add(heading_, mwtl::Fixed(32.0_dip))
-                        .Add(name_label_, mwtl::Fixed(24.0_dip))
+                        .Add(heading_, mwfl::Fixed(32.0_dip))
+                        .Add(name_label_, mwfl::Fixed(24.0_dip))
                         .Add(
-                            mwtl::Row()
+                            mwfl::Row()
                                 .Gap(20.0_dip)
-                                .Add(name_, mwtl::Stretch(1.0f, 180.0_dip))
-                                .Add(greet_, mwtl::Fixed(160.0_dip)),
-                            mwtl::Fixed(34.0_dip))
+                                .Add(name_, mwfl::Stretch(1.0f, 180.0_dip))
+                                .Add(greet_, mwfl::Fixed(160.0_dip)),
+                            mwfl::Fixed(34.0_dip))
                         .Add(
-                            mwtl::Row()
+                            mwfl::Row()
                                 .Gap(20.0_dip)
-                                .Add(enabled_, mwtl::Stretch())
-                                .Add(accent_, mwtl::Fixed(240.0_dip), {
-                                    .native_size = mwtl::SizeDip{0.0_dip, 180.0_dip},
+                                .Add(enabled_, mwfl::Stretch())
+                                .Add(accent_, mwfl::Fixed(240.0_dip), {
+                                    .native_size = mwfl::SizeDip{0.0_dip, 180.0_dip},
                                 }),
-                            mwtl::Fixed(34.0_dip))
-                        .Add(progress_, mwtl::Fixed(22.0_dip))
-                        .Add(status_, mwtl::Stretch(1.0f, 50.0_dip)),
-                    mwtl::Stretch(1.0f, 540.0_dip))
+                            mwfl::Fixed(34.0_dip))
+                        .Add(progress_, mwfl::Fixed(22.0_dip))
+                        .Add(status_, mwfl::Stretch(1.0f, 50.0_dip)),
+                    mwfl::Stretch(1.0f, 540.0_dip))
                 .Add(
-                    mwtl::Column()
+                    mwfl::Column()
                         .Gap(18.0_dip)
                         .Add(
-                            mwtl::Overlay()
+                            mwfl::Overlay()
                                 .Add(choices_)
                                 .Add(
-                                    mwtl::Column()
+                                    mwfl::Column()
                                         .Margin({20.0_dip, 32.0_dip, 20.0_dip, 18.0_dip})
                                         .Gap(6.0_dip)
-                                        .Add(sky_, mwtl::Fixed(28.0_dip))
-                                        .Add(cosmos_, mwtl::Fixed(28.0_dip))),
-                            mwtl::Fixed(154.0_dip))
-                        .Add(items_, mwtl::Stretch(1.0f, 100.0_dip))
-                        .Add(volume_, mwtl::Fixed(42.0_dip)),
-                    mwtl::Fixed(300.0_dip)));
+                                        .Add(sky_, mwfl::Fixed(28.0_dip))
+                                        .Add(cosmos_, mwfl::Fixed(28.0_dip))),
+                            mwfl::Fixed(154.0_dip))
+                        .Add(items_, mwfl::Stretch(1.0f, 100.0_dip))
+                        .Add(volume_, mwfl::Fixed(42.0_dip)),
+                    mwfl::Fixed(300.0_dip)));
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
         if (event.IsClicked(greet_)) {
             status_.SetText(
                 L"Hello, " + name_.GetText() +
@@ -104,53 +104,53 @@ public:
         } else if (event.Is(items_, LBN_SELCHANGE)) {
             status_.SetText(L"ListBox selection changed.");
         } else {
-            return mwtl::EventResult::Propagate();
+            return mwfl::EventResult::Propagate();
         }
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnTimer(mwtl::TimerId id) override {
+    mwfl::EventResult OnTimer(mwfl::TimerId id) override {
         if (id == kHeartbeat) {
             ++ticks_;
             progress_.SetValue(static_cast<int>((ticks_ * 9) % 101));
             SetTitle(L"Modern native controls — heartbeat " +
                      std::to_wstring(ticks_));
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage& message) override {
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage& message) override {
         if (message.id == WM_HSCROLL &&
             reinterpret_cast<HWND>(message.lparam) == volume_.GetHwnd()) {
             progress_.SetValue(volume_.GetValue());
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
-    static constexpr mwtl::TimerId kHeartbeat{1};
+    static constexpr mwfl::TimerId kHeartbeat{1};
 
-    mwtl::Label heading_;
-    mwtl::Label name_label_;
-    mwtl::TextBox name_;
-    mwtl::Button greet_;
-    mwtl::CheckBox enabled_;
-    mwtl::ComboBox accent_;
-    mwtl::ProgressBar progress_;
-    mwtl::Label status_;
-    mwtl::GroupBox choices_;
-    mwtl::RadioButton sky_;
-    mwtl::RadioButton cosmos_;
-    mwtl::ListBox items_;
-    mwtl::Slider volume_;
-    mwtl::UiTimer heartbeat_;
+    mwfl::Label heading_;
+    mwfl::Label name_label_;
+    mwfl::TextBox name_;
+    mwfl::Button greet_;
+    mwfl::CheckBox enabled_;
+    mwfl::ComboBox accent_;
+    mwfl::ProgressBar progress_;
+    mwfl::Label status_;
+    mwfl::GroupBox choices_;
+    mwfl::RadioButton sky_;
+    mwfl::RadioButton cosmos_;
+    mwfl::ListBox items_;
+    mwfl::Slider volume_;
+    mwfl::UiTimer heartbeat_;
     unsigned ticks_ = 0;
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<ControlsWindow>(
+    return mwfl::RunApplication<ControlsWindow>(
         instance,
         show_command,
         {

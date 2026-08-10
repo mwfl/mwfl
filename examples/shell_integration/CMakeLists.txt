@@ -1,2 +1,2 @@
-mwtl_add_example(mwtl_shell_integration_demo main.cpp)
-target_link_libraries(mwtl_shell_integration_demo PRIVATE mwtl::shell)
+mwfl_add_example(mwfl_shell_integration_demo main.cpp)
+target_link_libraries(mwfl_shell_integration_demo PRIVATE mwfl::shell)

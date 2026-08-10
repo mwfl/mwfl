@@ -1,8 +1,8 @@
-#include <mwtl/command.h>
+#include <mwfl/command.h>
 
 #include <algorithm>
 
-namespace mwtl {
+namespace mwfl {
 
 Command::Command(ControlId id, std::wstring text, Handler handler)
     : id_(id), text_(std::move(text)), handler_(std::move(handler)) {}
@@ -39,4 +39,4 @@ EventResult CommandSet::Dispatch(const CommandEvent& event) const {
     return EventResult::Handled();
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

@@ -1,9 +1,9 @@
-#include <mwtl/printing_settings.h>
+#include <mwfl/printing_settings.h>
 
 int main() {
-    const auto pages = mwtl::PaginateContent(21, 10);
-    mwtl::PrintPreviewModel preview;
+    const auto pages = mwfl::PaginateContent(21, 10);
+    mwfl::PrintPreviewModel preview;
     preview.SetPageCount(pages.size());
-    auto memory = mwtl::OwnedGlobalMemory::Allocate(64);
+    auto memory = mwfl::OwnedGlobalMemory::Allocate(64);
     return pages.size() == 3 && preview.SelectPage(2) && memory ? 0 : 1;
 }

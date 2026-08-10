@@ -1,11 +1,11 @@
-#include <mwtl/document_workspace.h>
+#include <mwfl/document_workspace.h>
 
 #include <array>
 #include <cmath>
 #include <stdexcept>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     bool threw = false;
     try { DocumentWorkspaceModel invalid{{}}; } catch (const std::invalid_argument&) { threw = true; }
     if (!threw) return 1;

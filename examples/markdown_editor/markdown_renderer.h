@@ -15,7 +15,7 @@ struct RenderOptions {
 
 // Produces a complete, offline HTML document. User input is escaped before it
 // enters markup, and only http(s), mailto, document-relative, and fragment URLs
-// are emitted. This intentionally small renderer is application-owned; mwtl
+// are emitted. This intentionally small renderer is application-owned; mwfl
 // remains a UI layer rather than a Markdown framework.
 std::wstring RenderMarkdown(std::wstring_view markdown,
                             const RenderOptions& options = {});

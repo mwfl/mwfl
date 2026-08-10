@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="docs/images/mwtl-mark.svg" width="128" alt="mwtl logo">
+  <img src="docs/images/mwfl-mark.svg" width="128" alt="mwfl logo">
 </p>
 
-<h1 align="center">mwtl</h1>
+<h1 align="center">mwfl</h1>
 
-<p align="center"><strong>Modern Windows Thin Layer</strong></p>
+<p align="center"><strong>Modern Windows Foundation Layer</strong></p>
 
 <p align="center">Native Windows UI, without the Win32 ceremony.</p>
 
@@ -23,69 +23,69 @@
   <a href="#quick-start">Quick start</a> &middot;
   <a href="#installation">Installation</a> &middot;
   <a href="#examples">Examples</a> &middot;
-  <a href="https://everettjf.github.io/mwtl/components/">Components</a> &middot;
-  <a href="https://everettjf.github.io/mwtl/">Documentation</a>
+  <a href="https://mwfl.github.io/components/">Components</a> &middot;
+  <a href="https://mwfl.github.io/">Documentation</a>
 </p>
 
-mwtl, the Modern Windows Thin Layer, wraps real HWND controls with clear
+mwfl, the Modern Windows Foundation Layer, wraps real HWND controls with clear
 ownership, typed events, checked setup helpers, and DPI-aware responsive layout. It reduces Win32 ceremony without
 hiding native handles, messages, styles, or return values.
 
 <p align="center">
-  <a href="examples/controls/main.cpp"><img width="48%" src="docs/images/examples/controls.png" alt="Native controls gallery built with mwtl"></a>
-  <a href="examples/common_controls/main.cpp"><img width="48%" src="docs/images/examples/common-controls.png" alt="Windows Common Controls gallery built with mwtl"></a>
+  <a href="examples/controls/main.cpp"><img width="48%" src="docs/images/examples/controls.png" alt="Native controls gallery built with mwfl"></a>
+  <a href="examples/common_controls/main.cpp"><img width="48%" src="docs/images/examples/common-controls.png" alt="Windows Common Controls gallery built with mwfl"></a>
 </p>
 
-## Why mwtl
+## Why mwfl
 
 | Native by design | Modern where it matters | Small and transparent | Ready for real desktop work |
 |---|---|---|---|
 | Real HWND controls, Win32 messages, styles, handles, and return values remain available. | Typed events, RAII resources, C++20 ranges, checked setup, and responsive layout remove repetitive plumbing. | No custom renderer, virtual DOM, code generator, reflection system, or message-map macros. | Per-Monitor V2 DPI, accessibility helpers, shell integration, worker wakeups, and wait-aware pumping. |
 
-Use mwtl when you want Windows to look and behave like Windows, while keeping
+Use mwfl when you want Windows to look and behave like Windows, while keeping
 application code readable enough to reason about.
 
 ## Quick start
 
 ```cpp
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
-class MainWindow final : public mwtl::WindowBase {
+class MainWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        SetTitle(L"Hello, mwtl");
+        SetTitle(L"Hello, mwfl");
 
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(message_, L"A native Windows UI with modern C++20 ergonomics.");
         ui.Add(close_, L"Close");
 
         SetLayout(
-            mwtl::Column()
+            mwfl::Column()
                 .Margin(24_dip)
                 .Gap(12_dip)
-                .Add(message_, mwtl::Auto())
-                .Add(close_, mwtl::Fixed(36_dip)));
+                .Add(message_, mwfl::Auto())
+                .Add(close_, mwfl::Fixed(36_dip)));
     }
 
-    mwtl::EventResult OnCommand(
-        const mwtl::CommandEvent& event) override {
+    mwfl::EventResult OnCommand(
+        const mwfl::CommandEvent& event) override {
         if (event.IsClicked(close_)) {
             Close();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
-    mwtl::Label message_;
-    mwtl::Button close_;
+    mwfl::Label message_;
+    mwfl::Button close_;
 };
 
 int WINAPI wWinMain(
     HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<MainWindow>(instance, show_command);
+    return mwfl::RunApplication<MainWindow>(instance, show_command);
 }
 ```
 
@@ -103,14 +103,14 @@ cmake_minimum_required(VERSION 3.21)
 project(my_app LANGUAGES CXX)
 
 include(FetchContent)
-FetchContent_Declare(mwtl
-  GIT_REPOSITORY https://github.com/everettjf/mwtl.git
+FetchContent_Declare(mwfl
+  GIT_REPOSITORY https://github.com/mwfl/mwfl.git
   GIT_TAG main
   GIT_SHALLOW TRUE)
-FetchContent_MakeAvailable(mwtl)
+FetchContent_MakeAvailable(mwfl)
 
 add_executable(my_app WIN32 main.cpp)
-target_link_libraries(my_app PRIVATE mwtl::mwtl)
+target_link_libraries(my_app PRIVATE mwfl::mwfl)
 ```
 
 Pin a release tag or immutable commit for reproducible application builds.
@@ -121,7 +121,7 @@ cmake --build build --config Debug
 ```
 
 Use `Visual Studio 17 2022` with Visual Studio 2022. The complete
-[setup guide](https://everettjf.github.io/mwtl/building.html) also covers an
+[setup guide](https://mwfl.github.io/building.html) also covers an
 installed `find_package` package, the Visual Studio folder workflow, VS Code,
 offline WTL/WIL sources, and building this repository.
 
@@ -146,14 +146,14 @@ offline WTL/WIL sources, and building this repository.
   pinned WebView2 components with reference applications and offline self-tests.
 
 Optional components are requested explicitly. For example, configure with
-`MWTL_BUILD_WEBVIEW2=ON` and link `mwtl::webview2`, or configure with
-`MWTL_BUILD_SCINTILLA=ON`, link `mwtl::scintilla`, and call
-`mwtl_deploy_scintilla(your_target)`. Core-only consumers do not fetch, link,
+`MWFL_BUILD_WEBVIEW2=ON` and link `mwfl::webview2`, or configure with
+`MWFL_BUILD_SCINTILLA=ON`, link `mwfl::scintilla`, and call
+`mwfl_deploy_scintilla(your_target)`. Core-only consumers do not fetch, link,
 or deploy either dependency.
 
-The [component reference](https://everettjf.github.io/mwtl/components/) shows
+The [component reference](https://mwfl.github.io/components/) shows
 every control with current code, a native screenshot, and its runnable example.
-The [complete capability catalog](https://everettjf.github.io/mwtl/components/catalog.html)
+The [complete capability catalog](https://mwfl.github.io/components/catalog.html)
 maps every public workflow to exact symbols, headers, examples, guides,
 contracts, and tests.
 Detailed API notes live in [docs/api.md](docs/api.md).
@@ -225,11 +225,11 @@ multi-monitor utility.
 </p>
 
 <p align="center">
-  <a href="examples/markdown_editor/main.cpp"><img width="96%" src="docs/images/examples/markdown-editor.png" alt="mwtl Markdown Editor with native source editing and offline preview"></a>
+  <a href="examples/markdown_editor/main.cpp"><img width="96%" src="docs/images/examples/markdown-editor.png" alt="mwfl Markdown Editor with native source editing and offline preview"></a>
 </p>
 
 The [examples catalog](examples/README.md) lists every target and its run
-commands. The [website](https://everettjf.github.io/mwtl/) highlights selected
+commands. The [website](https://mwfl.github.io/) highlights selected
 content-rich examples with screenshots and source links.
 
 ## Build this repository
@@ -267,7 +267,7 @@ compatibility pass and are not claimed by this README yet.
 CMake fetches pinned official WTL and Microsoft WIL revisions. Exact sources
 and licenses are recorded in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 For controlled environments, see the
-[offline setup instructions](https://everettjf.github.io/mwtl/building.html#offline).
+[offline setup instructions](https://mwfl.github.io/building.html#offline).
 
 ## Documentation
 
@@ -276,7 +276,7 @@ For controlled environments, see the
 - [Modern Windows UI API coverage plan](docs/windows-ui-modernization-plan.md)
 - [IDE-style docking workspace tutorial](docs/tutorials/docking-workspace.md)
 
-- [Using mwtl with coding agents](docs/agent-usage.md)
+- [Using mwfl with coding agents](docs/agent-usage.md)
 - [Copyable application templates](templates/)
 - [Task recipes](docs/recipes/)
 - [Agent-oriented public API contracts](docs/agent-reference.md)
@@ -284,8 +284,8 @@ For controlled environments, see the
 - [Capability and scope map](docs/scope-map.md)
 - [Coding-agent evaluation suite](agent-evals/)
 - [Compact agent context](docs/llms.txt)
-- [Get started](https://everettjf.github.io/mwtl/building.html)
-- [Component reference](https://everettjf.github.io/mwtl/components/)
+- [Get started](https://mwfl.github.io/building.html)
+- [Component reference](https://mwfl.github.io/components/)
 - [Current API notes](docs/api.md)
 - [Public header reference](docs/reference.md)
 - [Design and scope](docs/design.md)
@@ -301,7 +301,7 @@ licenses.
 
 ## Acknowledgements
 
-mwtl builds on decades of Windows desktop engineering. Thank you to the teams
+mwfl builds on decades of Windows desktop engineering. Thank you to the teams
 and communities behind the Windows API, MFC, WTL, WIL, and Win32++ for the
 designs, documentation, examples, and hard-won lessons that helped make native
 Windows development more approachable. Thanks also to the WebView2 and

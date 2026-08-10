@@ -1,9 +1,9 @@
-#include <mwtl/text_search.h>
+#include <mwfl/text_search.h>
 
 #include <algorithm>
 #include <cwctype>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 bool IsWordCharacter(wchar_t value) noexcept {
     return std::iswalnum(value) != 0 || value == L'_';
@@ -60,4 +60,4 @@ std::size_t ReplaceAllText(std::wstring& text, std::wstring_view query,
     return count;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

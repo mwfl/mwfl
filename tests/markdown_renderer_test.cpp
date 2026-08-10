@@ -17,7 +17,7 @@ int main() {
     const auto document = RenderMarkdown(
         L"# Heading\n\nA **strong** and *quiet* [link](https://example.com).\n\n"
         L"- [x] done\n- item\n\n> quote\n\n~~removed~~\n\n"
-        L"| Name | Value |\n| --- | --- |\n| mwtl | native |\n\n"
+        L"| Name | Value |\n| --- | --- |\n| mwfl | native |\n\n"
         L"```html\n<b>source</b>\n```\n");
     if (!Contains(document, L"<h1>Heading</h1>")) return 1;
     if (!Contains(document, L"<strong>strong</strong>")) return 2;

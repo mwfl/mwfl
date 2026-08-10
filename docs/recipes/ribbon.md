@@ -1,6 +1,6 @@
 # Ribbon recipes
 
-- Link `mwtl::ribbon`; do not add Ribbon headers to the core umbrella.
+- Link `mwfl::ribbon`; do not add Ribbon headers to the core umbrella.
 - Generate BML, header, and RC with SDK `uicc.exe`; embed the RC in the EXE.
 - Map stable Ribbon IDs to stable `ControlId` values with `RibbonCommandModel`.
 - Initialize COM as STA, then `Create`, `Load`, set modes/context, and invalidate.

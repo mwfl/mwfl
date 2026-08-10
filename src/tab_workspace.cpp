@@ -1,10 +1,10 @@
-#include <mwtl/tab_workspace.h>
+#include <mwfl/tab_workspace.h>
 
 #include <algorithm>
 #include <ranges>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 
 std::optional<std::size_t> TabWorkspaceModel::FindIndex(TabId id) const noexcept {
     if (!id) return std::nullopt;
@@ -76,4 +76,4 @@ bool TabWorkspaceModel::SetDirty(TabId id, bool dirty) noexcept {
     return true;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

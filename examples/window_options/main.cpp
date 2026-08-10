@@ -1,11 +1,11 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 struct DemoClassTraits {
-    static const wchar_t* GetClassName() noexcept { return L"mwtl.WindowOptionsDemo"; }
+    static const wchar_t* GetClassName() noexcept { return L"mwfl.WindowOptionsDemo"; }
     static UINT GetClassStyle() noexcept { return CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS; }
     static HICON GetIcon() noexcept { return nullptr; }
     static HICON GetSmallIcon() noexcept { return nullptr; }
@@ -13,13 +13,13 @@ struct DemoClassTraits {
     static HBRUSH GetBackground() noexcept { return reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1); }
 };
 
-class OptionsWindow final : public mwtl::Window<OptionsWindow, DemoClassTraits> {
+class OptionsWindow final : public mwfl::Window<OptionsWindow, DemoClassTraits> {
 public:
     void BuildUI() { SetTitle(L"Configurable class, style and DIP client size"); }
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<OptionsWindow>(
+    return mwfl::RunApplication<OptionsWindow>(
         instance,
         show_command,
         {

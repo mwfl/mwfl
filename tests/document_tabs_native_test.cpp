@@ -1,4 +1,4 @@
-#include <mwtl/document_tabs.h>
+#include <mwfl/document_tabs.h>
 
 #include <commctrl.h>
 
@@ -26,7 +26,7 @@ bool HasVisibleStyle(HWND window) {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     INITCOMMONCONTROLSEX controls{sizeof(controls), ICC_TAB_CLASSES};
     if (!::InitCommonControlsEx(&controls)) return 1;
     // Warm process-wide Common Controls brushes/fonts before measuring the

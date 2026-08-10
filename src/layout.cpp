@@ -1,4 +1,4 @@
-#include <mwtl/layout.h>
+#include <mwfl/layout.h>
 
 #include <algorithm>
 #include <climits>
@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 constexpr float kEpsilon = 0.0001f;
@@ -115,7 +115,7 @@ LayoutNode& LayoutNode::Add(
     LayoutLength length,
     LayoutItemOptions options) & {
     if (window == nullptr) {
-        throw std::invalid_argument("mwtl layout window is null");
+        throw std::invalid_argument("mwfl layout window is null");
     }
     children_.emplace_back(window, length, std::move(options));
     return *this;
@@ -127,7 +127,7 @@ LayoutNode& LayoutNode::AddMeasured(
     LayoutLength length,
     LayoutItemOptions options) {
     if (window == nullptr) {
-        throw std::invalid_argument("mwtl layout window is null");
+        throw std::invalid_argument("mwfl layout window is null");
     }
     children_.emplace_back(
         window, length, std::move(options), std::move(measure));
@@ -445,4 +445,4 @@ bool LayoutHost::Arrange(HWND parent) const {
     return succeeded;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

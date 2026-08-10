@@ -1,10 +1,10 @@
-#include <mwtl/docking_monitor.h>
+#include <mwfl/docking_monitor.h>
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 bool SamePlacement(const DockFloatingPlacement& left,
@@ -78,4 +78,4 @@ DockPlacementRecoveryResult RecoverDockFloatingPlacement(
             std::move(recovered)};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

@@ -1,4 +1,4 @@
-#include <mwtl/docking_native.h>
+#include <mwfl/docking_native.h>
 
 namespace {
 
@@ -17,7 +17,7 @@ HWND MakeChild(HWND parent, int id, const wchar_t* title = L"") {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     const HWND main_host = MakeTopLevel(20);
     const HWND floating_host = MakeTopLevel(550);
     if (!main_host || !floating_host) return 1;

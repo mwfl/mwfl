@@ -1,61 +1,61 @@
-# mwtl examples
+# mwfl examples
 
-The repository includes 44 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, Markdown Editor, document/MDI/Ribbon workspaces, graphics interop, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence.
+The repository includes 44 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwfl::Application` and recommended `mwfl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, Markdown Editor, document/MDI/Ribbon workspaces, graphics interop, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence.
 
 | Directory | Target | Focus |
 |---|---|---|
-| `hello` | `mwtl_hello` | Smallest complete mwtl program |
-| `application` | `mwtl_application_demo` | `mwtl::Application`, process entry, run result, and instance observation |
-| `window` | `mwtl_window_demo` | `mwtl::WindowBase`, HWND access, typed event handlers, and native messages |
-| `native_message` | `mwtl_native_message_demo` | Post and receive an application-defined `WM_APP` message |
-| `keyboard` | `mwtl_keyboard_demo` | Handle keyboard input and close with Escape |
-| `mouse` | `mwtl_mouse_demo` | Read native mouse client coordinates |
-| `resize` | `mwtl_resize_demo` | Observe native pixel dimensions and size state |
-| `timer` | `mwtl_timer_demo` | Own a window timer with `UiTimer` and `std::chrono` |
-| `paint` | `mwtl_paint_demo` | Draw directly in a native `WM_PAINT` handler |
-| `minmax` | `mwtl_minmax_demo` | Apply a minimum tracking size with `WM_GETMINMAXINFO` |
-| `close_policy` | `mwtl_close_policy_demo` | Intercept close once, then delegate to the base policy |
-| `window_state` | `mwtl_window_state_demo` | Observe restored, minimized, and maximized states |
-| `dpi` | `mwtl_dpi_demo` | Per-window DPI context and the default `WM_DPICHANGED` rectangle policy |
-| `window_options` | `mwtl_window_options_demo` | Class traits, styles, centered DIP client bounds, and native resources |
-| `wait_aware` | `mwtl_wait_aware_demo` | A non-busy wait-aware pump with idle callbacks |
-| `wakeup` | `mwtl_wakeup_demo` | A lifetime-safe worker-to-window wake token |
-| `com_sta` | `mwtl_com_sta_demo` | Application-owned COM STA initialization and cleanup |
-| `controls` | `mwtl_controls_demo` | All ten supported wrappers: text, buttons, grouping, choices, list, progress, slider, commands, and timer |
-| `common_controls` | `mwtl_common_controls_demo` | TreeView, ListView, Toolbar, DateTimePicker, and every specialized Common Controls family |
-| `self_drawn_host` | `mwtl_self_drawn_host_demo` | Worker-driven dirty frames, GDI paint, wake token, and wait-aware pump |
-| `system_lifecycle` | `mwtl_system_lifecycle_demo` | Power, display, settings, IME, end-session, and accessibility hand-off messages |
-| `hot_corners` | `mwtl_hot_corners_demo` | Multi-monitor hot corners using virtual-desktop coordinates and dwell detection |
-| `form_binding` | `mwtl_form_binding_demo` | Live bindings, validation, model preview, and explicit `Push()`/`Pull()` flow |
-| `commands` | `mwtl_commands_demo` | Shared command state across menu, toolbar, and keyboard accelerators |
-| `desktop_integration` | `mwtl_desktop_integration_demo` | Modern dialogs, clipboard, file drops, task dialogs, and persistent placement |
-| `document_state` | `mwtl_document_state_demo` | Dirty document state and safe user transition decisions |
-| `notepad` | `mwtl_notepad` | Complete accessible Unicode SDI editor with atomic file operations |
-| `document_workspace` | `mwtl_document_workspace` | Two-window multi-document editor with transfer, sessions, and coordinated close |
-| `mdi_workspace` | `mwtl_mdi_workspace` | Native MDI frame/child composition with commands, coordinated close, and GUI self-test |
-| `ribbon_workspace` | `mwtl_ribbon_workspace` | Windows Ribbon command routing, modes, contextual UI, and workspace integration |
-| `graphics_interop` | `mwtl_graphics_interop` | Direct2D, Direct3D 11, WIC, and native-host interoperability in one application |
-| `appearance` | `mwtl_appearance_demo` | System/light/dark title bars, backdrops, corners, and accessibility helpers |
-| `layout_gallery` | `mwtl_layout_gallery_demo` | Responsive nested rows, columns, overlays, sizing, alignment, and dynamic content |
-| `property_sheet` | `mwtl_property_sheet_demo` | Persistent multi-page Settings with validation and Apply/OK/Cancel |
-| `explorer` | `mwtl_explorer_demo` | Stable TreeView and virtual ListView in a complete Explorer-style shell |
-| `drawing` | `mwtl_drawing_demo` | DPI-aware Direct2D drawing, resource recovery, and SVG export |
-| `image_viewer` | `mwtl_image_viewer_demo` | WIC image decode, Fit/zoom/pan, color policy, and D2D recovery |
-| `printing` | `mwtl_printing_demo` | Shared pagination, preview zoom/navigation, printer settings, safe printing, and Esc cancellation |
-| `ole_drag_drop` | `mwtl_ole_drag_drop_demo` | Unicode, files, custom OLE data, mouse drag/drop, and keyboard alternatives |
-| `shell_integration` | `mwtl_shell_integration_demo` | Versioned settings, reversible association, Jump List, Recent, and taskbar recovery |
-| `code_editor` | `mwtl_code_editor_demo` | Optional pinned Scintilla editor with Unicode files, search/replace, notifications, and dirty state |
-| `browser` | `mwtl_browser_demo` | Optional pinned WebView2 browser with offline welcome, runtime diagnostics, navigation, and process recovery |
-| `markdown_editor` | `mwtl_markdown_editor` | Product-style local Markdown editor composing Scintilla, Lexilla syntax coloring, WebView2, split layout, safe rendering, and atomic document operations |
-| `docking_workspace` | `mwtl_docking_workspace_demo` | IDE-style document/tool workspace with docking, floating, auto-hide, keyboard navigation, and session restore |
+| `hello` | `mwfl_hello` | Smallest complete mwfl program |
+| `application` | `mwfl_application_demo` | `mwfl::Application`, process entry, run result, and instance observation |
+| `window` | `mwfl_window_demo` | `mwfl::WindowBase`, HWND access, typed event handlers, and native messages |
+| `native_message` | `mwfl_native_message_demo` | Post and receive an application-defined `WM_APP` message |
+| `keyboard` | `mwfl_keyboard_demo` | Handle keyboard input and close with Escape |
+| `mouse` | `mwfl_mouse_demo` | Read native mouse client coordinates |
+| `resize` | `mwfl_resize_demo` | Observe native pixel dimensions and size state |
+| `timer` | `mwfl_timer_demo` | Own a window timer with `UiTimer` and `std::chrono` |
+| `paint` | `mwfl_paint_demo` | Draw directly in a native `WM_PAINT` handler |
+| `minmax` | `mwfl_minmax_demo` | Apply a minimum tracking size with `WM_GETMINMAXINFO` |
+| `close_policy` | `mwfl_close_policy_demo` | Intercept close once, then delegate to the base policy |
+| `window_state` | `mwfl_window_state_demo` | Observe restored, minimized, and maximized states |
+| `dpi` | `mwfl_dpi_demo` | Per-window DPI context and the default `WM_DPICHANGED` rectangle policy |
+| `window_options` | `mwfl_window_options_demo` | Class traits, styles, centered DIP client bounds, and native resources |
+| `wait_aware` | `mwfl_wait_aware_demo` | A non-busy wait-aware pump with idle callbacks |
+| `wakeup` | `mwfl_wakeup_demo` | A lifetime-safe worker-to-window wake token |
+| `com_sta` | `mwfl_com_sta_demo` | Application-owned COM STA initialization and cleanup |
+| `controls` | `mwfl_controls_demo` | All ten supported wrappers: text, buttons, grouping, choices, list, progress, slider, commands, and timer |
+| `common_controls` | `mwfl_common_controls_demo` | TreeView, ListView, Toolbar, DateTimePicker, and every specialized Common Controls family |
+| `self_drawn_host` | `mwfl_self_drawn_host_demo` | Worker-driven dirty frames, GDI paint, wake token, and wait-aware pump |
+| `system_lifecycle` | `mwfl_system_lifecycle_demo` | Power, display, settings, IME, end-session, and accessibility hand-off messages |
+| `hot_corners` | `mwfl_hot_corners_demo` | Multi-monitor hot corners using virtual-desktop coordinates and dwell detection |
+| `form_binding` | `mwfl_form_binding_demo` | Live bindings, validation, model preview, and explicit `Push()`/`Pull()` flow |
+| `commands` | `mwfl_commands_demo` | Shared command state across menu, toolbar, and keyboard accelerators |
+| `desktop_integration` | `mwfl_desktop_integration_demo` | Modern dialogs, clipboard, file drops, task dialogs, and persistent placement |
+| `document_state` | `mwfl_document_state_demo` | Dirty document state and safe user transition decisions |
+| `notepad` | `mwfl_notepad` | Complete accessible Unicode SDI editor with atomic file operations |
+| `document_workspace` | `mwfl_document_workspace` | Two-window multi-document editor with transfer, sessions, and coordinated close |
+| `mdi_workspace` | `mwfl_mdi_workspace` | Native MDI frame/child composition with commands, coordinated close, and GUI self-test |
+| `ribbon_workspace` | `mwfl_ribbon_workspace` | Windows Ribbon command routing, modes, contextual UI, and workspace integration |
+| `graphics_interop` | `mwfl_graphics_interop` | Direct2D, Direct3D 11, WIC, and native-host interoperability in one application |
+| `appearance` | `mwfl_appearance_demo` | System/light/dark title bars, backdrops, corners, and accessibility helpers |
+| `layout_gallery` | `mwfl_layout_gallery_demo` | Responsive nested rows, columns, overlays, sizing, alignment, and dynamic content |
+| `property_sheet` | `mwfl_property_sheet_demo` | Persistent multi-page Settings with validation and Apply/OK/Cancel |
+| `explorer` | `mwfl_explorer_demo` | Stable TreeView and virtual ListView in a complete Explorer-style shell |
+| `drawing` | `mwfl_drawing_demo` | DPI-aware Direct2D drawing, resource recovery, and SVG export |
+| `image_viewer` | `mwfl_image_viewer_demo` | WIC image decode, Fit/zoom/pan, color policy, and D2D recovery |
+| `printing` | `mwfl_printing_demo` | Shared pagination, preview zoom/navigation, printer settings, safe printing, and Esc cancellation |
+| `ole_drag_drop` | `mwfl_ole_drag_drop_demo` | Unicode, files, custom OLE data, mouse drag/drop, and keyboard alternatives |
+| `shell_integration` | `mwfl_shell_integration_demo` | Versioned settings, reversible association, Jump List, Recent, and taskbar recovery |
+| `code_editor` | `mwfl_code_editor_demo` | Optional pinned Scintilla editor with Unicode files, search/replace, notifications, and dirty state |
+| `browser` | `mwfl_browser_demo` | Optional pinned WebView2 browser with offline welcome, runtime diagnostics, navigation, and process recovery |
+| `markdown_editor` | `mwfl_markdown_editor` | Product-style local Markdown editor composing Scintilla, Lexilla syntax coloring, WebView2, split layout, safe rendering, and atomic document operations |
+| `docking_workspace` | `mwfl_docking_workspace_demo` | IDE-style document/tool workspace with docking, floating, auto-hide, keyboard navigation, and session restore |
 
-Configure with `MWTL_BUILD_EXAMPLES=ON`, then build one target or all targets:
+Configure with `MWFL_BUILD_EXAMPLES=ON`, then build one target or all targets:
 
 ```powershell
-cmake -S . -B build/x64 -G "Visual Studio 18 2026" -A x64 -DMWTL_BUILD_EXAMPLES=ON
-cmake --build build/x64 --config Debug --target mwtl_application_demo
-cmake --build build/x64 --config Debug --target mwtl_window_demo
-cmake --build build/x64 --config Debug --target mwtl_timer_demo
+cmake -S . -B build/x64 -G "Visual Studio 18 2026" -A x64 -DMWFL_BUILD_EXAMPLES=ON
+cmake --build build/x64 --config Debug --target mwfl_application_demo
+cmake --build build/x64 --config Debug --target mwfl_window_demo
+cmake --build build/x64 --config Debug --target mwfl_timer_demo
 ```
 
 With the repository presets, the equivalent full examples/test build is:
@@ -70,9 +70,9 @@ All examples use the shared Per-Monitor V2 manifest in `example.manifest`.
 Run a target from its configuration directory, for example:
 
 ```powershell
-./build/x64/examples/paint/Debug/mwtl_paint_demo.exe
-./build/x64/examples/native_message/Debug/mwtl_native_message_demo.exe
-./build/x64/examples/timer/Debug/mwtl_timer_demo.exe
+./build/x64/examples/paint/Debug/mwfl_paint_demo.exe
+./build/x64/examples/native_message/Debug/mwfl_native_message_demo.exe
+./build/x64/examples/timer/Debug/mwfl_timer_demo.exe
 ```
 
 The examples remain native: every component is a real child HWND and direct Win32/WTL interoperability remains available. The wrappers provide ownership and typed ergonomics, not a closed rendering framework.

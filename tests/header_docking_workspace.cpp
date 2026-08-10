@@ -1,3 +1,3 @@
-#include <mwtl/docking_workspace.h>
+#include <mwfl/docking_workspace.h>
 
-static_assert(sizeof(mwtl::DockPanelId) == sizeof(std::uint64_t));
+static_assert(sizeof(mwfl::DockPanelId) == sizeof(std::uint64_t));

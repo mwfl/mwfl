@@ -1,11 +1,11 @@
-#include <mwtl/ribbon.h>
+#include <mwfl/ribbon.h>
 
 #include <array>
 #include <stdexcept>
 #include <vector>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     RibbonCommandModel model;
     if (model.Add({{}, {1}}).status != RibbonModelStatus::invalid_argument ||
         model.Add({{10}, {}, 1}).status != RibbonModelStatus::invalid_argument ||

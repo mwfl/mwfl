@@ -1,3 +1,3 @@
 #pragma once
 
-#define IDI_MWTL_MARKDOWN 101
+#define IDI_MWFL_MARKDOWN 101

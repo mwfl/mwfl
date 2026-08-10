@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include "settings_model.h"
 
@@ -9,13 +9,13 @@
 #include <utility>
 #include <vector>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 namespace {
 
 constexpr UINT kRunSelfTest = WM_APP + 0x130;
 bool g_self_test = false;
-std::wstring g_settings_key = L"Software\\mwtl\\Examples\\Settings\\1";
+std::wstring g_settings_key = L"Software\\mwfl\\Examples\\Settings\\1";
 
 bool HasAccessibleName(HWND window, std::wstring_view expected) {
     IAccessible* accessible = nullptr;
@@ -34,24 +34,24 @@ bool HasAccessibleName(HWND window, std::wstring_view expected) {
     return matches;
 }
 
-class PropertySheetWindow final : public mwtl::WindowBase {
+class PropertySheetWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        SetTitle(L"mwtl Settings");
-        mwtl::ControlHost ui{*this};
+        SetTitle(L"mwfl Settings");
+        mwfl::ControlHost ui{*this};
         ui.Add(summary_, L"");
         ui.Add(open_, L"Open settings");
-        SetLayout(mwtl::Column()
+        SetLayout(mwfl::Column()
                       .Margin(24.0_dip)
                       .Gap(12.0_dip)
-                      .Add(summary_, mwtl::Fixed(40.0_dip))
-                      .Add(open_, mwtl::Fixed(36.0_dip)));
-        mwtl::SetAccessibleName(open_.GetHwnd(), L"Open application settings");
+                      .Add(summary_, mwfl::Fixed(40.0_dip))
+                      .Add(open_, mwfl::Fixed(36.0_dip)));
+        mwfl::SetAccessibleName(open_.GetHwnd(), L"Open application settings");
         const auto loaded = settings_example::LoadSettings(HKEY_CURRENT_USER, g_settings_key);
         if (loaded.Succeeded()) {
             committed_ = *loaded.value;
         } else if (loaded.status != settings_example::StoreStatus::not_found) {
-            mwtl::ShowTaskDialog(GetHwnd(), L"mwtl Settings", L"Saved settings were not loaded",
+            mwfl::ShowTaskDialog(GetHwnd(), L"mwfl Settings", L"Saved settings were not loaded",
                                  L"The stored data was inaccessible or invalid. Defaults are in use.");
         }
         UpdateSummary();
@@ -59,32 +59,32 @@ public:
             throw std::runtime_error("post Settings self-test message failed");
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
-        if (!event.IsClicked(open_)) return mwtl::EventResult::Propagate();
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
+        if (!event.IsClicked(open_)) return mwfl::EventResult::Propagate();
         OpenSettings();
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnClose() override {
+    mwfl::EventResult OnClose() override {
         sheet_.Close();
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
         if (event.id == WM_THEMECHANGED || event.id == WM_SETTINGCHANGE) {
-            static_cast<void>(mwtl::ApplyWindowAppearance(GetHwnd()));
+            static_cast<void>(mwfl::ApplyWindowAppearance(GetHwnd()));
             ::RedrawWindow(GetHwnd(), nullptr, nullptr,
                            RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        if (event.id != kRunSelfTest) return mwtl::EventResult::Propagate();
+        if (event.id != kRunSelfTest) return mwfl::EventResult::Propagate();
         try {
             RunSelfTest();
         } catch (...) {
             ::RegDeleteTreeW(HKEY_CURRENT_USER, g_settings_key.c_str());
             ::PostQuitMessage(1);
         }
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
 private:
@@ -95,21 +95,21 @@ private:
         }
         pages_.clear();
         pages_.reserve(2);
-        pages_.emplace_back(mwtl::PropertyPageOptions{
+        pages_.emplace_back(mwfl::PropertyPageOptions{
             {1},
             L"Profile",
             {
                 .initialize =
                     [this](HWND page) {
-                        mwtl::ControlHost ui{page};
+                        mwfl::ControlHost ui{page};
                         ui.Add(name_label_, {101}, L"Display name", {});
                         ui.Add(name_, {102}, committed_.display_name, {});
-                        mwtl::SetAccessibleName(name_.GetHwnd(), L"Display name");
-                        return pages_[0].SetLayout(mwtl::Column()
+                        mwfl::SetAccessibleName(name_.GetHwnd(), L"Display name");
+                        return pages_[0].SetLayout(mwfl::Column()
                                                        .Margin(16.0_dip)
                                                        .Gap(8.0_dip)
-                                                       .Add(name_label_, mwtl::Fixed(24.0_dip))
-                                                       .Add(name_, mwtl::Fixed(34.0_dip)));
+                                                       .Add(name_label_, mwfl::Fixed(24.0_dip))
+                                                       .Add(name_, mwfl::Fixed(34.0_dip)));
                     },
                 .command =
                     [this](HWND, WORD id, WORD notification) {
@@ -122,12 +122,12 @@ private:
                         auto candidate = committed_;
                         candidate.display_name = name_.GetText();
                         if (settings_example::IsValid(candidate))
-                            return mwtl::PropertyPageValidation::valid;
-                        mwtl::ShowTaskDialog(page, L"Check the profile",
+                            return mwfl::PropertyPageValidation::valid;
+                        mwfl::ShowTaskDialog(page, L"Check the profile",
                                              L"Display name is required",
                                              L"Enter a non-blank display name of at most 128 characters.");
                         name_.Focus();
-                        return mwtl::PropertyPageValidation::invalid;
+                        return mwfl::PropertyPageValidation::invalid;
                     },
                 .apply =
                     [this](HWND page) {
@@ -137,17 +137,17 @@ private:
                     },
                 .reset = [this](HWND) { name_.SetText(committed_.display_name); },
             }});
-        pages_.emplace_back(mwtl::PropertyPageOptions{
+        pages_.emplace_back(mwfl::PropertyPageOptions{
             {2},
             L"Notifications",
             {
                 .initialize =
                     [this](HWND page) {
-                        mwtl::ControlHost ui{page};
+                        mwfl::ControlHost ui{page};
                         ui.Add(notifications_, {201}, L"Show activity notifications", {});
                         notifications_.SetChecked(committed_.show_notifications);
-                        return pages_[1].SetLayout(mwtl::Column().Margin(16.0_dip).Add(
-                            notifications_, mwtl::Fixed(32.0_dip)));
+                        return pages_[1].SetLayout(mwfl::Column().Margin(16.0_dip).Add(
+                            notifications_, mwfl::Fixed(32.0_dip)));
                     },
                 .command =
                     [this](HWND, WORD id, WORD notification) {
@@ -155,7 +155,7 @@ private:
                         pages_[1].SetDirty();
                         return true;
                     },
-                .validate = [](HWND) { return mwtl::PropertyPageValidation::valid; },
+                .validate = [](HWND) { return mwfl::PropertyPageValidation::valid; },
                 .apply =
                     [this](HWND page) {
                         auto candidate = committed_;
@@ -168,7 +168,7 @@ private:
             }});
         if (!sheet_.CreateModeless({.owner = GetHwnd(), .title = L"Application settings"},
                                    pages_)) {
-            mwtl::ShowTaskDialog(GetHwnd(), L"mwtl", L"Settings could not be opened",
+            mwfl::ShowTaskDialog(GetHwnd(), L"mwfl", L"Settings could not be opened",
                                  L"The native property sheet returned an error.");
         }
     }
@@ -177,8 +177,8 @@ private:
         const auto saved =
             settings_example::SaveSettings(HKEY_CURRENT_USER, g_settings_key, candidate);
         if (!saved.Succeeded()) {
-            mwtl::ShowTaskDialog(
-                page, L"mwtl Settings", L"Settings were not saved",
+            mwfl::ShowTaskDialog(
+                page, L"mwfl Settings", L"Settings were not saved",
                 L"Check that the current account can write its user settings, then try again.");
             return false;
         }
@@ -238,12 +238,12 @@ private:
     }
 
     settings_example::Settings committed_;
-    mwtl::Label summary_, name_label_;
-    mwtl::Button open_;
-    mwtl::TextBox name_;
-    mwtl::CheckBox notifications_;
-    std::vector<mwtl::PropertyPage> pages_;
-    mwtl::PropertySheetDialog sheet_;
+    mwfl::Label summary_, name_label_;
+    mwfl::Button open_;
+    mwfl::TextBox name_;
+    mwfl::CheckBox notifications_;
+    std::vector<mwfl::PropertyPage> pages_;
+    mwfl::PropertySheetDialog sheet_;
 };
 
 }  // namespace
@@ -251,13 +251,13 @@ private:
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     g_self_test = wcsstr(::GetCommandLineW(), L"--self-test") != nullptr;
     if (g_self_test) {
-        g_settings_key = L"Software\\mwtl\\Tests\\SettingsApplicationGui-" +
+        g_settings_key = L"Software\\mwfl\\Tests\\SettingsApplicationGui-" +
                          std::to_wstring(::GetCurrentProcessId());
         ::RegDeleteTreeW(HKEY_CURRENT_USER, g_settings_key.c_str());
     }
-    return mwtl::RunApplication<PropertySheetWindow>(
+    return mwfl::RunApplication<PropertySheetWindow>(
         instance, show,
-        {.title = L"mwtl Settings",
+        {.title = L"mwfl Settings",
          .initial_bounds = {{0.0_dip, 0.0_dip}, {520.0_dip, 220.0_dip}},
          .use_default_bounds = false});
 }

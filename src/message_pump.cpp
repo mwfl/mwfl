@@ -1,4 +1,4 @@
-#include <mwtl/message_pump.h>
+#include <mwfl/message_pump.h>
 
 #include "detail/diagnostics.h"
 
@@ -7,7 +7,7 @@
 #include <exception>
 #include <limits>
 
-namespace mwtl {
+namespace mwfl {
 
 namespace {
 
@@ -90,4 +90,4 @@ int WaitAwareMessagePump::Run(WTL::CMessageLoop& wtl_loop) noexcept {
     return EXIT_FAILURE;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

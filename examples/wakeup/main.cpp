@@ -1,14 +1,14 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <chrono>
 #include <cstdlib>
 #include <thread>
 
-class WakeWindow final : public mwtl::WindowBase {
+class WakeWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         SetTitle(L"Worker thread will wake this HWND safely");
-        const mwtl::WindowWakeup wake = GetWakeup();
+        const mwfl::WindowWakeup wake = GetWakeup();
         worker_ = std::jthread([wake](std::stop_token stop) {
             using namespace std::chrono_literals;
             if (!stop.stop_requested()) {
@@ -20,9 +20,9 @@ public:
         });
     }
 
-    mwtl::EventResult OnWakeup() noexcept override {
+    mwfl::EventResult OnWakeup() noexcept override {
         SetTitle(L"Safe cross-thread wake-up received");
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
 private:
@@ -30,5 +30,5 @@ private:
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<WakeWindow>(instance, show_command);
+    return mwfl::RunApplication<WakeWindow>(instance, show_command);
 }

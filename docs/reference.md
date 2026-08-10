@@ -1,60 +1,60 @@
 # Public header reference
 
-This index is the searchable map of the current mwtl public surface. Include the
-smallest header that owns the API; use `mwtl/mwtl.h` only when broad convenience
+This index is the searchable map of the current mwfl public surface. Include the
+smallest header that owns the API; use `mwfl/mwfl.h` only when broad convenience
 is more important than compile-time isolation.
 
 | Header | Primary API |
 |---|---|
-| `mwtl/application.h` | `Application`, `ApplicationOptions`, `RunApplication` |
-| `mwtl/appearance.h` | `AppearanceOptions`, `ApplyWindowAppearance`, accessibility helpers |
-| `mwtl/binding.h` | `ValueBinding`, `ValidationResult`, `ChangeGate` |
-| `mwtl/command.h` | `Command`, `CommandShortcut`, `CommandSet` |
-| `mwtl/command_controls.h` | `Toolbar`, `StatusBar`, `Rebar`, `Pager`, `Animation` |
-| `mwtl/concepts.h` | `WindowLike`, `ControlLike` |
-| `mwtl/control_batch.h` | checked range population helpers |
-| `mwtl/control_host.h` | concise checked child-control construction |
-| `mwtl/control_resources.h` | task dialogs, tooltips, image lists, flat scroll bars |
-| `mwtl/controls.h` | core native child controls and `NativeControl` |
-| `mwtl/dialog.h` | retained-layout modal and modeless native dialogs with structured results |
-| `mwtl/desktop.h` | menus, accelerators, dialogs, clipboard, shell and placement helpers |
-| `mwtl/document.h` | `DocumentState`, dirty tracking, and unsaved-transition decisions |
-| `mwtl/docking_workspace.h` | stable-ID panel/group/split graph and transactional mutations |
-| `mwtl/docking_native.h` | rollback-safe borrowed-HWND docking projection |
-| `mwtl/docking_drag.h` | cancellable target/proposal/commit drag sessions |
-| `mwtl/docking_preview.h` | nonactivating DPI-aware native docking preview |
-| `mwtl/docking_keyboard.h` | spatial and sequential accessible docking navigation |
-| `mwtl/docking_floating.h` | owned auxiliary floating host with borrowed content |
-| `mwtl/docking_auto_hide.h` | deterministic auto-hide timing and pin policy |
-| `mwtl/docking_monitor.h` | injectable floating-placement monitor recovery |
-| `mwtl/docking_session.h` | bounded versioned pointer-free layout persistence |
-| `mwtl/dpi.h` | DIP geometry and `DpiContext` |
-| `mwtl/error.h` | checked-operation `Error` and diagnostic context |
-| `mwtl/events.h` | typed message events and `EventResult` |
-| `mwtl/graphics.h` | move-only enhanced metafiles, explicit GDI+ startup, and bounded PNG export |
-| `mwtl/help.h` | validated CHM/local HTML/HTTPS Help requests and structured launch results |
-| `mwtl/input_controls.h` | date, calendar, hot-key, IP, up-down and link controls |
-| `mwtl/layout.h` | row/column/overlay retained layout |
-| `mwtl/message_pump.h` | default and wait-aware message pumps |
-| `mwtl/mdi.h` | optional stable-ID legacy MDI model and owned native MDICLIENT/children |
-| `mwtl/must.h` | `Must` and `MustInvoke` checked adapters |
-| `mwtl/navigation_controls.h` | tree, list, header, tab and extended combo controls |
-| `mwtl/property_sheet.h` | stable page state plus modal/modeless native property sheets |
-| `mwtl/recent_files.h` | bounded recent-file model and versioned registry persistence |
-| `mwtl/ribbon.h` | optional pointer-free Ribbon command model and STA Windows Ribbon host |
-| `mwtl/shell_integration.h` | Jump Lists, taskbar progress/overlays/thumbnail buttons/tabs, and Explorer recovery |
-| `mwtl/single_instance.h` | named-instance ownership and bounded activation forwarding |
-| `mwtl/tab_workspace.h` | stable-ID tab state, selection, ordering, and dirty metadata |
-| `mwtl/splitter.h` | native two-pane composition, keyboard/mouse movement, constraints, and pure geometry |
-| `mwtl/text_file.h` | Unicode text detection, file stamps, and atomic save |
-| `mwtl/text_history.h` | bounded text undo/redo history with saved-state tracking |
-| `mwtl/text_search.h` | deterministic forward/backward find and replace-all helpers |
-| `mwtl/timer.h` | move-only `UiTimer` |
-| `mwtl/tray_icon.h` | RAII notification-area identity, events, notifications, and Explorer recovery |
-| `mwtl/wakeup.h` | lifetime-safe worker-to-window notification |
-| `mwtl/window.h` | `Window<T>`, `WindowBase`, typed dispatch and layout ownership |
-| `mwtl/window_options.h` | window styles, bounds, resources and appearance |
-| `mwtl/mwtl.h` | umbrella include |
+| `mwfl/application.h` | `Application`, `ApplicationOptions`, `RunApplication` |
+| `mwfl/appearance.h` | `AppearanceOptions`, `ApplyWindowAppearance`, accessibility helpers |
+| `mwfl/binding.h` | `ValueBinding`, `ValidationResult`, `ChangeGate` |
+| `mwfl/command.h` | `Command`, `CommandShortcut`, `CommandSet` |
+| `mwfl/command_controls.h` | `Toolbar`, `StatusBar`, `Rebar`, `Pager`, `Animation` |
+| `mwfl/concepts.h` | `WindowLike`, `ControlLike` |
+| `mwfl/control_batch.h` | checked range population helpers |
+| `mwfl/control_host.h` | concise checked child-control construction |
+| `mwfl/control_resources.h` | task dialogs, tooltips, image lists, flat scroll bars |
+| `mwfl/controls.h` | core native child controls and `NativeControl` |
+| `mwfl/dialog.h` | retained-layout modal and modeless native dialogs with structured results |
+| `mwfl/desktop.h` | menus, accelerators, dialogs, clipboard, shell and placement helpers |
+| `mwfl/document.h` | `DocumentState`, dirty tracking, and unsaved-transition decisions |
+| `mwfl/docking_workspace.h` | stable-ID panel/group/split graph and transactional mutations |
+| `mwfl/docking_native.h` | rollback-safe borrowed-HWND docking projection |
+| `mwfl/docking_drag.h` | cancellable target/proposal/commit drag sessions |
+| `mwfl/docking_preview.h` | nonactivating DPI-aware native docking preview |
+| `mwfl/docking_keyboard.h` | spatial and sequential accessible docking navigation |
+| `mwfl/docking_floating.h` | owned auxiliary floating host with borrowed content |
+| `mwfl/docking_auto_hide.h` | deterministic auto-hide timing and pin policy |
+| `mwfl/docking_monitor.h` | injectable floating-placement monitor recovery |
+| `mwfl/docking_session.h` | bounded versioned pointer-free layout persistence |
+| `mwfl/dpi.h` | DIP geometry and `DpiContext` |
+| `mwfl/error.h` | checked-operation `Error` and diagnostic context |
+| `mwfl/events.h` | typed message events and `EventResult` |
+| `mwfl/graphics.h` | move-only enhanced metafiles, explicit GDI+ startup, and bounded PNG export |
+| `mwfl/help.h` | validated CHM/local HTML/HTTPS Help requests and structured launch results |
+| `mwfl/input_controls.h` | date, calendar, hot-key, IP, up-down and link controls |
+| `mwfl/layout.h` | row/column/overlay retained layout |
+| `mwfl/message_pump.h` | default and wait-aware message pumps |
+| `mwfl/mdi.h` | optional stable-ID legacy MDI model and owned native MDICLIENT/children |
+| `mwfl/must.h` | `Must` and `MustInvoke` checked adapters |
+| `mwfl/navigation_controls.h` | tree, list, header, tab and extended combo controls |
+| `mwfl/property_sheet.h` | stable page state plus modal/modeless native property sheets |
+| `mwfl/recent_files.h` | bounded recent-file model and versioned registry persistence |
+| `mwfl/ribbon.h` | optional pointer-free Ribbon command model and STA Windows Ribbon host |
+| `mwfl/shell_integration.h` | Jump Lists, taskbar progress/overlays/thumbnail buttons/tabs, and Explorer recovery |
+| `mwfl/single_instance.h` | named-instance ownership and bounded activation forwarding |
+| `mwfl/tab_workspace.h` | stable-ID tab state, selection, ordering, and dirty metadata |
+| `mwfl/splitter.h` | native two-pane composition, keyboard/mouse movement, constraints, and pure geometry |
+| `mwfl/text_file.h` | Unicode text detection, file stamps, and atomic save |
+| `mwfl/text_history.h` | bounded text undo/redo history with saved-state tracking |
+| `mwfl/text_search.h` | deterministic forward/backward find and replace-all helpers |
+| `mwfl/timer.h` | move-only `UiTimer` |
+| `mwfl/tray_icon.h` | RAII notification-area identity, events, notifications, and Explorer recovery |
+| `mwfl/wakeup.h` | lifetime-safe worker-to-window notification |
+| `mwfl/window.h` | `Window<T>`, `WindowBase`, typed dispatch and layout ownership |
+| `mwfl/window_options.h` | window styles, bounds, resources and appearance |
+| `mwfl/mwfl.h` | umbrella include |
 
 Detailed semantics and examples are in [api.md](api.md). Ownership, error,
 threading, and evolution rules are in [design.md](design.md) and

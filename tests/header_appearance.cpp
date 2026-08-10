@@ -1,6 +1,6 @@
-#include <mwtl/appearance.h>
+#include <mwfl/appearance.h>
 
 void HeaderAppearanceCompiles() {
-    mwtl::AppearanceOptions options;
+    mwfl::AppearanceOptions options;
     static_cast<void>(options);
 }

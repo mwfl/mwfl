@@ -10,8 +10,8 @@ Open **Developer PowerShell for VS 2026** at the repository root:
 
 ```powershell
 cmake --preset vs2026-x64
-cmake --build --preset vs2026-x64-debug --target mwtl_document_workspace
-ctest --preset vs2026-x64-debug -R '^mwtl\.document_workspace_gui$' --output-on-failure
+cmake --build --preset vs2026-x64-debug --target mwfl_document_workspace
+ctest --preset vs2026-x64-debug -R '^mwfl\.document_workspace_gui$' --output-on-failure
 ```
 
 The self-test is offline and non-interactive. It creates two hidden top-level
@@ -26,7 +26,7 @@ undo buffers, file stamps, and page HWND ownership in the application keyed by
 `DocumentId`. Never put a C++ pointer in `TCITEM::lParam`.
 
 ```cpp
-mwtl::DocumentWorkspaceModel workspace{{1}, 8};
+mwfl::DocumentWorkspaceModel workspace{{1}, 8};
 std::unordered_map<std::uint64_t, DocumentContent> contents;
 workspace.Add({{42}, L"notes.txt", L"C:\\Docs\\notes.txt"});
 contents[42] = {L"application-owned text", stamp};
@@ -41,10 +41,10 @@ Create the `TabControl` and edit pages as siblings with the same workspace
 parent. Attach and bind only borrowed HWNDs:
 
 ```cpp
-mwtl::DocumentTabWorkspaceAdapter tabs;
-Must(tabs.Attach(tab_control) == mwtl::DocumentTabStatus::success, "attach tabs");
+mwfl::DocumentTabWorkspaceAdapter tabs;
+Must(tabs.Attach(tab_control) == mwfl::DocumentTabStatus::success, "attach tabs");
 Must(tabs.BindPage(document_id, editor_hwnd) ==
-     mwtl::DocumentTabStatus::success, "bind editor");
+     mwfl::DocumentTabStatus::success, "bind editor");
 Must(tabs.Synchronize(workspace), "project document tabs");
 ```
 
@@ -59,14 +59,14 @@ resolve the current ID at invocation time instead of retaining a document
 pointer:
 
 ```cpp
-auto projection = mwtl::BuildActiveDocumentCommandProjection(workspace);
-Must(mwtl::ApplyActiveDocumentCommandProjection(
+auto projection = mwfl::BuildActiveDocumentCommandProjection(workspace);
+Must(mwfl::ApplyActiveDocumentCommandProjection(
          commands, {kSave, kClose, kUndo, kRedo}, projection) ==
-     mwtl::DocumentCommandProjectionStatus::success,
+     mwfl::DocumentCommandProjectionStatus::success,
      "project commands");
 
-commands.Add(mwtl::Command(kSave, L"Save", [&] {
-    mwtl::RouteActiveDocument(workspace, SaveByStableId);
+commands.Add(mwfl::Command(kSave, L"Save", [&] {
+    mwfl::RouteActiveDocument(workspace, SaveByStableId);
 }));
 ```
 
@@ -100,10 +100,10 @@ explicit limits. Malformed, unsupported, duplicate, truncated, or oversized
 state never mutates a workspace.
 
 ```cpp
-mwtl::DocumentSession session;
-session.workspaces.push_back(mwtl::CaptureWorkspaceSession(left));
-session.workspaces.push_back(mwtl::CaptureWorkspaceSession(right));
-mwtl::SaveDocumentSessionAtomic(session_path, session);
+mwfl::DocumentSession session;
+session.workspaces.push_back(mwfl::CaptureWorkspaceSession(left));
+session.workspaces.push_back(mwfl::CaptureWorkspaceSession(right));
+mwfl::SaveDocumentSessionAtomic(session_path, session);
 ```
 
 Restore into empty matching models with a validator that classifies each path

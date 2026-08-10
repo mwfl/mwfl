@@ -1,13 +1,13 @@
-#include <mwtl/docking_floating.h>
+#include <mwfl/docking_floating.h>
 
-#include <mwtl/dpi.h>
+#include <mwfl/dpi.h>
 
 #include <algorithm>
 #include <cmath>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
-constexpr wchar_t class_name[] = L"mwtl.DockFloatingWindow";
+constexpr wchar_t class_name[] = L"mwfl.DockFloatingWindow";
 
 DockFloatingWindowResult Result(
     DockFloatingWindowStatus status, DWORD error = ERROR_SUCCESS) noexcept {
@@ -239,4 +239,4 @@ LRESULT CALLBACK DockFloatingWindow::WindowProcedure(
     return ::DefWindowProcW(window, message, wparam, lparam);
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

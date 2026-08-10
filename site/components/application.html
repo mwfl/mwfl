@@ -3,43 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="mwtl::Application manages the WTL module, message loop, main window, and cleanup on every failure path.">
-  <link rel="canonical" href="https://everettjf.github.io/mwtl/components/application.html">
-  <title>Application — mwtl</title>
+  <meta name="description" content="mwfl::Application manages the WTL module, message loop, main window, and cleanup on every failure path.">
+  <link rel="canonical" href="https://mwfl.github.io/components/application.html">
+  <title>Application — mwfl</title>
   <meta name="theme-color" content="#f7f9ff">
-  <link rel="icon" type="image/svg+xml" href="../assets/mwtl-mark.svg">
+  <link rel="icon" type="image/svg+xml" href="../assets/mwfl-mark.svg">
   <link rel="stylesheet" href="../styles.css?v=20260810a">
-  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
   <script defer src="../assets/site.js?v=20260810a"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell nav">
-      <a class="brand" href="../index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="../assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+      <a class="brand" href="../index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="../assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
       <nav class="nav-links" aria-label="Main navigation">
         <a class="active" href="index.html">Components</a>
         <a href="../tutorial.html">Get started</a>
         <a href="../changelog.html">Changelog</a>
-        <a href="https://github.com/everettjf/mwtl">GitHub</a>
+        <a href="https://github.com/mwfl/mwfl">GitHub</a>
         <button class="theme-toggle" type="button" aria-label="Toggle color theme"></button>
       </nav>
     </div>
   </header>
   <main id="main" class="shell prose">
-    <div class="eyebrow">Component</div><h1>mwtl::Application</h1>
+    <div class="eyebrow">Component</div><h1>mwfl::Application</h1>
     <p>Application is the process-entry adapter. It stores a non-owning HINSTANCE and manages the WTL CAppModule, CMessageLoop, main-window object, optional COM apartment, and reverse-order cleanup on every failure path.</p>
     <h2>Complete example</h2>
-    <pre data-title="application/main.cpp"><code>#include &lt;mwtl/mwtl.h&gt;
+    <pre data-title="application/main.cpp"><code>#include &lt;mwfl/mwfl.h&gt;
 
-class MainWindow final : public mwtl::WindowBase {
+class MainWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override { SetTitle(L"Application demo"); }
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     try {
-        mwtl::Application app(instance);
+        mwfl::Application app(instance);
         return app.Run&lt;MainWindow&gt;(show);
     } catch (...) {
         return EXIT_FAILURE;
@@ -48,12 +48,12 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     <h2>Lifetime guarantees</h2>
     <ol><li>Initialize the single WTL <code>_Module</code>.</li><li>Register the stack-owned message loop.</li><li>Construct the main-window C++ object on the stack and create its HWND.</li><li>Run the message loop and return its exit code.</li><li>On normal and controlled failure paths, remove the message loop before terminating <code>_Module</code>.</li></ol>
     <div class="callout">Application is neither copyable nor movable and manages one active run at a time. Keep a final catch boundary in wWinMain.</div>
-    <p>Repository source: <a href="https://github.com/everettjf/mwtl/tree/main/examples/application">examples/application</a></p>
+    <p>Repository source: <a href="https://github.com/mwfl/mwfl/tree/main/examples/application">examples/application</a></p>
   </main>
   <footer class="site-footer">
     <div class="shell footer">
-      <span>Next: <a href="window.html">mwtl::WindowBase</a></span>
-      <nav aria-label="Footer"><a href="index.html">Components</a><a href="https://github.com/everettjf/mwtl">GitHub</a></nav>
+      <span>Next: <a href="window.html">mwfl::WindowBase</a></span>
+      <nav aria-label="Footer"><a href="index.html">Components</a><a href="https://github.com/mwfl/mwfl">GitHub</a></nav>
     </div>
   </footer>
 </body>

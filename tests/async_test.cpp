@@ -1,11 +1,11 @@
-#include <mwtl/async.h>
+#include <mwfl/async.h>
 
 #include <atomic>
 #include <stdexcept>
 #include <thread>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     int revocations = 0;
     {
         UniqueSubscription first([&] { ++revocations; });

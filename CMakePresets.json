@@ -10,8 +10,8 @@
       "name": "repository-base",
       "hidden": true,
       "cacheVariables": {
-        "MWTL_BUILD_EXAMPLES": "ON",
-        "MWTL_BUILD_TESTS": "ON"
+        "MWFL_BUILD_EXAMPLES": "ON",
+        "MWFL_BUILD_TESTS": "ON"
       }
     },
     {
@@ -53,7 +53,7 @@
       "inherits": "vs2026-base",
       "architecture": "x64",
       "binaryDir": "${sourceDir}/build/presets/vs2026-x64-scintilla",
-      "cacheVariables": {"MWTL_BUILD_SCINTILLA": "ON"}
+      "cacheVariables": {"MWFL_BUILD_SCINTILLA": "ON"}
     },
     {
       "name": "vs2026-x64-webview2",
@@ -61,7 +61,7 @@
       "inherits": "vs2026-base",
       "architecture": "x64",
       "binaryDir": "${sourceDir}/build/presets/vs2026-x64-webview2",
-      "cacheVariables": {"MWTL_BUILD_WEBVIEW2": "ON"}
+      "cacheVariables": {"MWFL_BUILD_WEBVIEW2": "ON"}
     },
     {
       "name": "vs2026-x64-optional",
@@ -70,8 +70,8 @@
       "architecture": "x64",
       "binaryDir": "${sourceDir}/build/presets/vs2026-x64-optional",
       "cacheVariables": {
-        "MWTL_BUILD_WEBVIEW2": "ON",
-        "MWTL_BUILD_SCINTILLA": "ON"
+        "MWFL_BUILD_WEBVIEW2": "ON",
+        "MWFL_BUILD_SCINTILLA": "ON"
       }
     },
     {

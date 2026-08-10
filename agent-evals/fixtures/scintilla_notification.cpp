@@ -1,7 +1,7 @@
-#include <mwtl/mwtl.h>
-#include <mwtl/scintilla.h>
+#include <mwfl/mwfl.h>
+#include <mwfl/scintilla.h>
 
-class ScintillaFixture final : public mwtl::WindowBase {
+class ScintillaFixture final : public mwfl::WindowBase {
 public:
     bool CreateEditor(HWND parent) {
         return runtime_.LoadAdjacent() &&
@@ -9,27 +9,27 @@ public:
             editor_.ConfigureCodeEditing() && editor_.SetText(L"// 你好\n");
     }
 
-    mwtl::EventResult OnNotify(const mwtl::NotifyEvent& event) override {
-        if (!event.IsFrom(editor_)) return mwtl::EventResult::Propagate();
+    mwfl::EventResult OnNotify(const mwfl::NotifyEvent& event) override {
+        if (!event.IsFrom(editor_)) return mwfl::EventResult::Propagate();
         const auto notification = editor_.DecodeNotification(event.header);
-        if (!notification) return mwtl::EventResult::Propagate();
-        if (notification->kind == mwtl::ScintillaNotificationKind::save_point_left)
+        if (!notification) return mwfl::EventResult::Propagate();
+        if (notification->kind == mwfl::ScintillaNotificationKind::save_point_left)
             document_.MarkChanged();
-        else if (notification->kind == mwtl::ScintillaNotificationKind::save_point_reached)
+        else if (notification->kind == mwfl::ScintillaNotificationKind::save_point_reached)
             document_.MarkSaved();
-        else if (notification->kind == mwtl::ScintillaNotificationKind::modified &&
+        else if (notification->kind == mwfl::ScintillaNotificationKind::modified &&
                  notification->lines_added != 0)
             static_cast<void>(editor_.UpdateLineNumberMargin());
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
     void FindUnicode() {
-        const std::optional<mwtl::ScintillaTextRange> bytes = editor_.Find(L"你好");
+        const std::optional<mwfl::ScintillaTextRange> bytes = editor_.Find(L"你好");
         if (bytes) static_cast<void>(editor_.SetSelection(*bytes));
     }
 
 private:
-    mwtl::ScintillaRuntime runtime_;
-    mwtl::ScintillaEditor editor_;
-    mwtl::DocumentState document_;
+    mwfl::ScintillaRuntime runtime_;
+    mwfl::ScintillaEditor editor_;
+    mwfl::DocumentState document_;
 };

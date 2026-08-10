@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title description">
+  <title id="title">mwfl geometric space mark</title>
+  <desc id="description">A luminous three-dimensional octahedron on a blue-violet cosmic gradient with precise mathematical construction lines.</desc>
+  <defs>
+    <radialGradient id="space" cx="28%" cy="20%" r="105%">
+      <stop offset="0" stop-color="#8be0ff"/>
+      <stop offset="0.42" stop-color="#388ce9"/>
+      <stop offset="0.76" stop-color="#3949c9"/>
+      <stop offset="1" stop-color="#171957"/>
+    </radialGradient>
+    <linearGradient id="topLeft" x1="72" y1="57" x2="128" y2="133" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f3fdff"/>
+      <stop offset="1" stop-color="#71d9ff"/>
+    </linearGradient>
+    <linearGradient id="topRight" x1="184" y1="57" x2="128" y2="133" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a6c7ff"/>
+      <stop offset="1" stop-color="#6278f5"/>
+    </linearGradient>
+    <linearGradient id="bottomLeft" x1="72" y1="142" x2="128" y2="203" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#35b9ed"/>
+      <stop offset="1" stop-color="#1766cc"/>
+    </linearGradient>
+    <linearGradient id="bottomRight" x1="184" y1="142" x2="128" y2="203" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#493bc4"/>
+      <stop offset="1" stop-color="#252082"/>
+    </linearGradient>
+    <linearGradient id="inner" x1="104" y1="111" x2="155" y2="157" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".92"/>
+      <stop offset="1" stop-color="#8bcfff" stop-opacity=".42"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="240%">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feColorMatrix in="blur" values="0 0 0 0 0.30  0 0 0 0 0.78  0 0 0 0 1  0 0 0 .55 0"/>
+    </filter>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="200%">
+      <feDropShadow dx="0" dy="12" stdDeviation="9" flood-color="#090b3f" flood-opacity=".45"/>
+    </filter>
+  </defs>
+
+  <rect x="12" y="12" width="232" height="232" rx="58" fill="url(#space)"/>
+
+  <!-- Quiet mathematical field: concentric ratios and a logarithmic arc. -->
+  <g fill="none" stroke="#dff7ff" stroke-width="1.25" opacity=".2">
+    <circle cx="128" cy="132" r="91"/>
+    <circle cx="128" cy="132" r="56"/>
+    <circle cx="128" cy="132" r="35"/>
+    <path d="M37 132h182M128 41v182"/>
+    <path d="M57 188C34 145 51 83 103 55c43-23 98-3 111 43 11 39-13 78-50 88-30 8-59-10-66-38-6-22 8-44 29-49 17-5 34 5 38 21"/>
+  </g>
+
+  <!-- A soft aura separates the solid from the construction field. -->
+  <path d="M128 47 194 132 128 217 62 132Z" fill="#77ddff" opacity=".38" filter="url(#glow)"/>
+
+  <!-- Faceted octahedron: one continuous solid, four distinct light planes. -->
+  <g filter="url(#shadow)" stroke="#dff8ff" stroke-opacity=".55" stroke-linejoin="round" stroke-width="1.5">
+    <path d="M128 45 61 132 128 126Z" fill="url(#topLeft)"/>
+    <path d="M128 45 195 132 128 126Z" fill="url(#topRight)"/>
+    <path d="M61 132 128 211 128 126Z" fill="url(#bottomLeft)"/>
+    <path d="M195 132 128 211 128 126Z" fill="url(#bottomRight)"/>
+  </g>
+
+  <!-- Inner tetrahedral cut expresses recursion and mathematical structure. -->
+  <path d="M128 88 161 143 128 174 95 143Z" fill="url(#inner)" stroke="#ffffff" stroke-opacity=".66" stroke-width="1.5"/>
+  <path d="M128 88v86M95 143h66" fill="none" stroke="#ffffff" stroke-opacity=".45" stroke-width="1"/>
+
+  <!-- Three orbital points establish scale without turning into an illustration. -->
+  <g fill="#eafaff">
+    <circle cx="49" cy="94" r="3.5"/>
+    <circle cx="205" cy="80" r="2.5" opacity=".8"/>
+    <circle cx="203" cy="185" r="4" opacity=".92"/>
+  </g>
+</svg>

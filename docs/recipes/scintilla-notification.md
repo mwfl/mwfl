@@ -5,19 +5,19 @@ editor before handling notifications. Route `WM_NOTIFY` through the window's
 typed override:
 
 ```cpp
-mwtl::EventResult OnNotify(const mwtl::NotifyEvent& event) override {
-    if (!event.IsFrom(editor_)) return mwtl::EventResult::Propagate();
+mwfl::EventResult OnNotify(const mwfl::NotifyEvent& event) override {
+    if (!event.IsFrom(editor_)) return mwfl::EventResult::Propagate();
     const auto notification = editor_.DecodeNotification(event.header);
-    if (!notification) return mwtl::EventResult::Propagate();
+    if (!notification) return mwfl::EventResult::Propagate();
 
-    if (notification->kind == mwtl::ScintillaNotificationKind::save_point_left)
+    if (notification->kind == mwfl::ScintillaNotificationKind::save_point_left)
         document_.MarkChanged();
-    else if (notification->kind == mwtl::ScintillaNotificationKind::save_point_reached)
+    else if (notification->kind == mwfl::ScintillaNotificationKind::save_point_reached)
         document_.MarkSaved();
-    else if (notification->kind == mwtl::ScintillaNotificationKind::modified &&
+    else if (notification->kind == mwfl::ScintillaNotificationKind::modified &&
              notification->lines_added != 0)
         editor_.UpdateLineNumberMargin();
-    return mwtl::EventResult::Propagate();
+    return mwfl::EventResult::Propagate();
 }
 ```
 

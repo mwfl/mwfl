@@ -72,7 +72,7 @@ component/site catalogs synchronized.
 capability catalog. After adding or changing a capability, run
 `./scripts/generate-site-components.ps1` and commit the generated
 `site/components/catalog.html`. The generator also discovers every recipe and
-tutorial. `mwtl.site_links` fails if any capability or usage document is absent,
+tutorial. `mwfl.site_links` fails if any capability or usage document is absent,
 so Agents should update metadata rather than hand-edit generated cards.
 
 ## Adding a typed event

@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <windows.h>
 #include <oleacc.h>
@@ -26,8 +26,8 @@ HWND CreateOwner() {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
-    using mwtl::operator""_dip;
+    using namespace mwfl;
+    using mwfl::operator""_dip;
 
     const HWND owner = CreateOwner();
     if (owner == nullptr) return 1;

@@ -1,10 +1,10 @@
-#include <mwtl/docking_auto_hide.h>
+#include <mwfl/docking_auto_hide.h>
 
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 constexpr std::chrono::milliseconds maximum_duration{5000};
@@ -149,4 +149,4 @@ DockMutation MakePinDockMutation(
     return mutation;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

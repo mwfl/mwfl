@@ -1,4 +1,4 @@
-#include <mwtl/binding.h>
+#include <mwfl/binding.h>
 
 #include <cstdlib>
 
@@ -9,13 +9,13 @@ struct Field { int value = 0; };
 int main() {
     Field field{4};
     int model = 7;
-    mwtl::ValueBinding<Field, int> binding(
+    mwfl::ValueBinding<Field, int> binding(
         field, model,
         [](const Field& value) { return value.value; },
         [](Field& value, const int& input) { value.value = input; return true; },
         [](const int& input) {
-            return input >= 0 ? mwtl::ValidationResult::Accept()
-                              : mwtl::ValidationResult::Reject(L"must be positive");
+            return input >= 0 ? mwfl::ValidationResult::Accept()
+                              : mwfl::ValidationResult::Reject(L"must be positive");
         });
 
     if (!binding.Push() || field.value != 7) return EXIT_FAILURE;

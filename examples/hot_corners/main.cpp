@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include "hot_corner_model.h"
 
@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-using namespace mwtl;
+using namespace mwfl;
 using namespace std::chrono_literals;
 
 namespace {
@@ -33,7 +33,7 @@ constexpr GUID kTrayIdentity{0x6ca0ba3d,
                              0xb00e,
                              0x483f,
                              {0xa0, 0xe3, 0x95, 0xe2, 0xb1, 0xad, 0x5c, 0x8f}};
-constexpr wchar_t kRegistryKey[] = L"Software\\mwtl\\Examples\\HotCorners";
+constexpr wchar_t kRegistryKey[] = L"Software\\mwfl\\Examples\\HotCorners";
 constexpr std::array<std::uint32_t, 4> kDwellValues{200, 350, 500, 750};
 constexpr std::array<LONG, 4> kToleranceValues{1, 2, 4, 8};
 
@@ -113,7 +113,7 @@ bool IsFullscreenBusy() noexcept {
 class HotCornersWindow final : public WindowBase {
 public:
     void BuildUI() override {
-        SetTitle(L"mwtl Hot Corners - x64 multi-monitor reference");
+        SetTitle(L"mwfl Hot Corners - x64 multi-monitor reference");
         BuildMenu();
         CreateControls();
         RefreshMonitors();
@@ -429,7 +429,7 @@ private:
                           .callback_message = kTrayMessage,
                           .identity = kTrayIdentity,
                           .icon = ::LoadIconW(nullptr, IDI_APPLICATION),
-                          .tooltip = L"mwtl Hot Corners - Watching"});
+                          .tooltip = L"mwfl Hot Corners - Watching"});
     }
 
     void TogglePause() {
@@ -437,9 +437,9 @@ private:
         tracker_.Reset();
         UpdateStatus();
         const std::wstring state = manual_paused_ ? L"Paused" : L"Watching";
-        static_cast<void>(tray_.UpdateTooltip(L"mwtl Hot Corners - " + state));
+        static_cast<void>(tray_.UpdateTooltip(L"mwfl Hot Corners - " + state));
         static_cast<void>(tray_.ShowNotification(
-            {.title = L"mwtl Hot Corners", .text = state, .respect_quiet_time = true}));
+            {.title = L"mwfl Hot Corners", .text = state, .respect_quiet_time = true}));
     }
 
     void ShowTrayMenu(POINT point) {
@@ -486,7 +486,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     g_self_test = wcsstr(::GetCommandLineW(), L"--self-test") != nullptr;
     g_test_mode = g_self_test || wcsstr(::GetCommandLineW(), L"--test-mode") != nullptr;
     WindowOptions options{};
-    options.title = L"mwtl Hot Corners";
+    options.title = L"mwfl Hot Corners";
     options.initial_bounds = {{0_dip, 0_dip}, {700_dip, 410_dip}};
     options.use_default_bounds = false;
     options.appearance.color_mode = ColorMode::system;

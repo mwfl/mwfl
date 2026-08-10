@@ -1,9 +1,9 @@
-#include <mwtl/printing_settings.h>
+#include <mwfl/printing_settings.h>
 
 #include <cstddef>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     auto memory = OwnedGlobalMemory::Allocate(256);
     if (!memory || memory.Size() < 256) return 1;
     {

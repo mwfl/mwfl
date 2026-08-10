@@ -1,3 +1,3 @@
-#include <mwtl/imaging.h>
+#include <mwfl/imaging.h>
 
-static_assert(static_cast<bool>(mwtl::DecodedImage{}) == false);
+static_assert(static_cast<bool>(mwfl::DecodedImage{}) == false);

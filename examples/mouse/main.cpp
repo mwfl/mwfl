@@ -1,10 +1,10 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 #include <exception>
 #include <stdexcept>
 
-class MouseWindow final : public mwtl::WindowBase {
+class MouseWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         if (!SetTitle(L"Mouse demo — move or click in the client area")) {
@@ -12,14 +12,14 @@ public:
         }
     }
 
-    mwtl::EventResult OnMouseMove(const mwtl::MouseEvent& event) override {
+    mwfl::EventResult OnMouseMove(const mwfl::MouseEvent& event) override {
         ShowPoint(L"WM_MOUSEMOVE", event.position);
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnLeftButtonDown(const mwtl::MouseEvent& event) override {
+    mwfl::EventResult OnLeftButtonDown(const mwfl::MouseEvent& event) override {
         ShowPoint(L"WM_LBUTTONDOWN", event.position);
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
 private:
@@ -33,5 +33,5 @@ private:
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<MouseWindow>(instance, show_command);
+    return mwfl::RunApplication<MouseWindow>(instance, show_command);
 }

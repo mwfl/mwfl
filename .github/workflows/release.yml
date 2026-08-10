@@ -23,10 +23,10 @@ jobs:
         if: github.event_name == 'push' || inputs.publish
         shell: pwsh
         run: |
-          $project = Select-String -Path CMakeLists.txt -Pattern 'project\(mwtl VERSION ([0-9.]+)' | ForEach-Object { $_.Matches[0].Groups[1].Value }
+          $project = Select-String -Path CMakeLists.txt -Pattern 'project\(mwfl VERSION ([0-9.]+)' | ForEach-Object { $_.Matches[0].Groups[1].Value }
           if ("v$project" -ne "${{ github.ref_name }}") { throw "Tag does not match project version v$project" }
       - name: Configure
-        run: cmake -S . -B build/release -G "Visual Studio 18 2026" -A x64 -DMWTL_BUILD_EXAMPLES=ON -DMWTL_BUILD_TESTS=ON
+        run: cmake -S . -B build/release -G "Visual Studio 18 2026" -A x64 -DMWFL_BUILD_EXAMPLES=ON -DMWFL_BUILD_TESTS=ON
       - name: Build and test
         run: |
           cmake --build build/release --config Release --verbose
@@ -47,7 +47,7 @@ jobs:
       - name: Upload package
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: mwtl-${{ github.sha }}-x64
+          name: mwfl-${{ github.sha }}-x64
           path: artifacts/*
           if-no-files-found: error
 
@@ -59,7 +59,7 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          pattern: mwtl-${{ github.sha }}-*
+          pattern: mwfl-${{ github.sha }}-*
           path: artifacts
           merge-multiple: true
       - name: Publish GitHub release

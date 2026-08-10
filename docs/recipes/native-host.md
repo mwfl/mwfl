@@ -5,13 +5,13 @@ layout, focus, notification forwarding, and deterministic teardown without
 building a library-specific wrapper.
 
 ```cpp
-mwtl::NativeHost host_;
+mwfl::NativeHost host_;
 
 ui.Add(host_);
 HWND child = CreateWindowExW(0, third_party_class, L"", WS_CHILD | WS_VISIBLE,
                              0, 0, 1, 1, host_.GetHwnd(), nullptr, instance, nullptr);
-mwtl::Must(host_.Attach(child), "attach third-party child");
-SetLayout(mwtl::Column().Add(host_, mwtl::Stretch()));
+mwfl::Must(host_.Attach(child), "attach third-party child");
+SetLayout(mwfl::Column().Add(host_, mwfl::Stretch()));
 ```
 
 The host owns its container HWND and borrows one direct-child HWND. Normal

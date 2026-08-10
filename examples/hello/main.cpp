@@ -1,41 +1,41 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
-class MainWindow final : public mwtl::WindowBase {
+class MainWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        mwtl::Must(SetTitle(L"mwtl hello"), "set window title");
-        mwtl::ControlHost ui{*this};
+        mwfl::Must(SetTitle(L"mwfl hello"), "set window title");
+        mwfl::ControlHost ui{*this};
         ui.Add(
             message_,
             L"Hello from a native Windows UI with modern C++20 ergonomics.");
         ui.Add(button_, L"Make it brighter");
         SetLayout(
-            mwtl::Column()
+            mwfl::Column()
                 .Margin(28.0_dip)
                 .Gap(20.0_dip)
-                .Add(message_, mwtl::Fixed(34.0_dip))
-                .Add(button_, mwtl::Fixed(36.0_dip), {
-                    .alignment = mwtl::CrossAlignment::start,
-                    .preferred_size = mwtl::SizeDip{180.0_dip, 36.0_dip},
+                .Add(message_, mwfl::Fixed(34.0_dip))
+                .Add(button_, mwfl::Fixed(36.0_dip), {
+                    .alignment = mwfl::CrossAlignment::start,
+                    .preferred_size = mwfl::SizeDip{180.0_dip, 36.0_dip},
                 }));
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
         if (event.IsClicked(button_)) {
             message_.SetText(
                 L"A real BUTTON HWND, dispatched without message-map macros.");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
-    mwtl::Label message_;
-    mwtl::Button button_;
+    mwfl::Label message_;
+    mwfl::Button button_;
 };
 
 int WINAPI wWinMain(
@@ -43,7 +43,7 @@ int WINAPI wWinMain(
     HINSTANCE,
     PWSTR,
     int show_command) {
-    return mwtl::RunApplication<MainWindow>(
+    return mwfl::RunApplication<MainWindow>(
         instance,
         show_command,
         {

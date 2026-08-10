@@ -1,4 +1,4 @@
-#include <mwtl/control_resources.h>
+#include <mwfl/control_resources.h>
 
 #include <windows.h>
 
@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
 
     if (!IsTaskDialogAvailable()) return 1;
     const TaskDialogResult invalid =
@@ -30,7 +30,7 @@ int main() {
     int verification_events = 0;
     int button_events = 0;
     TaskDialogOptions options{
-        .title = L"mwtl Task Dialog test",
+        .title = L"mwfl Task Dialog test",
         .main_instruction = L"Structured Task Dialog",
         .content = L"This dialog closes itself through the public controller.",
         .verification_text = L"Remember this choice",

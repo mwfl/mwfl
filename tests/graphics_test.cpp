@@ -1,4 +1,4 @@
-#include <mwtl/graphics.h>
+#include <mwfl/graphics.h>
 
 #include <windows.h>
 
@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     RECT invalid{0, 0, 0, 10};
     if (RecordEnhancedMetafile(&invalid, L"invalid", [](HDC) {}).status !=
             GraphicsStatus::invalid_argument ||
@@ -16,7 +16,7 @@ int main() {
             GraphicsStatus::invalid_argument)
         return 1;
 
-    auto recorded = RecordEnhancedMetafile(nullptr, L"mwtl\0graphics", [](HDC dc) {
+    auto recorded = RecordEnhancedMetafile(nullptr, L"mwfl\0graphics", [](HDC dc) {
         ::Rectangle(dc, 0, 0, 120, 80);
         ::MoveToEx(dc, 0, 0, nullptr);
         ::LineTo(dc, 120, 80);
@@ -30,9 +30,9 @@ int main() {
 
     const auto root = std::filesystem::temp_directory_path();
     const auto suffix = std::to_wstring(::GetCurrentProcessId());
-    const auto emf_path = root / (L"mwtl-graphics-" + suffix + L".emf");
-    const auto png_path = root / (L"mwtl-graphics-" + suffix + L".png");
-    const auto bad_path = root / (L"mwtl-graphics-bad-" + suffix + L".emf");
+    const auto emf_path = root / (L"mwfl-graphics-" + suffix + L".emf");
+    const auto png_path = root / (L"mwfl-graphics-" + suffix + L".png");
+    const auto bad_path = root / (L"mwfl-graphics-bad-" + suffix + L".emf");
     std::error_code ignored;
     std::filesystem::remove(emf_path, ignored);
     std::filesystem::remove(png_path, ignored);

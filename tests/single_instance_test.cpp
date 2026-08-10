@@ -1,4 +1,4 @@
-#include <mwtl/single_instance.h>
+#include <mwfl/single_instance.h>
 
 #include <windows.h>
 
@@ -7,7 +7,7 @@
 #include <string>
 
 namespace {
-mwtl::SingleInstance* receiver_instance{};
+mwfl::SingleInstance* receiver_instance{};
 std::wstring received;
 
 LRESULT CALLBACK ReceiverProcedure(HWND window, UINT message, WPARAM wparam, LPARAM lparam) {
@@ -23,17 +23,17 @@ LRESULT CALLBACK ReceiverProcedure(HWND window, UINT message, WPARAM wparam, LPA
 
 int main() {
     using namespace std::chrono_literals;
-    const std::wstring id = L"mwtl.single-instance-test." +
+    const std::wstring id = L"mwfl.single-instance-test." +
         std::to_wstring(::GetCurrentProcessId()) + L"." + std::to_wstring(::GetTickCount64());
-    mwtl::SingleInstance primary{id};
-    mwtl::SingleInstance secondary{id};
+    mwfl::SingleInstance primary{id};
+    mwfl::SingleInstance secondary{id};
     if (!primary.IsPrimary() || secondary.IsPrimary()) return EXIT_FAILURE;
     if (secondary.ForwardActivation(L"before-window", 0ms).status !=
-        mwtl::ActivationStatus::receiver_not_found) return EXIT_FAILURE;
+        mwfl::ActivationStatus::receiver_not_found) return EXIT_FAILURE;
     if (primary.ForwardActivation(L"invalid", 0ms).status !=
-        mwtl::ActivationStatus::io_error) return EXIT_FAILURE;
+        mwfl::ActivationStatus::io_error) return EXIT_FAILURE;
 
-    const std::wstring class_name = L"mwtl.SingleInstance.TestWindow." +
+    const std::wstring class_name = L"mwfl.SingleInstance.TestWindow." +
                                     std::to_wstring(::GetCurrentProcessId());
     WNDCLASSW window_class{};
     window_class.lpfnWndProc = ReceiverProcedure;
@@ -54,7 +54,7 @@ int main() {
     if (!secondary.ForwardActivation(L"", 1s).Delivered() || !received.empty())
         return EXIT_FAILURE;
     std::wstring oversized(32768, L'x');
-    if (secondary.ForwardActivation(oversized, 1s).status != mwtl::ActivationStatus::io_error)
+    if (secondary.ForwardActivation(oversized, 1s).status != mwfl::ActivationStatus::io_error)
         return EXIT_FAILURE;
 
     COPYDATASTRUCT malformed{1, 1, const_cast<wchar_t*>(L"x")};
@@ -62,7 +62,7 @@ int main() {
         return EXIT_FAILURE;
     primary.UnregisterWindow();
     if (secondary.ForwardActivation(L"after-window", 0ms).status !=
-        mwtl::ActivationStatus::receiver_not_found) return EXIT_FAILURE;
+        mwfl::ActivationStatus::receiver_not_found) return EXIT_FAILURE;
     receiver_instance = nullptr;
     ::DestroyWindow(window);
     ::UnregisterClassW(class_name.c_str(), window_class.hInstance);

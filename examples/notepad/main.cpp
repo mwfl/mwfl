@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <oleacc.h>
 
@@ -9,25 +9,25 @@
 #include <string>
 #include <utility>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 namespace {
-constexpr mwtl::ControlId kNew{700};
-constexpr mwtl::ControlId kOpen{701};
-constexpr mwtl::ControlId kSave{702};
-constexpr mwtl::ControlId kSaveAs{703};
-constexpr mwtl::ControlId kExit{704};
-constexpr mwtl::ControlId kUndo{710};
-constexpr mwtl::ControlId kCut{711};
-constexpr mwtl::ControlId kCopy{712};
-constexpr mwtl::ControlId kPaste{713};
-constexpr mwtl::ControlId kSelectAll{714};
-constexpr mwtl::ControlId kFind{715};
-constexpr mwtl::ControlId kReplace{716};
-constexpr mwtl::ControlId kRedo{717};
-constexpr mwtl::ControlId kAlwaysOnTop{718};
-constexpr mwtl::ControlId kRecentBase{730};
-constexpr std::wstring_view kSettingsKey = L"Software\\mwtl\\Notepad\\1";
+constexpr mwfl::ControlId kNew{700};
+constexpr mwfl::ControlId kOpen{701};
+constexpr mwfl::ControlId kSave{702};
+constexpr mwfl::ControlId kSaveAs{703};
+constexpr mwfl::ControlId kExit{704};
+constexpr mwfl::ControlId kUndo{710};
+constexpr mwfl::ControlId kCut{711};
+constexpr mwfl::ControlId kCopy{712};
+constexpr mwfl::ControlId kPaste{713};
+constexpr mwfl::ControlId kSelectAll{714};
+constexpr mwfl::ControlId kFind{715};
+constexpr mwfl::ControlId kReplace{716};
+constexpr mwfl::ControlId kRedo{717};
+constexpr mwfl::ControlId kAlwaysOnTop{718};
+constexpr mwfl::ControlId kRecentBase{730};
+constexpr std::wstring_view kSettingsKey = L"Software\\mwfl\\Notepad\\1";
 constexpr UINT kRunSelfTest = WM_APP + 0x120;
 
 std::optional<bool> LoadBoolSetting(
@@ -60,9 +60,9 @@ bool SaveBoolSetting(HKEY root, std::wstring_view subkey,
     return status == ERROR_SUCCESS;
 }
 
-class NotepadWindow final : public mwtl::WindowBase {
+class NotepadWindow final : public mwfl::WindowBase {
 public:
-    NotepadWindow(mwtl::SingleInstance& instance,
+    NotepadWindow(mwfl::SingleInstance& instance,
                   std::optional<std::filesystem::path> initial_path,
                   bool self_test,
                   std::optional<std::filesystem::path> self_test_result)
@@ -71,7 +71,7 @@ public:
 
     void BuildUI() override {
         if (!self_test_) {
-            const auto loaded = mwtl::LoadRecentFilesFromRegistry(
+            const auto loaded = mwfl::LoadRecentFilesFromRegistry(
                 HKEY_CURRENT_USER, kSettingsKey, recent_.GetMaximumEntries());
             if (loaded.Succeeded()) recent_ = std::move(*loaded.value);
             always_on_top_ = LoadBoolSetting(
@@ -79,60 +79,60 @@ public:
         }
         BuildCommands();
         RefreshRecentCommands();
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(toolbar_);
-        mwtl::TextBoxOptions options;
+        mwfl::TextBoxOptions options;
         options.style |= ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL |
                          WS_VSCROLL | WS_HSCROLL | ES_NOHIDESEL;
         ui.Add(editor_, L"", options);
         ui.Add(status_);
         for (const auto& command : commands_.GetCommands()) {
             if (command.GetId().value <= kSave.value) {
-                mwtl::Must(toolbar_.AddCommand(command), "add Notepad toolbar command");
+                mwfl::Must(toolbar_.AddCommand(command), "add Notepad toolbar command");
             }
         }
         toolbar_.AutoSize();
         constexpr std::array status_parts{-1};
-        mwtl::Must(status_.SetParts(status_parts), "configure Notepad status bar");
-        mwtl::Must(mwtl::SetAccessibleName(toolbar_.GetHwnd(), L"Document commands"),
+        mwfl::Must(status_.SetParts(status_parts), "configure Notepad status bar");
+        mwfl::Must(mwfl::SetAccessibleName(toolbar_.GetHwnd(), L"Document commands"),
                    "name Notepad toolbar for accessibility");
-        mwtl::Must(mwtl::SetAccessibleName(editor_.GetHwnd(), L"Document text"),
+        mwfl::Must(mwfl::SetAccessibleName(editor_.GetHwnd(), L"Document text"),
                    "name Notepad editor for accessibility");
-        mwtl::Must(mwtl::SetAccessibleName(status_.GetHwnd(), L"Document status"),
+        mwfl::Must(mwfl::SetAccessibleName(status_.GetHwnd(), L"Document status"),
                    "name Notepad status for accessibility");
         ApplyFont(GetDpiContext().GetDpi());
         BuildMenu();
         ApplyAlwaysOnTop();
-        mwtl::Must(accelerators_.Create(commands_), "create Notepad accelerators");
+        mwfl::Must(accelerators_.Create(commands_), "create Notepad accelerators");
         SetAccelerators(accelerators_.GetHandle());
-        mwtl::EnableFileDrop(GetHwnd());
-        mwtl::Must(instance_.RegisterWindow(GetHwnd()), "register Notepad activation window");
-        SetLayout(mwtl::Column()
-            .Add(toolbar_, mwtl::Auto())
-            .Add(editor_, mwtl::Stretch())
-            .Add(status_, mwtl::Auto()));
+        mwfl::EnableFileDrop(GetHwnd());
+        mwfl::Must(instance_.RegisterWindow(GetHwnd()), "register Notepad activation window");
+        SetLayout(mwfl::Column()
+            .Add(toolbar_, mwfl::Auto())
+            .Add(editor_, mwfl::Stretch())
+            .Add(status_, mwfl::Auto()));
         editor_.Focus();
-        mwtl::SavedWindowPlacement placement;
-        if (!self_test_ && mwtl::LoadWindowPlacementFromRegistry(
+        mwfl::SavedWindowPlacement placement;
+        if (!self_test_ && mwfl::LoadWindowPlacementFromRegistry(
                 HKEY_CURRENT_USER, kSettingsKey, L"WindowPlacement", placement))
-            mwtl::RestoreWindowPlacement(GetHwnd(), placement);
+            mwfl::RestoreWindowPlacement(GetHwnd(), placement);
         SyncPresentation(L"Ready");
         if (initial_path_) OpenPath(*initial_path_);
         if (self_test_ && ::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0) == FALSE)
             throw std::runtime_error("post Notepad self-test message failed");
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
         if (event.Is(editor_, EN_CHANGE) && !updating_editor_) {
             history_.Record(editor_.GetText());
             SyncDirtyFromHistory();
             SyncPresentation(L"Modified");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         return commands_.Dispatch(event);
     }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
         if (event.id == kRunSelfTest) {
             try {
                 RunSelfTest();
@@ -143,43 +143,43 @@ public:
                 ReportSelfTest("unknown Notepad self-test failure");
                 ::PostQuitMessage(1);
             }
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (auto activation = instance_.DecodeActivation(event.id, event.lparam)) {
             if (::IsIconic(GetHwnd())) ::ShowWindow(GetHwnd(), SW_RESTORE);
             ::SetForegroundWindow(GetHwnd());
             if (!activation->empty() && ConfirmTransition()) OpenPath(*activation);
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.id == find_message_) {
             HandleFindReplace(*reinterpret_cast<FINDREPLACEW*>(event.lparam));
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.id == WM_SETTINGCHANGE || event.id == WM_THEMECHANGED) {
             ApplyFont(GetDpiContext().GetDpi());
             ::RedrawWindow(GetHwnd(), nullptr, nullptr,
                            RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        if (event.id != WM_DROPFILES) return mwtl::EventResult::Propagate();
-        const auto files = mwtl::ReadDroppedFiles(reinterpret_cast<HDROP>(event.wparam));
+        if (event.id != WM_DROPFILES) return mwfl::EventResult::Propagate();
+        const auto files = mwfl::ReadDroppedFiles(reinterpret_cast<HDROP>(event.wparam));
         if (!files.empty() && ConfirmTransition()) OpenPath(files.front());
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnClose() override {
-        if (!ConfirmTransition()) return mwtl::EventResult::Handled();
-        mwtl::SavedWindowPlacement placement;
-        if (!self_test_ && mwtl::CaptureWindowPlacement(GetHwnd(), placement))
-            mwtl::SaveWindowPlacementToRegistry(
+    mwfl::EventResult OnClose() override {
+        if (!ConfirmTransition()) return mwfl::EventResult::Handled();
+        mwfl::SavedWindowPlacement placement;
+        if (!self_test_ && mwfl::CaptureWindowPlacement(GetHwnd(), placement))
+            mwfl::SaveWindowPlacementToRegistry(
                 HKEY_CURRENT_USER, kSettingsKey, L"WindowPlacement", placement);
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnDpiChanged(
-            const mwtl::DpiChangedEvent& event) override {
+    mwfl::EventResult OnDpiChanged(
+            const mwfl::DpiChangedEvent& event) override {
         ApplyFont(event.dpi_x);
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
@@ -220,14 +220,14 @@ private:
             FailSelfTest("resolve Notepad self-test temporary directory failed");
         const std::filesystem::path path =
             std::filesystem::path{temporary_directory} /
-            (L"mwtl-notepad-gui-" + std::to_wstring(::GetCurrentProcessId()) + L".txt");
+            (L"mwfl-notepad-gui-" + std::to_wstring(::GetCurrentProcessId()) + L".txt");
         struct RemoveTemporaryFile {
             std::filesystem::path path;
             ~RemoveTemporaryFile() { std::error_code ignored; std::filesystem::remove(path, ignored); }
         } cleanup{path};
 
-        const auto created = mwtl::WriteTextFileAtomic(
-            path, L"initial", mwtl::TextEncoding::utf8);
+        const auto created = mwfl::WriteTextFileAtomic(
+            path, L"initial", mwfl::TextEncoding::utf8);
         if (!created.Succeeded()) FailSelfTest("create Notepad self-test file failed");
         OpenPath(path);
         if (editor_.GetText() != L"initial" || document_.GetPath() != path ||
@@ -281,21 +281,21 @@ private:
                        reinterpret_cast<LPARAM>(L"edited"));
         if (!document_.IsDirty()) FailSelfTest("Notepad self-test edit stayed clean");
         if (!SaveDocument(false)) FailSelfTest("Notepad self-test save failed");
-        const auto saved = mwtl::ReadTextFile(path);
+        const auto saved = mwfl::ReadTextFile(path);
         if (!saved.Succeeded() || saved.value->text != L"edited" || document_.IsDirty())
             FailSelfTest("Notepad self-test saved content mismatch");
 
         editor_.SelectAll();
         ::SendMessageW(editor_.GetHwnd(), EM_REPLACESEL, TRUE,
                        reinterpret_cast<LPARAM>(L"unsaved"));
-        automated_choice_ = mwtl::UnsavedChangesChoice::cancel;
+        automated_choice_ = mwfl::UnsavedChangesChoice::cancel;
         NewDocument();
         if (editor_.GetText() != L"unsaved" || document_.GetPath() != path ||
             !document_.IsDirty()) {
             FailSelfTest("Notepad self-test cancel discarded content");
         }
 
-        automated_choice_ = mwtl::UnsavedChangesChoice::discard;
+        automated_choice_ = mwfl::UnsavedChangesChoice::discard;
         NewDocument();
         if (!editor_.GetText().empty() || document_.HasPath() || document_.IsDirty())
             FailSelfTest("Notepad self-test discard did not create a clean document");
@@ -338,24 +338,24 @@ private:
     }
 
     void ApplyFont(UINT dpi) {
-        mwtl::UiFont next;
-        mwtl::Must(next.CreateMessageFont(dpi), "create Notepad UI font");
+        mwfl::UiFont next;
+        mwfl::Must(next.CreateMessageFont(dpi), "create Notepad UI font");
         for (const HWND control : {toolbar_.GetHwnd(), editor_.GetHwnd(),
                                   status_.GetHwnd()}) {
-            mwtl::SetControlFont(control, next.GetHandle());
+            mwfl::SetControlFont(control, next.GetHandle());
         }
         font_ = std::move(next);
     }
 
     void ApplyAlwaysOnTop() {
         const HWND insert_after = always_on_top_ ? HWND_TOPMOST : HWND_NOTOPMOST;
-        mwtl::Must(::SetWindowPos(GetHwnd(), insert_after, 0, 0, 0, 0,
+        mwfl::Must(::SetWindowPos(GetHwnd(), insert_after, 0, 0, 0, 0,
                                   SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE) != FALSE,
                    "apply Notepad topmost setting");
         auto* command = commands_.Find(kAlwaysOnTop);
         command->SetChecked(always_on_top_);
         if (menu_.GetHandle() != nullptr) {
-            mwtl::Must(menu_.UpdateCommand(*command),
+            mwfl::Must(menu_.UpdateCommand(*command),
                        "update Notepad topmost command");
             ::DrawMenuBar(GetHwnd());
         }
@@ -374,36 +374,36 @@ private:
 
     void BuildCommands() {
         commands_
-            .Add(mwtl::Command(kNew, L"&New", [this] { NewDocument(); })
+            .Add(mwfl::Command(kNew, L"&New", [this] { NewDocument(); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'N'}))
-            .Add(mwtl::Command(kOpen, L"&Open...", [this] { OpenDocument(); })
+            .Add(mwfl::Command(kOpen, L"&Open...", [this] { OpenDocument(); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'O'}))
-            .Add(mwtl::Command(kSave, L"&Save", [this] { static_cast<void>(SaveDocument(false)); })
+            .Add(mwfl::Command(kSave, L"&Save", [this] { static_cast<void>(SaveDocument(false)); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'S'}))
-            .Add(mwtl::Command(kSaveAs, L"Save &As...", [this] { static_cast<void>(SaveDocument(true)); })
+            .Add(mwfl::Command(kSaveAs, L"Save &As...", [this] { static_cast<void>(SaveDocument(true)); })
                 .SetShortcut({FVIRTKEY | FCONTROL | FSHIFT, 'S'}))
-            .Add(mwtl::Command(kExit, L"E&xit", [this] { static_cast<void>(Close()); }))
-            .Add(mwtl::Command(kUndo, L"&Undo", [this] { ApplyHistory(history_.Undo(), L"Undo"); })
+            .Add(mwfl::Command(kExit, L"E&xit", [this] { static_cast<void>(Close()); }))
+            .Add(mwfl::Command(kUndo, L"&Undo", [this] { ApplyHistory(history_.Undo(), L"Undo"); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'Z'}))
-            .Add(mwtl::Command(kRedo, L"&Redo", [this] { ApplyHistory(history_.Redo(), L"Redo"); })
+            .Add(mwfl::Command(kRedo, L"&Redo", [this] { ApplyHistory(history_.Redo(), L"Redo"); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'Y'}))
-            .Add(mwtl::Command(kCut, L"Cu&t", [this] { ::SendMessageW(editor_.GetHwnd(), WM_CUT, 0, 0); })
+            .Add(mwfl::Command(kCut, L"Cu&t", [this] { ::SendMessageW(editor_.GetHwnd(), WM_CUT, 0, 0); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'X'}))
-            .Add(mwtl::Command(kCopy, L"&Copy", [this] { ::SendMessageW(editor_.GetHwnd(), WM_COPY, 0, 0); })
+            .Add(mwfl::Command(kCopy, L"&Copy", [this] { ::SendMessageW(editor_.GetHwnd(), WM_COPY, 0, 0); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'C'}))
-            .Add(mwtl::Command(kPaste, L"&Paste", [this] { ::SendMessageW(editor_.GetHwnd(), WM_PASTE, 0, 0); })
+            .Add(mwfl::Command(kPaste, L"&Paste", [this] { ::SendMessageW(editor_.GetHwnd(), WM_PASTE, 0, 0); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'V'}))
-            .Add(mwtl::Command(kSelectAll, L"Select &All", [this] { editor_.SelectAll(); })
+            .Add(mwfl::Command(kSelectAll, L"Select &All", [this] { editor_.SelectAll(); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'A'}))
-            .Add(mwtl::Command(kFind, L"&Find...", [this] { ShowFindDialog(false); })
+            .Add(mwfl::Command(kFind, L"&Find...", [this] { ShowFindDialog(false); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'F'}))
-            .Add(mwtl::Command(kReplace, L"&Replace...", [this] { ShowFindDialog(true); })
+            .Add(mwfl::Command(kReplace, L"&Replace...", [this] { ShowFindDialog(true); })
                 .SetShortcut({FVIRTKEY | FCONTROL, 'H'}))
-            .Add(mwtl::Command(kAlwaysOnTop, L"Always on &Top",
+            .Add(mwfl::Command(kAlwaysOnTop, L"Always on &Top",
                                [this] { ToggleAlwaysOnTop(); })
                 .SetChecked(always_on_top_));
         for (std::size_t index = 0; index < recent_.GetMaximumEntries(); ++index) {
-            commands_.Add(mwtl::Command(
+            commands_.Add(mwfl::Command(
                 {static_cast<WORD>(kRecentBase.value + index)}, L"Recent file",
                 [this, index] {
                     const auto paths = recent_.GetPaths();
@@ -413,32 +413,32 @@ private:
     }
 
     void BuildMenu() {
-        mwtl::Menu next;
-        mwtl::Menu file;
-        mwtl::Menu edit;
-        mwtl::Menu view;
-        mwtl::Must(next.Create(), "create Notepad menu");
-        mwtl::Must(file.CreatePopup(), "create File menu");
+        mwfl::Menu next;
+        mwfl::Menu file;
+        mwfl::Menu edit;
+        mwfl::Menu view;
+        mwfl::Must(next.Create(), "create Notepad menu");
+        mwfl::Must(file.CreatePopup(), "create File menu");
         for (const auto id : {kNew, kOpen, kSave, kSaveAs})
-            mwtl::Must(file.AppendCommand(*commands_.Find(id)), "append File command");
-        mwtl::Must(file.AppendSeparator(), "append File separator");
-        mwtl::Must(file.AppendCommand(*commands_.Find(kExit)), "append Exit command");
+            mwfl::Must(file.AppendCommand(*commands_.Find(id)), "append File command");
+        mwfl::Must(file.AppendSeparator(), "append File separator");
+        mwfl::Must(file.AppendCommand(*commands_.Find(kExit)), "append Exit command");
         if (!recent_.GetPaths().empty()) {
-            mwtl::Must(file.AppendSeparator(), "append recent separator");
+            mwfl::Must(file.AppendSeparator(), "append recent separator");
             for (std::size_t index = 0; index < recent_.GetMaximumEntries(); ++index)
-                mwtl::Must(file.AppendCommand(*commands_.Find(
+                mwfl::Must(file.AppendCommand(*commands_.Find(
                     {static_cast<WORD>(kRecentBase.value + index)})), "append recent file");
         }
-        mwtl::Must(edit.CreatePopup(), "create Edit menu");
+        mwfl::Must(edit.CreatePopup(), "create Edit menu");
         for (const auto id : {kUndo, kRedo, kCut, kCopy, kPaste, kSelectAll, kFind, kReplace})
-            mwtl::Must(edit.AppendCommand(*commands_.Find(id)), "append Edit command");
-        mwtl::Must(view.CreatePopup(), "create View menu");
-        mwtl::Must(view.AppendCommand(*commands_.Find(kAlwaysOnTop)),
+            mwfl::Must(edit.AppendCommand(*commands_.Find(id)), "append Edit command");
+        mwfl::Must(view.CreatePopup(), "create View menu");
+        mwfl::Must(view.AppendCommand(*commands_.Find(kAlwaysOnTop)),
                    "append Always on Top command");
-        mwtl::Must(next.AppendSubmenu(std::move(file), L"&File"), "append File menu");
-        mwtl::Must(next.AppendSubmenu(std::move(edit), L"&Edit"), "append Edit menu");
-        mwtl::Must(next.AppendSubmenu(std::move(view), L"&View"), "append View menu");
-        mwtl::Must(next.AttachToWindow(GetHwnd()), "attach Notepad menu");
+        mwfl::Must(next.AppendSubmenu(std::move(file), L"&File"), "append File menu");
+        mwfl::Must(next.AppendSubmenu(std::move(edit), L"&Edit"), "append Edit menu");
+        mwfl::Must(next.AppendSubmenu(std::move(view), L"&View"), "append View menu");
+        mwfl::Must(next.AttachToWindow(GetHwnd()), "attach Notepad menu");
         menu_ = std::move(next);
     }
 
@@ -449,14 +449,14 @@ private:
         updating_editor_ = false;
         document_.ResetUntitled();
         history_.Reset();
-        encoding_ = mwtl::TextEncoding::utf8;
+        encoding_ = mwfl::TextEncoding::utf8;
         stamp_.reset();
         SyncPresentation(L"New document");
         editor_.Focus();
     }
 
     void OpenDocument() {
-        const auto selected = mwtl::ShowOpenFileDialog({
+        const auto selected = mwfl::ShowOpenFileDialog({
             .owner = GetHwnd(), .title = L"Open text file",
             .filters = {{L"Text files", L"*.txt;*.log;*.md;*.cpp;*.h"}, {L"All files", L"*.*"}}});
         if (selected.Cancelled()) return;
@@ -466,10 +466,10 @@ private:
     }
 
     void OpenPath(const std::filesystem::path& path) {
-        const auto loaded = mwtl::ReadTextFile(path);
+        const auto loaded = mwfl::ReadTextFile(path);
         if (!loaded.Succeeded()) {
             ShowTextFileFailure(L"Could not open the file.", loaded.status, loaded.native_error);
-            if (loaded.status == mwtl::TextFileStatus::not_found && recent_.Remove(path)) {
+            if (loaded.status == mwfl::TextFileStatus::not_found && recent_.Remove(path)) {
                 PersistRecentFiles();
                 RefreshRecentCommands();
                 BuildMenu();
@@ -491,7 +491,7 @@ private:
     bool SaveDocument(bool choose_path) {
         auto path = document_.GetPath();
         if (choose_path || !document_.HasPath()) {
-            const auto selected = mwtl::ShowSaveFileDialog({
+            const auto selected = mwfl::ShowSaveFileDialog({
                 .owner = GetHwnd(), .title = L"Save text file",
                 .filters = {{L"Text files", L"*.txt"}, {L"All files", L"*.*"}},
                 .default_extension = L"txt", .initial_path = path});
@@ -500,7 +500,7 @@ private:
             path = selected.path;
         }
         const bool same_path = document_.HasPath() && path == document_.GetPath();
-        const auto saved = mwtl::WriteTextFileAtomic(path, editor_.GetText(), encoding_,
+        const auto saved = mwfl::WriteTextFileAtomic(path, editor_.GetText(), encoding_,
                                                      same_path ? stamp_ : std::nullopt);
         if (!saved.Succeeded()) { ShowTextFileFailure(L"Could not save the file.", saved.status, saved.native_error); return false; }
         document_.MarkSavedAs(path);
@@ -512,20 +512,20 @@ private:
     }
 
     bool ConfirmTransition() {
-        if (document_.EvaluateTransition() == mwtl::DocumentTransition::proceed) return true;
+        if (document_.EvaluateTransition() == mwfl::DocumentTransition::proceed) return true;
         if (automated_choice_) {
             const auto choice = std::exchange(automated_choice_, std::nullopt);
             const auto transition = document_.EvaluateTransition(*choice);
-            if (transition == mwtl::DocumentTransition::proceed) return true;
-            if (transition == mwtl::DocumentTransition::cancelled) return false;
+            if (transition == mwfl::DocumentTransition::proceed) return true;
+            if (transition == mwfl::DocumentTransition::cancelled) return false;
             return SaveDocument(false);
         }
         const std::wstring message = L"Save changes to " + document_.GetDisplayName() + L"?";
-        const int answer = ::MessageBoxW(GetHwnd(), message.c_str(), L"mwtl Notepad",
+        const int answer = ::MessageBoxW(GetHwnd(), message.c_str(), L"mwfl Notepad",
                                          MB_ICONWARNING | MB_YESNOCANCEL | MB_DEFBUTTON1);
         if (answer == IDCANCEL) return false;
         if (answer == IDNO) return document_.EvaluateTransition(
-            mwtl::UnsavedChangesChoice::discard) == mwtl::DocumentTransition::proceed;
+            mwfl::UnsavedChangesChoice::discard) == mwfl::DocumentTransition::proceed;
         return answer == IDYES && SaveDocument(false);
     }
 
@@ -564,7 +564,7 @@ private:
 
     void PersistRecentFiles() const {
         if (self_test_) return;
-        static_cast<void>(mwtl::SaveRecentFilesToRegistry(HKEY_CURRENT_USER, kSettingsKey, recent_));
+        static_cast<void>(mwfl::SaveRecentFilesToRegistry(HKEY_CURRENT_USER, kSettingsKey, recent_));
     }
 
     void RememberPath(const std::filesystem::path& path) {
@@ -618,11 +618,11 @@ private:
                        reinterpret_cast<WPARAM>(&selection_start),
                        reinterpret_cast<LPARAM>(&selection_end));
         const bool down = (request.Flags & FR_DOWN) != 0;
-        const mwtl::TextSearchOptions options{
+        const mwfl::TextSearchOptions options{
             .match_case = (request.Flags & FR_MATCHCASE) != 0,
             .whole_word = (request.Flags & FR_WHOLEWORD) != 0,
             .backwards = !down};
-        const auto match = mwtl::FindTextMatch(
+        const auto match = mwfl::FindTextMatch(
             text, query, down ? selection_end : selection_start, options);
         if (!match) {
             status_.SetPartText(0, L"No further match");
@@ -640,11 +640,11 @@ private:
         DWORD start{}, end{};
         ::SendMessageW(editor_.GetHwnd(), EM_GETSEL,
                        reinterpret_cast<WPARAM>(&start), reinterpret_cast<LPARAM>(&end));
-        const mwtl::TextSearchOptions options{
+        const mwfl::TextSearchOptions options{
             .match_case = (request.Flags & FR_MATCHCASE) != 0,
             .whole_word = (request.Flags & FR_WHOLEWORD) != 0};
         if (end >= start && end - start == query.size() &&
-            mwtl::TextMatchesAt(text, query, start, options)) {
+            mwfl::TextMatchesAt(text, query, start, options)) {
             ::SendMessageW(editor_.GetHwnd(), EM_REPLACESEL, TRUE,
                            reinterpret_cast<LPARAM>(request.lpstrReplaceWith));
         }
@@ -654,7 +654,7 @@ private:
         std::wstring text = editor_.GetText();
         const std::wstring query{request.lpstrFindWhat};
         const std::wstring replacement{request.lpstrReplaceWith};
-        const std::size_t count = mwtl::ReplaceAllText(text, query, replacement, {
+        const std::size_t count = mwfl::ReplaceAllText(text, query, replacement, {
             .match_case = (request.Flags & FR_MATCHCASE) != 0,
             .whole_word = (request.Flags & FR_WHOLEWORD) != 0});
         if (count) editor_.SetText(text);
@@ -672,7 +672,7 @@ private:
         for (const auto* command : {save, undo, redo}) menu_.UpdateCommand(*command);
         std::wstring title = document_.GetDisplayName();
         if (document_.IsDirty()) title += L" *";
-        title += L" — mwtl Notepad";
+        title += L" — mwfl Notepad";
         SetTitle(title);
         status_.SetPartText(0, message);
         ::DrawMenuBar(GetHwnd());
@@ -681,37 +681,37 @@ private:
     void ShowFailure(std::wstring_view message, DWORD error) const {
         std::wstring detail{message};
         if (error) detail += L"\n\nWindows error: " + std::to_wstring(error);
-        ::MessageBoxW(GetHwnd(), detail.c_str(), L"mwtl Notepad", MB_OK | MB_ICONERROR);
+        ::MessageBoxW(GetHwnd(), detail.c_str(), L"mwfl Notepad", MB_OK | MB_ICONERROR);
     }
 
-    void ShowTextFileFailure(std::wstring_view message, mwtl::TextFileStatus status, DWORD error) const {
+    void ShowTextFileFailure(std::wstring_view message, mwfl::TextFileStatus status, DWORD error) const {
         std::wstring detail{message};
-        if (status == mwtl::TextFileStatus::changed)
+        if (status == mwfl::TextFileStatus::changed)
             detail += L"\n\nThe file changed outside the editor. Your unsaved text was preserved.";
-        else if (status == mwtl::TextFileStatus::invalid_encoding)
+        else if (status == mwfl::TextFileStatus::invalid_encoding)
             detail += L"\n\nThe file contains malformed UTF-8 or UTF-16 data.";
         ShowFailure(detail, error);
     }
 
-    mwtl::DocumentState document_;
-    mwtl::SingleInstance& instance_;
+    mwfl::DocumentState document_;
+    mwfl::SingleInstance& instance_;
     std::optional<std::filesystem::path> initial_path_;
-    mwtl::RecentFileList recent_{5};
-    mwtl::TextHistory history_;
-    mwtl::TextEncoding encoding_ = mwtl::TextEncoding::utf8;
-    std::optional<mwtl::FileStamp> stamp_;
+    mwfl::RecentFileList recent_{5};
+    mwfl::TextHistory history_;
+    mwfl::TextEncoding encoding_ = mwfl::TextEncoding::utf8;
+    std::optional<mwfl::FileStamp> stamp_;
     bool updating_editor_{};
     bool self_test_{};
     bool always_on_top_{};
-    std::optional<mwtl::UnsavedChangesChoice> automated_choice_;
+    std::optional<mwfl::UnsavedChangesChoice> automated_choice_;
     std::optional<std::filesystem::path> self_test_result_;
-    mwtl::CommandSet commands_;
-    mwtl::UiFont font_;
-    mwtl::Menu menu_;
-    mwtl::AcceleratorTable accelerators_;
-    mwtl::Toolbar toolbar_;
-    mwtl::TextBox editor_;
-    mwtl::StatusBar status_;
+    mwfl::CommandSet commands_;
+    mwfl::UiFont font_;
+    mwfl::Menu menu_;
+    mwfl::AcceleratorTable accelerators_;
+    mwfl::Toolbar toolbar_;
+    mwfl::TextBox editor_;
+    mwfl::StatusBar status_;
     UINT find_message_ = ::RegisterWindowMessageW(FINDMSGSTRING);
     HWND find_dialog_{};
     FINDREPLACEW find_replace_{};
@@ -742,21 +742,21 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     if (arguments) ::LocalFree(arguments);
 
     const std::wstring instance_name = self_test
-        ? L"everettjf.mwtl.notepad.self-test." + std::to_wstring(::GetCurrentProcessId())
-        : L"everettjf.mwtl.notepad.v1";
-    mwtl::SingleInstance single_instance{instance_name};
+        ? L"everettjf.mwfl.notepad.self-test." + std::to_wstring(::GetCurrentProcessId())
+        : L"everettjf.mwfl.notepad.v1";
+    mwfl::SingleInstance single_instance{instance_name};
     if (!single_instance.IsPrimary()) {
         const std::wstring payload = initial_path ? initial_path->wstring() : std::wstring{};
         const auto activation = single_instance.ForwardActivation(payload);
         if (!activation.Delivered()) {
-            ::MessageBoxW(nullptr, L"The existing mwtl Notepad instance did not respond.",
-                          L"mwtl Notepad", MB_OK | MB_ICONERROR);
+            ::MessageBoxW(nullptr, L"The existing mwfl Notepad instance did not respond.",
+                          L"mwfl Notepad", MB_OK | MB_ICONERROR);
             return 2;
         }
         return 0;
     }
-    return mwtl::RunApplication<NotepadWindow>(instance, self_test ? SW_HIDE : show,
-        {.title = L"mwtl Notepad", .initial_bounds = {{}, {900.0_dip, 640.0_dip}},
+    return mwfl::RunApplication<NotepadWindow>(instance, self_test ? SW_HIDE : show,
+        {.title = L"mwfl Notepad", .initial_bounds = {{}, {900.0_dip, 640.0_dip}},
          .use_default_bounds = false}, {}, single_instance, std::move(initial_path),
         self_test, std::move(self_test_result));
 }

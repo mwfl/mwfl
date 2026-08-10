@@ -2,12 +2,12 @@ file(READ "${PROJECT_ROOT}/CMakeLists.txt" cmake_text)
 file(READ "${PROJECT_ROOT}/.github/workflows/release.yml" release_workflow_text)
 file(READ "${PROJECT_ROOT}/.github/workflows/ci.yml" ci_workflow_text)
 
-string(REGEX MATCH "project\\(mwtl VERSION ([0-9]+\\.[0-9]+\\.[0-9]+)" _ "${cmake_text}")
+string(REGEX MATCH "project\\(mwfl VERSION ([0-9]+\\.[0-9]+\\.[0-9]+)" _ "${cmake_text}")
 set(project_version "${CMAKE_MATCH_1}")
 if(project_version STREQUAL "")
-    message(FATAL_ERROR "Could not read the mwtl project version")
+    message(FATAL_ERROR "Could not read the mwfl project version")
 endif()
-if(NOT EXISTS "${PROJECT_ROOT}/cmake/mwtlConfig.cmake.in" OR
+if(NOT EXISTS "${PROJECT_ROOT}/cmake/mwflConfig.cmake.in" OR
    NOT EXISTS "${PROJECT_ROOT}/.github/workflows/release.yml")
     message(FATAL_ERROR "Release package metadata is incomplete")
 endif()

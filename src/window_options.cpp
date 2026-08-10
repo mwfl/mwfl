@@ -1,11 +1,11 @@
-#include <mwtl/window_options.h>
+#include <mwfl/window_options.h>
 
 #include <wil/resource.h>
 
 #include <algorithm>
 #include <cstring>
 
-namespace mwtl::detail {
+namespace mwfl::detail {
 namespace {
 
 UINT GetMonitorDpi(HMONITOR monitor) noexcept {
@@ -86,4 +86,4 @@ RECT ResolveWindowBounds(const WindowOptions& options) noexcept {
     return RECT{x, y, x + width, y + height};
 }
 
-}  // namespace mwtl::detail
+}  // namespace mwfl::detail

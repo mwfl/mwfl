@@ -1,4 +1,4 @@
-#include <mwtl/imaging.h>
+#include <mwfl/imaging.h>
 
 #include <cmath>
 
@@ -7,7 +7,7 @@ bool Near(float left, float right) { return std::abs(left - right) < 0.01f; }
 }
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     ImageViewportModel viewport;
     if (viewport.Fit() || viewport.SetZoom(2, {}) || viewport.ZoomBy(0, {}) ||
         viewport.PanBy({Dip(NAN), 0.0_dip}))

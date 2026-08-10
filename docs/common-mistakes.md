@@ -1,4 +1,4 @@
-# Common mistakes when generating mwtl applications
+# Common mistakes when generating mwfl applications
 
 ## Updating controls from a worker
 
@@ -26,9 +26,9 @@ window processing.
 
 ## Guessing framework APIs
 
-mwtl has no signal/slot layer, virtual DOM, data-context object, message-map
+mwfl has no signal/slot layer, virtual DOM, data-context object, message-map
 macro requirement, or automatic background dispatcher. Verify every symbol in
-`include/mwtl`, `docs/agent-reference.md`, or a compiled example.
+`include/mwfl`, `docs/agent-reference.md`, or a compiled example.
 
 ## Mixing pixels and DIPs
 
@@ -51,7 +51,7 @@ runtime failures into explicit state or diagnostics.
 
 ## Using internal headers
 
-Never include files from `src/` or name `mwtl::detail` types in application
+Never include files from `src/` or name `mwfl::detail` types in application
 code. They have no compatibility guarantee.
 
 ## Omitting the Windows application setup
@@ -62,4 +62,4 @@ Per-Monitor-V2 manifest. Copy a template instead of reconstructing this setup.
 ## Consuming a moving branch
 
 Use a release tag or immutable commit in `FetchContent`. `main` is appropriate
-only when explicitly testing unreleased mwtl changes.
+only when explicitly testing unreleased mwfl changes.

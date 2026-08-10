@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include "detail/testing.h"
 
@@ -17,7 +17,7 @@
 
 namespace {
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 enum class Mode {
     custom_window,
@@ -40,7 +40,7 @@ enum class Mode {
 Mode mode = Mode::custom_window;
 HWND test_window = nullptr;
 HANDLE wait_event = nullptr;
-mwtl::WindowWakeup wakeup;
+mwfl::WindowWakeup wakeup;
 std::thread producer;
 std::atomic<bool> custom_verified{false};
 std::atomic<bool> wake_posted{false};
@@ -56,7 +56,7 @@ std::atomic<bool> input_observed{false};
 
 struct TestClassTraits {
     static const wchar_t* GetClassName() noexcept {
-        return L"mwtl.AdvancedLifecycleTest";
+        return L"mwfl.AdvancedLifecycleTest";
     }
     static UINT GetClassStyle() noexcept {
         return CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
@@ -68,9 +68,9 @@ struct TestClassTraits {
 };
 
 class AdvancedWindow final
-    : public mwtl::Window<AdvancedWindow, TestClassTraits> {
+    : public mwfl::Window<AdvancedWindow, TestClassTraits> {
 public:
-    using BaseWindow = mwtl::Window<AdvancedWindow, TestClassTraits>;
+    using BaseWindow = mwfl::Window<AdvancedWindow, TestClassTraits>;
     explicit AdvancedWindow(int injected_value) noexcept
         : injected_value_(injected_value) {}
 
@@ -133,7 +133,7 @@ public:
     }
 
     BEGIN_MSG_MAP(AdvancedWindow)
-        MESSAGE_HANDLER(mwtl::WindowWakeup::Message(), OnWake)
+        MESSAGE_HANDLER(mwfl::WindowWakeup::Message(), OnWake)
         MESSAGE_HANDLER(WM_APP + 8, OnVerifyResources)
         MESSAGE_HANDLER(WM_DPICHANGED, OnDpiChanged)
         MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
@@ -193,7 +193,7 @@ void AfterDispatch(const MSG& message) {
         throw std::runtime_error("injected AfterDispatch failure");
     }
     if (mode == Mode::wakeup &&
-        message.message == mwtl::WindowWakeup::Message()) {
+        message.message == mwfl::WindowWakeup::Message()) {
         ::PostMessageW(test_window, WM_CLOSE, 0, 0);
     }
 }
@@ -227,8 +227,8 @@ std::chrono::milliseconds NextInterval() noexcept {
 }
 
 bool LifecycleWasBalanced() {
-    const mwtl::detail::LifecycleSnapshot value =
-        mwtl::detail::GetLifecycleSnapshotForTesting();
+    const mwfl::detail::LifecycleSnapshot value =
+        mwfl::detail::GetLifecycleSnapshotForTesting();
     return value.module_initialized == 1 && value.loop_registered == 1 &&
         value.loop_removed == 1 && value.module_terminated == 1;
 }
@@ -254,7 +254,7 @@ int main(int argc, char** argv) {
     else if (std::strcmp(argv[1], "dpi_change") == 0) mode = Mode::dpi_change;
     else return 21;
 
-    mwtl::detail::ResetLifecycleSnapshotForTesting();
+    mwfl::detail::ResetLifecycleSnapshotForTesting();
     if (mode == Mode::wait_handle || mode == Mode::wait_callback_exception ||
         mode == Mode::wait_failure) {
         wait_event = ::CreateEventW(
@@ -270,7 +270,7 @@ int main(int argc, char** argv) {
     const std::span<const HANDLE> wait_handles = waits_on_handle
         ? std::span<const HANDLE>{handles}
         : std::span<const HANDLE>{};
-    mwtl::WaitAwareMessagePump pump({
+    mwfl::WaitAwareMessagePump pump({
         .handles = wait_handles,
         .idle_interval = std::chrono::milliseconds{
             (mode == Mode::pump_exception || mode == Mode::wait_failure) ? 1 :
@@ -281,8 +281,8 @@ int main(int argc, char** argv) {
         .next_interval = NextInterval,
     });
 
-    mwtl::WindowOptions window_options;
-    window_options.title = L"mwtl advanced lifecycle test";
+    mwfl::WindowOptions window_options;
+    window_options.title = L"mwfl advanced lifecycle test";
     window_options.use_default_bounds = false;
     window_options.initial_bounds = {
         {20.0_dip, 20.0_dip}, {800.0_dip, 500.0_dip}};
@@ -294,11 +294,11 @@ int main(int argc, char** argv) {
     const bool injected_com_mta = mode == Mode::com_conflict &&
         SUCCEEDED(::CoInitializeEx(nullptr, COINIT_MULTITHREADED));
     if (mode == Mode::com_conflict && !injected_com_mta) return 31;
-    const mwtl::ApplicationOptions application_options{
-        mode == Mode::ole_sta ? mwtl::ComApartment::ole_sta :
-        (mode == Mode::com_sta || mode == Mode::com_conflict) ? mwtl::ComApartment::sta
-                              : mwtl::ComApartment::none};
-    mwtl::Application application(::GetModuleHandleW(nullptr), application_options);
+    const mwfl::ApplicationOptions application_options{
+        mode == Mode::ole_sta ? mwfl::ComApartment::ole_sta :
+        (mode == Mode::com_sta || mode == Mode::com_conflict) ? mwfl::ComApartment::sta
+                              : mwfl::ComApartment::none};
+    mwfl::Application application(::GetModuleHandleW(nullptr), application_options);
     FILETIME created{}, exited{}, kernel_before{}, user_before{};
     ::GetProcessTimes(::GetCurrentProcess(), &created, &exited, &kernel_before, &user_before);
     const auto wall_start = std::chrono::steady_clock::now();
@@ -313,8 +313,8 @@ int main(int argc, char** argv) {
     if (injected_com_mta) ::CoUninitialize();
 
     if (mode == Mode::com_conflict) {
-        const mwtl::detail::LifecycleSnapshot snapshot =
-            mwtl::detail::GetLifecycleSnapshotForTesting();
+        const mwfl::detail::LifecycleSnapshot snapshot =
+            mwfl::detail::GetLifecycleSnapshotForTesting();
         return result != 0 && snapshot.module_initialized == 0 &&
             snapshot.loop_registered == 0 && snapshot.loop_removed == 0 &&
             snapshot.module_terminated == 0 ? 0 : 32;

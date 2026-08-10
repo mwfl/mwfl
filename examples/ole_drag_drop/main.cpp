@@ -1,5 +1,5 @@
-#include <mwtl/mwtl.h>
-#include <mwtl/ole_drag_drop.h>
+#include <mwfl/mwfl.h>
+#include <mwfl/ole_drag_drop.h>
 
 #include <algorithm>
 #include <array>
@@ -11,27 +11,27 @@
 #include <string_view>
 #include <vector>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 namespace {
-constexpr mwtl::ControlId kSource{861};
-constexpr mwtl::ControlId kDestination{862};
-constexpr mwtl::ControlId kCopy{863};
-constexpr mwtl::ControlId kMove{864};
-constexpr mwtl::ControlId kClear{865};
+constexpr mwfl::ControlId kSource{861};
+constexpr mwfl::ControlId kDestination{862};
+constexpr mwfl::ControlId kCopy{863};
+constexpr mwfl::ControlId kMove{864};
+constexpr mwfl::ControlId kClear{865};
 constexpr UINT kRunSelfTest = WM_APP + 0x1C0;
 bool g_self_test = false;
 
-class DragDropWindow final : public mwtl::WindowBase {
+class DragDropWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        SetTitle(L"mwtl OLE Drag and Drop");
+        SetTitle(L"mwfl OLE Drag and Drop");
         ::SetWindowPos(GetHwnd(), nullptr, 0, 0, 980, 720,
                        SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
-        custom_format_ = mwtl::RegisterOleFormat(L"mwtl.example.item.v1");
+        custom_format_ = mwfl::RegisterOleFormat(L"mwfl.example.item.v1");
         if (!custom_format_) throw std::runtime_error("register custom OLE format failed");
 
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(title_, L"OLE drag/drop — Unicode, files, and an application-defined format");
         ui.Add(source_label_, L"Source items");
         ui.Add(source_, kSource, {0.0_dip, 0.0_dip, 300.0_dip, 300.0_dip});
@@ -46,33 +46,33 @@ public:
         for (std::wstring_view item : {L"Alpha — 中文", L"Beta — café", L"Gamma — Ελληνικά"})
             source_.AddItem(item);
         source_.SetSelection(0);
-        SetLayout(mwtl::Column()
+        SetLayout(mwfl::Column()
                       .Margin(18.0_dip)
                       .Gap(10.0_dip)
-                      .Add(title_, mwtl::Fixed(34.0_dip))
-                      .Add(mwtl::Row().Gap(18.0_dip)
-                               .Add(mwtl::Column().Gap(6.0_dip)
-                                        .Add(source_label_, mwtl::Fixed(26.0_dip))
-                                        .Add(source_, mwtl::Fixed(330.0_dip)),
-                                    mwtl::Stretch())
-                               .Add(mwtl::Column().Gap(6.0_dip)
-                                        .Add(destination_label_, mwtl::Fixed(26.0_dip))
-                                        .Add(destination_, mwtl::Fixed(330.0_dip)),
-                                    mwtl::Stretch()),
-                           mwtl::Fixed(362.0_dip))
-                      .Add(mwtl::Row().Gap(8.0_dip)
-                               .Add(copy_, mwtl::Auto())
-                               .Add(move_, mwtl::Auto())
-                               .Add(clear_, mwtl::Auto()),
-                           mwtl::Fixed(38.0_dip))
-                      .Add(status_, mwtl::Fixed(32.0_dip)));
-        mwtl::Must(mwtl::SetAccessibleName(source_.GetHwnd(), L"Drag source items"),
+                      .Add(title_, mwfl::Fixed(34.0_dip))
+                      .Add(mwfl::Row().Gap(18.0_dip)
+                               .Add(mwfl::Column().Gap(6.0_dip)
+                                        .Add(source_label_, mwfl::Fixed(26.0_dip))
+                                        .Add(source_, mwfl::Fixed(330.0_dip)),
+                                    mwfl::Stretch())
+                               .Add(mwfl::Column().Gap(6.0_dip)
+                                        .Add(destination_label_, mwfl::Fixed(26.0_dip))
+                                        .Add(destination_, mwfl::Fixed(330.0_dip)),
+                                    mwfl::Stretch()),
+                           mwfl::Fixed(362.0_dip))
+                      .Add(mwfl::Row().Gap(8.0_dip)
+                               .Add(copy_, mwfl::Auto())
+                               .Add(move_, mwfl::Auto())
+                               .Add(clear_, mwfl::Auto()),
+                           mwfl::Fixed(38.0_dip))
+                      .Add(status_, mwfl::Fixed(32.0_dip)));
+        mwfl::Must(mwfl::SetAccessibleName(source_.GetHwnd(), L"Drag source items"),
                    "name OLE source list");
-        mwtl::Must(mwtl::SetAccessibleName(destination_.GetHwnd(), L"Drop destination items"),
+        mwfl::Must(mwfl::SetAccessibleName(destination_.GetHwnd(), L"Drop destination items"),
                    "name OLE destination list");
-        mwtl::ApplyWindowAppearance(GetHwnd());
+        mwfl::ApplyWindowAppearance(GetHwnd());
 
-        target_ = mwtl::CreateOleDropTarget({
+        target_ = mwfl::CreateOleDropTarget({
             .enter = [this](IDataObject& data, DWORD, POINTL, DWORD allowed) {
                 status_.SetText(L"Drag entered — release to drop; Esc cancels.");
                 return Supports(data) ? PreferredEffect(allowed) : DROPEFFECT_NONE;
@@ -84,46 +84,46 @@ public:
             .drop = [this](IDataObject& data, DWORD, POINTL, DWORD allowed) {
                 return Accept(data) ? PreferredEffect(allowed) : DROPEFFECT_NONE;
             }});
-        auto registered = mwtl::RegisterOleDropTarget(GetHwnd(), target_);
+        auto registered = mwfl::RegisterOleDropTarget(GetHwnd(), target_);
         if (!registered) throw std::runtime_error("register OLE drop target failed");
         registration_ = std::move(registered.registration);
         if (g_self_test && !::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0))
             throw std::runtime_error("post OLE drag/drop self-test failed");
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
-        if (event.IsClicked(copy_)) { TransferSelected(false); return mwtl::EventResult::Handled(); }
-        if (event.IsClicked(move_)) { TransferSelected(true); return mwtl::EventResult::Handled(); }
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
+        if (event.IsClicked(copy_)) { TransferSelected(false); return mwfl::EventResult::Handled(); }
+        if (event.IsClicked(move_)) { TransferSelected(true); return mwfl::EventResult::Handled(); }
         if (event.IsClicked(clear_)) {
             destination_.ClearItems();
             status_.SetText(L"Destination cleared.");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnKeyDown(const mwtl::KeyEvent& event) override {
+    mwfl::EventResult OnKeyDown(const mwfl::KeyEvent& event) override {
         if (event.virtual_key == VK_RETURN && (::GetKeyState(VK_CONTROL) & 0x8000)) {
-            TransferSelected(false); return mwtl::EventResult::Handled();
+            TransferSelected(false); return mwfl::EventResult::Handled();
         }
         if (event.virtual_key == VK_RETURN && (::GetKeyState(VK_SHIFT) & 0x8000)) {
-            TransferSelected(true); return mwtl::EventResult::Handled();
+            TransferSelected(true); return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnLeftButtonDown(const mwtl::MouseEvent& event) override {
+    mwfl::EventResult OnLeftButtonDown(const mwfl::MouseEvent& event) override {
         const RECT grip = DragGrip();
         if (::PtInRect(&grip, event.position)) {
             drag_armed_ = true;
             drag_start_ = event.position;
             ::SetCapture(GetHwnd());
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnMouseMove(const mwtl::MouseEvent& event) override {
+    mwfl::EventResult OnMouseMove(const mwfl::MouseEvent& event) override {
         if (drag_armed_ && (event.key_state & MK_LBUTTON)) {
             const int threshold_x = ::GetSystemMetrics(SM_CXDRAG);
             const int threshold_y = ::GetSystemMetrics(SM_CYDRAG);
@@ -133,16 +133,16 @@ public:
                 if (::GetCapture() == GetHwnd()) ::ReleaseCapture();
                 StartMouseDrag();
             }
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (drag_armed_ && !(event.key_state & MK_LBUTTON)) {
             drag_armed_ = false;
             if (::GetCapture() == GetHwnd()) ::ReleaseCapture();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnPaint(mwtl::PaintEvent& event) override {
+    mwfl::EventResult OnPaint(mwfl::PaintEvent& event) override {
         RECT grip = DragGrip();
         HBRUSH brush = ::CreateSolidBrush(::GetSysColor(COLOR_HIGHLIGHT));
         if (brush) { ::FillRect(event.GetDC(), &grip, brush); ::DeleteObject(brush); }
@@ -150,23 +150,23 @@ public:
         ::SetTextColor(event.GetDC(), ::GetSysColor(COLOR_HIGHLIGHTTEXT));
         ::DrawTextW(event.GetDC(), L"Drag selected item from here", -1, &grip,
                     DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
-        if (event.id == kRunSelfTest) { RunSelfTest(); return mwtl::EventResult::Handled(); }
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
+        if (event.id == kRunSelfTest) { RunSelfTest(); return mwfl::EventResult::Handled(); }
         if (event.id == WM_THEMECHANGED || event.id == WM_SYSCOLORCHANGE ||
             event.id == WM_SETTINGCHANGE) {
-            mwtl::ApplyWindowAppearance(GetHwnd());
+            mwfl::ApplyWindowAppearance(GetHwnd());
             ::InvalidateRect(GetHwnd(), nullptr, TRUE);
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnClose() override {
+    mwfl::EventResult OnClose() override {
         if (registration_.IsRegistered()) registration_.Revoke();
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
@@ -197,19 +197,19 @@ private:
         if (!selected) return {};
         const auto item = source_.GetItemText(*selected);
         if (!item) return {};
-        mwtl::OleDataObjectBuilder builder;
+        mwfl::OleDataObjectBuilder builder;
         builder.AddUnicodeText(*item);
         std::vector<std::byte> custom((item->size() + 1) * sizeof(wchar_t));
         std::memcpy(custom.data(), item->c_str(), custom.size());
         builder.AddBytes(custom_format_, custom);
         const std::array<std::filesystem::path, 1> files{
-            std::filesystem::path(L"C:\\mwtl-demo\\") / (*item + L".txt")};
+            std::filesystem::path(L"C:\\mwfl-demo\\") / (*item + L".txt")};
         builder.AddFiles(files);
         return builder.Build();
     }
 
     bool Accept(IDataObject& data) {
-        const auto custom = mwtl::ReadOleBytes(data, custom_format_);
+        const auto custom = mwfl::ReadOleBytes(data, custom_format_);
         if (custom && custom.bytes.size() >= sizeof(wchar_t) &&
             custom.bytes.size() % sizeof(wchar_t) == 0) {
             const auto* text = reinterpret_cast<const wchar_t*>(custom.bytes.data());
@@ -221,13 +221,13 @@ private:
                 return true;
             }
         }
-        const auto text = mwtl::ReadOleUnicodeText(data);
+        const auto text = mwfl::ReadOleUnicodeText(data);
         if (text) {
             destination_.AddItem(L"Text: " + text.text);
             status_.SetText(L"Accepted Unicode text.");
             return true;
         }
-        const auto files = mwtl::ReadOleFiles(data);
+        const auto files = mwfl::ReadOleFiles(data);
         if (files) {
             for (const auto& file : files.files) destination_.AddItem(L"File: " + file.native());
             status_.SetText(L"Accepted files from an OLE source.");
@@ -256,14 +256,14 @@ private:
         auto data = BuildSelectedData();
         if (!selected || !data) { status_.SetText(L"Select a source item first."); return; }
         status_.SetText(L"Dragging — Ctrl copies, Shift moves, Esc cancels.");
-        const auto result = mwtl::DoOleDragDrop(*data.Get(), DROPEFFECT_COPY | DROPEFFECT_MOVE);
-        if (result.status == mwtl::OleDragStatus::success &&
+        const auto result = mwfl::DoOleDragDrop(*data.Get(), DROPEFFECT_COPY | DROPEFFECT_MOVE);
+        if (result.status == mwfl::OleDragStatus::success &&
             result.effect == DROPEFFECT_MOVE && source_.GetItemText(*selected)) {
             source_.RemoveItem(*selected);
             const int remaining = source_.GetItemCount();
             if (remaining > 0) source_.SetSelection((std::min)(*selected, remaining - 1));
         }
-        status_.SetText(result.status == mwtl::OleDragStatus::cancelled
+        status_.SetText(result.status == mwfl::OleDragStatus::cancelled
                             ? L"Drag cancelled safely."
                             : (result ? L"Drag completed." : L"Drag failed."));
     }
@@ -279,14 +279,14 @@ private:
             effect = DROPEFFECT_COPY;
             if (result == 0 && (FAILED(target_->Drop(data.Get(), 0, {10, 10}, &effect)) ||
                                 destination_.GetItemCount() != 1)) result = 3;
-            mwtl::OleDataObjectBuilder external_text;
+            mwfl::OleDataObjectBuilder external_text;
             external_text.AddUnicodeText(L"External Unicode 中文");
             auto text_data = external_text.Build();
             effect = DROPEFFECT_COPY;
             if (result == 0 && (FAILED(target_->DragEnter(text_data.Get(), 0, {}, &effect)) ||
                                 FAILED(target_->Drop(text_data.Get(), 0, {}, &effect)) ||
                                 destination_.GetItemCount() != 2)) result = 10;
-            mwtl::OleDataObjectBuilder external_files;
+            mwfl::OleDataObjectBuilder external_files;
             const std::array<std::filesystem::path, 2> paths{L"C:\\one.txt", L"D:\\two.txt"};
             external_files.AddFiles(paths);
             auto file_data = external_files.Build();
@@ -307,8 +307,8 @@ private:
             }
             const auto after = ::GetGuiResources(::GetCurrentProcess(), GR_GDIOBJECTS);
             if (result == 0 && after > before + 1) result = 7;
-            if (registration_.Revoke().status != mwtl::OleDragStatus::success ||
-                registration_.Revoke().status != mwtl::OleDragStatus::not_registered)
+            if (registration_.Revoke().status != mwfl::OleDragStatus::success ||
+                registration_.Revoke().status != mwfl::OleDragStatus::not_registered)
                 result = 8;
         } catch (...) {
             result = 9;
@@ -320,16 +320,16 @@ private:
     bool drag_armed_ = false;
     POINT drag_start_{};
     Microsoft::WRL::ComPtr<IDropTarget> target_;
-    mwtl::OleDropTargetRegistration registration_;
-    mwtl::Label title_, source_label_, destination_label_, status_;
-    mwtl::ListBox source_, destination_;
-    mwtl::Button copy_, move_, clear_;
+    mwfl::OleDropTargetRegistration registration_;
+    mwfl::Label title_, source_label_, destination_label_, status_;
+    mwfl::ListBox source_, destination_;
+    mwfl::Button copy_, move_, clear_;
 };
 }  // namespace
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
     g_self_test = std::wstring_view{::GetCommandLineW()}.find(L"--self-test") !=
                   std::wstring_view::npos;
-    return mwtl::RunApplication<DragDropWindow>(
-        instance, show_command, {}, {.com_apartment = mwtl::ComApartment::ole_sta});
+    return mwfl::RunApplication<DragDropWindow>(
+        instance, show_command, {}, {.com_apartment = mwfl::ComApartment::ole_sta});
 }

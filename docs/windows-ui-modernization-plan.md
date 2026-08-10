@@ -7,7 +7,7 @@ starts until that release gate is complete.
 ## Objective
 
 Make useful Windows UI and desktop APIs available through a concise, modern
-C++20 development model. mwtl should remove repetitive setup and unsafe
+C++20 development model. mwfl should remove repetitive setup and unsafe
 lifetime plumbing while preserving native behavior, native handles, messages,
 styles, return values, and composition with the wider Windows SDK.
 
@@ -26,7 +26,7 @@ machine-readable evidence for a coding Agent to choose the correct API.
 4. Prefer values, RAII, `std::span`, `std::ranges`, `std::chrono`, concepts,
    `std::filesystem`, and explicit result types over framework-specific utility
    types.
-5. Keep optional native ecosystems out of `mwtl::mwtl`.
+5. Keep optional native ecosystems out of `mwfl::mwfl`.
 6. Ship every public feature as API, example, recipe/tutorial, package evidence,
    Agent metadata, Pages component entry, and automated tests.
 

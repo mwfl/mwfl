@@ -1,4 +1,4 @@
-#include <mwtl/desktop.h>
+#include <mwfl/desktop.h>
 
 #include <shobjidl.h>
 
@@ -7,7 +7,7 @@
 #include <limits>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 std::wstring Terminate(std::wstring_view value) {
@@ -409,4 +409,4 @@ HWND FocusNextControl(HWND parent, HWND current, bool previous) noexcept {
     return next != nullptr ? ::SetFocus(next) : nullptr;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

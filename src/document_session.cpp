@@ -1,13 +1,13 @@
-#include <mwtl/document_session.h>
+#include <mwfl/document_session.h>
 
 #include <iomanip>
 #include <ranges>
 #include <sstream>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
-constexpr std::wstring_view magic = L"MWTL_DOCUMENT_SESSION";
+constexpr std::wstring_view magic = L"MWFL_DOCUMENT_SESSION";
 
 std::optional<std::size_t> Utf8Size(std::wstring_view text) {
     if (text.size() > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
@@ -271,4 +271,4 @@ SessionRestoreResult RestoreWorkspaceSession(
     return result;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

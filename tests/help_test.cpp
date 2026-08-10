@@ -1,4 +1,4 @@
-#include <mwtl/help.h>
+#include <mwfl/help.h>
 
 #include <windows.h>
 
@@ -7,9 +7,9 @@
 #include <stdexcept>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     const auto root = std::filesystem::temp_directory_path();
-    const auto html = root / (L"mwtl-help-" +
+    const auto html = root / (L"mwfl-help-" +
         std::to_wstring(::GetCurrentProcessId()) + L".html");
     std::error_code ignored;
     std::filesystem::remove(html, ignored);

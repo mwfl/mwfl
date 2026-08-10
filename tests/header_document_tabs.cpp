@@ -1,6 +1,6 @@
-#include <mwtl/document_tabs.h>
+#include <mwfl/document_tabs.h>
 
 void HeaderDocumentTabsCompiles() {
-    mwtl::DocumentTabWorkspaceAdapter adapter;
+    mwfl::DocumentTabWorkspaceAdapter adapter;
     (void)adapter;
 }

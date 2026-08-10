@@ -109,12 +109,12 @@ foreach ($category in $categoryIds.Keys) {
         [void]$cards.AppendLine("              <p>$(Encode-Html $intent).</p><div class=`"capability-symbols`">$symbols</div>")
         [void]$cards.AppendLine("              <div class=`"capability-headers`">$headers</div><nav aria-label=`"$(Encode-Html (Display-Name $id)) resources`">")
         if ($capability.example) {
-            [void]$cards.AppendLine("                <a href=`"https://github.com/everettjf/mwtl/blob/main/$($capability.example)`">Example</a>")
+            [void]$cards.AppendLine("                <a href=`"https://github.com/mwfl/mwfl/blob/main/$($capability.example)`">Example</a>")
         }
         if ($capability.recipe) {
-            [void]$cards.AppendLine("                <a href=`"https://github.com/everettjf/mwtl/blob/main/$($capability.recipe)`">Guide</a>")
+            [void]$cards.AppendLine("                <a href=`"https://github.com/mwfl/mwfl/blob/main/$($capability.recipe)`">Guide</a>")
         }
-        [void]$cards.AppendLine("                <a href=`"https://github.com/everettjf/mwtl/blob/main/docs/api-index.json`">API index</a>")
+        [void]$cards.AppendLine("                <a href=`"https://github.com/mwfl/mwfl/blob/main/docs/api-index.json`">API index</a>")
         [void]$cards.AppendLine('              </nav>')
         if ($capability.constraints -or $capability.tests) {
             [void]$cards.AppendLine('              <details><summary>Contracts and evidence</summary>')
@@ -141,7 +141,7 @@ foreach ($entry in $docGroups.GetEnumerator()) {
     [void]$usage.AppendLine("          <section><h3>$($entry.Key)</h3><ul class=`"usage-list`">")
     foreach ($file in $entry.Value) {
         $relative = $file.FullName.Substring($ProjectRoot.Length + 1).Replace('\', '/')
-        [void]$usage.AppendLine("            <li data-usage-path=`"$relative`"><a href=`"https://github.com/everettjf/mwtl/blob/main/$relative`">$(Encode-Html (Doc-Name $file.Name))</a></li>")
+        [void]$usage.AppendLine("            <li data-usage-path=`"$relative`"><a href=`"https://github.com/mwfl/mwfl/blob/main/$relative`">$(Encode-Html (Doc-Name $file.Name))</a></li>")
     }
     [void]$usage.AppendLine('          </ul></section>')
 }
@@ -152,27 +152,27 @@ $html = @"
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Search every mwtl capability, public symbol, example, recipe, tutorial, contract, and test from one component catalog.">
-  <link rel="canonical" href="https://everettjf.github.io/mwtl/components/catalog.html">
-  <title>Complete component catalog &mdash; mwtl</title>
+  <meta name="description" content="Search every mwfl capability, public symbol, example, recipe, tutorial, contract, and test from one component catalog.">
+  <link rel="canonical" href="https://mwfl.github.io/components/catalog.html">
+  <title>Complete component catalog &mdash; mwfl</title>
   <meta name="theme-color" content="#f7f9ff">
-  <link rel="icon" type="image/svg+xml" href="../assets/mwtl-mark.svg">
+  <link rel="icon" type="image/svg+xml" href="../assets/mwfl-mark.svg">
   <link rel="stylesheet" href="../styles.css?v=20260810a">
-  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
   <script defer src="../assets/site.js?v=20260810a"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header docs-topbar"><div class="nav">
-    <a class="brand" href="../index.html" aria-label="MWTL &mdash; Modern Windows Thin Layer"><img src="../assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
-    <nav class="nav-links" aria-label="Main navigation"><a class="active" href="index.html">Components</a><a href="../tutorial.html">Get started</a><a href="../changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
+    <a class="brand" href="../index.html" aria-label="MWFL &mdash; Modern Windows Foundation Layer"><img src="../assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
+    <nav class="nav-links" aria-label="Main navigation"><a class="active" href="index.html">Components</a><a href="../tutorial.html">Get started</a><a href="../changelog.html">Changelog</a><a href="https://github.com/mwfl/mwfl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
   </div></header>
   <main id="main" class="shell catalog-page">
     <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all $($capabilities.Count) public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
       <div class="catalog-stats"><span><strong>$($capabilities.Count)</strong> capabilities</span><span><strong>44</strong> examples</span><span><strong>$($docGroups['Recipes'].Count)</strong> recipes</span><span><strong>$($docGroups['Tutorials'].Count)</strong> tutorials</span></div>
     </header>
     <section class="catalog-tools" aria-label="Filter components">
-      <label for="component-search">Find by task, symbol, or header</label><input id="component-search" type="search" placeholder="Try docking, PrintJob, mwtl/ribbon.h..." autocomplete="off">
+      <label for="component-search">Find by task, symbol, or header</label><input id="component-search" type="search" placeholder="Try docking, PrintJob, mwfl/ribbon.h..." autocomplete="off">
       <div class="catalog-filters" role="group" aria-label="Capability category"><button class="active" type="button" data-catalog-filter="all">All</button>
 $(($categoryIds.Keys | ForEach-Object { "        <button type=`"button`" data-catalog-filter=`"$(Encode-Html $_)`">$(Encode-Html $_)</button>" }) -join "`n")
       </div><p class="catalog-result" role="status" aria-live="polite">Showing all $($capabilities.Count) capabilities.</p>
@@ -180,18 +180,18 @@ $(($categoryIds.Keys | ForEach-Object { "        <button type=`"button`" data-ca
     <div class="capability-groups">
 $cards
     </div>
-    <section id="cmake-components" class="catalog-reference"><div><div class="eyebrow">CMake composition</div><h2>Link only what the application uses.</h2><p>The core target stays small. Rendering, imaging, printing, OLE, Shell, Ribbon, MDI, graphics, WebView2, and Scintilla remain explicit components.</p></div><pre data-title="CMakeLists.txt"><code>find_package(mwtl CONFIG REQUIRED COMPONENTS printing ole shell)
+    <section id="cmake-components" class="catalog-reference"><div><div class="eyebrow">CMake composition</div><h2>Link only what the application uses.</h2><p>The core target stays small. Rendering, imaging, printing, OLE, Shell, Ribbon, MDI, graphics, WebView2, and Scintilla remain explicit components.</p></div><pre data-title="CMakeLists.txt"><code>find_package(mwfl CONFIG REQUIRED COMPONENTS printing ole shell)
 target_link_libraries(my_app PRIVATE
-  mwtl::mwtl
-  mwtl::printing
-  mwtl::ole
-  mwtl::shell)</code></pre></section>
+  mwfl::mwfl
+  mwfl::printing
+  mwfl::ole
+  mwfl::shell)</code></pre></section>
     <section id="usage-library" class="usage-library"><div class="eyebrow">All usage paths</div><h2>From first window to native integration.</h2><p>These lists are generated from every checked-in recipe and tutorial, so specialized workflows remain discoverable even when one capability card links a broader guide.</p><div class="usage-columns">
 $usage
       </div></section>
-    <section class="catalog-next"><div><div class="eyebrow">Before the first public preview</div><h2>Freeze one coherent API, then publish every example and contract from the same tested commit.</h2></div><p><a class="button primary" href="https://github.com/everettjf/mwtl/blob/main/docs/release-readiness.md">Read the release plan</a></p></section>
+    <section class="catalog-next"><div><div class="eyebrow">Before the first public preview</div><h2>Freeze one coherent API, then publish every example and contract from the same tested commit.</h2></div><p><a class="button primary" href="https://github.com/mwfl/mwfl/blob/main/docs/release-readiness.md">Read the release plan</a></p></section>
   </main>
-  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Thin Layer &middot; MIT licensed &middot; Windows 10+ &middot; x64</span><nav aria-label="Footer"><a href="../building.html">Build</a><a href="https://github.com/everettjf/mwtl">Source</a></nav></div></footer>
+  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Foundation Layer &middot; MIT licensed &middot; Windows 10+ &middot; x64</span><nav aria-label="Footer"><a href="../building.html">Build</a><a href="https://github.com/mwfl/mwfl">Source</a></nav></div></footer>
 </body>
 </html>
 "@

@@ -1,4 +1,4 @@
-#include <mwtl/text_file.h>
+#include <mwfl/text_file.h>
 
 #include <atomic>
 #include <cstddef>
@@ -6,7 +6,7 @@
 #include <utility>
 #include <vector>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 class FileHandle final {
@@ -157,7 +157,7 @@ bool WriteAll(HANDLE file, const std::vector<std::byte>& bytes, DWORD& error) no
 std::filesystem::path TemporarySibling(const std::filesystem::path& path) {
     static std::atomic<unsigned long> sequence{};
     auto temporary = path;
-    temporary += L".mwtl-tmp-" + std::to_wstring(::GetCurrentProcessId()) + L"-" +
+    temporary += L".mwfl-tmp-" + std::to_wstring(::GetCurrentProcessId()) + L"-" +
                  std::to_wstring(sequence.fetch_add(1, std::memory_order_relaxed));
     return temporary;
 }
@@ -288,4 +288,4 @@ TextFileWriteResult WriteTextFileAtomic(const std::filesystem::path& path,
             .native_error = ERROR_SUCCESS};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

@@ -1,18 +1,18 @@
-#include <mwtl/ribbon.h>
+#include <mwfl/ribbon.h>
 
 #include <array>
 
 class RibbonWorkspace final {
 public:
     RibbonWorkspace() {
-        commands_.Add(mwtl::Command({201}, L"Save", [this] { ++save_count_; }));
+        commands_.Add(mwfl::Command({201}, L"Save", [this] { ++save_count_; }));
         model_.Add({{101}, {201}, 1, {7}});
         const std::array recent{
-            mwtl::RibbonRecentItem{L"one", L"One", L"C:\\one.txt"}};
+            mwfl::RibbonRecentItem{L"one", L"One", L"C:\\one.txt"}};
         model_.SetRecentItems(recent);
     }
 
-    mwtl::RibbonHostResult Create(HWND frame, HINSTANCE module) noexcept {
+    mwfl::RibbonHostResult Create(HWND frame, HINSTANCE module) noexcept {
         auto created = host_.Create(frame, model_, commands_);
         if (!created) return created;
         auto loaded = host_.Load(module, L"APPLICATION_RIBBON");
@@ -29,7 +29,7 @@ public:
 
 private:
     int save_count_ = 0;
-    mwtl::CommandSet commands_;
-    mwtl::RibbonCommandModel model_;
-    mwtl::RibbonFrameworkHost host_;
+    mwfl::CommandSet commands_;
+    mwfl::RibbonCommandModel model_;
+    mwfl::RibbonFrameworkHost host_;
 };

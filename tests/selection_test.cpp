@@ -1,4 +1,4 @@
-#include <mwtl/selection.h>
+#include <mwfl/selection.h>
 
 #include <optional>
 #include <string>
@@ -40,7 +40,7 @@ struct FakeSelectionControl {
 
 int main() {
     FakeSelectionControl control;
-    mwtl::SelectionAdapter<FakeSelectionControl, int> adapter{control};
+    mwfl::SelectionAdapter<FakeSelectionControl, int> adapter{control};
     if (!adapter.Add(L"ten", 10) || !adapter.Add(L"twenty", 20) ||
         adapter.Size() != 2 || !adapter.IsSynchronized()) return 1;
     if (!adapter.SelectValue(20) || !adapter.GetSelectedValue() ||

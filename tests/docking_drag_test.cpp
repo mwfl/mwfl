@@ -1,29 +1,29 @@
-#include <mwtl/docking_drag.h>
+#include <mwfl/docking_drag.h>
 
 #include <array>
 #include <stdexcept>
 
 namespace {
 
-mwtl::DockLayoutModel MakeModel() {
-    mwtl::DockLayoutModel model{{10}, {100}, mwtl::DockGroupRole::tool};
-    model.AddPanel({{1}, L"Explorer", mwtl::DockPanelRole::tool}, {10});
-    model.AddPanel({{2}, L"Output", mwtl::DockPanelRole::tool}, {10});
+mwfl::DockLayoutModel MakeModel() {
+    mwfl::DockLayoutModel model{{10}, {100}, mwfl::DockGroupRole::tool};
+    model.AddPanel({{1}, L"Explorer", mwfl::DockPanelRole::tool}, {10});
+    model.AddPanel({{2}, L"Output", mwfl::DockPanelRole::tool}, {10});
     return model;
 }
 
-mwtl::DockMutation HideMutation(mwtl::DockPanelId panel) {
-    mwtl::DockMutation mutation;
-    mutation.kind = mwtl::DockMutationKind::auto_hide;
+mwfl::DockMutation HideMutation(mwfl::DockPanelId panel) {
+    mwfl::DockMutation mutation;
+    mutation.kind = mwfl::DockMutationKind::auto_hide;
     mutation.panel = panel;
-    mutation.edge = mwtl::DockEdge::left;
+    mutation.edge = mwfl::DockEdge::left;
     return mutation;
 }
 
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     const std::array targets{
         DockDropTarget{20, DockTargetKind::tab_group, {0, 0, 200, 200}, {10},
                        DockEdge::left, 1, true},

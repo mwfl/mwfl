@@ -1,11 +1,11 @@
-#include <mwtl/error.h>
+#include <mwfl/error.h>
 
-namespace mwtl {
+namespace mwfl {
 namespace detail {
 
 std::string DescribeOperation(
     std::string_view operation, const std::source_location& where) {
-    std::string description(operation.empty() ? "mwtl operation" : operation);
+    std::string description(operation.empty() ? "mwfl operation" : operation);
     description += " at ";
     description += where.file_name();
     description += ':';
@@ -22,4 +22,4 @@ Error::Error(DWORD native_error, std::string_view operation,
           std::system_category(), detail::DescribeOperation(operation, where)),
       operation_(operation), location_(where) {}
 
-}  // namespace mwtl
+}  // namespace mwfl

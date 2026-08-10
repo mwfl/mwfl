@@ -1,6 +1,6 @@
 # Add a notification-area icon
 
-Use `mwtl/tray_icon.h` for a background utility whose status and commands must
+Use `mwfl/tray_icon.h` for a background utility whose status and commands must
 remain available from the Windows notification area.
 
 1. Give the icon a stable, application-owned GUID. Do not generate a new GUID
@@ -30,22 +30,22 @@ void BuildUI() override {
     }
 }
 
-mwtl::EventResult OnMessage(const mwtl::WindowMessage& message) override {
+mwfl::EventResult OnMessage(const mwfl::WindowMessage& message) override {
     if (tray_.IsTaskbarCreated(message)) {
         static_cast<void>(tray_.Recreate());
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
     const auto event = tray_.Decode(message);
-    if (!event) return mwtl::EventResult::Propagate();
-    if (event->kind == mwtl::TrayIconEventKind::context_menu) {
+    if (!event) return mwfl::EventResult::Propagate();
+    if (event->kind == mwfl::TrayIconEventKind::context_menu) {
         ShowCommandMenu(event->screen_position);
     }
-    return mwtl::EventResult::Handled();
+    return mwfl::EventResult::Handled();
 }
 
-mwtl::EventResult OnClose() override {
+mwfl::EventResult OnClose() override {
     tray_.Remove();
-    return mwtl::EventResult::Propagate();
+    return mwfl::EventResult::Propagate();
 }
 ```
 

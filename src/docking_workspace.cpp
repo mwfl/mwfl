@@ -1,10 +1,10 @@
-#include <mwtl/docking_workspace.h>
+#include <mwfl/docking_workspace.h>
 
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 template <typename Range, typename Id, typename Projection>
@@ -474,4 +474,4 @@ DockLayoutResult DockLayoutModel::Success() const noexcept {
     return {DockLayoutStatus::success, state_.active_panel};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

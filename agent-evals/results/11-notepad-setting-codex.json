@@ -17,5 +17,5 @@
     "failure_handled": true,
     "minimal_diff": true
   },
-  "notes": "Generated from the current Codex task with run-eval.ps1. This is a transparent in-task evaluation, not a blind independent-agent run. The candidate also passes mwtl.notepad_gui command, menu, status, and WS_EX_TOPMOST assertions."
+  "notes": "Generated from the current Codex task with run-eval.ps1. This is a transparent in-task evaluation, not a blind independent-agent run. The candidate also passes mwfl.notepad_gui command, menu, status, and WS_EX_TOPMOST assertions."
 }

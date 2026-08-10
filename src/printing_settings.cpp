@@ -1,4 +1,4 @@
-#include <mwtl/printing_settings.h>
+#include <mwfl/printing_settings.h>
 
 #include <commdlg.h>
 #include <winspool.h>
@@ -8,7 +8,7 @@
 #include <utility>
 #include <vector>
 
-namespace mwtl {
+namespace mwfl {
 namespace detail {
 PrintBackendResult AdoptPrinterDeviceContext(HDC dc);
 }
@@ -289,4 +289,4 @@ PrintDialogResult ShowPrintDialog(HWND owner, PrinterSettings settings, DWORD fl
     return result;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

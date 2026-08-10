@@ -1,9 +1,9 @@
-#include <mwtl/dpi.h>
+#include <mwfl/dpi.h>
 
 #include <cmath>
 #include <limits>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 int RoundAndClamp(double value) noexcept {
@@ -73,4 +73,4 @@ RECT DpiContext::ToPixels(RectDip value) const noexcept {
         AddAndClamp(origin.y, size.cy)};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

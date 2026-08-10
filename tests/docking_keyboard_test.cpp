@@ -1,9 +1,9 @@
-#include <mwtl/docking_keyboard.h>
+#include <mwfl/docking_keyboard.h>
 
 #include <array>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     const std::array targets{
         DockDropTarget{1, DockTargetKind::split, {0, 40, 40, 40}, {10},
                        DockEdge::left},

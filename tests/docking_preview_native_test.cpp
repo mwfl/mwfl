@@ -1,4 +1,4 @@
-#include <mwtl/docking_preview.h>
+#include <mwfl/docking_preview.h>
 
 #include <cstdlib>
 #include <cstdio>
@@ -19,7 +19,7 @@ HWND MakeOwner() {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     HWND owner = MakeOwner();
     if (!owner) return 1;
     ::ShowWindow(owner, SW_SHOWNOACTIVATE);

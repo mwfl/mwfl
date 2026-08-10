@@ -1,4 +1,4 @@
-#include <mwtl/d2d_host.h>
+#include <mwfl/d2d_host.h>
 
 #include <stdexcept>
 
@@ -11,7 +11,7 @@ HWND CreateParent() {
 }
 
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
-    using namespace mwtl;
+    using namespace mwfl;
     const HWND parent = CreateParent();
     if (parent == nullptr) return 1;
 

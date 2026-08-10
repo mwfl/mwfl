@@ -9,6 +9,6 @@ smaller starting point is `templates/form-app/main.cpp`.
 
 Keep bindings as window members because they refer to both controls and model
 values. Check `Pull().accepted` before updating dependent UI. On rejection,
-show the returned message and focus the invalid control. Do not assume mwtl has
+show the returned message and focus the invalid control. Do not assume mwfl has
 an implicit global data context.
 

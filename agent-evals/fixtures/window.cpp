@@ -1,16 +1,16 @@
-#include <mwtl/mwtl.h>
-using mwtl::operator""_dip;
-class EvalWindow final : public mwtl::WindowBase {
+#include <mwfl/mwfl.h>
+using mwfl::operator""_dip;
+class EvalWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        mwtl::ControlHost ui{*this}; ui.Add(status_, L"Ready"); ui.Add(close_, L"Close");
-        SetLayout(mwtl::Column().Margin(16.0_dip).Gap(8.0_dip)
-            .Add(status_, mwtl::Stretch()).Add(close_, mwtl::Fixed(36.0_dip)));
+        mwfl::ControlHost ui{*this}; ui.Add(status_, L"Ready"); ui.Add(close_, L"Close");
+        SetLayout(mwfl::Column().Margin(16.0_dip).Gap(8.0_dip)
+            .Add(status_, mwfl::Stretch()).Add(close_, mwfl::Fixed(36.0_dip)));
     }
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
-        if (!event.IsClicked(close_)) return mwtl::EventResult::Propagate();
-        Close(); return mwtl::EventResult::Handled();
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
+        if (!event.IsClicked(close_)) return mwfl::EventResult::Propagate();
+        Close(); return mwfl::EventResult::Handled();
     }
-private: mwtl::Label status_; mwtl::Button close_;
+private: mwfl::Label status_; mwfl::Button close_;
 };
 

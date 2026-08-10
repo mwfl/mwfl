@@ -1,7 +1,7 @@
-#include <mwtl/concepts.h>
+#include <mwfl/concepts.h>
 
 struct ConceptWindow {
     HWND GetHwnd() const noexcept { return nullptr; }
 };
 
-static_assert(mwtl::WindowLike<ConceptWindow>);
+static_assert(mwfl::WindowLike<ConceptWindow>);

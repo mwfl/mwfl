@@ -1,19 +1,19 @@
-#include <mwtl/navigation_controls.h>
+#include <mwfl/navigation_controls.h>
 
 #include <concepts>
 
-static_assert(std::movable<mwtl::TreeView>);
-static_assert(std::movable<mwtl::ListView>);
+static_assert(std::movable<mwfl::TreeView>);
+static_assert(std::movable<mwfl::ListView>);
 
 void ConsumeNavigationControls() {
-    mwtl::TreeView tree;
-    mwtl::ListView list;
-    mwtl::Header header;
-    mwtl::TabControl tabs;
-    mwtl::ComboBoxEx combo;
-    const mwtl::TreeItemId tree_id{1};
-    const mwtl::ListItemId list_id{2};
-    const mwtl::ListViewOptions virtual_options{.virtual_data = true};
+    mwfl::TreeView tree;
+    mwfl::ListView list;
+    mwfl::Header header;
+    mwfl::TabControl tabs;
+    mwfl::ComboBoxEx combo;
+    const mwfl::TreeItemId tree_id{1};
+    const mwfl::ListItemId list_id{2};
+    const mwfl::ListViewOptions virtual_options{.virtual_data = true};
     static_cast<void>(tree);
     static_cast<void>(list);
     static_cast<void>(header);

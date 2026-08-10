@@ -1,4 +1,4 @@
-#include <mwtl/single_instance.h>
+#include <mwfl/single_instance.h>
 
 #include <algorithm>
 #include <cstdint>
@@ -7,7 +7,7 @@
 #include <system_error>
 #include <thread>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 constexpr std::size_t kMaximumPayloadCharacters = 32767;
 
@@ -39,9 +39,9 @@ SingleInstance::SingleInstance(std::wstring_view application_id) {
     if (application_id.empty()) throw std::invalid_argument("single-instance application ID must not be empty");
     const auto hash = Hash(application_id);
     const std::wstring suffix = std::to_wstring(hash);
-    property_name_ = L"mwtl.SingleInstance.Window." + suffix;
+    property_name_ = L"mwfl.SingleInstance.Window." + suffix;
     payload_tag_ = static_cast<ULONG_PTR>(hash == 0 ? 1 : hash);
-    const std::wstring mutex_name = L"Local\\mwtl.SingleInstance.Mutex." + suffix;
+    const std::wstring mutex_name = L"Local\\mwfl.SingleInstance.Mutex." + suffix;
     mutex_ = ::CreateMutexW(nullptr, FALSE, mutex_name.c_str());
     if (!mutex_) throw std::system_error(static_cast<int>(::GetLastError()),
                                          std::system_category(), "CreateMutexW");
@@ -114,4 +114,4 @@ std::optional<std::wstring> SingleInstance::DecodeActivation(
     return std::wstring{text, count - 1};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

@@ -1,19 +1,19 @@
 # Native system-message recipes
 
-mwtl intentionally leaves system semantics with the application. Rare messages
+mwfl intentionally leaves system semantics with the application. Rare messages
 can share the typed raw-message fallback without introducing a macro map:
 
 ```cpp
-mwtl::EventResult OnMessage(const mwtl::WindowMessage& message) {
+mwfl::EventResult OnMessage(const mwfl::WindowMessage& message) {
     switch (message.id) {
     case WM_QUERYENDSESSION:
-        return mwtl::EventResult::Handled(TRUE);
+        return mwfl::EventResult::Handled(TRUE);
     case WM_POWERBROADCAST:
     case WM_SETTINGCHANGE:
         RefreshSystemState();
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     default:
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 }
 ```
@@ -25,7 +25,7 @@ Preserve the documented LRESULT for messages such as `WM_QUERYENDSESSION` and
 | Message | Consumer responsibility |
 |---|---|
 | `WM_PAINT`, `WM_SIZE` | own renderer resources, resize and invalidation |
-| `WM_DPICHANGED` | mwtl applies the suggested rect by default; refresh consumer DPI resources |
+| `WM_DPICHANGED` | mwfl applies the suggested rect by default; refresh consumer DPI resources |
 | `WM_DISPLAYCHANGE` | re-query monitor/display capabilities |
 | `WM_SETTINGCHANGE` | re-query high contrast and other relevant settings |
 | `WM_POWERBROADCAST` | pause/resume consumer devices and background services |

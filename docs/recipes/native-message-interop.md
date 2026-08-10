@@ -2,7 +2,7 @@
 
 Prefer typed handlers already provided by `WindowBase`. For an application-defined
 message, choose an ID at or above `WM_APP`, post or send it through `GetHwnd()`, and
-handle it in `OnMessage(const mwtl::WindowMessage&)`.
+handle it in `OnMessage(const mwfl::WindowMessage&)`.
 
 - Return `Handled(result)` only when the message was consumed.
 - Return `Propagate()` for every other message.

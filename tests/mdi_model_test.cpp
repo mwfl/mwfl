@@ -1,9 +1,9 @@
-#include <mwtl/mdi.h>
+#include <mwfl/mdi.h>
 
 #include <stdexcept>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     MdiWorkspaceModel source;
     if (source.Add({{}, L"bad"}).status != MdiModelStatus::invalid_argument ||
         source.Add({{1}, L""}).status != MdiModelStatus::invalid_argument)

@@ -1,9 +1,9 @@
-#include <mwtl/docking_floating.h>
+#include <mwfl/docking_floating.h>
 
 #include <stdexcept>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     const HWND owner = ::CreateWindowExW(0, L"STATIC", L"floating owner",
         WS_OVERLAPPEDWINDOW, 0, 0, 600, 400, nullptr, nullptr,
         ::GetModuleHandleW(nullptr), nullptr);

@@ -1,4 +1,4 @@
-#include <mwtl/shell_integration.h>
+#include <mwfl/shell_integration.h>
 
 #include <propkey.h>
 #include <propvarutil.h>
@@ -12,7 +12,7 @@
 #include <limits>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 ShellStatus MapError(HRESULT error) noexcept {
@@ -57,11 +57,11 @@ TBPFLAG NativeState(TaskbarProgressState state) noexcept {
 }
 
 std::wstring TaskIdentity(std::wstring_view id) {
-    return L"--mwtl-jump-task=" + std::wstring(id);
+    return L"--mwfl-jump-task=" + std::wstring(id);
 }
 
 std::wstring ExtractTaskId(std::wstring_view arguments) {
-    constexpr std::wstring_view prefix = L"--mwtl-jump-task=";
+    constexpr std::wstring_view prefix = L"--mwfl-jump-task=";
     if (!arguments.starts_with(prefix)) return {};
     const std::size_t end = arguments.find(L' ', prefix.size());
     return std::wstring(arguments.substr(prefix.size(), end - prefix.size()));
@@ -383,4 +383,4 @@ ShellResult SetWindowAppUserModelId(HWND window, std::wstring_view app_id) noexc
     return {MapError(SUCCEEDED(result) ? S_OK : result), result};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

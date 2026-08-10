@@ -1,10 +1,10 @@
-#include <mwtl/docking_session.h>
-#include <mwtl/text_file.h>
+#include <mwfl/docking_session.h>
+#include <mwfl/text_file.h>
 
 #include <filesystem>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     DockLayoutModel model{{10}, {100}, DockGroupRole::document};
     if (!model.AddDockedGroup({20}, {200}, DockGroupRole::tool, {10}, {300},
                               DockEdge::left, 0.3) ||
@@ -84,20 +84,20 @@ int main() {
         DockingSessionStatus::invalid_graph) return 13;
 
     const auto root = std::filesystem::temp_directory_path() /
-        (L"mwtl-docking-session-" + std::to_wstring(::GetCurrentProcessId()));
+        (L"mwfl-docking-session-" + std::to_wstring(::GetCurrentProcessId()));
     std::error_code ignored;
     std::filesystem::remove_all(root, ignored);
     std::filesystem::create_directories(root);
-    const auto path = root / L"layout.mwtl";
+    const auto path = root / L"layout.mwfl";
     if (SaveDockingSessionAtomic(path, model.GetSnapshot()) !=
         DockingSessionStatus::success) return 14;
     const auto loaded = LoadDockingSession(path);
     if (!loaded || loaded.snapshot->main_root != model.GetSnapshot().main_root)
         return 15;
-    if (!WriteTextFileAtomic(path, L"MWTL_DOCK_LAYOUT 1\nR 100").Succeeded() ||
+    if (!WriteTextFileAtomic(path, L"MWFL_DOCK_LAYOUT 1\nR 100").Succeeded() ||
         LoadDockingSession(path).status != DockingSessionStatus::malformed)
         return 16;
-    if (SaveDockingSessionAtomic(root / L"invalid.mwtl", cyclic) !=
+    if (SaveDockingSessionAtomic(root / L"invalid.mwfl", cyclic) !=
         DockingSessionStatus::invalid_graph) return 17;
     std::filesystem::remove_all(root, ignored);
     if (std::filesystem::exists(root)) return 18;

@@ -1,5 +1,5 @@
-#include <mwtl/docking_preview.h>
+#include <mwfl/docking_preview.h>
 
 #include <type_traits>
 
-static_assert(!std::is_copy_constructible_v<mwtl::DockPreviewWindow>);
+static_assert(!std::is_copy_constructible_v<mwfl::DockPreviewWindow>);

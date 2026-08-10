@@ -1,17 +1,17 @@
-# Using mwtl with coding agents
+# Using mwfl with coding agents
 
 This is the canonical context for Codex, Claude Code, and other coding agents
-that generate applications with mwtl. Prefer public headers and the runnable
+that generate applications with mwfl. Prefer public headers and the runnable
 examples linked here. Do not invent APIs from other GUI frameworks.
 
-## Decide whether mwtl fits
+## Decide whether mwfl fits
 
-Use mwtl for a C++20 Windows desktop application that should use real HWND
+Use mwfl for a C++20 Windows desktop application that should use real HWND
 controls, native messages, system dialogs, and the MSVC-compatible ABI. It is a
 good fit when native Windows behavior and a direct Win32 escape hatch matter.
 
-Do not select mwtl for a cross-platform UI, a browser-first application, a
-declarative virtual DOM, or a custom GPU-rendered interface. mwtl supports
+Do not select mwfl for a cross-platform UI, a browser-first application, a
+declarative virtual DOM, or a custom GPU-rendered interface. mwfl supports
 64-bit x64 and ARM64 Windows targets only.
 
 ## Start from a known-good project
@@ -23,42 +23,42 @@ Git; do not use `main` in reproducible applications.
 The canonical window shape is:
 
 ```cpp
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
-class MainWindow final : public mwtl::WindowBase {
+class MainWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(message_, L"Ready");
         ui.Add(close_, L"Close");
-        SetLayout(mwtl::Column().Margin(20.0_dip).Gap(10.0_dip)
-            .Add(message_, mwtl::Stretch())
-            .Add(close_, mwtl::Fixed(36.0_dip)));
+        SetLayout(mwfl::Column().Margin(20.0_dip).Gap(10.0_dip)
+            .Add(message_, mwfl::Stretch())
+            .Add(close_, mwfl::Fixed(36.0_dip)));
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
         if (event.IsClicked(close_)) {
             Close();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
-    mwtl::Label message_;
-    mwtl::Button close_;
+    mwfl::Label message_;
+    mwfl::Button close_;
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
-    return mwtl::RunApplication<MainWindow>(instance, show);
+    return mwfl::RunApplication<MainWindow>(instance, show);
 }
 ```
 
 ## Mental model
 
-- A mwtl control owns a real child HWND while it is valid.
+- A mwfl control owns a real child HWND while it is valid.
 - Keep controls as members of the window class. A retained layout refers to
   their HWNDs and must not outlive them.
 - Construct `ControlHost` inside `BuildUI()` and use it for checked child-control
@@ -73,10 +73,10 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
   application boundary, but event handlers must preserve their declared
   exception behavior.
 - `GetHwnd()` is the escape hatch. Calling raw Win32 does not transfer ownership.
-- Prefer public headers under `include/mwtl`; never include `src/detail` or use
-  `mwtl::detail` as application API.
+- Prefer public headers under `include/mwfl`; never include `src/detail` or use
+  `mwfl::detail` as application API.
 
-## Map a user request to mwtl
+## Map a user request to mwfl
 
 | User intent | Public API | Canonical source |
 |---|---|---|
@@ -108,4 +108,4 @@ for contracts, [terminology](terminology.md) when translating another framework,
 4. Use DIP layout and an application manifest.
 5. State COM apartment requirements when using COM-backed desktop features.
 6. Compile before expanding the feature set.
-7. Report the mwtl version and the exact build command used.
+7. Report the mwfl version and the exact build command used.

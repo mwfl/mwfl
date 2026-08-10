@@ -1,4 +1,4 @@
-#include <mwtl/document.h>
+#include <mwfl/document.h>
 
 #include <cstdlib>
 #include <filesystem>
@@ -7,12 +7,12 @@
 namespace {
 bool RejectsEmptyNamesAndPaths() {
     try {
-        mwtl::DocumentState invalid{L""};
+        mwfl::DocumentState invalid{L""};
         static_cast<void>(invalid);
         return false;
     } catch (const std::invalid_argument&) {
     }
-    mwtl::DocumentState document;
+    mwfl::DocumentState document;
     try { document.MarkOpened({}); return false; }
     catch (const std::invalid_argument&) {}
     try { document.MarkSavedAs({}); return false; }
@@ -22,9 +22,9 @@ bool RejectsEmptyNamesAndPaths() {
 }  // namespace
 
 int main() {
-    using enum mwtl::DocumentTransition;
-    using enum mwtl::UnsavedChangesChoice;
-    mwtl::DocumentState document{L"New note"};
+    using enum mwfl::DocumentTransition;
+    using enum mwfl::UnsavedChangesChoice;
+    mwfl::DocumentState document{L"New note"};
     if (document.HasPath() || document.IsDirty() ||
         document.GetDisplayName() != L"New note" ||
         document.EvaluateTransition() != proceed) return EXIT_FAILURE;

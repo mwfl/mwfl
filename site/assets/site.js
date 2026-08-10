@@ -20,7 +20,7 @@
     button.addEventListener("click", () => {
       const next = currentTheme() === "dark" ? "light" : "dark";
       root.dataset.theme = next;
-      try { localStorage.setItem("mwtl-theme", next); } catch { /* private mode */ }
+      try { localStorage.setItem("mwfl-theme", next); } catch { /* private mode */ }
       syncThemeButton(button);
     });
   });

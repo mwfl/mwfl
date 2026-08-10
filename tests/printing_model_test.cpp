@@ -1,10 +1,10 @@
-#include <mwtl/printing.h>
+#include <mwfl/printing.h>
 
 #include <cmath>
 #include <limits>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     constexpr PrintLayout a4{{210000, 297000}, {10000, 12000, 10000, 12000}};
     static_assert(a4.IsValid());
     static_assert(a4.ContentExtent().width == 190000);

@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <windows.h>
 
@@ -20,7 +20,7 @@ HWND CreateOwner() {
                              ::GetModuleHandleW(nullptr), nullptr);
 }
 
-mwtl::TrayIconOptions Options(HWND owner, UINT id, GUID identity, std::wstring tooltip) {
+mwfl::TrayIconOptions Options(HWND owner, UINT id, GUID identity, std::wstring tooltip) {
     return {.owner = owner,
             .id = id,
             .callback_message = kTrayMessage,
@@ -32,7 +32,7 @@ mwtl::TrayIconOptions Options(HWND owner, UINT id, GUID identity, std::wstring t
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
 
     const HWND owner = CreateOwner();
     if (owner == nullptr) return 1;
@@ -48,7 +48,7 @@ int main() {
         return 4;
 
     TrayIcon icon;
-    if (!icon.Add(Options(owner, 17, kPrimaryIdentity, L"mwtl tray test")) || !icon.IsAdded() ||
+    if (!icon.Add(Options(owner, 17, kPrimaryIdentity, L"mwfl tray test")) || !icon.IsAdded() ||
         icon.GetState() != TrayIconState::added || !icon.IsOwnerThread())
         return 5;
     if (icon.Add(Options(owner, 18, kSecondaryIdentity, L"Duplicate")) ||
@@ -72,14 +72,14 @@ int main() {
 
     std::wstring oversized_tip(128, L'x');
     if (icon.UpdateTooltip(oversized_tip) || ::GetLastError() != ERROR_BUFFER_OVERFLOW ||
-        icon.GetOptions().tooltip != L"mwtl tray test")
+        icon.GetOptions().tooltip != L"mwfl tray test")
         return 10;
-    if (!icon.UpdateTooltip(L"mwtl tray updated") ||
-        icon.GetOptions().tooltip != L"mwtl tray updated" || !icon.SetVisible(false) ||
+    if (!icon.UpdateTooltip(L"mwfl tray updated") ||
+        icon.GetOptions().tooltip != L"mwfl tray updated" || !icon.SetVisible(false) ||
         !icon.GetOptions().hidden || !icon.SetVisible(true) || icon.GetOptions().hidden ||
         !icon.UpdateIcon(::LoadIconW(nullptr, IDI_INFORMATION)))
         return 11;
-    if (!icon.ShowNotification({.title = L"mwtl TrayIcon",
+    if (!icon.ShowNotification({.title = L"mwfl TrayIcon",
                                 .text = L"Native notification protocol test",
                                 .respect_quiet_time = true}))
         return 12;
@@ -95,7 +95,7 @@ int main() {
             !icon.UpdateTooltip(L"wrong thread") && ::GetLastError() == ERROR_INVALID_THREAD_ID;
     });
     wrong_thread.join();
-    if (!rejected_wrong_thread || icon.GetOptions().tooltip != L"mwtl tray updated") return 14;
+    if (!rejected_wrong_thread || icon.GetOptions().tooltip != L"mwfl tray updated") return 14;
 
     TrayIcon replacement;
     if (!replacement.Add(Options(owner, 18, kSecondaryIdentity, L"Replacement"))) return 15;

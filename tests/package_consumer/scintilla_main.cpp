@@ -1,7 +1,7 @@
-#include <mwtl/scintilla.h>
+#include <mwfl/scintilla.h>
 
 int main() {
-    mwtl::ScintillaRuntime runtime;
-    const auto text = mwtl::FromUtf8("installed");
+    mwfl::ScintillaRuntime runtime;
+    const auto text = mwfl::FromUtf8("installed");
     return runtime.LoadAdjacent() && text && *text == L"installed" ? 0 : 1;
 }

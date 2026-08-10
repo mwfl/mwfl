@@ -1,9 +1,9 @@
-#include <mwtl/text_history.h>
+#include <mwfl/text_history.h>
 
 #include <stdexcept>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 
 TextHistory::TextHistory(std::size_t maximum_entries)
     : maximum_entries_(maximum_entries) {
@@ -55,4 +55,4 @@ void TextHistory::TrimToCapacity() {
     }
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

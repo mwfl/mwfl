@@ -2,7 +2,7 @@
 
 Windows Ribbon is an optional interoperability component. Prefer ordinary
 `CommandSet`, menus, toolbars, and the modern docking workspace unless an
-Office-style Ribbon is a product requirement. Linking `mwtl::mwtl` alone never
+Office-style Ribbon is a product requirement. Linking `mwfl::mwfl` alone never
 starts COM or links the Ribbon Framework.
 
 ## 1. Prerequisites
@@ -12,8 +12,8 @@ or newer SDK. Open a Developer PowerShell in the repository and configure x64:
 
 ```powershell
 cmake --preset vs2026-x64
-cmake --build --preset vs2026-x64-debug --target mwtl_ribbon_workspace
-ctest --preset vs2026-x64-debug -R "^mwtl\.ribbon_(model|native|workspace_gui)$"
+cmake --build --preset vs2026-x64-debug --target mwfl_ribbon_workspace
+ctest --preset vs2026-x64-debug -R "^mwfl\.ribbon_(model|native|workspace_gui)$"
 ```
 
 Repeat with `vs2026-x64-release`. The build locates the SDK `uicc.exe`, compiles
@@ -26,8 +26,8 @@ than silently creating a nonfunctional Ribbon target.
 For an installed package:
 
 ```cmake
-find_package(mwtl 0.1 CONFIG REQUIRED COMPONENTS ribbon)
-target_link_libraries(my_app PRIVATE mwtl::ribbon)
+find_package(mwfl 0.1 CONFIG REQUIRED COMPONENTS ribbon)
+target_link_libraries(my_app PRIVATE mwfl::ribbon)
 target_compile_features(my_app PRIVATE cxx_std_20)
 ```
 
@@ -39,10 +39,10 @@ application command IDs must be stable nonzero integers.
 Create application-owned commands first, then map Ribbon IDs to them:
 
 ```cpp
-mwtl::CommandSet commands;
-commands.Add(mwtl::Command({2001}, L"Save", [&] { SaveDocument(); }));
+mwfl::CommandSet commands;
+commands.Add(mwfl::Command({2001}, L"Save", [&] { SaveDocument(); }));
 
-mwtl::RibbonCommandModel ribbon_model;
+mwfl::RibbonCommandModel ribbon_model;
 ribbon_model.Add({{1001}, {2001}, 1});
 ```
 
@@ -55,9 +55,9 @@ Initialize an STA before constructing the host. The host borrows the frame,
 model, and command set and owns its `IUIFramework` and callback references:
 
 ```cpp
-mwtl::RibbonFrameworkHost ribbon;
+mwfl::RibbonFrameworkHost ribbon;
 auto created = ribbon.Create(frame, ribbon_model, commands);
-if (created.status == mwtl::RibbonHostStatus::unavailable) {
+if (created.status == mwfl::RibbonHostStatus::unavailable) {
     ShowToolbarFallback();
 } else if (!created) {
     ReportRibbonError(created.error);

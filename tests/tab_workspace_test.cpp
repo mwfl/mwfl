@@ -1,12 +1,12 @@
-#include <mwtl/tab_workspace.h>
+#include <mwfl/tab_workspace.h>
 
 #include <cstdlib>
 
 int main() {
-    mwtl::TabWorkspaceModel model;
-    const mwtl::TabId first{11};
-    const mwtl::TabId second{22};
-    const mwtl::TabId third{33};
+    mwfl::TabWorkspaceModel model;
+    const mwfl::TabId first{11};
+    const mwfl::TabId second{22};
+    const mwfl::TabId third{33};
 
     if (model.Add({{}, L"invalid", false, true}) || model.Add({first, L"", false, true}) ||
         !model.Add({first, L"First", false, false}) || model.GetSelectedId() != first ||

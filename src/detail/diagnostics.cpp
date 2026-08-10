@@ -3,14 +3,14 @@
 #include <cstdio>
 #include <cwchar>
 
-namespace mwtl::detail {
+namespace mwfl::detail {
 namespace {
 
 bool TestDialogsDisabled() noexcept {
-#ifdef MWTL_TESTING
+#ifdef MWFL_TESTING
     wchar_t value[2]{};
     return ::GetEnvironmentVariableW(
-        L"MWTL_TEST_NO_DIALOGS", value, _countof(value)) != 0;
+        L"MWFL_TEST_NO_DIALOGS", value, _countof(value)) != 0;
 #else
     return false;
 #endif
@@ -27,7 +27,7 @@ void Emit(const wchar_t* text, bool show_user) noexcept {
         std::fflush(stderr);
     }
     if (ShouldShowUserDialog(show_user)) {
-        ::MessageBoxW(nullptr, text, L"mwtl startup error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+        ::MessageBoxW(nullptr, text, L"mwfl startup error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
     }
 }
 
@@ -73,7 +73,7 @@ void ReportHresult(const wchar_t* stage, HRESULT result, bool show_user) noexcep
         output,
         _countof(output),
         _TRUNCATE,
-        L"mwtl: %s failed (HRESULT 0x%08lX): %s\r\n",
+        L"mwfl: %s failed (HRESULT 0x%08lX): %s\r\n",
         stage,
         static_cast<unsigned long>(result),
         system_message);
@@ -90,7 +90,7 @@ void ReportWin32(const wchar_t* stage, DWORD error, bool show_user) noexcept {
         output,
         _countof(output),
         _TRUNCATE,
-        L"mwtl: %s failed (Win32 %lu): %s\r\n",
+        L"mwfl: %s failed (Win32 %lu): %s\r\n",
         stage,
         static_cast<unsigned long>(error),
         system_message);
@@ -111,7 +111,7 @@ void ReportException(
         output,
         _countof(output),
         _TRUNCATE,
-        L"mwtl: C++ std::exception during %s (message 0x%04X): %s\r\n",
+        L"mwfl: C++ std::exception during %s (message 0x%04X): %s\r\n",
         stage,
         message,
         wide_description);
@@ -126,11 +126,11 @@ void ReportUnknownException(const wchar_t* stage, UINT message, bool show_user) 
         output,
         _countof(output),
         _TRUNCATE,
-        L"mwtl: unknown C++ exception during %s (message 0x%04X).\r\n",
+        L"mwfl: unknown C++ exception during %s (message 0x%04X).\r\n",
         stage,
         message);
     Emit(output, show_user);
     ::SetLastError(original_error);
 }
 
-}  // namespace mwtl::detail
+}  // namespace mwfl::detail

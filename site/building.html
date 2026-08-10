@@ -3,26 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Install and use mwtl with CMake, Visual Studio, or VS Code on Windows x64 and ARM64.">
-  <link rel="canonical" href="https://everettjf.github.io/mwtl/building.html">
-  <title>Build reference — mwtl</title>
+  <meta name="description" content="Install and use mwfl with CMake, Visual Studio, or VS Code on Windows x64 and ARM64.">
+  <link rel="canonical" href="https://mwfl.github.io/building.html">
+  <title>Build reference — mwfl</title>
   <meta name="theme-color" content="#f7f9ff">
-  <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
+  <link rel="icon" type="image/svg+xml" href="assets/mwfl-mark.svg">
   <link rel="stylesheet" href="styles.css?v=20260810a">
-  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
   <script defer src="assets/site.js?v=20260810a"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell nav">
-      <a class="brand" href="index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+      <a class="brand" href="index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="components/index.html">Components</a>
         <a href="tutorial.html">Get started</a>
         <a class="active" href="building.html" aria-current="page">Build reference</a>
         <a href="changelog.html">Changelog</a>
-        <a href="https://github.com/everettjf/mwtl">GitHub</a>
+        <a href="https://github.com/mwfl/mwfl">GitHub</a>
         <button class="theme-toggle" type="button" aria-label="Toggle color theme"></button>
       </nav>
     </div>
@@ -31,7 +31,7 @@
     <div class="hero">
       <div class="eyebrow">Build reference</div>
       <h1>Choose and configure your build workflow.</h1>
-      <p class="lede">This page is the reference for CMake, IDE, installed-package, repository, and offline workflows. Every path builds the same C++20 x64 or ARM64 library and links the exported <code>mwtl::mwtl</code> target.</p>
+      <p class="lede">This page is the reference for CMake, IDE, installed-package, repository, and offline workflows. Every path builds the same C++20 x64 or ARM64 library and links the exported <code>mwfl::mwfl</code> target.</p>
       <div class="callout"><strong>Building your first Windows application?</strong> Follow the <a href="tutorial.html">15-minute beginner tutorial</a> first. It starts with installing Visual Studio and ends with a running window.</div>
       <nav class="page-toc" aria-label="On this page">
         <a href="#cmake">CMake</a>
@@ -54,19 +54,19 @@
 
     <section id="cmake">
       <div class="eyebrow">Recommended</div><h2>CMake project</h2>
-      <p>Fetch a pinned release directly from your application. mwtl fetches its pinned WTL 10.01 and WIL dependencies and propagates the required include paths, libraries, and C++20 setting.</p>
+      <p>Fetch a pinned release directly from your application. mwfl fetches its pinned WTL 10.01 and WIL dependencies and propagates the required include paths, libraries, and C++20 setting.</p>
       <pre data-title="CMakeLists.txt"><code>cmake_minimum_required(VERSION 3.21)
 project(my_app LANGUAGES CXX)
 
 include(FetchContent)
-FetchContent_Declare(mwtl
-  GIT_REPOSITORY https://github.com/everettjf/mwtl.git
+FetchContent_Declare(mwfl
+  GIT_REPOSITORY https://github.com/mwfl/mwfl.git
   GIT_TAG v0.1.0
   GIT_SHALLOW TRUE)
-FetchContent_MakeAvailable(mwtl)
+FetchContent_MakeAvailable(mwfl)
 
 add_executable(my_app WIN32 main.cpp)
-target_link_libraries(my_app PRIVATE mwtl::mwtl)</code></pre>
+target_link_libraries(my_app PRIVATE mwfl::mwfl)</code></pre>
       <pre data-title="PowerShell"><code>cmake -S . -B build -G "Visual Studio 18 2026" -A x64
 cmake --build build --config Debug</code></pre>
       <div class="callout"><strong>Visual Studio 2022:</strong> replace the generator with <code>Visual Studio 17 2022</code>. The library supports VS 2022 or newer.</div>
@@ -74,16 +74,16 @@ cmake --build build --config Debug</code></pre>
 
     <section id="installed-package">
       <div class="eyebrow">Reusable installation</div><h2>Install once, consume with find_package</h2>
-      <pre data-title="PowerShell"><code>git clone --depth 1 https://github.com/everettjf/mwtl.git
-cmake -S mwtl -B mwtl-build -G "Visual Studio 18 2026" -A x64
-cmake --build mwtl-build --config Release
-cmake --install mwtl-build --config Release --prefix C:/deps/mwtl</code></pre>
-      <pre data-title="consumer CMakeLists.txt"><code>find_package(mwtl CONFIG REQUIRED)
+      <pre data-title="PowerShell"><code>git clone --depth 1 https://github.com/mwfl/mwfl.git
+cmake -S mwfl -B mwfl-build -G "Visual Studio 18 2026" -A x64
+cmake --build mwfl-build --config Release
+cmake --install mwfl-build --config Release --prefix C:/deps/mwfl</code></pre>
+      <pre data-title="consumer CMakeLists.txt"><code>find_package(mwfl CONFIG REQUIRED)
 add_executable(my_app WIN32 main.cpp)
-target_link_libraries(my_app PRIVATE mwtl::mwtl)
+target_link_libraries(my_app PRIVATE mwfl::mwfl)
 
 # configure
-cmake -S . -B build -A x64 -DCMAKE_PREFIX_PATH=C:/deps/mwtl</code></pre>
+cmake -S . -B build -A x64 -DCMAKE_PREFIX_PATH=C:/deps/mwfl</code></pre>
     </section>
 
     <section id="visual-studio">
@@ -112,43 +112,43 @@ cmake -S . -B build -A x64 -DCMAKE_PREFIX_PATH=C:/deps/mwtl</code></pre>
   "cmake.configureArgs": ["-A", "x64"],
   "cmake.buildDirectory": "${workspaceFolder}/build"
 }</code></pre>
-      <p>On Visual Studio 2022, use <code>Visual Studio 17 2022</code>. CMake Tools supplies IntelliSense from CMake’s compile model, so do not duplicate mwtl include paths in <code>c_cpp_properties.json</code>.</p>
+      <p>On Visual Studio 2022, use <code>Visual Studio 17 2022</code>. CMake Tools supplies IntelliSense from CMake’s compile model, so do not duplicate mwfl include paths in <code>c_cpp_properties.json</code>.</p>
     </section>
 
     <section id="first-window">
-      <div class="eyebrow">Application code</div><h2>Your first mwtl window</h2>
-      <pre data-title="main.cpp"><code>#include &lt;mwtl/mwtl.h&gt;
+      <div class="eyebrow">Application code</div><h2>Your first mwfl window</h2>
+      <pre data-title="main.cpp"><code>#include &lt;mwfl/mwfl.h&gt;
 
-class MainWindow final : public mwtl::WindowBase {
+class MainWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         SetTitle(L"My app");
-        mwtl::ControlHost ui{*this};
-        ui.Add(message_, L"Hello from mwtl");
+        mwfl::ControlHost ui{*this};
+        ui.Add(message_, L"Hello from mwfl");
         ui.Add(close_, L"Close");
-        SetLayout(mwtl::Column().Margin(24.0_dip).Gap(12.0_dip)
-            .Add(message_, mwtl::Auto())
-            .Add(close_, mwtl::Fixed(36.0_dip)));
+        SetLayout(mwfl::Column().Margin(24.0_dip).Gap(12.0_dip)
+            .Add(message_, mwfl::Auto())
+            .Add(close_, mwfl::Fixed(36.0_dip)));
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent&amp; event) override {
-        if (event.IsClicked(close_)) { Close(); return mwtl::EventResult::Handled(); }
-        return mwtl::EventResult::Propagate();
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent&amp; event) override {
+        if (event.IsClicked(close_)) { Close(); return mwfl::EventResult::Handled(); }
+        return mwfl::EventResult::Propagate();
     }
 private:
-    mwtl::Label message_;
-    mwtl::Button close_;
+    mwfl::Label message_;
+    mwfl::Button close_;
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
-    return mwtl::RunApplication&lt;MainWindow&gt;(instance, show);
+    return mwfl::RunApplication&lt;MainWindow&gt;(instance, show);
 }</code></pre>
     </section>
 
     <section id="repository">
       <div class="eyebrow">Contributors</div><h2>Build this repository</h2>
-      <pre data-title="PowerShell"><code>git clone https://github.com/everettjf/mwtl.git
-cd mwtl
+      <pre data-title="PowerShell"><code>git clone https://github.com/mwfl/mwfl.git
+cd mwfl
 ./scripts/doctor.ps1 -VisualStudio 2026
 cmake --preset vs2026-x64
 cmake --build --preset vs2026-x64-debug
@@ -159,41 +159,41 @@ ctest --preset vs2026-x64-debug</code></pre>
 
 # Full release-equivalent verification
 ./scripts/verify.ps1 -Mode Full -VisualStudio 2026</code></pre>
-      <p>Build a single example with <code>cmake --build build/presets/vs2026-x64 --config Debug --target mwtl_hello</code>. Its executable is under <code>build/presets/vs2026-x64/examples/hello/Debug/</code>. See the <a href="components/index.html">complete component gallery</a> for source links and screenshots.</p>
+      <p>Build a single example with <code>cmake --build build/presets/vs2026-x64 --config Debug --target mwfl_hello</code>. Its executable is under <code>build/presets/vs2026-x64/examples/hello/Debug/</code>. See the <a href="components/index.html">complete component gallery</a> for source links and screenshots.</p>
     </section>
 
     <section id="optional">
       <div class="eyebrow">Explicit dependencies</div><h2>Optional integrations</h2>
-      <p>Core applications link <code>mwtl::mwtl</code> and never fetch WebView2 or Scintilla. Enable only the component an application uses.</p>
+      <p>Core applications link <code>mwfl::mwfl</code> and never fetch WebView2 or Scintilla. Enable only the component an application uses.</p>
       <pre data-title="Visual Studio 2026 x64"><code># Browser
 cmake --preset vs2026-x64-webview2
-cmake --build --preset vs2026-x64-webview2-debug --target mwtl_browser_demo
+cmake --build --preset vs2026-x64-webview2-debug --target mwfl_browser_demo
 
 # Editor
 cmake --preset vs2026-x64-scintilla
-cmake --build --preset vs2026-x64-scintilla-debug --target mwtl_code_editor_demo</code></pre>
-      <p>Installed consumers request <code>COMPONENTS webview2</code> or <code>COMPONENTS scintilla</code>. Scintilla applications also call <code>mwtl_deploy_scintilla(target)</code>. See the <a href="optional-integrations.html">complete ownership, Runtime, and offline-test guide</a>.</p>
+cmake --build --preset vs2026-x64-scintilla-debug --target mwfl_code_editor_demo</code></pre>
+      <p>Installed consumers request <code>COMPONENTS webview2</code> or <code>COMPONENTS scintilla</code>. Scintilla applications also call <code>mwfl_deploy_scintilla(target)</code>. See the <a href="optional-integrations.html">complete ownership, Runtime, and offline-test guide</a>.</p>
     </section>
 
     <section id="offline">
       <div class="eyebrow">Controlled environments</div><h2>Offline dependencies</h2>
       <pre data-title="PowerShell"><code>cmake -S . -B build -A x64 \
-  -DMWTL_WTL_SOURCE_DIR=C:/deps/wtl \
-  -DMWTL_WIL_SOURCE_DIR=C:/deps/wil</code></pre>
-      <p>Set <code>MWTL_DEPENDENCY_MODE=SYSTEM</code> to prohibit downloads and
+  -DMWFL_WTL_SOURCE_DIR=C:/deps/wtl \
+  -DMWFL_WIL_SOURCE_DIR=C:/deps/wil</code></pre>
+      <p>Set <code>MWFL_DEPENDENCY_MODE=SYSTEM</code> to prohibit downloads and
       locate preinstalled WTL/WIL trees, or <code>FETCH</code> to require the
       pinned upstream revisions. <code>AUTO</code> is the default. Explicit
       source directories always take priority.</p>
-      <p>You can also define <code>WTL::WTL</code> and <code>WIL::WIL</code> before adding mwtl. The build never silently selects an unidentified system copy.</p>
+      <p>You can also define <code>WTL::WTL</code> and <code>WIL::WIL</code> before adding mwfl. The build never silently selects an unidentified system copy.</p>
     </section>
   </main>
   <footer class="site-footer">
     <div class="shell footer">
-      <span>Modern Windows Thin Layer · MIT licensed · Windows 10 1809+ · x64 / ARM64</span>
+      <span>Modern Windows Foundation Layer · MIT licensed · Windows 10 1809+ · x64 / ARM64</span>
       <nav aria-label="Footer">
         <a href="components/index.html">Components</a>
-        <a href="https://github.com/everettjf/mwtl">GitHub</a>
-        <a href="https://github.com/everettjf/mwtl/blob/main/LICENSE">License</a>
+        <a href="https://github.com/mwfl/mwfl">GitHub</a>
+        <a href="https://github.com/mwfl/mwfl/blob/main/LICENSE">License</a>
       </nav>
     </div>
   </footer>

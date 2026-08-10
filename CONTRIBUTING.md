@@ -1,6 +1,6 @@
 # Contributing
 
-mwtl targets x64 and ARM64 Windows applications using C++20 with MSVC-compatible
+mwfl targets x64 and ARM64 Windows applications using C++20 with MSVC-compatible
 toolchains. Build and test both Debug and Release before submitting a change.
 Public API changes need an
 independent-header compile test, runtime coverage when behavior is observable,

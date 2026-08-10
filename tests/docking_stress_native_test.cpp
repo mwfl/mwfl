@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <windows.h>
 
@@ -7,7 +7,7 @@
 
 namespace {
 
-using namespace mwtl;
+using namespace mwfl;
 
 struct GuiResources {
     DWORD user = 0;

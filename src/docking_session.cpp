@@ -1,15 +1,15 @@
-#include <mwtl/docking_session.h>
+#include <mwfl/docking_session.h>
 
-#include <mwtl/text_file.h>
+#include <mwfl/text_file.h>
 
 #include <iomanip>
 #include <limits>
 #include <sstream>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
-constexpr std::wstring_view magic = L"MWTL_DOCK_LAYOUT";
+constexpr std::wstring_view magic = L"MWFL_DOCK_LAYOUT";
 
 std::optional<std::size_t> Utf8Size(std::wstring_view text) {
     if (text.size() > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
@@ -261,4 +261,4 @@ DockingSessionStatus SaveDockingSessionAtomic(
         ? DockingSessionStatus::success : DockingSessionStatus::io_error;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

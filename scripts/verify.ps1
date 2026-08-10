@@ -23,19 +23,19 @@ function Invoke-Checked {
     }
 }
 
-$toolchain = Resolve-MwtlToolchain -VisualStudio $VisualStudio -Architecture $Architecture
-$presets = Get-MwtlPresetNames -Toolchain $toolchain -Architecture $Architecture
+$toolchain = Resolve-MwflToolchain -VisualStudio $VisualStudio -Architecture $Architecture
+$presets = Get-MwflPresetNames -Toolchain $toolchain -Architecture $Architecture
 $configureArguments = @('--preset', $presets.Configure)
 if ($Offline) {
-    $wtl = [Environment]::GetEnvironmentVariable('MWTL_WTL_SOURCE_DIR')
-    $wil = [Environment]::GetEnvironmentVariable('MWTL_WIL_SOURCE_DIR')
+    $wtl = [Environment]::GetEnvironmentVariable('MWFL_WTL_SOURCE_DIR')
+    $wil = [Environment]::GetEnvironmentVariable('MWFL_WIL_SOURCE_DIR')
     if (-not $wtl -or -not $wil) {
-        throw '-Offline requires MWTL_WTL_SOURCE_DIR and MWTL_WIL_SOURCE_DIR.'
+        throw '-Offline requires MWFL_WTL_SOURCE_DIR and MWFL_WIL_SOURCE_DIR.'
     }
     $configureArguments += @(
-        '-DMWTL_DEPENDENCY_MODE=SYSTEM',
-        "-DMWTL_WTL_SOURCE_DIR=$wtl",
-        "-DMWTL_WIL_SOURCE_DIR=$wil")
+        '-DMWFL_DEPENDENCY_MODE=SYSTEM',
+        "-DMWFL_WTL_SOURCE_DIR=$wtl",
+        "-DMWFL_WIL_SOURCE_DIR=$wil")
 }
 
 Invoke-Checked $toolchain.CMake $configureArguments
@@ -47,7 +47,7 @@ switch ($Mode) {
     }
     'Docs' {
         Invoke-Checked $toolchain.CMake @('--build', '--preset', $presets.Debug,
-            '--target', 'mwtl_agent_api_probe', '--parallel', "$Jobs")
+            '--target', 'mwfl_agent_api_probe', '--parallel', "$Jobs")
         Invoke-Checked $toolchain.CTest @('--preset', $presets.Debug, '-L', 'docs|metadata')
     }
     'Package' {
@@ -66,4 +66,4 @@ switch ($Mode) {
     }
 }
 
-Write-Host "mwtl verification completed: $Mode, Visual Studio $($toolchain.Year), $Architecture"
+Write-Host "mwfl verification completed: $Mode, Visual Studio $($toolchain.Year), $Architecture"

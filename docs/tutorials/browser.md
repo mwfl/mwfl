@@ -1,7 +1,7 @@
 # Build and extend the WebView2 Browser
 
 This tutorial targets Windows 10 or later, Visual Studio 2026, MSVC C++20,
-and x64. WebView2 is optional: a normal `mwtl::mwtl` build does not download
+and x64. WebView2 is optional: a normal `mwfl::mwfl` build does not download
 its SDK or require the Evergreen Runtime.
 
 ## 1. Build the reference application
@@ -10,8 +10,8 @@ From Developer PowerShell in the repository root:
 
 ```powershell
 cmake --preset vs2026-x64-webview2
-cmake --build --preset vs2026-x64-webview2-debug --target mwtl_browser_demo
-./build/presets/vs2026-x64-webview2/examples/browser/Debug/mwtl_browser_demo.exe
+cmake --build --preset vs2026-x64-webview2-debug --target mwfl_browser_demo
+./build/presets/vs2026-x64-webview2/examples/browser/Debug/mwfl_browser_demo.exe
 ```
 
 The first configure downloads the official WebView2 SDK `1.0.4129.50` and
@@ -25,14 +25,14 @@ installer.
 For an installed package:
 
 ```cmake
-find_package(mwtl CONFIG REQUIRED COMPONENTS webview2)
+find_package(mwfl CONFIG REQUIRED COMPONENTS webview2)
 add_executable(my_browser WIN32 main.cpp)
-target_link_libraries(my_browser PRIVATE mwtl::webview2)
+target_link_libraries(my_browser PRIVATE mwfl::webview2)
 ```
 
-For `FetchContent` or `add_subdirectory`, set `MWTL_BUILD_WEBVIEW2=ON` before
-making mwtl available, then link the same target. Projects that only link
-`mwtl::mwtl` do not fetch or link WebView2.
+For `FetchContent` or `add_subdirectory`, set `MWFL_BUILD_WEBVIEW2=ON` before
+making mwfl available, then link the same target. Projects that only link
+`mwfl::mwfl` do not fetch or link WebView2.
 
 ## 3. Create and initialize the host
 
@@ -40,15 +40,15 @@ Store `WebView2Host` as a window member, create it through `ControlHost`, and
 run the application in an STA:
 
 ```cpp
-mwtl::WebView2Host browser_;
+mwfl::WebView2Host browser_;
 
-ui.AddNative(browser_, mwtl::ControlId{500}, mwtl::RectDip{});
+ui.AddNative(browser_, mwfl::ControlId{500}, mwfl::RectDip{});
 browser_.Initialize({}, {
-    .initialized = [this](mwtl::WebView2InitializationResult result) {
-        if (result.state == mwtl::WebView2HostState::ready)
+    .initialized = [this](mwfl::WebView2InitializationResult result) {
+        if (result.state == mwfl::WebView2HostState::ready)
             browser_.NavigateToString(L"<h1>Offline welcome</h1>");
     },
-    .process_failed = [this](mwtl::WebView2ProcessFailureKind) {
+    .process_failed = [this](mwfl::WebView2ProcessFailureKind) {
         PostMessageW(GetHwnd(), WM_APP + 1, 0, 0);
     }});
 ```
@@ -75,7 +75,7 @@ when the application consumed the key.
 
 ```powershell
 ctest --test-dir build/presets/vs2026-x64-webview2 -C Debug `
-  -R "mwtl.(webview2_model|webview2_native|browser_gui)"
+  -R "mwfl.(webview2_model|webview2_native|browser_gui)"
 ```
 
 The tests classify missing Runtime deterministically, create a real controller

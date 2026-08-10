@@ -1,4 +1,4 @@
-#include <mwtl/events.h>
+#include <mwfl/events.h>
 
 #include <windows.h>
 #include <commctrl.h>
@@ -18,7 +18,7 @@ int main() {
     const FakeControl first{first_window};
     const FakeControl second{second_window};
 
-    const mwtl::CommandEvent command{{42}, CBN_SELCHANGE, first_window};
+    const mwfl::CommandEvent command{{42}, CBN_SELCHANGE, first_window};
     if (!command.Is({42}, CBN_SELCHANGE) ||
         !command.Is(first, CBN_SELCHANGE) || !command.IsFrom(first) ||
         command.Is(second, CBN_SELCHANGE) || command.Is(first, CBN_EDITCHANGE)) {
@@ -26,7 +26,7 @@ int main() {
     }
 
     const NMHDR header{first_window, 42, NM_CLICK};
-    const mwtl::NotifyEvent notify{header};
+    const mwfl::NotifyEvent notify{header};
     if (!notify.Is(first, NM_CLICK) || !notify.IsFrom(first) ||
         notify.Is(second, NM_CLICK) || notify.Is(first, NM_DBLCLK)) {
         return 2;

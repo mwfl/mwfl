@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = 'Stop'
 [xml] $coverage = Get-Content -LiteralPath $Report
 $root = (Resolve-Path -LiteralPath $ProjectRoot).Path.TrimEnd('\')
-$sourcePrefixes = @("$root\src\", "$root\include\mwtl\")
+$sourcePrefixes = @("$root\src\", "$root\include\mwfl\")
 $lines = @{}
 
 foreach ($class in $coverage.coverage.packages.package.classes.class) {
@@ -31,12 +31,12 @@ foreach ($class in $coverage.coverage.packages.package.classes.class) {
 }
 
 if ($lines.Count -eq 0) {
-    throw 'Coverage report contains no mwtl source lines.'
+    throw 'Coverage report contains no mwfl source lines.'
 }
 
 $covered = @($lines.Values | Where-Object { $_ -gt 0 }).Count
 $percent = 100.0 * $covered / $lines.Count
-Write-Host ('mwtl source coverage: {0:N2}% ({1}/{2} lines)' -f
+Write-Host ('mwfl source coverage: {0:N2}% ({1}/{2} lines)' -f
     $percent, $covered, $lines.Count)
 if ($percent -lt $MinimumPercent) {
     throw ('Coverage {0:N2}% is below the {1:N2}% floor.' -f

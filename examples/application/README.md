@@ -1,4 +1,4 @@
-# `mwtl::Application` demo
+# `mwfl::Application` demo
 
 This executable demonstrates the complete milestone-1 application lifecycle:
 

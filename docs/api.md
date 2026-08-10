@@ -1,4 +1,4 @@
-# Current mwtl API
+# Current mwfl API
 
 > This document describes the current public API. Stability guarantees and
 > evolution rules are in [stability.md](stability.md).
@@ -95,7 +95,7 @@ the selected ID through the same `CommandSet`.
 in a DIP layout with `Auto()` and remeasured during Per-Monitor-V2 DPI changes.
 The Notepad reference application demonstrates that path, assigns MSAA names to
 its text surface, toolbar, and status bar, and responds to theme/settings changes
-using system fonts and colors. Its `mwtl.notepad_gui` test drives the real hidden
+using system fonts and colors. Its `mwfl.notepad_gui` test drives the real hidden
 window through open, edit, atomic save, cancel, discard, reopen, DPI refresh, and
 close without touching user settings.
 
@@ -132,7 +132,7 @@ For large data, create with `ListViewOptions{.virtual_data = true}` and attach a
 shared `VirtualListModel`. The application model remains authoritative and the
 native owner-data control stores no application pointers. IDs must be unique
 and nonzero. Route `WM_NOTIFY` to `HandleNotification`; then call
-`TakeVirtualException` and rethrow on the ordinary mwtl event path if a text
+`TakeVirtualException` and rethrow on the ordinary mwfl event path if a text
 callback failed. Mutating item APIs reject owner-data views: update the model
 through `UpdateVirtualModel` to preserve selected stable IDs across reorder, or
 call `RefreshVirtualModel` after a count/text-only change. All wrappers, models, sorting, and
@@ -151,10 +151,10 @@ not add or reorder native items behind it. `IsSynchronized()` detects count
 drift. Native handles remain borrowed escape hatches.
 
 ```cpp
-mwtl::SelectionAdapter<mwtl::ComboBox, ThemeId> themes{theme_combo};
-mwtl::Must(themes.Add(L"System", ThemeId::system), "add theme");
-mwtl::Must(themes.Add(L"Dark", ThemeId::dark), "add theme");
-mwtl::Must(themes.SelectValue(ThemeId::system), "select theme");
+mwfl::SelectionAdapter<mwfl::ComboBox, ThemeId> themes{theme_combo};
+mwfl::Must(themes.Add(L"System", ThemeId::system), "add theme");
+mwfl::Must(themes.Add(L"Dark", ThemeId::dark), "add theme");
+mwfl::Must(themes.SelectValue(ThemeId::system), "select theme");
 if (const auto selected = themes.GetSelectedValue()) SaveTheme(selected->get());
 ```
 
@@ -179,7 +179,7 @@ Explorer reference application is the complete native composition example.
 page HWND exists only while a sheet has created it. `PropertySheetDialog`
 retains page state even if the caller's page wrappers leave scope. Its modeless
 form is a move-only HWND owner and integrates `PropSheet_IsDialogMessage` with
-an initialized mwtl message loop. All operations belong to the creating UI
+an initialized mwfl message loop. All operations belong to the creating UI
 thread. Page callbacks cover initialization, commands, validation, apply, and
 reset; exceptions are captured in `PropertySheetResult` and never cross the
 Win32 callback boundary. `SetDirty` controls the native Apply button, and a
@@ -241,8 +241,8 @@ exists. `Remove` and destruction are idempotent and abandon local identity even
 if an already-destroyed owner makes the shell deletion fail. All mutation and
 destruction belong to the creating UI thread. The GUID and callback ID are
 application identity, not owned resources. Hot Corners is the canonical
-Windows 10+ tray utility; `mwtl.tray_icon_state` proves every state transition
-without HWNDs and `mwtl.tray_icon_native` exercises the real shell
+Windows 10+ tray utility; `mwfl.tray_icon_state` proves every state transition
+without HWNDs and `mwfl.tray_icon_native` exercises the real shell
 protocol.
 
 `WindowOptions::appearance` applies system/light/dark color preference, optional
@@ -265,9 +265,9 @@ compatibility.
 
 ## Optional Direct2D host
 
-`<mwtl/d2d_host.h>` is supplied by the optional `mwtl::d2d` target. The core
-`mwtl::mwtl` target does not link Direct2D. Installed consumers use
-`find_package(mwtl CONFIG REQUIRED COMPONENTS d2d)` and link `mwtl::d2d`.
+`<mwfl/d2d_host.h>` is supplied by the optional `mwfl::d2d` target. The core
+`mwfl::mwfl` target does not link Direct2D. Installed consumers use
+`find_package(mwfl CONFIG REQUIRED COMPONENTS d2d)` and link `mwfl::d2d`.
 
 `D2DHost` owns its child HWND, factory, HWND render target, and every
 `BeginDraw`/`EndDraw` transaction. `D2DHostCallbacks::paint` receives a borrowed
@@ -284,7 +284,7 @@ never loses user content. See `examples/drawing` and
 
 ## Optional Direct3D swap-chain host
 
-`<mwtl/d3d_host.h>` belongs to the optional `mwtl::d3d` target. Installed
+`<mwfl/d3d_host.h>` belongs to the optional `mwfl::d3d` target. Installed
 consumers request `COMPONENTS d3d`; the core target exposes no `d3d11` or
 `dxgi` linkage. `D3DHost` owns its child HWND, D3D11 device/context, flip-model
 BGRA8 swap chain, and render-target view. `RenderFrame` renders one requested
@@ -328,7 +328,7 @@ ignore native results.
 `RunApplication` forwards constructor arguments to the main window:
 
 ```cpp
-return mwtl::RunApplication<MainWindow>(
+return mwfl::RunApplication<MainWindow>(
     instance, show, {.title = L"App"}, {}, settings, service);
 ```
 
@@ -344,7 +344,7 @@ accepts callbacks directly. There is no delegate base class to implement:
 
 ```cpp
 using namespace std::chrono_literals;
-mwtl::WaitAwareMessagePump pump({
+mwfl::WaitAwareMessagePump pump({
     .handles = handles,
     .idle_interval = 16ms,
     .on_signal = [&](std::size_t index) { HandleSignal(index); },
@@ -358,7 +358,7 @@ Dialogs use `std::filesystem::path` and structured filters instead of exposing
 the double-NUL Win32 filter encoding:
 
 ```cpp
-auto selected = mwtl::ShowOpenFileDialog({
+auto selected = mwfl::ShowOpenFileDialog({
     .owner = GetHwnd(),
     .title = L"Open image",
     .filters = {
@@ -370,7 +370,7 @@ auto selected = mwtl::ShowOpenFileDialog({
 
 ## Optional WIC imaging
 
-`<mwtl/imaging.h>` belongs to `mwtl::imaging`. `DecodeImageFile` requires COM
+`<mwfl/imaging.h>` belongs to `mwfl::imaging`. `DecodeImageFile` requires COM
 on the caller thread and synchronously returns a structured status plus
 application-owned, top-down premultiplied BGRA8 pixels. Dimensions and the
 default 256 MiB decoded-pixel budget are checked before allocation. Embedded
@@ -385,22 +385,22 @@ disposable device cache. See `examples/image_viewer` and
 
 ## Printing, OLE, and Shell components
 
-`<mwtl/printing.h>`, `<mwtl/printing_native.h>`, and
-`<mwtl/printing_settings.h>` belong to `mwtl::printing`. Pagination and preview
+`<mwfl/printing.h>`, `<mwfl/printing_native.h>`, and
+`<mwfl/printing_settings.h>` belong to `mwfl::printing`. Pagination and preview
 models are independent of HWNDs and printers. `PrintJob` owns the native
 StartDoc/StartPage transaction and aborts incomplete work; render callbacks
 borrow the HDC. `PrintPages` accepts a pre-page cancellation check and contains
 exceptions from both callbacks. Printer enumeration, capabilities, DEVMODE/DEVNAMES settings,
 dialog cancellation, and native failures have structured results.
 
-`<mwtl/ole_data.h>` and `<mwtl/ole_drag_drop.h>` belong to `mwtl::ole` and
+`<mwfl/ole_data.h>` and `<mwfl/ole_drag_drop.h>` belong to `mwfl::ole` and
 require `ComApartment::ole_sta` for drag/drop. Data objects copy and bound
 Unicode, file-list, custom, and delayed payloads. COM reference counts and
 STGMEDIUM transfer determine ownership. Drop callbacks are reentrant UI-thread
 calls; revoke registrations before destroying the target HWND.
 
-`<mwtl/settings_store.h>`, `<mwtl/file_association.h>`, and
-`<mwtl/shell_integration.h>` belong to `mwtl::shell`. Settings use an explicit
+`<mwfl/settings_store.h>`, `<mwfl/file_association.h>`, and
+`<mwfl/shell_integration.h>` belong to `mwfl::shell`. Settings use an explicit
 schema version written last. Associations are per-user, owner-marked, and
 reversible without removing foreign registry state. Jump Lists use stable task
 IDs and an STA transaction. `TaskbarWindowIntegration` is creating-thread-only;
@@ -412,7 +412,7 @@ See `examples/printing`, `examples/ole_drag_drop`,
 `docs/tutorials/printing-ole-shell.md`.
 ## Generic native host
 
-`<mwtl/native_host.h>` provides `NativeHost`, an owned container HWND that
+`<mwfl/native_host.h>` provides `NativeHost`, an owned container HWND that
 borrows one same-thread, same-process direct-child HWND. `Attach` arranges the
 child and enables focus plus notification forwarding; `Detach` stops management
 without destroying or reparenting. Parent destruction follows normal Win32
@@ -424,9 +424,9 @@ Use a specialized host when the integration does not create an attachable HWND.
 
 ## Optional WebView2 host
 
-`<mwtl/webview2.h>` is supplied by `mwtl::webview2`, enabled with
-`MWTL_BUILD_WEBVIEW2`. The optional component pins official SDK
-`1.0.4129.50`; core `mwtl::mwtl` does not fetch or link it. Installed consumers
+`<mwfl/webview2.h>` is supplied by `mwfl::webview2`, enabled with
+`MWFL_BUILD_WEBVIEW2`. The optional component pins official SDK
+`1.0.4129.50`; core `mwfl::mwfl` does not fetch or link it. Installed consumers
 request `COMPONENTS webview2`.
 
 `QueryWebView2Runtime` reports `available`, `missing`, or `failed` and never
@@ -445,10 +445,10 @@ focus moves into web content. Tests use `NavigateToString` to remain offline.
 
 ## Optional Scintilla editor
 
-`<mwtl/scintilla.h>` is supplied by `mwtl::scintilla`, enabled with
-`MWTL_BUILD_SCINTILLA`. It pins Scintilla 5.6.5 source and x64 runtime archives.
+`<mwfl/scintilla.h>` is supplied by `mwfl::scintilla`, enabled with
+`MWFL_BUILD_SCINTILLA`. It pins Scintilla 5.6.5 source and x64 runtime archives.
 Installed consumers request `COMPONENTS scintilla`, link the target, and invoke
-`mwtl_deploy_scintilla(target)`.
+`mwfl_deploy_scintilla(target)`.
 
 `ScintillaRuntime` returns structured missing/wrong-architecture/failure state.
 Its loaded module state is shared with every created editor so a live HWND never
@@ -465,9 +465,9 @@ on the creating UI thread.
 
 ## Multi-document workspace
 
-`<mwtl/document_workspace.h>`, `<mwtl/document_coordination.h>`,
-`<mwtl/document_tabs.h>`, and `<mwtl/document_session.h>` are core
-`mwtl::mwtl` surfaces for Windows 10+ C++20 applications. Installed,
+`<mwfl/document_workspace.h>`, `<mwfl/document_coordination.h>`,
+`<mwfl/document_tabs.h>`, and `<mwfl/document_session.h>` are core
+`mwfl::mwfl` surfaces for Windows 10+ C++20 applications. Installed,
 `add_subdirectory`, and `FetchContent` consumers acquire no rendering, OLE,
 Shell, or mandatory Document/View dependency.
 
@@ -512,15 +512,15 @@ See `examples/document_workspace`, `docs/tutorials/document-workspace.md`, and
 
 ## Docking workspace
 
-`<mwtl/docking_workspace.h>` owns the stable-ID logical graph and explicit
-proposal/commit transaction. `<mwtl/docking_native.h>` projects snapshots into
+`<mwfl/docking_workspace.h>` owns the stable-ID logical graph and explicit
+proposal/commit transaction. `<mwfl/docking_native.h>` projects snapshots into
 application-owned panel and group HWNDs with prepare/adopt/rollback/commit.
-`<mwtl/docking_drag.h>`, `<mwtl/docking_preview.h>`, and
-`<mwtl/docking_keyboard.h>` separate input, target selection, non-destructive
-feedback, and acceptance. `<mwtl/docking_floating.h>`,
-`<mwtl/docking_auto_hide.h>`, and `<mwtl/docking_monitor.h>` define auxiliary
-host and monitor policy. `<mwtl/docking_session.h>` owns versioned persistence.
-All are core `mwtl::mwtl` surfaces for Windows 10+ C++20 applications.
+`<mwfl/docking_drag.h>`, `<mwfl/docking_preview.h>`, and
+`<mwfl/docking_keyboard.h>` separate input, target selection, non-destructive
+feedback, and acceptance. `<mwfl/docking_floating.h>`,
+`<mwfl/docking_auto_hide.h>`, and `<mwfl/docking_monitor.h>` define auxiliary
+host and monitor policy. `<mwfl/docking_session.h>` owns versioned persistence.
+All are core `mwfl::mwfl` surfaces for Windows 10+ C++20 applications.
 
 `DockLayoutModel` owns metadata copies only. `DockPanelId`, `DockGroupId`,
 `DockNodeId`, and `DockFloatingHostId` are stable nonzero application IDs;
@@ -558,8 +558,8 @@ See `examples/docking_workspace`,
 
 ## Optional Windows Ribbon
 
-`<mwtl/ribbon.h>` is supplied by the `ribbon` package component and target
-`mwtl::ribbon`; it is not part of the umbrella header. `RibbonCommandModel`
+`<mwfl/ribbon.h>` is supplied by the `ribbon` package component and target
+`mwfl::ribbon`; it is not part of the umbrella header. `RibbonCommandModel`
 owns stable command bindings, application-mode masks, contextual visibility,
 and copied bounded recent-item metadata. It contains no HWND, COM interface, or
 application pointer. `Project` maps ordinary `CommandSet` presentation state,
@@ -576,7 +576,7 @@ the frame and COM apartment. See `examples/ribbon_workspace` and
 
 ## Optional legacy MDI
 
-`<mwtl/mdi.h>` is the optional `mdi` component. Prefer the modern document
+`<mwfl/mdi.h>` is the optional `mdi` component. Prefer the modern document
 workspace for new products. `MdiWorkspaceModel` owns pointer-free stable child
 IDs, titles, order, active selection, dirty state, and close policy; application
 documents and views remain external. Move and destination-first transfer are
@@ -594,7 +594,7 @@ destroy on the creating UI thread. See `examples/mdi_workspace` and
 
 ## Optional enhanced metafiles and GDI+
 
-`<mwtl/graphics.h>` is the optional `graphics` component. `EnhancedMetafile`
+`<mwfl/graphics.h>` is the optional `graphics` component. `EnhancedMetafile`
 exclusively owns one HENHMETAFILE and is move-only; `Release` transfers the
 `DeleteEnhMetaFile` obligation. `RecordEnhancedMetafile` lends its recording HDC
 only during the callback, always closes it, deletes partial output after an
@@ -617,7 +617,7 @@ remain on the creating STA UI thread. After `TaskbarCreated`, call `Recreate`
 and reapply all application-owned state. Clear reversible state before window
 teardown.
 
-`<mwtl/help.h>` accepts absolute existing local CHM/HTML or an HTTPS URI. It
+`<mwfl/help.h>` accepts absolute existing local CHM/HTML or an HTTPS URI. It
 rejects UNC paths, traversal, embedded controls, quotes, credentials, whitespace,
 wrong extensions, and non-HTTPS network schemes. `LaunchHelp` calls HtmlHelpW or
 ShellExecuteExW without composing a command line. Missing, unavailable,

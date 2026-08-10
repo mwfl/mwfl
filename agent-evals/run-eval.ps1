@@ -15,20 +15,20 @@ $task = $tasks | Where-Object id -eq $TaskId
 if (-not $task) { throw "Unknown task id: $TaskId" }
 $candidatePath = (Resolve-Path $Candidate).Path
 $source = Get-Content $candidatePath -Raw
-$publicApiOnly = $source -notmatch 'mwtl[\\/]detail|src[\\/]detail'
+$publicApiOnly = $source -notmatch 'mwfl[\\/]detail|src[\\/]detail'
 $threadSafe = if ($TaskId -eq '05-background') { $source -match 'WindowWakeup|GetWakeup' -and $source -match 'jthread' } else { $true }
 $eventSemantics = $source -match 'Handled|Propagate|CommandSet[\s\S]*Dispatch|commands_\.Dispatch'
 $dipCorrect = if ($TaskId -in @('01-window','03-layout','08-dpi')) { $source -match '_dip|Dip\s*[({]' } else { $true }
 $failureHandled = $source -match 'Must\s*\(|if\s*\(|cancel|Cancel|accepted|status'
 $compilePassed = $false
-$component = if ($TaskId -match '^2[12]-') { 'printing' } elseif ($TaskId -match '^2[34]-') { 'ole' } elseif ($TaskId -match '^2[5-8]-') { 'shell' } else { 'mwtl' }
+$component = if ($TaskId -match '^2[12]-') { 'printing' } elseif ($TaskId -match '^2[34]-') { 'ole' } elseif ($TaskId -match '^2[5-8]-') { 'shell' } else { 'mwfl' }
 
 . (Join-Path $root 'scripts/developer-tools.ps1')
-$toolchain = Resolve-MwtlToolchain -VisualStudio $VisualStudio -Architecture x64
-$presets = Get-MwtlPresetNames -Toolchain $toolchain -Architecture x64
-& $toolchain.CMake --preset $presets.Configure "-DMWTL_AGENT_EVAL_CANDIDATE=$candidatePath" "-DMWTL_AGENT_EVAL_COMPONENT=$component"
+$toolchain = Resolve-MwflToolchain -VisualStudio $VisualStudio -Architecture x64
+$presets = Get-MwflPresetNames -Toolchain $toolchain -Architecture x64
+& $toolchain.CMake --preset $presets.Configure "-DMWFL_AGENT_EVAL_CANDIDATE=$candidatePath" "-DMWFL_AGENT_EVAL_COMPONENT=$component"
 if ($LASTEXITCODE -eq 0) {
-    & $toolchain.CMake --build --preset $presets.Debug --target mwtl_agent_eval_candidate --parallel 2
+    & $toolchain.CMake --build --preset $presets.Debug --target mwfl_agent_eval_candidate --parallel 2
     $compilePassed = $LASTEXITCODE -eq 0
 }
 

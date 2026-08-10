@@ -1,1 +1,1 @@
-mwtl_add_example(mwtl_mouse_demo main.cpp)
+mwfl_add_example(mwfl_mouse_demo main.cpp)

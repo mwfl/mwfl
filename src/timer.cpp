@@ -1,8 +1,8 @@
-#include <mwtl/timer.h>
+#include <mwfl/timer.h>
 
 #include <limits>
 
-namespace mwtl {
+namespace mwfl {
 
 UiTimer::~UiTimer() noexcept {
     Stop();
@@ -60,4 +60,4 @@ bool UiTimer::IsRunning() const noexcept {
         ::IsWindow(window_) != FALSE;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

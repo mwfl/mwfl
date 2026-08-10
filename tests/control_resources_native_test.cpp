@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <windows.h>
 #include <oleacc.h>
@@ -42,7 +42,7 @@ bool AccessibleNameEquals(HWND window, std::wstring_view expected) {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
 
     const HWND owner = CreateOwner();
     if (owner == nullptr) return 1;

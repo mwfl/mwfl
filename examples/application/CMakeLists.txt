@@ -1,1 +1,1 @@
-mwtl_add_example(mwtl_application_demo main.cpp)
+mwfl_add_example(mwfl_application_demo main.cpp)

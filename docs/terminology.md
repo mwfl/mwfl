@@ -2,7 +2,7 @@
 
 Use this map before guessing an API name.
 
-| User or framework term | mwtl term |
+| User or framework term | mwfl term |
 |---|---|
 | app/window entry point | `wWinMain` + `RunApplication` |
 | widget/control | native control wrapper |
@@ -25,6 +25,6 @@ Use this map before guessing an API name.
 | default event processing | `EventResult::Propagate()` |
 | consume event | `EventResult::Handled()` |
 
-mwtl deliberately does not provide a virtual DOM, reflection-based property
+mwfl deliberately does not provide a virtual DOM, reflection-based property
 system, implicit global data context, or general-purpose task scheduler.
 

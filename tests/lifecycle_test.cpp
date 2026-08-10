@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include "detail/testing.h"
 
@@ -19,7 +19,7 @@ enum class TestMode {
 
 TestMode current_mode = TestMode::normal_close;
 
-class TestWindow final : public mwtl::Window<TestWindow> {
+class TestWindow final : public mwfl::Window<TestWindow> {
 public:
     void BuildUI() {
         if (current_mode == TestMode::create_failure) {
@@ -40,7 +40,7 @@ public:
     BEGIN_MSG_MAP(TestWindow)
         MESSAGE_HANDLER(WM_APP + 1, OnInjectedFailure)
         MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
-        CHAIN_MSG_MAP(mwtl::Window<TestWindow>)
+        CHAIN_MSG_MAP(mwfl::Window<TestWindow>)
     END_MSG_MAP()
 
 private:
@@ -61,7 +61,7 @@ private:
 };
 
 int RunOnce() {
-    mwtl::Application application(::GetModuleHandleW(nullptr));
+    mwfl::Application application(::GetModuleHandleW(nullptr));
     return application.Run<TestWindow>(SW_HIDE);
 }
 
@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     }
 
     bool expect_success = false;
-    mwtl::detail::LifecycleSnapshot expected{1, 1, 1, 1};
+    mwfl::detail::LifecycleSnapshot expected{1, 1, 1, 1};
     if (std::strcmp(argv[1], "normal") == 0) {
         current_mode = TestMode::normal_close;
         expect_success = true;
@@ -97,15 +97,15 @@ int main(int argc, char** argv) {
         return 21;
     }
 
-    mwtl::detail::ResetLifecycleSnapshotForTesting();
+    mwfl::detail::ResetLifecycleSnapshotForTesting();
     const int run_result = RunOnce();
     if ((run_result == 0) != expect_success) {
         std::fprintf(stderr, "unexpected Application::Run result: %d\n", run_result);
         return 22;
     }
 
-    const mwtl::detail::LifecycleSnapshot snapshot =
-        mwtl::detail::GetLifecycleSnapshotForTesting();
+    const mwfl::detail::LifecycleSnapshot snapshot =
+        mwfl::detail::GetLifecycleSnapshotForTesting();
     if (snapshot.module_initialized != expected.module_initialized ||
         snapshot.loop_registered != expected.loop_registered ||
         snapshot.loop_removed != expected.loop_removed ||

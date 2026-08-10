@@ -1,14 +1,14 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 #include <chrono>
 #include <thread>
 
-class SelfDrawnWindow final : public mwtl::WindowBase {
+class SelfDrawnWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         SetTitle(L"Self-drawn host - worker-driven dirty frames");
-        const mwtl::WindowWakeup wake = GetWakeup();
+        const mwfl::WindowWakeup wake = GetWakeup();
         producer_ = std::jthread([wake](std::stop_token stop) {
             while (!stop.stop_requested()) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(16));
@@ -17,13 +17,13 @@ public:
         });
     }
 
-    mwtl::EventResult OnWakeup() noexcept override {
+    mwfl::EventResult OnWakeup() noexcept override {
         ++frame_;
         ::InvalidateRect(GetHwnd(), nullptr, FALSE);
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnPaint(mwtl::PaintEvent& event) noexcept override {
+    mwfl::EventResult OnPaint(mwfl::PaintEvent& event) noexcept override {
         const HDC dc = event.GetDC();
         if (dc != nullptr) {
             RECT client{};
@@ -35,7 +35,7 @@ public:
             ::SetDCBrushColor(dc, RGB(33, 115, 190));
             ::FillRect(dc, &marker, static_cast<HBRUSH>(::GetStockObject(DC_BRUSH)));
         }
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
 private:
@@ -44,6 +44,6 @@ private:
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    mwtl::WaitAwareMessagePump pump;
-    return mwtl::RunApplication<SelfDrawnWindow>(instance, show_command, pump);
+    mwfl::WaitAwareMessagePump pump;
+    return mwfl::RunApplication<SelfDrawnWindow>(instance, show_command, pump);
 }

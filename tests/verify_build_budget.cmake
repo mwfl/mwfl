@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 if(NOT EXISTS "${LIBRARY}")
-    message(FATAL_ERROR "mwtl library does not exist: ${LIBRARY}")
+    message(FATAL_ERROR "mwfl library does not exist: ${LIBRARY}")
 endif()
 file(SIZE "${LIBRARY}" library_bytes)
 # Debug MSVC libraries include substantial compiler metadata. This is a
@@ -15,17 +15,17 @@ file(SIZE "${LIBRARY}" library_bytes)
 # archive is 25,233,412 bytes (Release is 8,936,512 bytes). Keep less than 8%
 # Debug headroom instead of hiding this deliberate core capability increase.
 set(library_limit 27262976) # 26 MiB; 0.7 measures 24.06 MiB on VS2026 x64.
-if(MWTL_ARCHITECTURE STREQUAL "ARM64")
+if(MWFL_ARCHITECTURE STREQUAL "ARM64")
     # The post-0.8 VS2022 ARM64 Debug archive measures 26,182,312 bytes
     # (24.97 MiB). Keep a measured ceiling with less than 12% headroom.
     set(library_limit 30408704) # 29 MiB.
 endif()
 if(library_bytes GREATER library_limit)
     message(FATAL_ERROR
-        "mwtl ${MWTL_ARCHITECTURE} static library exceeded ${library_limit} bytes: ${library_bytes}")
+        "mwfl ${MWFL_ARCHITECTURE} static library exceeded ${library_limit} bytes: ${library_bytes}")
 endif()
 
-file(GLOB public_headers "${PROJECT_ROOT}/include/mwtl/*.h")
+file(GLOB public_headers "${PROJECT_ROOT}/include/mwfl/*.h")
 set(core_header_bytes 0)
 set(optional_header_bytes 0)
 set(optional_headers
@@ -70,7 +70,7 @@ if(optional_header_bytes GREATER 73728)
         "component public headers exceeded 72 KiB: ${optional_header_bytes}")
 endif()
 
-file(STRINGS "${PROJECT_ROOT}/include/mwtl/window.h" window_lines)
+file(STRINGS "${PROJECT_ROOT}/include/mwfl/window.h" window_lines)
 list(LENGTH window_lines window_line_count)
 if(window_line_count GREATER 525)
     message(FATAL_ERROR

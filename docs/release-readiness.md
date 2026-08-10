@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Publish one clean `v0.1.0` as mwtl's first supported public preview. The old
+Publish one clean `v0.1.0` as mwfl's first supported public preview. The old
 release and tag were removed on 2026-08-10 because they had no known users. The
 replacement release is created only after the current source, all 43 examples,
 optional integrations, packages, documentation, and website pass the gates
@@ -46,7 +46,7 @@ The remaining work is hardening rather than another feature milestone:
 
 ### Gate A - surface freeze candidate
 
-- Inspect every file under `include/mwtl` and its corresponding implementation.
+- Inspect every file under `include/mwfl` and its corresponding implementation.
 - Classify every public type as stable, provisional, optional, or internal.
 - Record ownership, borrowing, thread/apartment affinity, failure/cancellation,
   units, encoding, teardown, and native escape hatches.

@@ -1,6 +1,6 @@
-#include <mwtl/property_sheet.h>
+#include <mwfl/property_sheet.h>
 
 void CompilePropertySheetHeader() {
-    mwtl::PropertySheetModel model;
+    mwfl::PropertySheetModel model;
     static_cast<void>(model.AnyDirty());
 }

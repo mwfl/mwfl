@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 #include <exception>
@@ -7,7 +7,7 @@
 namespace {
 constexpr UINT kGreetingMessage = WM_APP + 42;
 
-class NativeMessageWindow final : public mwtl::WindowBase {
+class NativeMessageWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         ::SetWindowPos(GetHwnd(), nullptr, 0, 0, 900, 560,
@@ -20,20 +20,20 @@ public:
         }
     }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage& message) override {
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage& message) override {
         if (message.id != kGreetingMessage) {
-            return mwtl::EventResult::Propagate();
+            return mwfl::EventResult::Propagate();
         }
         wchar_t title[128]{};
         _snwprintf_s(title, _countof(title), _TRUNCATE,
                      L"Native WM_APP received (payload: %llu)",
                      static_cast<unsigned long long>(message.wparam));
         SetTitle(title);
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 };
 }
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<NativeMessageWindow>(instance, show_command);
+    return mwfl::RunApplication<NativeMessageWindow>(instance, show_command);
 }

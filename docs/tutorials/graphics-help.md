@@ -1,15 +1,15 @@
 # EMF, GDI+, taskbar, and Help integrations
 
-These are optional traditional desktop integrations. Link `mwtl::graphics` for
-enhanced metafiles and GDI+, or `mwtl::shell` for taskbar and Help. Core users
+These are optional traditional desktop integrations. Link `mwfl::graphics` for
+enhanced metafiles and GDI+, or `mwfl::shell` for taskbar and Help. Core users
 pay no link, COM, startup, or resource cost.
 
 ## Build and test
 
 ```powershell
 cmake --preset vs2026-x64
-cmake --build --preset vs2026-x64-debug --target mwtl_graphics_interop mwtl_shell_integration_demo
-ctest --preset vs2026-x64-debug -R "^mwtl\.(graphics|graphics_interop_gui|help|shell_integration|shell_integration_gui)$"
+cmake --build --preset vs2026-x64-debug --target mwfl_graphics_interop mwfl_shell_integration_demo
+ctest --preset vs2026-x64-debug -R "^mwfl\.(graphics|graphics_interop_gui|help|shell_integration|shell_integration_gui)$"
 ```
 
 Repeat with Release.
@@ -21,11 +21,11 @@ success or exception. `EnhancedMetafile` is move-only and calls
 `DeleteEnhMetaFile`; `Release` explicitly transfers that obligation.
 
 ```cpp
-auto recorded = mwtl::RecordEnhancedMetafile(nullptr, L"report", [](HDC dc) {
+auto recorded = mwfl::RecordEnhancedMetafile(nullptr, L"report", [](HDC dc) {
     Rectangle(dc, 0, 0, 400, 240);
 });
-mwtl::SaveEnhancedMetafile(recorded.metafile, output_emf);
-mwtl::PlayEnhancedMetafile(paint_dc, recorded.metafile, destination_pixels);
+mwfl::SaveEnhancedMetafile(recorded.metafile, output_emf);
+mwfl::PlayEnhancedMetafile(paint_dc, recorded.metafile, destination_pixels);
 ```
 
 An explicit frame passed to recording uses 0.01 millimeter units. Playback
@@ -38,7 +38,7 @@ GDI+ token, contains drawing exceptions, and atomically replaces a sibling PNG.
 Dimensions are limited to 32768 and 67,108,864 pixels.
 
 ```cpp
-mwtl::ExportGdiPlusPng(path, 800, 600, [](Gdiplus::Graphics& graphics) {
+mwfl::ExportGdiPlusPng(path, 800, 600, [](Gdiplus::Graphics& graphics) {
     graphics.Clear(Gdiplus::Color(255, 255, 255, 255));
 });
 ```
@@ -62,9 +62,9 @@ only accepted network scheme. UNC paths, traversal, credentials, whitespace,
 quotes, controls, and malformed topics are rejected.
 
 ```cpp
-mwtl::HelpRequest request{
-    mwtl::HelpTargetKind::https_uri, {}, L"https://example.com/help", L"#editing"};
-auto result = mwtl::LaunchHelp(owner, request);
+mwfl::HelpRequest request{
+    mwfl::HelpTargetKind::https_uri, {}, L"https://example.com/help", L"#editing"};
+auto result = mwfl::LaunchHelp(owner, request);
 ```
 
 Cancellation, missing content, unavailable HTML Help, and native failure are

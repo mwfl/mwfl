@@ -1,4 +1,4 @@
-#include <mwtl/mdi.h>
+#include <mwfl/mdi.h>
 
 #include <windows.h>
 
@@ -14,7 +14,7 @@ LRESULT CALLBACK FrameProcedure(HWND window, UINT message, WPARAM wparam,
 }
 
 HWND CreateFrame() {
-    constexpr wchar_t ClassName[] = L"mwtl.mdi.native.frame";
+    constexpr wchar_t ClassName[] = L"mwfl.mdi.native.frame";
     WNDCLASSW window_class{};
     window_class.lpfnWndProc = FrameProcedure;
     window_class.hInstance = ::GetModuleHandleW(nullptr);
@@ -29,7 +29,7 @@ HWND CreateFrame() {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     MdiWorkspaceModel invalid_model;
     MdiHost invalid;
     if (invalid.Create(nullptr, invalid_model).status !=

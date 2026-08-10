@@ -1,10 +1,10 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 #include <exception>
 #include <stdexcept>
 
-class ResizeWindow final : public mwtl::WindowBase {
+class ResizeWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         if (!SetTitle(L"Resize demo — resize this window")) {
@@ -12,16 +12,16 @@ public:
         }
     }
 
-    mwtl::EventResult OnResize(const mwtl::ResizeEvent& event) override {
+    mwfl::EventResult OnResize(const mwfl::ResizeEvent& event) override {
         wchar_t title[128]{};
         _snwprintf_s(title, _countof(title), _TRUNCATE,
                      L"WM_SIZE: %ld × %ld",
                      event.client_size.cx, event.client_size.cy);
         SetTitle(title);
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<ResizeWindow>(instance, show_command);
+    return mwfl::RunApplication<ResizeWindow>(instance, show_command);
 }

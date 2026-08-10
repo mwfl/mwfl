@@ -30,11 +30,11 @@ That final message is expected.
 
 ## 2. Copy the supported template
 
-From a local mwtl checkout:
+From a local mwfl checkout:
 
 ```powershell
-Copy-Item -Recurse .\templates\basic-app ..\mwtl-notepad-tutorial
-Set-Location ..\mwtl-notepad-tutorial
+Copy-Item -Recurse .\templates\basic-app ..\mwfl-notepad-tutorial
+Set-Location ..\mwfl-notepad-tutorial
 ```
 
 The template already supplies a Per-Monitor-V2 manifest, C++20 compile options,
@@ -45,18 +45,18 @@ Configure with the matching generator:
 ```powershell
 # Visual Studio 2026
 cmake -S . -B build -G "Visual Studio 18 2026" -A x64 `
-  -DMWTL_SOURCE_DIR=D:/GitHub/mwtl
+  -DMWFL_SOURCE_DIR=D:/GitHub/mwfl
 
 # Visual Studio 2022 alternative
 cmake -S . -B build-vs2022 -G "Visual Studio 17 2022" -A x64 `
-  -DMWTL_SOURCE_DIR=D:/GitHub/mwtl
+  -DMWFL_SOURCE_DIR=D:/GitHub/mwfl
 ```
 
 Build and run the unchanged starter before editing it:
 
 ```powershell
 cmake --build build --config Debug
-& .\build\Debug\mwtl_basic_app.exe
+& .\build\Debug\mwfl_basic_app.exe
 ```
 
 If this step fails, fix the toolchain first. Do not diagnose application code
@@ -67,15 +67,15 @@ until the untouched template builds.
 Store every retained object as a window member. Add:
 
 ```cpp
-mwtl::DocumentState document_;
-mwtl::TextHistory history_;
-mwtl::CommandSet commands_;
-mwtl::Menu menu_;
-mwtl::AcceleratorTable accelerators_;
-mwtl::UiFont font_;
-mwtl::Toolbar toolbar_;
-mwtl::TextBox editor_;
-mwtl::StatusBar status_;
+mwfl::DocumentState document_;
+mwfl::TextHistory history_;
+mwfl::CommandSet commands_;
+mwfl::Menu menu_;
+mwfl::AcceleratorTable accelerators_;
+mwfl::UiFont font_;
+mwfl::Toolbar toolbar_;
+mwfl::TextBox editor_;
+mwfl::StatusBar status_;
 ```
 
 In `BuildUI`, use `ControlHost` to create the three native controls. Give the
@@ -83,18 +83,18 @@ text box `ES_MULTILINE`, scrolling, and `ES_NOHIDESEL`. Use intrinsic sizing for
 the bars and let the editor stretch:
 
 ```cpp
-SetLayout(mwtl::Column()
-    .Add(toolbar_, mwtl::Auto())
-    .Add(editor_, mwtl::Stretch())
-    .Add(status_, mwtl::Auto()));
+SetLayout(mwfl::Column()
+    .Add(toolbar_, mwfl::Auto())
+    .Add(editor_, mwfl::Stretch())
+    .Add(status_, mwfl::Auto()));
 ```
 
 Assign accessible names to surfaces without visible labels:
 
 ```cpp
-mwtl::Must(mwtl::SetAccessibleName(editor_.GetHwnd(), L"Document text"),
+mwfl::Must(mwfl::SetAccessibleName(editor_.GetHwnd(), L"Document text"),
            "name editor");
-mwtl::Must(mwtl::SetAccessibleName(status_.GetHwnd(), L"Document status"),
+mwfl::Must(mwfl::SetAccessibleName(status_.GetHwnd(), L"Document status"),
            "name status");
 ```
 
@@ -108,7 +108,7 @@ Give every action one stable `ControlId`. Put its text, enabled/checked/visible
 state, shortcut, and callback in one `Command`:
 
 ```cpp
-commands_.Add(mwtl::Command(kSave, L"&Save", [this] {
+commands_.Add(mwfl::Command(kSave, L"&Save", [this] {
     static_cast<void>(SaveDocument(false));
 }).SetShortcut({FVIRTKEY | FCONTROL, 'S'}));
 ```
@@ -133,7 +133,7 @@ Use `ShowOpenFileDialog` and `ShowSaveFileDialog`. Check the three outcomes
 separately:
 
 ```cpp
-const auto selected = mwtl::ShowOpenFileDialog(options);
+const auto selected = mwfl::ShowOpenFileDialog(options);
 if (selected.Cancelled()) return;
 if (!selected.accepted) {
     // Report selected.extended_error. Keep the current document.
@@ -148,7 +148,7 @@ write succeeds. A `changed` result means another process modified the file;
 preserve the editor text and ask the user what to do.
 
 The complete encoding and error mapping is in `examples/notepad/main.cpp` and is
-covered by `mwtl.text_file`.
+covered by `mwfl.text_file`.
 
 ## 6. Protect destructive transitions
 
@@ -177,7 +177,7 @@ and failure checks rather than copying only the happy path.
 
 Follow [the focused Agent recipe](../recipes/notepad-command-setting.md) to add
 the checked **Always on Top** command. The setting lives below the versioned key
-`Software\\mwtl\\Notepad\\1` as a `REG_DWORD`; a failed optional preference
+`Software\\mwfl\\Notepad\\1` as a `REG_DWORD`; a failed optional preference
 write never affects document safety.
 
 ## 9. Build and verify
@@ -187,8 +187,8 @@ GUI workflow:
 
 ```powershell
 cmake --preset vs2026-x64
-cmake --build --preset x64-debug --target mwtl_notepad
-ctest --preset x64-debug -R "mwtl.notepad_gui" --output-on-failure
+cmake --build --preset x64-debug --target mwfl_notepad
+ctest --preset x64-debug -R "mwfl.notepad_gui" --output-on-failure
 ```
 
 The GUI test launches the actual executable and covers open, user-style edit
@@ -210,12 +210,12 @@ Install or package a Release build:
 cmake --build --preset x64-release
 cmake --install build\presets\vs2026-x64 --config Release `
   --prefix build\install
-& .\build\install\bin\mwtl_notepad.exe
+& .\build\install\bin\mwfl_notepad.exe
 
 cpack --config build\presets\vs2026-x64\CPackConfig.cmake `
   -C Release -B build\packages
 ```
 
-The ZIP contains `bin/mwtl_notepad.exe` together with the library, headers,
+The ZIP contains `bin/mwfl_notepad.exe` together with the library, headers,
 CMake package files, licenses, and documentation.
 

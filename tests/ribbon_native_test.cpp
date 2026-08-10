@@ -1,4 +1,4 @@
-#include <mwtl/ribbon.h>
+#include <mwfl/ribbon.h>
 
 #include <windows.h>
 
@@ -14,7 +14,7 @@ LRESULT CALLBACK TestWindowProcedure(HWND window, UINT message, WPARAM wparam,
 }
 
 HWND CreateTestWindow() {
-    constexpr wchar_t ClassName[] = L"mwtl.ribbon.native.test";
+    constexpr wchar_t ClassName[] = L"mwfl.ribbon.native.test";
     WNDCLASSW window_class{};
     window_class.lpfnWndProc = TestWindowProcedure;
     window_class.hInstance = ::GetModuleHandleW(nullptr);
@@ -29,7 +29,7 @@ HWND CreateTestWindow() {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     RibbonCommandModel model;
     CommandSet commands;
     int invoked = 0;

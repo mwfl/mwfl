@@ -8,19 +8,19 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## `RunApplication` and `Application`
 
-- Header: `<mwtl/application.h>`
+- Header: `<mwfl/application.h>`
 - Purpose: process entry, module/COM setup, main-window lifetime, message loop,
   and the outer exception boundary.
 - Construction: normally call `RunApplication<MainWindow>(instance, show,
   options)` from `wWinMain`.
-- Requirement: the window derives from the mwtl window marker, implements
+- Requirement: the window derives from the mwfl window marker, implements
   `void BuildUI()`, and is constructible from the supplied arguments.
 - Failure: returns `EXIT_FAILURE` after reporting setup or uncaught run errors.
 - Related: `ApplicationOptions`, `WindowOptions`, `MessagePump`.
 
 ## `WindowBase`
 
-- Header: `<mwtl/window.h>`
+- Header: `<mwfl/window.h>`
 - Ownership: owns its top-level HWND while attached; non-copyable.
 - Threading: create, use, and destroy on the UI thread.
 - Setup: override `BuildUI()`; store child controls as members.
@@ -31,17 +31,17 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## `ControlHost`
 
-- Header: `<mwtl/control_host.h>`
+- Header: `<mwfl/control_host.h>`
 - Purpose: checked creation of native child controls and automatic control-ID
   allocation during `BuildUI()`.
 - Ownership: does not own the C++ control wrapper; controls remain window
   members.
-- Use: `mwtl::ControlHost ui{*this}; ui.Add(button_, L"Save");`.
+- Use: `mwfl::ControlHost ui{*this}; ui.Add(button_, L"Save");`.
 - Failure: creation failures use the library's checked diagnostic path.
 
 ## `NativeControl` and core controls
 
-- Header: `<mwtl/controls.h>`
+- Header: `<mwfl/controls.h>`
 - Types: `Label`, `Button`, `TextBox`, `CheckBox`, `RadioButton`, `GroupBox`,
   `ComboBox`, `ListBox`, `ProgressBar`, and `Slider`.
 - Ownership: a wrapper owns its child HWND; move-only; destruction is
@@ -52,14 +52,14 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
   IDs and bounds are required.
 - Failure: most creating/mutating operations return `bool`; check them or use
   `Must` during setup.
-- Typed choices: include `mwtl/selection.h` and use
+- Typed choices: include `mwfl/selection.h` and use
   `SelectionAdapter<Control, Value>` with ComboBox, ListBox, or ComboBoxEx. It
   owns values outside Win32 item data, rejects invalid indices, and must be the
   exclusive item mutator on the control's UI thread.
 
 ## Layout
 
-- Header: `<mwtl/layout.h>`
+- Header: `<mwfl/layout.h>`
 - Entry points: `Row()`, `Column()`, `Overlay()` return move-only `LayoutNode`.
 - Sizing: `Auto(min,max)`, `Fixed(dip)`, `Stretch(weight,min,max)`.
 - Units: `Dip`, usually written with `operator""_dip`.
@@ -69,7 +69,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## Events and `EventResult`
 
-- Header: `<mwtl/events.h>`
+- Header: `<mwfl/events.h>`
 - Command matching: `event.IsClicked(control)` or `event.Is(control,
   notification_code)`.
 - `Handled()`: the application consumed the event/result.
@@ -78,7 +78,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## Binding
 
-- Header: `<mwtl/binding.h>`
+- Header: `<mwfl/binding.h>`
 - `ValueBinding<Control, Value>` keeps explicit references to a control and
   model value plus read/write/optional validation callables.
 - `Pull()` validates before committing and returns a result with `accepted` and
@@ -87,7 +87,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## Split panes and Explorer composition
 
-- Header: `<mwtl/splitter.h>`; canonical application: `examples/explorer`.
+- Header: `<mwfl/splitter.h>`; canonical application: `examples/explorer`.
 - Create both pane HWNDs as direct children of `Splitter`, then call
   `AttachPanes`. The splitter owns its container and borrows the two pane HWNDs.
 - Attached-pane `WM_NOTIFY`, control `WM_COMMAND`, and `WM_CONTEXTMENU` are
@@ -97,11 +97,11 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
   `TreeItemId`/`ListItemId`, `UpdateVirtualModel` for mutations that preserve
   selection, and `TakeVirtualException` after callback handling.
 - Follow `docs/tutorials/explorer-application.md`; verify with
-  `mwtl.explorer_model`, `mwtl.explorer_gui`, and `mwtl.splitter_native`.
+  `mwfl.explorer_model`, `mwfl.explorer_gui`, and `mwfl.splitter_native`.
 
 ## Property sheets and persisted Settings
 
-- Header: `<mwtl/property_sheet.h>`; canonical application:
+- Header: `<mwfl/property_sheet.h>`; canonical application:
   `examples/property_sheet`.
 - Give pages stable nonzero IDs. Create page controls in `initialize`, route
   native edit/click notifications through `command`, and call `SetDirty()`.
@@ -112,11 +112,11 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 - `reset` projects the committed value back to controls for Cancel. Modeless
   sheets and page callbacks stay on their creating UI thread.
 - Follow `docs/tutorials/settings-application.md`; verify focused changes with
-  `mwtl.settings_application_model` and `mwtl.settings_application_gui`.
+  `mwfl.settings_application_model` and `mwfl.settings_application_gui`.
 
 ## Commands
 
-- Headers: `<mwtl/command.h>`, `<mwtl/command_controls.h>`, `<mwtl/desktop.h>`.
+- Headers: `<mwfl/command.h>`, `<mwfl/command_controls.h>`, `<mwfl/desktop.h>`.
 - `Command` contains a stable ID, label, callback, enabled/checked state, and
   optional shortcut.
 - `CommandSet` stores commands and dispatches a `CommandEvent`.
@@ -128,7 +128,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## Tooltips and image lists
 
-- Header: `<mwtl/control_resources.h>`.
+- Header: `<mwfl/control_resources.h>`.
 - `ImageList` owns its native list. `GetHandle()` and toolbar attachment are
   borrowed; the list must outlive every borrowing toolbar. Icon inputs are
   copied by the native list.
@@ -140,7 +140,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## TreeView and ListView data
 
-- Header: `<mwtl/navigation_controls.h>`.
+- Header: `<mwfl/navigation_controls.h>`.
 - Give tree and list rows stable nonzero `TreeItemId`/`ListItemId` values; do
   not put application object pointers in native item data.
 - ListView is multi-select by default. Read `GetSelectedItemIds`; request
@@ -158,7 +158,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## `WindowWakeup`
 
-- Header: `<mwtl/wakeup.h>`
+- Header: `<mwfl/wakeup.h>`
 - Purpose: copyable, lifetime-safe worker-to-window notification token.
 - Worker operation: `bool TryWake() const noexcept`.
 - UI operation: override `OnWakeup()` and update controls there.
@@ -167,14 +167,14 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## Timers and message pumps
 
-- Headers: `<mwtl/timer.h>`, `<mwtl/message_pump.h>`.
+- Headers: `<mwfl/timer.h>`, `<mwfl/message_pump.h>`.
 - `UiTimer` is move-only RAII state associated with the window thread.
 - The default pump handles ordinary applications. Use the wait-aware pump only
   when integrating kernel handles or explicit idle work.
 
 ## Desktop integration
 
-- Headers: `<mwtl/desktop.h>`, `<mwtl/dialog.h>`.
+- Headers: `<mwfl/desktop.h>`, `<mwfl/dialog.h>`.
 - Includes menus, accelerator tables, file/folder dialogs, clipboard, file
   drops, and window placement.
 - Dialog results distinguish acceptance, cancellation, and failure.
@@ -189,7 +189,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## Notification-area applications
 
-- Header: `<mwtl/tray_icon.h>`.
+- Header: `<mwfl/tray_icon.h>`.
 - `TrayIcon` owns the shell registration but borrows its owner HWND and HICON.
 - `TrayIconStateModel` is the pure state machine behind initial add, retryable
   Explorer recovery, successful registration, and detach; use it when business
@@ -206,7 +206,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## Appearance, DPI, and accessibility
 
-- Headers: `<mwtl/appearance.h>`, `<mwtl/dpi.h>`.
+- Headers: `<mwfl/appearance.h>`, `<mwfl/dpi.h>`.
 - `AppearanceOptions` requests system/light/dark mode, backdrop, and corners on
   a best-effort basis.
 - High Contrast takes precedence over decorative choices.
@@ -216,14 +216,14 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## Checked operations
 
-- Headers: `<mwtl/must.h>`, `<mwtl/error.h>`.
+- Headers: `<mwfl/must.h>`, `<mwfl/error.h>`.
 - `Must(value, context)` converts failed setup results into rich diagnostics.
 - Use it for operations that must succeed before the window can function.
 - Do not let resulting exceptions escape a Win32 callback.
 
 ## WIC image viewing
 
-- Request `COMPONENTS imaging d2d`; link `mwtl::imaging` and `mwtl::d2d`.
+- Request `COMPONENTS imaging d2d`; link `mwfl::imaging` and `mwfl::d2d`.
 - Initialize COM (normally `ApplicationOptions{.com_apartment = sta}`) before
   `DecodeImageFile`. Handle structured missing, unsupported, invalid, too-large,
   COM, memory, and generic failure statuses.
@@ -236,7 +236,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 
 ## Direct2D drawing
 
-- Header: `<mwtl/d2d_host.h>`; CMake target: `mwtl::d2d`.
+- Header: `<mwfl/d2d_host.h>`; CMake target: `mwfl::d2d`.
 - For installed packages request `COMPONENTS d2d`. Do not add Direct2D to the
   core target or include the optional header when it is not requested.
 - Store `D2DHost` and device resources as window members. Create brushes in
@@ -245,12 +245,12 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 - Never call `BeginDraw`/`EndDraw` or retain `D2DRenderContext`/its target.
 - Keep application content GPU-independent and use DIP coordinates.
 - Layout has no `Spacer()` helper. Use only `Row`, `Column`, `Margin`, `Gap`,
-  `Auto`, `Fixed`, and `Stretch` APIs present in `<mwtl/layout.h>`.
+  `Auto`, `Fixed`, and `Stretch` APIs present in `<mwfl/layout.h>`.
 - Start from `examples/drawing` and `docs/recipes/direct2d-drawing.md`.
 
 ## Direct3D swap chain
 
-- Header: `<mwtl/d3d_host.h>`; CMake target: `mwtl::d3d`; installed packages
+- Header: `<mwfl/d3d_host.h>`; CMake target: `mwfl::d3d`; installed packages
   require `COMPONENTS d3d`.
 - Call `RenderFrame` when the application needs a frame. Do not add an implicit
   timer or game loop unless the application explicitly requires one.
@@ -263,19 +263,19 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
   hardware acceleration. See `docs/recipes/direct3d-swap-chain.md`.
 ## Optional integration selection
 
-- Generic child HWND: include `mwtl/native_host.h`, link `mwtl::mwtl`, create
+- Generic child HWND: include `mwfl/native_host.h`, link `mwfl::mwfl`, create
   the third-party child with the host as parent, then `Attach` it.
-- Web content: set `MWTL_BUILD_WEBVIEW2=ON`, include `mwtl/webview2.h`, and link
-  `mwtl::webview2`. Run in an STA, wait for ready, handle missing Runtime, and
+- Web content: set `MWFL_BUILD_WEBVIEW2=ON`, include `mwfl/webview2.h`, and link
+  `mwfl::webview2`. Run in an STA, wait for ready, handle missing Runtime, and
   use `NavigateToString` in tests.
-- Source editor: set `MWTL_BUILD_SCINTILLA=ON`, include `mwtl/scintilla.h`, link
-  `mwtl::scintilla`, and deploy `Scintilla.dll`. Treat positions as UTF-8 bytes.
-- 2D drawing: link `mwtl::d2d`; keep document data independent of brushes and
+- Source editor: set `MWFL_BUILD_SCINTILLA=ON`, include `mwfl/scintilla.h`, link
+  `mwfl::scintilla`, and deploy `Scintilla.dll`. Treat positions as UTF-8 bytes.
+- 2D drawing: link `mwfl::d2d`; keep document data independent of brushes and
   render targets.
-- Swap chain: link `mwtl::d3d`; render on demand and handle every frame status.
-- Image decode: link `mwtl::imaging`; initialize COM and enforce pixel budgets.
+- Swap chain: link `mwfl::d3d`; render on demand and handle every frame status.
+- Image decode: link `mwfl::imaging`; initialize COM and enforce pixel budgets.
 
-Never add optional SDK libraries to `mwtl::mwtl`. Do not retain callback-scoped
+Never add optional SDK libraries to `mwfl::mwfl`. Do not retain callback-scoped
 COM interfaces, render contexts, native notification pointers, or raw escape
 hatches. UI integrations and callbacks remain on their creating thread.
 
@@ -305,5 +305,5 @@ deterministic local tests without network or dialogs.
   bounded, versioned, pointer-free, atomic where possible, and restored only
   after monitor recovery and graph validation.
 - Focused local gate:
-  `ctest --test-dir build/presets/vs2026-x64 -C Debug -R "mwtl.docking_"`;
+  `ctest --test-dir build/presets/vs2026-x64 -C Debug -R "mwfl.docking_"`;
   repeat with Release.

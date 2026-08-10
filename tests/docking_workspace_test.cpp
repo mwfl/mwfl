@@ -1,11 +1,11 @@
-#include <mwtl/docking_workspace.h>
+#include <mwfl/docking_workspace.h>
 
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
 
     bool threw = false;
     try { DockLayoutModel invalid{{}, {100}}; }

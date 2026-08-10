@@ -1,12 +1,12 @@
-#include <mwtl/d3d_host.h>
-#include <mwtl/appearance.h>
+#include <mwfl/d3d_host.h>
+#include <mwfl/appearance.h>
 
 #include <commctrl.h>
 
 #include <algorithm>
 #include <iterator>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 constexpr UINT_PTR kD3DHostSubclassId = 1;
 }
@@ -274,4 +274,4 @@ LRESULT D3DHost::ProcessMessage(HWND window, UINT message, WPARAM wparam,
     }
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

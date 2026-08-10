@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <algorithm>
 #include <array>
@@ -11,22 +11,22 @@
 #include <string>
 #include <unordered_map>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 namespace {
 
-constexpr mwtl::ControlId kNew{800};
-constexpr mwtl::ControlId kSave{801};
-constexpr mwtl::ControlId kClose{802};
-constexpr mwtl::ControlId kMove{803};
-constexpr mwtl::ControlId kLeft{804};
-constexpr mwtl::ControlId kRight{805};
-constexpr mwtl::ControlId kUndo{806};
-constexpr mwtl::ControlId kRedo{807};
-constexpr mwtl::ControlId kExit{808};
-constexpr mwtl::ControlId kOpen{809};
-constexpr mwtl::ControlId kReopen{810};
-constexpr mwtl::ControlId kTabs{820};
+constexpr mwfl::ControlId kNew{800};
+constexpr mwfl::ControlId kSave{801};
+constexpr mwfl::ControlId kClose{802};
+constexpr mwfl::ControlId kMove{803};
+constexpr mwfl::ControlId kLeft{804};
+constexpr mwfl::ControlId kRight{805};
+constexpr mwfl::ControlId kUndo{806};
+constexpr mwfl::ControlId kRedo{807};
+constexpr mwfl::ControlId kExit{808};
+constexpr mwfl::ControlId kOpen{809};
+constexpr mwfl::ControlId kReopen{810};
+constexpr mwfl::ControlId kTabs{820};
 constexpr UINT kRunSelfTest = WM_APP + 0x160;
 
 bool SamePath(const std::filesystem::path& left,
@@ -41,7 +41,7 @@ class WorkspaceWindow;
 
 struct DocumentContent {
     std::wstring text;
-    std::optional<mwtl::FileStamp> stamp;
+    std::optional<mwfl::FileStamp> stamp;
 };
 
 struct Coordinator {
@@ -49,7 +49,7 @@ struct Coordinator {
         : self_test(test), result_path(std::move(result)) {
         if (self_test) {
             session_path = std::filesystem::temp_directory_path() /
-                (L"mwtl-document-workspace-app-session-" +
+                (L"mwfl-document-workspace-app-session-" +
                  std::to_wstring(::GetCurrentProcessId()) + L".state");
             std::error_code ignored;
             std::filesystem::remove(session_path, ignored);
@@ -59,18 +59,18 @@ struct Coordinator {
                 L"LOCALAPPDATA", local.data(), static_cast<DWORD>(local.size()));
             if (length > 0 && length < local.size())
                 session_path = std::filesystem::path{local.data()} /
-                    L"mwtl" / L"document-workspace.state";
+                    L"mwfl" / L"document-workspace.state";
         }
         if (!session_path.empty()) {
-            const auto loaded = mwtl::LoadDocumentSession(session_path);
+            const auto loaded = mwfl::LoadDocumentSession(session_path);
             if (loaded && loaded.session->workspaces.size() == models.size())
                 pending_session = std::move(*loaded.session);
         }
     }
 
-    std::array<mwtl::DocumentWorkspaceModel, 2> models{
-        mwtl::DocumentWorkspaceModel{{1}, 8},
-        mwtl::DocumentWorkspaceModel{{2}, 8}};
+    std::array<mwfl::DocumentWorkspaceModel, 2> models{
+        mwfl::DocumentWorkspaceModel{{1}, 8},
+        mwfl::DocumentWorkspaceModel{{2}, 8}};
     std::unordered_map<std::uint64_t, DocumentContent> contents;
     std::array<WorkspaceWindow*, 2> windows{};
     std::unique_ptr<WorkspaceWindow> secondary;
@@ -78,7 +78,7 @@ struct Coordinator {
     bool self_test = false;
     std::optional<std::filesystem::path> result_path;
     std::filesystem::path session_path;
-    std::optional<mwtl::DocumentSession> pending_session;
+    std::optional<mwfl::DocumentSession> pending_session;
 
     void EnsureSecondary();
     bool MoveActive(std::size_t source);
@@ -93,7 +93,7 @@ struct Coordinator {
     }
 };
 
-class WorkspaceWindow final : public mwtl::WindowBase {
+class WorkspaceWindow final : public mwfl::WindowBase {
 public:
     WorkspaceWindow(Coordinator& coordinator, std::size_t index, bool primary)
         : coordinator_(coordinator), index_(index), primary_(primary) {}
@@ -101,28 +101,28 @@ public:
     void BuildUI() override {
         coordinator_.windows[index_] = this;
         BuildCommands();
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(toolbar_);
-        ui.Add(tabs_, mwtl::TabControlOptions{});
+        ui.Add(tabs_, mwfl::TabControlOptions{});
         ui.Add(status_);
         for (const auto& command : commands_.GetCommands()) {
             if (command.GetId() != kExit)
-                mwtl::Must(toolbar_.AddCommand(command), "add workspace toolbar command");
+                mwfl::Must(toolbar_.AddCommand(command), "add workspace toolbar command");
         }
         toolbar_.AutoSize();
-        mwtl::Must(adapter_.Attach(tabs_) == mwtl::DocumentTabStatus::success,
+        mwfl::Must(adapter_.Attach(tabs_) == mwfl::DocumentTabStatus::success,
                    "attach document tabs");
         BuildMenu();
-        mwtl::Must(accelerators_.Create(commands_), "create workspace accelerators");
+        mwfl::Must(accelerators_.Create(commands_), "create workspace accelerators");
         SetAccelerators(accelerators_.GetHandle());
-        mwtl::Must(mwtl::SetAccessibleName(tabs_.GetHwnd(), L"Open documents"),
+        mwfl::Must(mwfl::SetAccessibleName(tabs_.GetHwnd(), L"Open documents"),
                    "name document tabs");
-        mwtl::Must(mwtl::SetAccessibleName(status_.GetHwnd(), L"Workspace status"),
+        mwfl::Must(mwfl::SetAccessibleName(status_.GetHwnd(), L"Workspace status"),
                    "name workspace status");
-        SetLayout(mwtl::Column()
-            .Add(toolbar_, mwtl::Auto())
-            .Add(tabs_, mwtl::Stretch())
-            .Add(status_, mwtl::Fixed(26.0_dip)));
+        SetLayout(mwfl::Column()
+            .Add(toolbar_, mwfl::Auto())
+            .Add(tabs_, mwfl::Stretch())
+            .Add(status_, mwfl::Fixed(26.0_dip)));
         if (index_ == 0) {
             coordinator_.EnsureSecondary();
             coordinator_.InitializeWorkspaces();
@@ -133,7 +133,7 @@ public:
         Sync(L"Ready");
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
         if (event.notification == EN_CHANGE && event.control) {
             for (const auto& binding : adapter_.GetPages()) {
                 if (binding.page != event.control) continue;
@@ -142,28 +142,28 @@ public:
                 model().SetUndoState(binding.document,
                     ::SendMessageW(binding.page, EM_CANUNDO, 0, 0) != 0, false);
                 Sync(L"Modified");
-                return mwtl::EventResult::Handled();
+                return mwfl::EventResult::Handled();
             }
         }
         return commands_.Dispatch(event);
     }
 
-    mwtl::EventResult OnNotify(const mwtl::NotifyEvent& event) override {
+    mwfl::EventResult OnNotify(const mwfl::NotifyEvent& event) override {
         if (event.Is(tabs_, TCN_SELCHANGE)) {
             adapter_.ActivateNativeSelection(model());
             Sync(L"Active document changed");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnResize(const mwtl::ResizeEvent&) override {
+    mwfl::EventResult OnResize(const mwfl::ResizeEvent&) override {
         adapter_.ArrangePages();
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
-        if (event.id != kRunSelfTest) return mwtl::EventResult::Propagate();
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
+        if (event.id != kRunSelfTest) return mwfl::EventResult::Propagate();
         try {
             RunSelfTest();
             coordinator_.Report("ok");
@@ -178,30 +178,30 @@ public:
             coordinator_.Report(error.what());
             ::PostQuitMessage(1);
         }
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnClose() override {
+    mwfl::EventResult OnClose() override {
         if (primary_) {
             if (!coordinator_.ConfirmShutdown(GetHwnd()))
-                return mwtl::EventResult::Handled();
+                return mwfl::EventResult::Handled();
         } else if (!ConfirmCloseAll()) {
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (primary_ && coordinator_.secondary && coordinator_.secondary->IsWindow())
             ::DestroyWindow(coordinator_.secondary->GetHwnd());
         coordinator_.windows[index_] = nullptr;
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::DocumentWorkspaceModel& model() { return coordinator_.models[index_]; }
-    mwtl::DocumentTabWorkspaceAdapter& adapter() { return adapter_; }
+    mwfl::DocumentWorkspaceModel& model() { return coordinator_.models[index_]; }
+    mwfl::DocumentTabWorkspaceAdapter& adapter() { return adapter_; }
 
     void Sync(std::wstring_view message) {
-        const auto projection = mwtl::BuildActiveDocumentCommandProjection(model());
-        if (mwtl::ApplyActiveDocumentCommandProjection(
+        const auto projection = mwfl::BuildActiveDocumentCommandProjection(model());
+        if (mwfl::ApplyActiveDocumentCommandProjection(
                 commands_, {kSave, kClose, kUndo, kRedo}, projection) !=
-            mwtl::DocumentCommandProjectionStatus::success)
+            mwfl::DocumentCommandProjectionStatus::success)
             throw std::runtime_error("project active document commands failed");
         for (const auto id : {kSave, kClose, kUndo, kRedo})
             if (const auto* command = commands_.Find(id)) toolbar_.UpdateCommand(*command);
@@ -216,7 +216,7 @@ public:
         }
         status_.SetText(std::wstring{message} + L" — " + projection.status_text);
         SetTitle((index_ == 0 ? L"Workspace A" : L"Workspace B") +
-                 std::wstring{L" — mwtl Documents"});
+                 std::wstring{L" — mwfl Documents"});
         ::DrawMenuBar(GetHwnd());
     }
 
@@ -224,43 +224,43 @@ private:
     friend struct Coordinator;
     void BuildCommands() {
         commands_
-            .Add(mwtl::Command(kNew, L"New", [this] { NewDocument(); })
+            .Add(mwfl::Command(kNew, L"New", [this] { NewDocument(); })
                      .SetShortcut({FVIRTKEY | FCONTROL, 'N'}))
-            .Add(mwtl::Command(kOpen, L"Open…", [this] { OpenInteractive(); })
+            .Add(mwfl::Command(kOpen, L"Open…", [this] { OpenInteractive(); })
                      .SetShortcut({FVIRTKEY | FCONTROL, 'O'}))
-            .Add(mwtl::Command(kSave, L"Save", [this] { SaveActive(); })
+            .Add(mwfl::Command(kSave, L"Save", [this] { SaveActive(); })
                      .SetShortcut({FVIRTKEY | FCONTROL, 'S'}))
-            .Add(mwtl::Command(kClose, L"Close", [this] { CloseActive(); })
+            .Add(mwfl::Command(kClose, L"Close", [this] { CloseActive(); })
                      .SetShortcut({FVIRTKEY | FCONTROL, 'W'}))
-            .Add(mwtl::Command(kMove, L"Move to other window",
+            .Add(mwfl::Command(kMove, L"Move to other window",
                                [this] { coordinator_.MoveActive(index_); }))
-            .Add(mwtl::Command(kLeft, L"Move tab left", [this] { Reorder(-1); }))
-            .Add(mwtl::Command(kRight, L"Move tab right", [this] { Reorder(1); }))
-            .Add(mwtl::Command(kReopen, L"Reopen closed", [this] { ReopenClosed(); })
+            .Add(mwfl::Command(kLeft, L"Move tab left", [this] { Reorder(-1); }))
+            .Add(mwfl::Command(kRight, L"Move tab right", [this] { Reorder(1); }))
+            .Add(mwfl::Command(kReopen, L"Reopen closed", [this] { ReopenClosed(); })
                      .SetShortcut({FVIRTKEY | FCONTROL | FSHIFT, 'T'}))
-            .Add(mwtl::Command(kUndo, L"Undo", [this] {
+            .Add(mwfl::Command(kUndo, L"Undo", [this] {
                 if (const HWND page = ActivePage()) ::SendMessageW(page, WM_UNDO, 0, 0);
             }).SetShortcut({FVIRTKEY | FCONTROL, 'Z'}))
-            .Add(mwtl::Command(kRedo, L"Redo", [] {}).SetEnabled(false))
-            .Add(mwtl::Command(kExit, L"Exit", [this] { Close(); }));
+            .Add(mwfl::Command(kRedo, L"Redo", [] {}).SetEnabled(false))
+            .Add(mwfl::Command(kExit, L"Exit", [this] { Close(); }));
     }
 
     void BuildMenu() {
-        mwtl::Menu bar;
-        mwtl::Menu file;
-        mwtl::Must(bar.Create(), "create workspace menu");
-        mwtl::Must(file.CreatePopup(), "create workspace popup");
+        mwfl::Menu bar;
+        mwfl::Menu file;
+        mwfl::Must(bar.Create(), "create workspace menu");
+        mwfl::Must(file.CreatePopup(), "create workspace popup");
         file_menu_ = file.GetHandle();
         for (const auto id : {kNew, kOpen, kSave, kClose, kReopen,
                               kMove, kLeft, kRight})
-            mwtl::Must(file.AppendCommand(*commands_.Find(id)), "append workspace command");
-        mwtl::Must(file.AppendSeparator(), "append workspace separator");
-        mwtl::Must(file.AppendCommand(*commands_.Find(kExit)), "append exit command");
-        mwtl::Must(bar.AppendSubmenu(std::move(file), L"Document"), "append document menu");
-        mwtl::Must(bar.AttachToWindow(GetHwnd()), "attach workspace menu");
+            mwfl::Must(file.AppendCommand(*commands_.Find(id)), "append workspace command");
+        mwfl::Must(file.AppendSeparator(), "append workspace separator");
+        mwfl::Must(file.AppendCommand(*commands_.Find(kExit)), "append exit command");
+        mwfl::Must(bar.AppendSubmenu(std::move(file), L"Document"), "append document menu");
+        mwfl::Must(bar.AttachToWindow(GetHwnd()), "attach workspace menu");
     }
 
-    HWND CreateEditor(mwtl::DocumentId id, std::wstring_view text) {
+    HWND CreateEditor(mwfl::DocumentId id, std::wstring_view text) {
         const std::wstring terminated{text};
         return ::CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", terminated.c_str(),
             WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_MULTILINE | ES_AUTOVSCROLL |
@@ -272,38 +272,38 @@ private:
 
     void NewDocument(std::wstring title = {}, std::wstring text = {},
                      std::filesystem::path path = {},
-                     std::optional<mwtl::FileStamp> stamp = {}) {
-        const mwtl::DocumentId id{coordinator_.next_id++};
+                     std::optional<mwfl::FileStamp> stamp = {}) {
+        const mwfl::DocumentId id{coordinator_.next_id++};
         if (title.empty()) title = L"Untitled " + std::to_wstring(id.value);
         HWND page = CreateEditor(id, text);
-        mwtl::Must(page != nullptr, "create document editor");
-        mwtl::Must(static_cast<bool>(model().Add({id, title, std::move(path)})),
+        mwfl::Must(page != nullptr, "create document editor");
+        mwfl::Must(static_cast<bool>(model().Add({id, title, std::move(path)})),
                    "add document model");
-        mwtl::Must(adapter_.BindPage(id, page) == mwtl::DocumentTabStatus::success,
+        mwfl::Must(adapter_.BindPage(id, page) == mwfl::DocumentTabStatus::success,
                    "bind document editor");
         coordinator_.contents[id.value] = {std::move(text), stamp};
         model().Activate(id);
-        mwtl::SetAccessibleName(page, title.c_str());
+        mwfl::SetAccessibleName(page, title.c_str());
         Sync(L"Created " + title);
     }
 
-    std::size_t RestoreSnapshot(const mwtl::WorkspaceSession& snapshot) {
+    std::size_t RestoreSnapshot(const mwfl::WorkspaceSession& snapshot) {
         std::unordered_map<std::uint64_t, DocumentContent> restored_contents;
-        const auto validator = [&](const mwtl::SessionDocument& item) {
+        const auto validator = [&](const mwfl::SessionDocument& item) {
             if (item.metadata.path.empty() || !item.metadata.path.is_absolute() ||
-                !item.stamp) return mwtl::SessionDocumentDisposition::untrusted;
-            const auto read = mwtl::ReadTextFile(item.metadata.path);
-            if (read.status == mwtl::TextFileStatus::not_found)
-                return mwtl::SessionDocumentDisposition::missing;
+                !item.stamp) return mwfl::SessionDocumentDisposition::untrusted;
+            const auto read = mwfl::ReadTextFile(item.metadata.path);
+            if (read.status == mwfl::TextFileStatus::not_found)
+                return mwfl::SessionDocumentDisposition::missing;
             if (!read.Succeeded() || read.value->stamp != *item.stamp)
-                return mwtl::SessionDocumentDisposition::changed;
+                return mwfl::SessionDocumentDisposition::changed;
             restored_contents[item.metadata.id.value] =
                 {read.value->text, read.value->stamp};
-            return mwtl::SessionDocumentDisposition::restore;
+            return mwfl::SessionDocumentDisposition::restore;
         };
-        const auto restored = mwtl::RestoreWorkspaceSession(
+        const auto restored = mwfl::RestoreWorkspaceSession(
             model(), snapshot, validator,
-            [&](const mwtl::SessionDocument& item) {
+            [&](const mwfl::SessionDocument& item) {
                 return restored_contents.contains(item.metadata.id.value);
             });
         if (!restored) return 0;
@@ -312,10 +312,10 @@ private:
             if (content == restored_contents.end()) continue;
             HWND page = CreateEditor(document.id, content->second.text);
             if (!page || adapter_.BindPage(document.id, page) !=
-                    mwtl::DocumentTabStatus::success)
+                    mwfl::DocumentTabStatus::success)
                 throw std::runtime_error("restore document page failed");
             coordinator_.contents[document.id.value] = std::move(content->second);
-            mwtl::SetAccessibleName(page, document.title.c_str());
+            mwfl::SetAccessibleName(page, document.title.c_str());
             coordinator_.next_id = (std::max)(coordinator_.next_id,
                                                document.id.value + 1);
         }
@@ -332,7 +332,7 @@ private:
     }
 
     void OpenInteractive() {
-        const auto selected = mwtl::ShowOpenFileDialog({
+        const auto selected = mwfl::ShowOpenFileDialog({
             .owner = GetHwnd(), .title = L"Open document",
             .filters = {{L"Text files", L"*.txt"}, {L"All files", L"*.*"}}});
         if (selected.accepted) OpenPath(selected.path);
@@ -349,7 +349,7 @@ private:
                 return true;
             }
         }
-        const auto read = mwtl::ReadTextFile(path);
+        const auto read = mwfl::ReadTextFile(path);
         if (!read.Succeeded()) return false;
         NewDocument(path.filename().wstring(), read.value->text, path, read.value->stamp);
         Sync(L"Opened file");
@@ -362,7 +362,7 @@ private:
         auto content = coordinator_.contents.find(metadata.id.value);
         if (content == coordinator_.contents.end()) {
             if (metadata.path.empty()) return false;
-            const auto read = mwtl::ReadTextFile(metadata.path);
+            const auto read = mwfl::ReadTextFile(metadata.path);
             if (!read.Succeeded()) return false;
             content = coordinator_.contents.emplace(metadata.id.value,
                 DocumentContent{read.value->text, read.value->stamp}).first;
@@ -373,11 +373,11 @@ private:
             ::DestroyWindow(page);
             return false;
         }
-        if (adapter_.BindPage(metadata.id, page) != mwtl::DocumentTabStatus::success) {
+        if (adapter_.BindPage(metadata.id, page) != mwfl::DocumentTabStatus::success) {
             ::DestroyWindow(page);
             return false;
         }
-        mwtl::SetAccessibleName(page, metadata.title.c_str());
+        mwfl::SetAccessibleName(page, metadata.title.c_str());
         Sync(L"Reopened closed document");
         return true;
     }
@@ -391,9 +391,9 @@ private:
         if (path.empty()) {
             if (coordinator_.self_test) {
                 path = std::filesystem::temp_directory_path() /
-                    (L"mwtl-workspace-" + std::to_wstring(id->value) + L".txt");
+                    (L"mwfl-workspace-" + std::to_wstring(id->value) + L".txt");
             } else {
-                const auto selected = mwtl::ShowSaveFileDialog({
+                const auto selected = mwfl::ShowSaveFileDialog({
                     .owner = GetHwnd(), .title = L"Save document",
                     .filters = {{L"Text files", L"*.txt"}, {L"All files", L"*.*"}},
                     .default_extension = L"txt", .path_must_exist = false});
@@ -402,8 +402,8 @@ private:
             }
         }
         auto& content = coordinator_.contents[id->value];
-        const auto saved = mwtl::WriteTextFileAtomic(path, content.text,
-                                                      mwtl::TextEncoding::utf8,
+        const auto saved = mwfl::WriteTextFileAtomic(path, content.text,
+                                                      mwfl::TextEncoding::utf8,
                                                       content.stamp);
         if (!saved.Succeeded()) return false;
         content.stamp = saved.stamp;
@@ -419,13 +419,13 @@ private:
         const auto* document = model().Find(*id);
         if (document->dirty && !discard && !coordinator_.self_test) {
             const int answer = ::MessageBoxW(GetHwnd(), L"Save changes before closing?",
-                L"mwtl Documents", MB_YESNOCANCEL | MB_ICONWARNING);
+                L"mwfl Documents", MB_YESNOCANCEL | MB_ICONWARNING);
             if (answer == IDCANCEL) return false;
             if (answer == IDYES && !SaveActive()) return false;
         }
         const HWND page = adapter_.FindPage(*id);
         if (!model().Close(*id) ||
-            adapter_.UnbindPage(*id) != mwtl::DocumentTabStatus::success) return false;
+            adapter_.UnbindPage(*id) != mwfl::DocumentTabStatus::success) return false;
         if (page) ::DestroyWindow(page);
         Sync(L"Closed");
         return true;
@@ -443,23 +443,23 @@ private:
     }
 
     bool ConfirmCloseAll() {
-        std::vector<mwtl::DocumentCloseDecision> decisions;
+        std::vector<mwfl::DocumentCloseDecision> decisions;
         for (const auto& document : model().GetDocuments()) {
             if (document.dirty)
                 decisions.push_back({document.id, coordinator_.self_test
-                    ? mwtl::DocumentCloseChoice::discard
-                    : mwtl::DocumentCloseChoice::cancel});
+                    ? mwfl::DocumentCloseChoice::discard
+                    : mwfl::DocumentCloseChoice::cancel});
         }
         if (!coordinator_.self_test && !decisions.empty()) {
             const int answer = ::MessageBoxW(GetHwnd(),
                 L"Discard all unsaved changes and close this workspace?",
-                L"mwtl Documents", MB_OKCANCEL | MB_ICONWARNING);
+                L"mwfl Documents", MB_OKCANCEL | MB_ICONWARNING);
             if (answer != IDOK) return false;
             for (auto& decision : decisions)
-                decision.choice = mwtl::DocumentCloseChoice::discard;
+                decision.choice = mwfl::DocumentCloseChoice::discard;
         }
-        const auto plan = mwtl::BuildCoordinatedClosePlan(model(), decisions);
-        return static_cast<bool>(mwtl::ExecuteCoordinatedClose(model(), plan, {}));
+        const auto plan = mwfl::BuildCoordinatedClosePlan(model(), decisions);
+        return static_cast<bool>(mwfl::ExecuteCoordinatedClose(model(), plan, {}));
     }
 
     HWND ActivePage() const {
@@ -498,7 +498,7 @@ private:
         model().ClearRecentlyClosed();
         coordinator_.contents.erase(active->value);
         if (!OpenPath(saved_path)) throw std::runtime_error("file reopen failed");
-        if (!mwtl::WriteTextFileAtomic(saved_path, L"external change").Succeeded())
+        if (!mwfl::WriteTextFileAtomic(saved_path, L"external change").Succeeded())
             throw std::runtime_error("external change setup failed");
         const HWND reopened_page = ActivePage();
         ::SetWindowTextW(reopened_page, L"local unsaved change");
@@ -507,7 +507,7 @@ private:
             reinterpret_cast<LPARAM>(reopened_page));
         if (SaveActive() || !model().Find(*model().GetActiveId())->dirty)
             throw std::runtime_error("external change protection failed");
-        const auto current_disk = mwtl::ReadTextFile(saved_path);
+        const auto current_disk = mwfl::ReadTextFile(saved_path);
         if (!current_disk.Succeeded())
             throw std::runtime_error("read changed file failed");
         coordinator_.contents[model().GetActiveId()->value].stamp =
@@ -518,55 +518,55 @@ private:
             throw std::runtime_error("cross-window transfer failed");
         if (!coordinator_.SaveSession())
             throw std::runtime_error("session persistence failed");
-        const auto loaded = mwtl::LoadDocumentSession(coordinator_.session_path);
+        const auto loaded = mwfl::LoadDocumentSession(coordinator_.session_path);
         if (!loaded || loaded.session->workspaces.size() != 2)
             throw std::runtime_error("saved application session failed to load");
-        mwtl::DocumentWorkspaceModel restored_a{{1}, 8};
-        mwtl::DocumentWorkspaceModel restored_b{{2}, 8};
-        const auto validator = [](const mwtl::SessionDocument& item) {
+        mwfl::DocumentWorkspaceModel restored_a{{1}, 8};
+        mwfl::DocumentWorkspaceModel restored_b{{2}, 8};
+        const auto validator = [](const mwfl::SessionDocument& item) {
             if (item.metadata.path.empty() || !item.metadata.path.is_absolute() ||
-                !item.stamp) return mwtl::SessionDocumentDisposition::untrusted;
-            const auto read = mwtl::ReadTextFile(item.metadata.path);
-            if (read.status == mwtl::TextFileStatus::not_found)
-                return mwtl::SessionDocumentDisposition::missing;
+                !item.stamp) return mwfl::SessionDocumentDisposition::untrusted;
+            const auto read = mwfl::ReadTextFile(item.metadata.path);
+            if (read.status == mwfl::TextFileStatus::not_found)
+                return mwfl::SessionDocumentDisposition::missing;
             if (!read.Succeeded() || read.value->stamp != *item.stamp)
-                return mwtl::SessionDocumentDisposition::changed;
-            return mwtl::SessionDocumentDisposition::restore;
+                return mwfl::SessionDocumentDisposition::changed;
+            return mwfl::SessionDocumentDisposition::restore;
         };
-        const auto restore = [](const mwtl::SessionDocument&) { return true; };
-        if (!mwtl::RestoreWorkspaceSession(
+        const auto restore = [](const mwfl::SessionDocument&) { return true; };
+        if (!mwfl::RestoreWorkspaceSession(
                 restored_a, loaded.session->workspaces[0], validator, restore) ||
-            !mwtl::RestoreWorkspaceSession(
+            !mwfl::RestoreWorkspaceSession(
                 restored_b, loaded.session->workspaces[1], validator, restore) ||
             restored_a.GetCount() != 0 || restored_b.GetCount() != 1)
             throw std::runtime_error("session restore failed");
-        if (!mwtl::WriteTextFileAtomic(saved_path, L"changed after session").Succeeded())
+        if (!mwfl::WriteTextFileAtomic(saved_path, L"changed after session").Succeeded())
             throw std::runtime_error("changed restore setup failed");
-        mwtl::DocumentWorkspaceModel changed_restore{{2}, 8};
-        const auto changed_result = mwtl::RestoreWorkspaceSession(
+        mwfl::DocumentWorkspaceModel changed_restore{{2}, 8};
+        const auto changed_result = mwfl::RestoreWorkspaceSession(
             changed_restore, loaded.session->workspaces[1], validator, restore);
         if (!changed_result || changed_result.issues.empty() ||
             changed_result.issues.front().disposition !=
-                mwtl::SessionDocumentDisposition::changed ||
+                mwfl::SessionDocumentDisposition::changed ||
             changed_restore.GetCount() != 0)
             throw std::runtime_error("changed session path was not skipped");
         std::error_code ignored;
         std::filesystem::remove(saved_path, ignored);
-        mwtl::DocumentWorkspaceModel missing_restore{{2}, 8};
-        const auto missing_result = mwtl::RestoreWorkspaceSession(
+        mwfl::DocumentWorkspaceModel missing_restore{{2}, 8};
+        const auto missing_result = mwfl::RestoreWorkspaceSession(
             missing_restore, loaded.session->workspaces[1], validator, restore);
         if (!missing_result || missing_result.issues.empty() ||
             missing_result.issues.front().disposition !=
-                mwtl::SessionDocumentDisposition::missing)
+                mwfl::SessionDocumentDisposition::missing)
             throw std::runtime_error("missing session path was not skipped");
         auto untrusted_snapshot = loaded.session->workspaces[1];
         untrusted_snapshot.documents.front().metadata.path = L"relative.txt";
-        mwtl::DocumentWorkspaceModel untrusted_restore{{2}, 8};
-        const auto untrusted_result = mwtl::RestoreWorkspaceSession(
+        mwfl::DocumentWorkspaceModel untrusted_restore{{2}, 8};
+        const auto untrusted_result = mwfl::RestoreWorkspaceSession(
             untrusted_restore, untrusted_snapshot, validator, restore);
         if (!untrusted_result || untrusted_result.issues.empty() ||
             untrusted_result.issues.front().disposition !=
-                mwtl::SessionDocumentDisposition::untrusted)
+                mwfl::SessionDocumentDisposition::untrusted)
             throw std::runtime_error("untrusted session path was not skipped");
         std::filesystem::remove(coordinator_.session_path, ignored);
     }
@@ -574,19 +574,19 @@ private:
     Coordinator& coordinator_;
     std::size_t index_ = 0;
     bool primary_ = false;
-    mwtl::CommandSet commands_;
-    mwtl::AcceleratorTable accelerators_;
+    mwfl::CommandSet commands_;
+    mwfl::AcceleratorTable accelerators_;
     HMENU file_menu_ = nullptr;
-    mwtl::Toolbar toolbar_;
-    mwtl::TabControl tabs_;
-    mwtl::StatusBar status_;
-    mwtl::DocumentTabWorkspaceAdapter adapter_;
+    mwfl::Toolbar toolbar_;
+    mwfl::TabControl tabs_;
+    mwfl::StatusBar status_;
+    mwfl::DocumentTabWorkspaceAdapter adapter_;
 };
 
 void Coordinator::EnsureSecondary() {
     if (secondary) return;
     secondary = std::make_unique<WorkspaceWindow>(*this, 1, false);
-    mwtl::WindowOptions options;
+    mwfl::WindowOptions options;
     options.quit_on_destroy = false;
     secondary->ConfigureWindowOptions(options);
     RECT bounds{650, 120, 1200, 600};
@@ -603,7 +603,7 @@ bool Coordinator::MoveActive(std::size_t source) {
     if (!from || !to) return false;
     const auto id = models[source].GetActiveId();
     if (!id) return false;
-    const auto moved = mwtl::TransferDocumentWithPage(
+    const auto moved = mwfl::TransferDocumentWithPage(
         models[source], from->adapter(), models[destination], to->adapter(), *id);
     if (!moved) return false;
     from->Sync(L"Moved document out");
@@ -617,7 +617,7 @@ void Coordinator::InitializeWorkspaces() {
         for (std::size_t index = 0; index < models.size(); ++index) {
             const auto found = std::ranges::find(
                 pending_session->workspaces, models[index].GetId(),
-                &mwtl::WorkspaceSession::workspace);
+                &mwfl::WorkspaceSession::workspace);
             if (found != pending_session->workspaces.end())
                 restored += windows[index]->RestoreSnapshot(*found);
         }
@@ -635,11 +635,11 @@ void Coordinator::InitializeWorkspaces() {
 
 bool Coordinator::SaveSession() {
     if (session_path.empty()) return false;
-    mwtl::DocumentSession session;
+    mwfl::DocumentSession session;
     for (const auto& workspace : models) {
-        auto snapshot = mwtl::CaptureWorkspaceSession(workspace);
-        const auto decorate = [&](std::vector<mwtl::SessionDocument>& documents) {
-            std::erase_if(documents, [&](mwtl::SessionDocument& item) {
+        auto snapshot = mwfl::CaptureWorkspaceSession(workspace);
+        const auto decorate = [&](std::vector<mwfl::SessionDocument>& documents) {
+            std::erase_if(documents, [&](mwfl::SessionDocument& item) {
                 const auto content = contents.find(item.metadata.id.value);
                 if (item.metadata.path.empty() || content == contents.end() ||
                     !content->second.stamp) return true;
@@ -662,8 +662,8 @@ bool Coordinator::SaveSession() {
     std::error_code error;
     std::filesystem::create_directories(session_path.parent_path(), error);
     if (error) return false;
-    return mwtl::SaveDocumentSessionAtomic(session_path, session) ==
-           mwtl::DocumentSessionStatus::success;
+    return mwfl::SaveDocumentSessionAtomic(session_path, session) ==
+           mwfl::DocumentSessionStatus::success;
 }
 
 bool Coordinator::ConfirmShutdown(HWND owner) {
@@ -672,27 +672,27 @@ bool Coordinator::ConfirmShutdown(HWND owner) {
         for (const auto& document : workspace.GetDocuments()) dirty |= document.dirty;
     if (dirty && !self_test && ::MessageBoxW(owner,
             L"Discard all unsaved changes in both workspace windows?",
-            L"mwtl Documents", MB_OKCANCEL | MB_ICONWARNING) != IDOK)
+            L"mwfl Documents", MB_OKCANCEL | MB_ICONWARNING) != IDOK)
         return false;
     if (!SaveSession()) {
         if (self_test) return false;
         if (::MessageBoxW(owner,
                 L"The workspace session could not be saved. Close anyway?",
-                L"mwtl Documents", MB_OKCANCEL | MB_ICONWARNING) != IDOK)
+                L"mwfl Documents", MB_OKCANCEL | MB_ICONWARNING) != IDOK)
             return false;
     }
-    std::array<mwtl::CoordinatedClosePlan, 2> plans;
+    std::array<mwfl::CoordinatedClosePlan, 2> plans;
     for (std::size_t index = 0; index < models.size(); ++index) {
-        std::vector<mwtl::DocumentCloseDecision> decisions;
+        std::vector<mwfl::DocumentCloseDecision> decisions;
         for (const auto& document : models[index].GetDocuments())
             if (document.dirty)
                 decisions.push_back(
-                    {document.id, mwtl::DocumentCloseChoice::discard});
-        plans[index] = mwtl::BuildCoordinatedClosePlan(models[index], decisions);
+                    {document.id, mwfl::DocumentCloseChoice::discard});
+        plans[index] = mwfl::BuildCoordinatedClosePlan(models[index], decisions);
         if (!plans[index]) return false;
     }
     for (std::size_t index = 0; index < models.size(); ++index)
-        if (!mwtl::ExecuteCoordinatedClose(models[index], plans[index], {})) return false;
+        if (!mwfl::ExecuteCoordinatedClose(models[index], plans[index], {})) return false;
     return true;
 }
 
@@ -710,8 +710,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     }
     if (arguments) ::LocalFree(arguments);
     Coordinator coordinator{self_test, std::move(result)};
-    return mwtl::RunApplication<WorkspaceWindow>(instance, self_test ? SW_HIDE : show,
-        {.title = L"Workspace A — mwtl Documents",
+    return mwfl::RunApplication<WorkspaceWindow>(instance, self_test ? SW_HIDE : show,
+        {.title = L"Workspace A — mwfl Documents",
          .initial_bounds = {{}, {560.0_dip, 480.0_dip}},
          .use_default_bounds = false}, {}, coordinator, 0, true);
 }

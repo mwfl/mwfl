@@ -1,10 +1,10 @@
-function(mwtl_add_example target)
+function(mwfl_add_example target)
     add_executable(${target} WIN32
         ${ARGN}
         "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/example.manifest")
     target_compile_features(${target} PRIVATE cxx_std_20)
     target_compile_options(${target} PRIVATE /W4 /permissive- /EHsc /utf-8)
-    target_link_libraries(${target} PRIVATE mwtl::mwtl)
+    target_link_libraries(${target} PRIVATE mwfl::mwfl)
     set_property(
         SOURCE "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/example.manifest"
         PROPERTY VS_TOOL_OVERRIDE "Manifest")
@@ -51,12 +51,12 @@ add_subdirectory(image_viewer)
 add_subdirectory(printing)
 add_subdirectory(ole_drag_drop)
 add_subdirectory(shell_integration)
-if(MWTL_BUILD_SCINTILLA)
+if(MWFL_BUILD_SCINTILLA)
     add_subdirectory(code_editor)
 endif()
-if(MWTL_BUILD_WEBVIEW2)
+if(MWFL_BUILD_WEBVIEW2)
     add_subdirectory(browser)
 endif()
-if(MWTL_BUILD_SCINTILLA AND MWTL_BUILD_WEBVIEW2)
+if(MWFL_BUILD_SCINTILLA AND MWFL_BUILD_WEBVIEW2)
     add_subdirectory(markdown_editor)
 endif()

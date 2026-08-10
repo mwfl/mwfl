@@ -1,10 +1,10 @@
-#include <mwtl/scintilla.h>
+#include <mwfl/scintilla.h>
 
 #include <oleacc.h>
 
 namespace {
 struct Notifications {
-    mwtl::ScintillaEditor* editor = nullptr;
+    mwfl::ScintillaEditor* editor = nullptr;
     int modified = 0;
     int save_point_left = 0;
     int save_point_reached = 0;
@@ -17,10 +17,10 @@ LRESULT CALLBACK ParentSubclass(HWND window, UINT message, WPARAM wparam, LPARAM
         const auto* header = reinterpret_cast<const NMHDR*>(lparam);
         if (header) {
             if (const auto decoded = state->editor->DecodeNotification(*header)) {
-                if (decoded->kind == mwtl::ScintillaNotificationKind::modified) ++state->modified;
-                if (decoded->kind == mwtl::ScintillaNotificationKind::save_point_left)
+                if (decoded->kind == mwfl::ScintillaNotificationKind::modified) ++state->modified;
+                if (decoded->kind == mwfl::ScintillaNotificationKind::save_point_left)
                     ++state->save_point_left;
-                if (decoded->kind == mwtl::ScintillaNotificationKind::save_point_reached)
+                if (decoded->kind == mwfl::ScintillaNotificationKind::save_point_reached)
                     ++state->save_point_reached;
             }
         }
@@ -46,7 +46,7 @@ bool HasAccessibleName(HWND window) {
 }
 
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
-    using namespace mwtl;
+    using namespace mwfl;
     ScintillaRuntime missing;
     if (missing.Load(L"definitely-missing-Scintilla.dll") ||
         missing.GetStatus() != ScintillaRuntimeStatus::missing)

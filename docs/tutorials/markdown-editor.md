@@ -1,17 +1,17 @@
 # Build the Markdown Editor
 
-The Markdown Editor is a product-style example that combines two optional mwtl
+The Markdown Editor is a product-style example that combines two optional mwfl
 components without turning either dependency into part of the core library.
 Scintilla owns source editing, WebView2 displays an offline HTML preview, and
-mwtl owns the native application lifecycle, layout, document state, dialogs,
+mwfl owns the native application lifecycle, layout, document state, dialogs,
 Unicode file I/O, and failure boundaries.
 
 ## Configure and run
 
 ```powershell
 cmake --preset vs2026-x64-optional
-cmake --build --preset vs2026-x64-optional-debug --target mwtl_markdown_editor
-./build/presets/vs2026-x64-optional/examples/markdown_editor/Debug/mwtl_markdown_editor.exe
+cmake --build --preset vs2026-x64-optional-debug --target mwfl_markdown_editor
+./build/presets/vs2026-x64-optional/examples/markdown_editor/Debug/mwfl_markdown_editor.exe
 ```
 
 The build deploys pinned `Scintilla.dll` and `Lexilla.dll` beside the executable.
@@ -34,8 +34,8 @@ ZIP's SHA-256 digest.
 
 ## Composition
 
-`MarkdownEditorWindow` creates a vertical `mwtl::Splitter`. Its first child is
-an `mwtl::ScintillaEditor`; its second child is an `mwtl::WebView2Host`. Both
+`MarkdownEditorWindow` creates a vertical `mwfl::Splitter`. Its first child is
+an `mwfl::ScintillaEditor`; its second child is an `mwfl::WebView2Host`. Both
 are real child HWNDs owned by their wrappers and used only from the creating STA
 thread.
 
@@ -52,7 +52,7 @@ protection, and a delayed atomic recovery copy for dirty documents. Recovery is
 off during deterministic self-tests and is removed after a successful save or
 intentional close.
 
-`mwtl::ReadTextFile` rejects malformed Unicode. `mwtl::WriteTextFileAtomic`
+`mwfl::ReadTextFile` rejects malformed Unicode. `mwfl::WriteTextFileAtomic`
 writes through a flushed sibling and uses the last observed `FileStamp` to
 reject an overwrite when another process changed the file. `DocumentState`
 changes only after successful I/O.
@@ -61,14 +61,14 @@ changes only after successful I/O.
 
 ```powershell
 ctest --test-dir build/presets/vs2026-x64-optional -C Debug \
-  -R "mwtl\\.markdown" --output-on-failure
+  -R "mwfl\\.markdown" --output-on-failure
 ```
 
-`mwtl.markdown_renderer` verifies representative formatting, dark styling,
-HTML escaping, and rejection of active URL schemes. `mwtl.markdown_editor_gui`
+`mwfl.markdown_renderer` verifies representative formatting, dark styling,
+HTML escaping, and rejection of active URL schemes. `mwfl.markdown_editor_gui`
 starts the real executable, asserts representative lexer token styles, exercises
 file round-tripping and an offline WebView2 navigation, then exits with a
 machine-readable result.
 
 The renderer remains application code. General Markdown parsing is not a
-Windows UI concern and should not be added to the stable mwtl public surface.
+Windows UI concern and should not be added to the stable mwfl public surface.

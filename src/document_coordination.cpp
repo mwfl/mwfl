@@ -1,11 +1,11 @@
-#include <mwtl/document_coordination.h>
+#include <mwfl/document_coordination.h>
 
 #include <algorithm>
 #include <array>
 #include <ranges>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 
 bool ActiveDocumentCommandIds::IsValid() const noexcept {
     const std::array values{save.value, close.value, undo.value, redo.value};
@@ -154,4 +154,4 @@ CoordinatedCloseResult ExecuteCoordinatedClose(
     return CommitCoordinatedCloseAfterSaves(workspace, plan);
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

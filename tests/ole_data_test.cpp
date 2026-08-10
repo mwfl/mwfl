@@ -1,4 +1,4 @@
-#include <mwtl/ole_data.h>
+#include <mwfl/ole_data.h>
 
 #include <shlobj_core.h>
 
@@ -6,12 +6,12 @@
 #include <memory>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     const HRESULT initialized = ::OleInitialize(nullptr);
     if (FAILED(initialized)) return 1;
     struct Uninitialize { ~Uninitialize() { ::OleUninitialize(); } } uninitialize;
 
-    const CLIPFORMAT custom = RegisterOleFormat(L"mwtl.tests.ole-data.v1");
+    const CLIPFORMAT custom = RegisterOleFormat(L"mwfl.tests.ole-data.v1");
     if (!custom || RegisterOleFormat(L"") != 0) return 2;
     OleDataObjectBuilder builder(4096);
     const std::array<std::filesystem::path, 2> files{L"C:\\one.txt", L"D:\\two.txt"};

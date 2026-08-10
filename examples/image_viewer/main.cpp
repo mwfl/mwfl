@@ -1,6 +1,6 @@
-#include <mwtl/mwtl.h>
-#include <mwtl/d2d_host.h>
-#include <mwtl/imaging.h>
+#include <mwfl/mwfl.h>
+#include <mwfl/d2d_host.h>
+#include <mwfl/imaging.h>
 
 #include <windowsx.h>
 #include <wil/resource.h>
@@ -11,14 +11,14 @@
 #include <stdexcept>
 #include <string>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 namespace {
-constexpr mwtl::ControlId kOpen{821};
-constexpr mwtl::ControlId kFit{822};
-constexpr mwtl::ControlId kActual{823};
-constexpr mwtl::ControlId kZoomIn{824};
-constexpr mwtl::ControlId kZoomOut{825};
+constexpr mwfl::ControlId kOpen{821};
+constexpr mwfl::ControlId kFit{822};
+constexpr mwfl::ControlId kActual{823};
+constexpr mwfl::ControlId kZoomIn{824};
+constexpr mwfl::ControlId kZoomOut{825};
 constexpr UINT kRunSelfTest = WM_APP + 0x170;
 bool g_self_test = false;
 
@@ -28,8 +28,8 @@ D2D1_COLOR_F SystemColor(int index) {
                         GetBValue(color) / 255.0f, 1.0f);
 }
 
-mwtl::DecodedImage MakeWelcomeImage() {
-    mwtl::DecodedImage image;
+mwfl::DecodedImage MakeWelcomeImage() {
+    mwfl::DecodedImage image;
     image.width = 640;
     image.height = 400;
     image.stride = image.width * 4;
@@ -75,16 +75,16 @@ bool WriteSelfTestBmp(const std::filesystem::path& path) {
            written == pixels.size();
 }
 
-class ImageViewerWindow final : public mwtl::WindowBase {
+class ImageViewerWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        SetTitle(L"mwtl Image Viewer");
+        SetTitle(L"mwfl Image Viewer");
         image_ = MakeWelcomeImage();
         viewport_.SetImageSize(image_.width, image_.height);
         viewport_.SetViewport({900.0_dip, 560.0_dip});
         viewport_.Fit();
 
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(open_, kOpen, L"Open...", {0.0_dip, 0.0_dip, 90.0_dip, 32.0_dip});
         ui.Add(fit_, kFit, L"Fit (F)", {0.0_dip, 0.0_dip, 80.0_dip, 32.0_dip});
         ui.Add(actual_, kActual, L"100% (0)", {0.0_dip, 0.0_dip, 90.0_dip, 32.0_dip});
@@ -92,7 +92,7 @@ public:
         ui.Add(zoom_out_, kZoomOut, L"Zoom -", {0.0_dip, 0.0_dip, 80.0_dip, 32.0_dip});
         ui.Add(status_, L"Built-in image | Fit | drag to pan, wheel to zoom");
 
-        mwtl::D2DHostOptions options;
+        mwfl::D2DHostOptions options;
         options.callbacks.create_device_resources = [this](ID2D1HwndRenderTarget& target) {
             CreateDeviceResources(target);
         };
@@ -101,73 +101,73 @@ public:
             background_a_.Reset();
             background_b_.Reset();
         };
-        options.callbacks.paint = [this](mwtl::D2DRenderContext& context) { Paint(context); };
-        options.callbacks.input = [this](const mwtl::D2DInputEvent& event) {
+        options.callbacks.paint = [this](mwfl::D2DRenderContext& context) { Paint(context); };
+        options.callbacks.input = [this](const mwfl::D2DInputEvent& event) {
             return HandleInput(event);
         };
-        mwtl::Must(canvas_.Create(*this, {826}, {0.0_dip, 0.0_dip, 900.0_dip, 560.0_dip},
+        mwfl::Must(canvas_.Create(*this, {826}, {0.0_dip, 0.0_dip, 900.0_dip, 560.0_dip},
                                   std::move(options)),
                    "create image canvas");
-        mwtl::Must(mwtl::SetAccessibleName(canvas_.GetHwnd(), L"Image viewport"),
+        mwfl::Must(mwfl::SetAccessibleName(canvas_.GetHwnd(), L"Image viewport"),
                    "name image viewport");
-        SetLayout(mwtl::Column()
+        SetLayout(mwfl::Column()
                       .Margin(10.0_dip)
                       .Gap(8.0_dip)
-                      .Add(mwtl::Row().Gap(6.0_dip)
-                               .Add(open_, mwtl::Auto())
-                               .Add(fit_, mwtl::Auto())
-                               .Add(actual_, mwtl::Auto())
-                               .Add(zoom_in_, mwtl::Auto())
-                               .Add(zoom_out_, mwtl::Auto()),
-                           mwtl::Auto())
-                      .Add(canvas_, mwtl::Stretch())
-                      .Add(status_, mwtl::Auto()));
-        mwtl::ApplyWindowAppearance(GetHwnd());
+                      .Add(mwfl::Row().Gap(6.0_dip)
+                               .Add(open_, mwfl::Auto())
+                               .Add(fit_, mwfl::Auto())
+                               .Add(actual_, mwfl::Auto())
+                               .Add(zoom_in_, mwfl::Auto())
+                               .Add(zoom_out_, mwfl::Auto()),
+                           mwfl::Auto())
+                      .Add(canvas_, mwfl::Stretch())
+                      .Add(status_, mwfl::Auto()));
+        mwfl::ApplyWindowAppearance(GetHwnd());
         if (g_self_test && !::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0))
             throw std::runtime_error("post image-viewer self-test failed");
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
         if (event.IsClicked(open_)) {
             OpenInteractive();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.IsClicked(fit_)) {
             viewport_.Fit();
             Refresh(L"Fit");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.IsClicked(actual_)) {
             viewport_.SetZoom(1, Center());
             Refresh(L"Actual size");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.IsClicked(zoom_in_)) {
             viewport_.ZoomBy(1.25f, Center());
             Refresh(L"Zoom in");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.IsClicked(zoom_out_)) {
             viewport_.ZoomBy(0.8f, Center());
             Refresh(L"Zoom out");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
         if (event.id == WM_THEMECHANGED || event.id == WM_SYSCOLORCHANGE ||
             event.id == WM_SETTINGCHANGE) {
-            mwtl::ApplyWindowAppearance(GetHwnd());
+            mwfl::ApplyWindowAppearance(GetHwnd());
             canvas_.DiscardDeviceResources();
             canvas_.Invalidate();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.id == kRunSelfTest) {
             RunSelfTest();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
@@ -188,9 +188,9 @@ private:
         if (FAILED(result)) throw std::runtime_error("create image-viewer resources failed");
     }
 
-    void Paint(mwtl::D2DRenderContext& context) {
-        viewport_.SetViewport({mwtl::Dip(context.size_dip.width),
-                               mwtl::Dip(context.size_dip.height)});
+    void Paint(mwfl::D2DRenderContext& context) {
+        viewport_.SetViewport({mwfl::Dip(context.size_dip.width),
+                               mwfl::Dip(context.size_dip.height)});
         if (!bitmap_ || !background_a_ || !background_b_) return;
         constexpr float tile = 24;
         context.target.FillRectangle(D2D1::RectF(0, 0, context.size_dip.width,
@@ -216,49 +216,49 @@ private:
                                   source);
     }
 
-    mwtl::EventResult HandleInput(const mwtl::D2DInputEvent& event) {
+    mwfl::EventResult HandleInput(const mwfl::D2DInputEvent& event) {
         if (event.message == WM_MOUSEWHEEL) {
             viewport_.ZoomBy(GET_WHEEL_DELTA_WPARAM(event.wparam) > 0 ? 1.2f : 1.0f / 1.2f,
                              event.position);
             Refresh(L"Wheel zoom");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.message == WM_LBUTTONDOWN) {
             dragging_ = true;
             drag_point_ = event.position;
             ::SetCapture(canvas_.GetHwnd());
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.message == WM_MOUSEMOVE && dragging_) {
-            viewport_.PanBy({mwtl::Dip(event.position.x.value - drag_point_.x.value),
-                             mwtl::Dip(event.position.y.value - drag_point_.y.value)});
+            viewport_.PanBy({mwfl::Dip(event.position.x.value - drag_point_.x.value),
+                             mwfl::Dip(event.position.y.value - drag_point_.y.value)});
             drag_point_ = event.position;
             canvas_.Invalidate();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.message == WM_LBUTTONUP && dragging_) {
             dragging_ = false;
             if (::GetCapture() == canvas_.GetHwnd()) ::ReleaseCapture();
             Refresh(L"Pan");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.message == WM_KEYDOWN && event.wparam == 'F') {
-            viewport_.Fit(); Refresh(L"Fit"); return mwtl::EventResult::Handled();
+            viewport_.Fit(); Refresh(L"Fit"); return mwfl::EventResult::Handled();
         }
         if (event.message == WM_KEYDOWN && event.wparam == '0') {
             viewport_.SetZoom(1, Center()); Refresh(L"Actual size");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::PointDip Center() const {
+    mwfl::PointDip Center() const {
         const auto size = viewport_.GetViewport();
-        return {mwtl::Dip(size.width.value * 0.5f), mwtl::Dip(size.height.value * 0.5f)};
+        return {mwfl::Dip(size.width.value * 0.5f), mwfl::Dip(size.height.value * 0.5f)};
     }
 
     bool Load(const std::filesystem::path& path) {
-        auto decoded = mwtl::DecodeImageFile(path);
+        auto decoded = mwfl::DecodeImageFile(path);
         if (!decoded) return false;
         image_ = std::move(decoded.image);
         viewport_.SetImageSize(image_.width, image_.height);
@@ -270,7 +270,7 @@ private:
     }
 
     void OpenInteractive() {
-        const auto selected = mwtl::ShowOpenFileDialog({
+        const auto selected = mwfl::ShowOpenFileDialog({
             .owner = GetHwnd(), .title = L"Open image",
             .filters = {{L"Images", L"*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff"},
                         {L"All files", L"*.*"}}});
@@ -288,7 +288,7 @@ private:
     void RunSelfTest() noexcept {
         int result = 0;
         const auto path = std::filesystem::temp_directory_path() /
-                          (L"mwtl-viewer-" + std::to_wstring(::GetCurrentProcessId()) + L".bmp");
+                          (L"mwfl-viewer-" + std::to_wstring(::GetCurrentProcessId()) + L".bmp");
         try {
             if (!WriteSelfTestBmp(path) || !Load(path) || image_.width != 3 || image_.height != 2)
                 result = 1;
@@ -313,26 +313,26 @@ private:
         ::PostQuitMessage(result);
     }
 
-    mwtl::DecodedImage image_;
-    mwtl::ImageViewportModel viewport_;
-    mwtl::Button open_;
-    mwtl::Button fit_;
-    mwtl::Button actual_;
-    mwtl::Button zoom_in_;
-    mwtl::Button zoom_out_;
-    mwtl::Label status_;
-    mwtl::D2DHost canvas_;
+    mwfl::DecodedImage image_;
+    mwfl::ImageViewportModel viewport_;
+    mwfl::Button open_;
+    mwfl::Button fit_;
+    mwfl::Button actual_;
+    mwfl::Button zoom_in_;
+    mwfl::Button zoom_out_;
+    mwfl::Label status_;
+    mwfl::D2DHost canvas_;
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap_;
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> background_a_;
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> background_b_;
     bool dragging_ = false;
-    mwtl::PointDip drag_point_{};
+    mwfl::PointDip drag_point_{};
 };
 }  // namespace
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
     g_self_test = std::wstring_view{::GetCommandLineW()}.find(L"--self-test") !=
                   std::wstring_view::npos;
-    return mwtl::RunApplication<ImageViewerWindow>(
-        instance, show_command, {}, {.com_apartment = mwtl::ComApartment::sta});
+    return mwfl::RunApplication<ImageViewerWindow>(
+        instance, show_command, {}, {.com_apartment = mwfl::ComApartment::sta});
 }

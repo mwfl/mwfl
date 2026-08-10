@@ -1,6 +1,6 @@
-#include <mwtl/document_workspace.h>
+#include <mwfl/document_workspace.h>
 
 void UseDocumentWorkspaceHeader() {
-    mwtl::DocumentWorkspaceModel workspace{{1}};
+    mwfl::DocumentWorkspaceModel workspace{{1}};
     static_cast<void>(workspace.GetCount());
 }

@@ -1,4 +1,4 @@
-#include <mwtl/printing_native.h>
+#include <mwfl/printing_native.h>
 
 #include <memory>
 #include <stdexcept>
@@ -7,7 +7,7 @@
 namespace {
 struct Counts { int start_doc=0, start_page=0, end_page=0, end_doc=0, abort_doc=0; };
 
-class FakeBackend final : public mwtl::PrintBackend {
+class FakeBackend final : public mwfl::PrintBackend {
 public:
     FakeBackend(Counts& counts, int fail_at = 0) : counts_(counts), fail_at_(fail_at) {}
     int StartDocument(std::wstring_view) noexcept override { return Call(counts_.start_doc); }
@@ -32,7 +32,7 @@ private:
 }
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     const auto pages = PaginateContent(25, 10);
     Counts success;
     {

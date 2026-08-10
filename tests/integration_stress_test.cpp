@@ -1,12 +1,12 @@
-#include <mwtl/file_association.h>
-#include <mwtl/graphics.h>
-#include <mwtl/help.h>
-#include <mwtl/mdi.h>
-#include <mwtl/ole_data.h>
-#include <mwtl/printing_native.h>
-#include <mwtl/ribbon.h>
-#include <mwtl/settings_store.h>
-#include <mwtl/shell_integration.h>
+#include <mwfl/file_association.h>
+#include <mwfl/graphics.h>
+#include <mwfl/help.h>
+#include <mwfl/mdi.h>
+#include <mwfl/ole_data.h>
+#include <mwfl/printing_native.h>
+#include <mwfl/ribbon.h>
+#include <mwfl/settings_store.h>
+#include <mwfl/shell_integration.h>
 
 #include <array>
 #include <cstdio>
@@ -15,7 +15,7 @@
 #include <string>
 
 namespace {
-class StressPrintBackend final : public mwtl::PrintBackend {
+class StressPrintBackend final : public mwfl::PrintBackend {
 public:
     int StartDocument(std::wstring_view) noexcept override { return 1; }
     int StartPage() noexcept override { return 1; }
@@ -32,14 +32,14 @@ LRESULT CALLBACK WindowProcedure(HWND window, UINT message, WPARAM wparam, LPARA
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     if (FAILED(::OleInitialize(nullptr))) return 1;
     struct OleCleanup { ~OleCleanup() { ::OleUninitialize(); } } ole_cleanup;
 
     WNDCLASSW type{};
     type.lpfnWndProc = WindowProcedure;
     type.hInstance = ::GetModuleHandleW(nullptr);
-    type.lpszClassName = L"mwtl.IntegrationStress";
+    type.lpszClassName = L"mwfl.IntegrationStress";
     if (!::RegisterClassW(&type) && ::GetLastError() != ERROR_CLASS_ALREADY_EXISTS) return 2;
     HWND window = ::CreateWindowExW(0, type.lpszClassName, L"", WS_OVERLAPPED,
                                      0, 0, 64, 64, nullptr, nullptr, type.hInstance, nullptr);
@@ -47,7 +47,7 @@ int main() {
 
     const DWORD gdi_before = ::GetGuiResources(::GetCurrentProcess(), GR_GDIOBJECTS);
     const DWORD user_before = ::GetGuiResources(::GetCurrentProcess(), GR_USEROBJECTS);
-    const std::wstring root = L"Software\\mwtl\\Tests\\IntegrationStress-" +
+    const std::wstring root = L"Software\\mwfl\\Tests\\IntegrationStress-" +
                               std::to_wstring(::GetCurrentProcessId());
     const std::wstring classes = root + L"\\Classes";
     const std::wstring settings_key = root + L"\\Settings";
@@ -57,13 +57,13 @@ int main() {
         JumpListTask{L"two", L"Two", {}, {}, 0}};
     const std::array<std::wstring, 1> removed{L"one"};
     FileAssociationSpec association{
-        .extension = L".stress", .prog_id = L"mwtl.tests.stress.document",
-        .owner_id = L"mwtl.tests.stress", .display_name = L"Stress document",
+        .extension = L".stress", .prog_id = L"mwfl.tests.stress.document",
+        .owner_id = L"mwfl.tests.stress", .display_name = L"Stress document",
         .executable = L"C:\\Windows\\notepad.exe", .icon = L"C:\\Windows\\notepad.exe",
         .verbs = {{L"open", L"Open", {}}}};
     VersionedSettingsStore settings{HKEY_CURRENT_USER, settings_key, 1};
     const auto png = std::filesystem::temp_directory_path() /
-        (L"mwtl-integration-stress-" + std::to_wstring(::GetCurrentProcessId()) + L".png");
+        (L"mwfl-integration-stress-" + std::to_wstring(::GetCurrentProcessId()) + L".png");
     std::error_code ignored;
     std::filesystem::remove(png, ignored);
 

@@ -7,10 +7,10 @@ set(required_headers
 file(READ "${PROJECT_ROOT}/docs/reference.md" reference)
 
 foreach(header IN LISTS required_headers)
-    if(NOT EXISTS "${PROJECT_ROOT}/include/mwtl/${header}.h")
+    if(NOT EXISTS "${PROJECT_ROOT}/include/mwfl/${header}.h")
         message(FATAL_ERROR "Missing public API header: ${header}.h")
     endif()
-    if(NOT reference MATCHES "mwtl/${header}\\.h")
+    if(NOT reference MATCHES "mwfl/${header}\\.h")
         message(FATAL_ERROR "Public header is missing from reference: ${header}.h")
     endif()
 endforeach()
@@ -22,7 +22,7 @@ set(required_api
     "class ScintillaRuntime" "class ScintillaEditor"
     "class LayoutNode" "class MessagePump" "class WindowWakeup"
     "class Error" "class Command" "class CommandSet" "class ChangeGate")
-file(GLOB public_headers "${PROJECT_ROOT}/include/mwtl/*.h")
+file(GLOB public_headers "${PROJECT_ROOT}/include/mwfl/*.h")
 set(surface "")
 foreach(header IN LISTS public_headers)
     file(READ "${header}" contents)

@@ -1,4 +1,4 @@
-#include <mwtl/imaging.h>
+#include <mwfl/imaging.h>
 
 #include <wil/resource.h>
 
@@ -37,16 +37,16 @@ bool WriteBmp(const std::filesystem::path& path) {
 }
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     const auto before_com = DecodeImageFile(L"missing.bmp");
     if (before_com.status != ImageDecodeStatus::com_unavailable) return 1;
     if (FAILED(::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED))) return 2;
     const auto uninitialize = wil::scope_exit([] { ::CoUninitialize(); });
 
-    const auto missing = DecodeImageFile(L"definitely-missing-mwtl-image.bmp");
+    const auto missing = DecodeImageFile(L"definitely-missing-mwfl-image.bmp");
     if (missing.status != ImageDecodeStatus::not_found) return 3;
     const auto path = std::filesystem::temp_directory_path() /
-                      (L"mwtl-image-" + std::to_wstring(::GetCurrentProcessId()) + L".bmp");
+                      (L"mwfl-image-" + std::to_wstring(::GetCurrentProcessId()) + L".bmp");
     if (!WriteBmp(path)) return 4;
     const auto cleanup = wil::scope_exit([&] { ::DeleteFileW(path.c_str()); });
 

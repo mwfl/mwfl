@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mwtl/scintilla.h>
+#include <mwfl/scintilla.h>
 
 #include <filesystem>
 
@@ -16,10 +16,10 @@ public:
     MarkdownSyntax& operator=(const MarkdownSyntax&) = delete;
 
     bool LoadAdjacent() noexcept;
-    bool Attach(mwtl::ScintillaEditor& editor) noexcept;
-    void ApplyTheme(mwtl::ScintillaEditor& editor, EditorTheme theme) const noexcept;
-    int StyleAt(const mwtl::ScintillaEditor& editor,
-                mwtl::ScintillaPosition position) const noexcept;
+    bool Attach(mwfl::ScintillaEditor& editor) noexcept;
+    void ApplyTheme(mwfl::ScintillaEditor& editor, EditorTheme theme) const noexcept;
+    int StyleAt(const mwfl::ScintillaEditor& editor,
+                mwfl::ScintillaPosition position) const noexcept;
     bool IsLoaded() const noexcept { return module_ != nullptr; }
 
 private:

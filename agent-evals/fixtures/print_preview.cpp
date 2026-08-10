@@ -1,10 +1,10 @@
-#include <mwtl/printing.h>
+#include <mwfl/printing.h>
 
 #include <vector>
 
 struct PreviewFixture {
-    std::vector<mwtl::PrintPage> pages = mwtl::PaginateContent(120, 32);
-    mwtl::PrintPreviewModel preview;
+    std::vector<mwfl::PrintPage> pages = mwfl::PaginateContent(120, 32);
+    mwfl::PrintPreviewModel preview;
 
     PreviewFixture() { preview.SetPageCount(pages.size()); }
     bool Next() { return preview.MoveBy(1); }

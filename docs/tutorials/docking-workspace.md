@@ -11,8 +11,8 @@ From a Developer PowerShell prompt at the repository root:
 
 ```powershell
 cmake --preset vs2026-x64
-cmake --build --preset vs2026-x64-debug --target mwtl_docking_workspace_demo
-./build/presets/vs2026-x64/examples/docking_workspace/Debug/mwtl_docking_workspace_demo.exe
+cmake --build --preset vs2026-x64-debug --target mwfl_docking_workspace_demo
+./build/presets/vs2026-x64/examples/docking_workspace/Debug/mwfl_docking_workspace_demo.exe
 ```
 
 The window starts with two document tabs, Solution Explorer on the left, and
@@ -33,7 +33,7 @@ Run its deterministic offline integration test with:
 
 ```powershell
 ctest --test-dir build/presets/vs2026-x64 -C Debug --output-on-failure `
-  -R "mwtl.docking_workspace_gui"
+  -R "mwfl.docking_workspace_gui"
 ```
 
 ## 2. Give logical objects stable identities
@@ -42,22 +42,22 @@ Panel, group, split-node, and floating-host IDs must be nonzero and stable
 across runs. They are application data, not HWND values:
 
 ```cpp
-constexpr mwtl::DockPanelId kDocument{1};
-constexpr mwtl::DockPanelId kOutput{2};
-constexpr mwtl::DockGroupId kDocuments{10};
-constexpr mwtl::DockGroupId kTools{20};
+constexpr mwfl::DockPanelId kDocument{1};
+constexpr mwfl::DockPanelId kOutput{2};
+constexpr mwfl::DockGroupId kDocuments{10};
+constexpr mwfl::DockGroupId kTools{20};
 
-mwtl::DockLayoutModel model{kDocuments, mwtl::DockNodeId{100},
-                            mwtl::DockGroupRole::document};
-mwtl::Must(static_cast<bool>(model.AddDockedGroup(
-    kTools, mwtl::DockNodeId{200}, mwtl::DockGroupRole::tool,
-    kDocuments, mwtl::DockNodeId{300}, mwtl::DockEdge::bottom, 0.72)),
+mwfl::DockLayoutModel model{kDocuments, mwfl::DockNodeId{100},
+                            mwfl::DockGroupRole::document};
+mwfl::Must(static_cast<bool>(model.AddDockedGroup(
+    kTools, mwfl::DockNodeId{200}, mwfl::DockGroupRole::tool,
+    kDocuments, mwfl::DockNodeId{300}, mwfl::DockEdge::bottom, 0.72)),
     "add tool group");
-mwtl::Must(static_cast<bool>(model.AddPanel(
-    {kDocument, L"main.cpp", mwtl::DockPanelRole::document}, kDocuments)),
+mwfl::Must(static_cast<bool>(model.AddPanel(
+    {kDocument, L"main.cpp", mwfl::DockPanelRole::document}, kDocuments)),
     "add document");
-mwtl::Must(static_cast<bool>(model.AddPanel(
-    {kOutput, L"Output", mwtl::DockPanelRole::tool}, kTools)),
+mwfl::Must(static_cast<bool>(model.AddPanel(
+    {kOutput, L"Output", mwfl::DockPanelRole::tool}, kTools)),
     "add output");
 ```
 
@@ -71,17 +71,17 @@ Create group-host child windows and panel child windows first. Then attach one
 native adapter on the creating UI thread:
 
 ```cpp
-mwtl::DockNativeWorkspaceAdapter native;
-mwtl::Must(static_cast<bool>(native.Attach(main_window)), "attach adapter");
-mwtl::Must(static_cast<bool>(native.BindGroup(kDocuments, document_host)),
+mwfl::DockNativeWorkspaceAdapter native;
+mwfl::Must(static_cast<bool>(native.Attach(main_window)), "attach adapter");
+mwfl::Must(static_cast<bool>(native.BindGroup(kDocuments, document_host)),
            "bind document host");
-mwtl::Must(static_cast<bool>(native.BindGroup(kTools, tool_host)),
+mwfl::Must(static_cast<bool>(native.BindGroup(kTools, tool_host)),
            "bind tool host");
-mwtl::Must(static_cast<bool>(native.BindPanel(kDocument, editor)),
+mwfl::Must(static_cast<bool>(native.BindPanel(kDocument, editor)),
            "bind editor");
-mwtl::Must(static_cast<bool>(native.BindPanel(kOutput, output_list)),
+mwfl::Must(static_cast<bool>(native.BindPanel(kOutput, output_list)),
            "bind output");
-mwtl::Must(static_cast<bool>(native.Synchronize(model.GetSnapshot())),
+mwfl::Must(static_cast<bool>(native.Synchronize(model.GetSnapshot())),
            "project initial layout");
 ```
 
@@ -95,7 +95,7 @@ logical change, prepare and adopt native moves, commit the model, and finally
 commit the adoption:
 
 ```cpp
-auto mutation = mwtl::MakePinDockMutation(kOutput, kDocuments);
+auto mutation = mwfl::MakePinDockMutation(kOutput, kDocuments);
 auto transaction = model.Propose(mutation);
 if (!transaction) return false;
 
@@ -127,7 +127,7 @@ Use `DockDragSession` to separate hit testing, proposal, preview, and commit:
    `Cancel` and hide the preview.
 
 The reference app implements this sequence directly in
-`examples/docking_workspace/main.cpp`. `mwtl.docking_drag` covers stale,
+`examples/docking_workspace/main.cpp`. `mwfl.docking_drag` covers stale,
 throwing, rejected, reentrant, and cancelled transactions; the GUI self-test
 covers successful mouse docking and cancellation without layout mutation.
 
@@ -192,7 +192,7 @@ committed layout, not a live proposal.
 - Session results distinguish I/O, version, bounds, parse, and graph failures.
 
 Preserve these typed outcomes at subsystem boundaries. Convert a required
-startup failure to `mwtl::Must` only where the application truly cannot proceed.
+startup failure to `mwfl::Must` only where the application truly cannot proceed.
 
 ## Verification gate
 

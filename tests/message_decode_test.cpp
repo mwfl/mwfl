@@ -1,4 +1,4 @@
-#include <mwtl/detail/message_decode.h>
+#include <mwfl/detail/message_decode.h>
 
 #include <cstdlib>
 #include <cstdint>
@@ -16,29 +16,29 @@ std::uint64_t Next(std::uint64_t& state) noexcept {
 
 int main() {
     constexpr LPARAM key_bits = 3 | (0x2AL << 16) | (1LL << 24) | (1LL << 30);
-    constexpr auto key = mwtl::detail::DecodeKeyEvent(VK_SPACE, key_bits);
+    constexpr auto key = mwfl::detail::DecodeKeyEvent(VK_SPACE, key_bits);
     static_assert(key.virtual_key == VK_SPACE && key.repeat_count == 3 &&
                   key.scan_code == 0x2A && key.extended && key.was_down);
 
     constexpr LPARAM mouse_bits =
         static_cast<LPARAM>(static_cast<WORD>(-12)) |
         (static_cast<LPARAM>(static_cast<WORD>(34)) << 16);
-    constexpr auto mouse = mwtl::detail::DecodeMouseEvent(MK_CONTROL, mouse_bits);
+    constexpr auto mouse = mwfl::detail::DecodeMouseEvent(MK_CONTROL, mouse_bits);
     static_assert(mouse.position.x == -12 && mouse.position.y == 34 &&
                   mouse.key_state == MK_CONTROL);
 
-    constexpr auto resize = mwtl::detail::DecodeResizeEvent(
+    constexpr auto resize = mwfl::detail::DecodeResizeEvent(
         SIZE_MAXIMIZED, MAKELPARAM(640, 480));
     static_assert(resize.client_size.cx == 640 && resize.client_size.cy == 480 &&
-                  resize.state == mwtl::WindowSizeState::maximized);
+                  resize.state == mwfl::WindowSizeState::maximized);
 
     const HWND source = reinterpret_cast<HWND>(0x1234);
-    const auto command = mwtl::detail::DecodeCommandEvent(
+    const auto command = mwfl::detail::DecodeCommandEvent(
         MAKEWPARAM(42, BN_CLICKED), reinterpret_cast<LPARAM>(source));
     if (command.id.value != 42 || command.notification != BN_CLICKED ||
         command.control != source) return EXIT_FAILURE;
 
-    const auto scroll = mwtl::detail::DecodeScrollEvent(
+    const auto scroll = mwfl::detail::DecodeScrollEvent(
         WM_VSCROLL, MAKEWPARAM(SB_THUMBPOSITION, 17),
         reinterpret_cast<LPARAM>(source));
     if (scroll.control != source || scroll.request != SB_THUMBPOSITION ||
@@ -50,7 +50,7 @@ int main() {
         const auto bits = Next(state);
         const auto x = static_cast<short>(bits & 0xFFFFU);
         const auto y = static_cast<short>((bits >> 16) & 0xFFFFU);
-        const auto decoded_mouse = mwtl::detail::DecodeMouseEvent(
+        const auto decoded_mouse = mwfl::detail::DecodeMouseEvent(
             static_cast<WPARAM>(bits >> 32),
             MAKELPARAM(static_cast<WORD>(x), static_cast<WORD>(y)));
         if (decoded_mouse.position.x != x || decoded_mouse.position.y != y ||
@@ -60,7 +60,7 @@ int main() {
 
         const WORD id = static_cast<WORD>(bits);
         const WORD notification = static_cast<WORD>(bits >> 16);
-        const auto decoded_command = mwtl::detail::DecodeCommandEvent(
+        const auto decoded_command = mwfl::detail::DecodeCommandEvent(
             MAKEWPARAM(id, notification), reinterpret_cast<LPARAM>(source));
         if (decoded_command.id.value != id ||
             decoded_command.notification != notification ||
@@ -69,7 +69,7 @@ int main() {
         const WORD request = static_cast<WORD>(bits >> 32);
         const WORD position = static_cast<WORD>(bits >> 48);
         const bool horizontal = (bits & 1U) != 0;
-        const auto decoded_scroll = mwtl::detail::DecodeScrollEvent(
+        const auto decoded_scroll = mwfl::detail::DecodeScrollEvent(
             horizontal ? WM_HSCROLL : WM_VSCROLL,
             MAKEWPARAM(request, position), reinterpret_cast<LPARAM>(source));
         if (decoded_scroll.request != request ||

@@ -1,4 +1,4 @@
-#include <mwtl/settings_store.h>
+#include <mwfl/settings_store.h>
 
 #include "denied_registry_root.h"
 
@@ -7,14 +7,14 @@
 
 namespace {
 struct TestKey {
-    std::wstring path = L"Software\\mwtl\\Tests\\SettingsStore-" +
+    std::wstring path = L"Software\\mwfl\\Tests\\SettingsStore-" +
                         std::to_wstring(::GetCurrentProcessId());
     ~TestKey() { ::RegDeleteTreeW(HKEY_CURRENT_USER, path.c_str()); }
 };
 }
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     TestKey key;
     VersionedSettingsStore store(HKEY_CURRENT_USER, key.path, 3);
     const std::array schema{
@@ -68,7 +68,7 @@ int main() {
     const std::array<std::wstring_view, 2> invalid_owned{L"Enabled", L"SchemaVersion"};
     if (store.RemoveOwned(invalid_owned).status != VersionedSettingsStatus::invalid_argument) return 14;
 
-    DeniedRegistryRoot denied_root{L"Software\\mwtl\\Tests\\DeniedSettings-" +
+    DeniedRegistryRoot denied_root{L"Software\\mwfl\\Tests\\DeniedSettings-" +
                                    std::to_wstring(::GetCurrentProcessId())};
     if (!denied_root.IsValid()) return 15;
     VersionedSettingsStore denied{denied_root.Get(), L"Child", 1};

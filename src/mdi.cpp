@@ -1,9 +1,9 @@
-#include <mwtl/mdi.h>
+#include <mwfl/mdi.h>
 
 #include <algorithm>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 MdiModelResult Result(MdiModelStatus status,
@@ -161,7 +161,7 @@ struct MdiHost::ChildState {
 
 namespace {
 
-constexpr wchar_t MdiChildClassName[] = L"mwtl.MdiHost.Child";
+constexpr wchar_t MdiChildClassName[] = L"mwfl.MdiHost.Child";
 
 bool RegisterMdiChildClass() noexcept {
     WNDCLASSW window_class{};
@@ -379,4 +379,4 @@ void MdiHost::Destroy() noexcept {
     callback_exception_ = nullptr;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

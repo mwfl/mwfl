@@ -1,6 +1,6 @@
-#include <mwtl/splitter.h>
+#include <mwfl/splitter.h>
 
 void CompileSplitterHeader() {
-    mwtl::SplitterModel splitter;
-    static_cast<void>(splitter.Arrange(mwtl::SizeDip{}));
+    mwfl::SplitterModel splitter;
+    static_cast<void>(splitter.Arrange(mwfl::SizeDip{}));
 }

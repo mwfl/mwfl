@@ -1,4 +1,4 @@
-#include <mwtl/splitter.h>
+#include <mwfl/splitter.h>
 
 #include <cmath>
 #include <cstdlib>
@@ -12,7 +12,7 @@ bool Near(float actual, float expected) {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
 
     SplitterModel splitter(SplitterOrientation::vertical, {Dip(100.0f), Dip(80.0f), Dip(6.0f)});
     splitter.SetPosition(Dip(120.0f));

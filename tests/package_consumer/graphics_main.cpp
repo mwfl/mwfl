@@ -1,7 +1,7 @@
-#include <mwtl/graphics.h>
+#include <mwfl/graphics.h>
 
 int main() {
-    mwtl::EnhancedMetafile metafile;
-    mwtl::GdiPlusSession session;
+    mwfl::EnhancedMetafile metafile;
+    mwfl::GdiPlusSession session;
     return metafile || session.IsStarted() ? 1 : 0;
 }

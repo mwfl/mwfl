@@ -1,11 +1,11 @@
-#include <mwtl/mwtl.h>
-class EvalAppearance final : public mwtl::WindowBase {
+#include <mwfl/mwfl.h>
+class EvalAppearance final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        mwtl::ControlHost ui{*this}; ui.Add(input_, L"");
-        mwtl::SetAccessibleName(input_.GetHwnd(), L"Search query");
-        static_cast<void>(mwtl::ApplyWindowAppearance(GetHwnd(), {mwtl::ColorMode::system}));
+        mwfl::ControlHost ui{*this}; ui.Add(input_, L"");
+        mwfl::SetAccessibleName(input_.GetHwnd(), L"Search query");
+        static_cast<void>(mwfl::ApplyWindowAppearance(GetHwnd(), {mwfl::ColorMode::system}));
     }
-private: mwtl::TextBox input_;
+private: mwfl::TextBox input_;
 };
 

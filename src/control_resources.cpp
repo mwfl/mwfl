@@ -1,4 +1,4 @@
-#include <mwtl/control_resources.h>
+#include <mwfl/control_resources.h>
 
 #include <wil/resource.h>
 
@@ -8,7 +8,7 @@
 #include <unordered_set>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 
 namespace {
 
@@ -518,4 +518,4 @@ TaskDialogResult ShowTaskDialog(HWND owner, std::wstring_view title,
 bool InitializeFlatScrollBars(HWND window) noexcept { return window != nullptr && ::InitializeFlatSB(window) != FALSE; }
 bool UninitializeFlatScrollBars(HWND window) noexcept { return window != nullptr && ::UninitializeFlatSB(window) != FALSE; }
 
-}  // namespace mwtl
+}  // namespace mwfl

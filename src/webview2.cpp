@@ -1,6 +1,6 @@
-#include <mwtl/webview2.h>
+#include <mwfl/webview2.h>
 
-#include <mwtl/appearance.h>
+#include <mwfl/appearance.h>
 
 #include <WebView2.h>
 #include <commctrl.h>
@@ -9,7 +9,7 @@
 #include <atomic>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 using Microsoft::WRL::Callback;
 using Microsoft::WRL::ComPtr;
@@ -380,4 +380,4 @@ bool WebView2Host::Arrange() noexcept {
 void* WebView2Host::GetController() const noexcept { return implementation_->controller.Get(); }
 void* WebView2Host::GetWebView() const noexcept { return implementation_->webview.Get(); }
 
-}  // namespace mwtl
+}  // namespace mwfl

@@ -1,4 +1,4 @@
-#include <mwtl/d3d_host.h>
+#include <mwfl/d3d_host.h>
 
 #include <stdexcept>
 
@@ -16,7 +16,7 @@ DWORD GuiResources() {
 }
 
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
-    using namespace mwtl;
+    using namespace mwfl;
     const HWND parent = CreateParent();
     if (!parent) return 1;
 

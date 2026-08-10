@@ -1,6 +1,6 @@
-#include <mwtl/document_session.h>
+#include <mwfl/document_session.h>
 
 void HeaderDocumentSessionCompiles() {
-    mwtl::DocumentSession session;
+    mwfl::DocumentSession session;
     (void)session;
 }

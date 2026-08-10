@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <array>
 #include <cstdlib>
@@ -16,25 +16,25 @@ DWORD GuiResources() noexcept {
 int main() {
     const DWORD before = GuiResources();
     HWND window = ::CreateWindowExW(
-        0, L"STATIC", L"mwtl menu leak fixture", WS_OVERLAPPED,
+        0, L"STATIC", L"mwfl menu leak fixture", WS_OVERLAPPED,
         0, 0, 100, 100, nullptr, nullptr, ::GetModuleHandleW(nullptr), nullptr);
     if (window == nullptr) return EXIT_FAILURE;
     for (int iteration = 0; iteration < 200; ++iteration) {
-        mwtl::Menu menu;
+        mwfl::Menu menu;
         if (!menu.CreatePopup() ||
-            !menu.AppendCommand(mwtl::Command({100}, L"Resource test"))) {
+            !menu.AppendCommand(mwfl::Command({100}, L"Resource test"))) {
             return EXIT_FAILURE;
         }
         const std::array<ACCEL, 1> keys{{ACCEL{FVIRTKEY, VK_F6, 100}}};
-        mwtl::AcceleratorTable accelerators;
+        mwfl::AcceleratorTable accelerators;
         if (!accelerators.Create(keys)) return EXIT_FAILURE;
-        mwtl::UiFont font;
+        mwfl::UiFont font;
         if (!font.CreateMessageFont(96)) return EXIT_FAILURE;
 
-        mwtl::Menu bar;
-        mwtl::Menu popup;
+        mwfl::Menu bar;
+        mwfl::Menu popup;
         if (!bar.Create() || !popup.CreatePopup() ||
-            !popup.AppendCommand(mwtl::Command({101}, L"Attached resource test")) ||
+            !popup.AppendCommand(mwfl::Command({101}, L"Attached resource test")) ||
             !bar.AppendSubmenu(std::move(popup), L"Test") ||
             !bar.AttachToWindow(window)) {
             ::DestroyWindow(window);

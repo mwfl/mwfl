@@ -1,6 +1,6 @@
-#include <mwtl/document_coordination.h>
+#include <mwfl/document_coordination.h>
 
 void UseDocumentCoordinationHeader() {
-    mwtl::DocumentWorkspaceModel workspace{{1}};
-    static_cast<void>(mwtl::BuildActiveDocumentCommandProjection(workspace));
+    mwfl::DocumentWorkspaceModel workspace{{1}};
+    static_cast<void>(mwfl::BuildActiveDocumentCommandProjection(workspace));
 }

@@ -1,7 +1,7 @@
-#include <mwtl/d2d_host.h>
+#include <mwfl/d2d_host.h>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     D2DRenderStateModel model;
     if (model.GetState() != D2DRenderState::empty || model.BeginDraw()) return 1;
     if (!model.MarkReady() || !model.BeginDraw() || model.BeginDraw()) return 2;

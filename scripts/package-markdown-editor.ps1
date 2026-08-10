@@ -19,12 +19,12 @@ function Invoke-Checked {
     }
 }
 
-$toolchain = Resolve-MwtlToolchain -VisualStudio $VisualStudio -Architecture x64
+$toolchain = Resolve-MwflToolchain -VisualStudio $VisualStudio -Architecture x64
 $projectRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $buildRoot = Join-Path $projectRoot "build\markdown-editor\vs$($toolchain.Year)-x64"
 $stageRoot = Join-Path $buildRoot 'stage'
 $resolvedOutput = [System.IO.Path]::GetFullPath($OutputDirectory)
-$packageName = "mwtl-markdown-editor-$Version-windows-x64"
+$packageName = "mwfl-markdown-editor-$Version-windows-x64"
 $archive = Join-Path $resolvedOutput "$packageName.zip"
 $generator = "Visual Studio $($toolchain.Major) $($toolchain.Year)"
 
@@ -33,16 +33,16 @@ Invoke-Checked $toolchain.CMake @(
     '-B', $buildRoot,
     '-G', $generator,
     '-A', 'x64',
-    '-DMWTL_BUILD_EXAMPLES=ON',
-    '-DMWTL_BUILD_TESTS=ON',
-    '-DMWTL_BUILD_SCINTILLA=ON',
-    '-DMWTL_BUILD_WEBVIEW2=ON')
+    '-DMWFL_BUILD_EXAMPLES=ON',
+    '-DMWFL_BUILD_TESTS=ON',
+    '-DMWFL_BUILD_SCINTILLA=ON',
+    '-DMWFL_BUILD_WEBVIEW2=ON')
 Invoke-Checked $toolchain.CMake @(
     '--build', $buildRoot, '--config', 'Release',
-    '--target', 'mwtl_markdown_editor', 'mwtl_markdown_renderer_test')
+    '--target', 'mwfl_markdown_editor', 'mwfl_markdown_renderer_test')
 Invoke-Checked $toolchain.CTest @(
     '--test-dir', $buildRoot, '-C', 'Release',
-    '-R', 'mwtl[.]markdown', '--output-on-failure')
+    '-R', 'mwfl[.]markdown', '--output-on-failure')
 
 if (Test-Path -LiteralPath $stageRoot) {
     $resolvedStage = [System.IO.Path]::GetFullPath($stageRoot)
@@ -60,9 +60,9 @@ Invoke-Checked $toolchain.CMake @(
 
 $readme = Join-Path $stageRoot 'README.txt'
 @"
-mwtl Markdown Editor $Version
+mwfl Markdown Editor $Version
 
-Run bin\mwtl_markdown_editor.exe.
+Run bin\mwfl_markdown_editor.exe.
 
 Requirements:
 - Windows 10 1809 or newer, x64
@@ -72,7 +72,7 @@ The editor, file operations, and recovery remain available if WebView2 is
 missing. Documents stay local; preview assets do not use a CDN.
 Markdown syntax coloring is provided locally by the bundled Lexilla runtime.
 
-Source and build instructions: https://github.com/everettjf/mwtl
+Source and build instructions: https://github.com/mwfl/mwfl
 "@ | Set-Content -LiteralPath $readme -Encoding utf8
 
 if (Test-Path -LiteralPath $archive) { Remove-Item -LiteralPath $archive -Force }

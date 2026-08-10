@@ -1,4 +1,4 @@
-#include <mwtl/file_association.h>
+#include <mwfl/file_association.h>
 
 #include "denied_registry_root.h"
 
@@ -7,7 +7,7 @@
 
 namespace {
 struct TestRoot {
-    std::wstring path = L"Software\\mwtl\\Tests\\FileAssociation-" +
+    std::wstring path = L"Software\\mwfl\\Tests\\FileAssociation-" +
                         std::to_wstring(::GetCurrentProcessId());
     ~TestRoot() { ::RegDeleteTreeW(HKEY_CURRENT_USER, path.c_str()); }
 };
@@ -21,15 +21,15 @@ std::wstring Read(HKEY root, const std::wstring& key, const wchar_t* name = null
 }
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     TestRoot root;
     FileAssociationSpec spec{
-        .extension = L".mwtltest",
-        .prog_id = L"mwtl.Tests.Document",
-        .owner_id = L"mwtl-tests-owner",
-        .display_name = L"mwtl test document",
-        .executable = L"C:\\Program Files\\mwtl test\\app.exe",
-        .icon = L"C:\\Program Files\\mwtl test\\app.exe",
+        .extension = L".mwfltest",
+        .prog_id = L"mwfl.Tests.Document",
+        .owner_id = L"mwfl-tests-owner",
+        .display_name = L"mwfl test document",
+        .executable = L"C:\\Program Files\\mwfl test\\app.exe",
+        .icon = L"C:\\Program Files\\mwfl test\\app.exe",
         .verbs = {{L"open", L"Open", L""},
                   {L"inspect", L"Inspect", L"--inspect"}}};
     const auto plan = BuildFileAssociationPlan(spec);
@@ -40,10 +40,10 @@ int main() {
     const std::wstring extension = root.path + L"\\" + spec.extension;
     const std::wstring prog_id = root.path + L"\\" + spec.prog_id;
     if (Read(HKEY_CURRENT_USER, extension) != spec.prog_id ||
-        Read(HKEY_CURRENT_USER, extension, L"mwtl.OwnerId") != spec.owner_id ||
-        Read(HKEY_CURRENT_USER, prog_id, L"mwtl.OwnerId") != spec.owner_id ||
+        Read(HKEY_CURRENT_USER, extension, L"mwfl.OwnerId") != spec.owner_id ||
+        Read(HKEY_CURRENT_USER, prog_id, L"mwfl.OwnerId") != spec.owner_id ||
         Read(HKEY_CURRENT_USER, prog_id + L"\\shell\\open\\command") !=
-            L"\"C:\\Program Files\\mwtl test\\app.exe\" \"%1\"") return 3;
+            L"\"C:\\Program Files\\mwfl test\\app.exe\" \"%1\"") return 3;
 
     HKEY extension_key = nullptr;
     if (::RegOpenKeyExW(HKEY_CURRENT_USER, extension.c_str(), 0, KEY_SET_VALUE,
@@ -89,7 +89,7 @@ int main() {
         RegisterFileAssociation(HKEY_CURRENT_USER, root.path, invalid, false).status !=
             FileAssociationStatus::invalid_argument) return 10;
 
-    DeniedRegistryRoot denied_root{L"Software\\mwtl\\Tests\\DeniedAssociation-" +
+    DeniedRegistryRoot denied_root{L"Software\\mwfl\\Tests\\DeniedAssociation-" +
                                    std::to_wstring(::GetCurrentProcessId())};
     if (!denied_root.IsValid()) return 17;
     const auto denied = RegisterFileAssociation(denied_root.Get(), L"Classes", spec, false);

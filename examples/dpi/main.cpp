@@ -1,19 +1,19 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 #include <cwchar>
 
-class DpiWindow final : public mwtl::WindowBase {
+class DpiWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override { UpdateTitle(GetDpiContext()); }
 
-    mwtl::EventResult OnDpiChanged(const mwtl::DpiChangedEvent& event) noexcept override {
-        UpdateTitle(mwtl::DpiContext::FromDpi(event.dpi_x));
-        return mwtl::EventResult::Propagate();
+    mwfl::EventResult OnDpiChanged(const mwfl::DpiChangedEvent& event) noexcept override {
+        UpdateTitle(mwfl::DpiContext::FromDpi(event.dpi_x));
+        return mwfl::EventResult::Propagate();
     }
 
 private:
-    void UpdateTitle(mwtl::DpiContext dpi) noexcept {
+    void UpdateTitle(mwfl::DpiContext dpi) noexcept {
         wchar_t title[96]{};
         ::swprintf_s(title, L"DPI demo - %u DPI (%.2fx)", dpi.GetDpi(), dpi.GetScale());
         SetTitle(title);
@@ -22,5 +22,5 @@ private:
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<DpiWindow>(instance, show_command);
+    return mwfl::RunApplication<DpiWindow>(instance, show_command);
 }

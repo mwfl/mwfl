@@ -92,7 +92,7 @@ committed state.
 
 ```powershell
 ctest --test-dir build/presets/vs2026-x64 -C Debug --output-on-failure `
-  -R "mwtl\.(docking_|manifest\.mwtl_docking_workspace_demo)"
+  -R "mwfl\.(docking_|manifest\.mwfl_docking_workspace_demo)"
 ```
 
 Repeat with `-C Release` for the approved 0.7 local gate.

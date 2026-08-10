@@ -1,4 +1,4 @@
-#include <mwtl/printing_native.h>
+#include <mwfl/printing_native.h>
 
 #include <wingdi.h>
 
@@ -6,7 +6,7 @@
 #include <limits>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace detail {
 PrintBackendResult AdoptPrinterDeviceContext(HDC dc);
 }
@@ -268,4 +268,4 @@ PrintOperationStatus PrintPages(PrintJob& job, std::wstring_view title,
     return job.Complete();
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

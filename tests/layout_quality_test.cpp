@@ -1,4 +1,4 @@
-#include <mwtl/layout.h>
+#include <mwfl/layout.h>
 
 #include <windows.h>
 
@@ -21,7 +21,7 @@ private:
 }  // namespace
 
 int main() {
-    using mwtl::operator""_dip;
+    using mwfl::operator""_dip;
     constexpr int child_count = 100;
     WindowList lifetime;
     const HWND parent = ::CreateWindowExW(0, L"STATIC", L"layout-quality",
@@ -30,7 +30,7 @@ int main() {
     if (parent == nullptr) return EXIT_FAILURE;
     lifetime.Add(parent);
 
-    mwtl::LayoutNode column = mwtl::Column().Margin(8.0_dip).Gap(1.0_dip);
+    mwfl::LayoutNode column = mwfl::Column().Margin(8.0_dip).Gap(1.0_dip);
     std::vector<HWND> children;
     children.reserve(child_count);
     for (int index = 0; index < child_count; ++index) {
@@ -39,10 +39,10 @@ int main() {
         if (child == nullptr) return EXIT_FAILURE;
         children.push_back(child);
         // The parent destroys child HWNDs; do not add them to WindowList.
-        column.Add(child, mwtl::Stretch(1.0f, 1.0_dip));
+        column.Add(child, mwfl::Stretch(1.0f, 1.0_dip));
     }
 
-    mwtl::LayoutHost layout(std::move(column));
+    mwfl::LayoutHost layout(std::move(column));
     const auto started = std::chrono::steady_clock::now();
     for (int iteration = 0; iteration < 250; ++iteration) {
         if (!layout.Arrange(parent)) return EXIT_FAILURE;

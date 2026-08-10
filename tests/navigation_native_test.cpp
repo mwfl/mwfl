@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <windows.h>
 #include <commctrl.h>
@@ -13,7 +13,7 @@
 namespace {
 
 struct TestState {
-    mwtl::ListView* virtual_list = nullptr;
+    mwfl::ListView* virtual_list = nullptr;
     std::vector<UINT> notifications;
     bool accept_label_edits = false;
 };
@@ -43,7 +43,7 @@ HWND CreateOwner(TestState& state) {
     type.cbSize = sizeof(type);
     type.lpfnWndProc = OwnerProc;
     type.hInstance = ::GetModuleHandleW(nullptr);
-    type.lpszClassName = L"mwtl.navigation.native.owner";
+    type.lpszClassName = L"mwfl.navigation.native.owner";
     static_cast<void>(::RegisterClassExW(&type));
     return ::CreateWindowExW(0, type.lpszClassName, L"Navigation native test",
                              WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
@@ -64,11 +64,11 @@ std::wstring TreeText(HWND tree, HTREEITEM handle) {
     return TreeView_GetItem(tree, &item) ? text : L"";
 }
 
-class SampleVirtualModel final : public mwtl::VirtualListModel {
+class SampleVirtualModel final : public mwfl::VirtualListModel {
 public:
     std::size_t GetRowCount() const noexcept override { return ids.size(); }
-    mwtl::ListItemId GetRowId(std::size_t row) const noexcept override {
-        return row < ids.size() ? ids[row] : mwtl::ListItemId{};
+    mwfl::ListItemId GetRowId(std::size_t row) const noexcept override {
+        return row < ids.size() ? ids[row] : mwfl::ListItemId{};
     }
     std::wstring GetCellText(std::size_t row, int column) const override {
         if (throw_on_text) throw std::runtime_error("virtual text");
@@ -79,7 +79,7 @@ public:
         return row == 1 ? 2 : 1;
     }
 
-    std::vector<mwtl::ListItemId> ids{{501}, {502}, {503}};
+    std::vector<mwfl::ListItemId> ids{{501}, {502}, {503}};
     std::vector<std::wstring> names{L"alpha", L"beta", L"gamma"};
     bool throw_on_text = false;
 };
@@ -87,8 +87,8 @@ public:
 }  // namespace
 
 int main() {
-    using namespace mwtl;
-    using mwtl::operator""_dip;
+    using namespace mwfl;
+    using mwfl::operator""_dip;
 
     TestState state;
     TreeView empty_tree;

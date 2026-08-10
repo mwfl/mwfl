@@ -69,12 +69,12 @@ jobs:
         run: >-
           cmake -S . -B build/analyze
           -G "Visual Studio 18 2026" -A x64
-          -DMWTL_BUILD_EXAMPLES=OFF
-          -DMWTL_BUILD_TESTS=OFF
-          -DMWTL_WARNINGS_AS_ERRORS=ON
+          -DMWFL_BUILD_EXAMPLES=OFF
+          -DMWFL_BUILD_TESTS=OFF
+          -DMWFL_WARNINGS_AS_ERRORS=ON
       - name: Analyze
         run: >-
-          cmake --build build/analyze --config Debug --target mwtl --
+          cmake --build build/analyze --config Debug --target mwfl --
           /p:Configuration=Debug
           /p:RunCodeAnalysis=true
           /p:CodeAnalysisRuleSet=NativeRecommendedRules.ruleset
@@ -88,8 +88,8 @@ jobs:
         run: >-
           cmake -S . -B build/asan
           -G "Visual Studio 18 2026" -A x64
-          -DMWTL_BUILD_EXAMPLES=OFF -DMWTL_BUILD_TESTS=ON
-          -DMWTL_ENABLE_ASAN=ON
+          -DMWFL_BUILD_EXAMPLES=OFF -DMWFL_BUILD_TESTS=ON
+          -DMWFL_ENABLE_ASAN=ON
       - name: Build
         run: cmake --build build/asan --config Debug --parallel
       - name: Test
@@ -104,7 +104,7 @@ jobs:
         run: >-
           cmake -S . -B build/coverage
           -G "Visual Studio 18 2026" -A x64
-          -DMWTL_BUILD_EXAMPLES=ON -DMWTL_BUILD_TESTS=ON
+          -DMWFL_BUILD_EXAMPLES=ON -DMWFL_BUILD_TESTS=ON
       - name: Build
         run: cmake --build build/coverage --config Debug --parallel
       - name: Locate coverage collector
@@ -113,13 +113,13 @@ jobs:
           $collector = Get-ChildItem "${env:ProgramFiles}\Microsoft Visual Studio\18" `
             -Recurse -Filter Microsoft.CodeCoverage.Console.exe | Select-Object -First 1
           if (-not $collector) { throw 'Microsoft native code coverage collector was not found.' }
-          "MWTL_COVERAGE_COLLECTOR=$($collector.FullName)" | Out-File $env:GITHUB_ENV -Append
+          "MWFL_COVERAGE_COLLECTOR=$($collector.FullName)" | Out-File $env:GITHUB_ENV -Append
       - name: Collect coverage
         shell: pwsh
         run: >-
-          & $env:MWTL_COVERAGE_COLLECTOR collect ctest
+          & $env:MWFL_COVERAGE_COLLECTOR collect ctest
           --test-dir build/coverage -C Debug
-          -E "mwtl\.(desktop|package_consumer|hot_corners_self_test)"
+          -E "mwfl\.(desktop|package_consumer|hot_corners_self_test)"
           --output-on-failure
           --output build/coverage/coverage.xml
           --output-format cobertura
@@ -147,7 +147,7 @@ jobs:
         run: >-
           cmake -S . -B build/arm64
           -G "Visual Studio 17 2022" -A ARM64
-          -DMWTL_BUILD_EXAMPLES=ON -DMWTL_BUILD_TESTS=ON
+          -DMWFL_BUILD_EXAMPLES=ON -DMWFL_BUILD_TESTS=ON
       - name: Build
         run: cmake --build build/arm64 --config Debug --parallel
       - name: Test
@@ -156,4 +156,4 @@ jobs:
         # built for ARM64; their real Shell protocol runs in both x64 matrices.
         run: >-
           ctest --test-dir build/arm64 -C Debug --output-on-failure
-          -E 'mwtl\.(tray_icon_native|hot_corners_self_test)'
+          -E 'mwfl\.(tray_icon_native|hot_corners_self_test)'

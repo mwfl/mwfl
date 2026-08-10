@@ -1,4 +1,4 @@
-#include <mwtl/property_sheet.h>
+#include <mwfl/property_sheet.h>
 
 #include <windows.h>
 #include <commctrl.h>
@@ -17,7 +17,7 @@
 
 extern WTL::CAppModule _Module;
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 constexpr UINT_PTR kSheetSubclassId = 1;
@@ -708,4 +708,4 @@ LRESULT CALLBACK PropertySheetDialog::SheetSubclass(HWND sheet, UINT message, WP
     return result;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <array>
 #include <cstdlib>
@@ -12,17 +12,17 @@ namespace {
 
 bool accelerator_seen = false;
 
-class AcceleratorWindow final : public mwtl::Window<AcceleratorWindow> {
+class AcceleratorWindow final : public mwfl::Window<AcceleratorWindow> {
 public:
     void BuildUI() {
-        command_set_.Add(mwtl::Command({701}, L"Verify\tF6", [this] {
+        command_set_.Add(mwfl::Command({701}, L"Verify\tF6", [this] {
             accelerator_seen = true;
             ::KillTimer(GetHwnd(), 1);
             ::KillTimer(GetHwnd(), 2);
             static_cast<void>(Close());
         }).SetShortcut({FVIRTKEY, VK_F6}));
-        command_set_.Add(mwtl::Command({702}, L"Mutable"));
-        mwtl::Menu commands;
+        command_set_.Add(mwfl::Command({702}, L"Mutable"));
+        mwfl::Menu commands;
         if (!menu_.Create() || !commands.CreatePopup() ||
             !commands.AppendCommand(*command_set_.Find({701})) ||
             !commands.AppendCommand(*command_set_.Find({702})) ||
@@ -57,7 +57,7 @@ public:
         ::SetTimer(GetHwnd(), 2, 2000, nullptr);
     }
 
-    mwtl::EventResult OnTimer(mwtl::TimerId id) {
+    mwfl::EventResult OnTimer(mwfl::TimerId id) {
         if (id.value == 1) {
             ::SetFocus(GetHwnd());
             ::PostMessageW(GetHwnd(), WM_KEYDOWN, VK_F6, 0);
@@ -65,32 +65,32 @@ public:
             ::KillTimer(GetHwnd(), id.value);
             (void)Close();
         }
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) {
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) {
         return command_set_.Dispatch(event);
     }
 
 private:
-    mwtl::AcceleratorTable accelerators_;
-    mwtl::CommandSet command_set_;
-    mwtl::Menu menu_;
+    mwfl::AcceleratorTable accelerators_;
+    mwfl::CommandSet command_set_;
+    mwfl::Menu menu_;
 };
 
 bool VerifyClipboardRoundTrip() {
     const bool had_text = ::IsClipboardFormatAvailable(CF_UNICODETEXT) != FALSE;
-    const std::wstring original_text = had_text ? mwtl::GetClipboardText() : L"";
+    const std::wstring original_text = had_text ? mwfl::GetClipboardText() : L"";
 
-    const bool wrote = mwtl::SetClipboardText(nullptr, L"mwtl clipboard round trip");
+    const bool wrote = mwfl::SetClipboardText(nullptr, L"mwfl clipboard round trip");
     const bool matched = wrote &&
-        mwtl::GetClipboardText() == L"mwtl clipboard round trip";
+        mwfl::GetClipboardText() == L"mwfl clipboard round trip";
     if (!matched) {
         std::fprintf(stderr, "clipboard round trip failed: wrote=%d error=%lu\n",
                      wrote ? 1 : 0, ::GetLastError());
     }
 
-    bool restored = had_text && mwtl::SetClipboardText(nullptr, original_text);
+    bool restored = had_text && mwfl::SetClipboardText(nullptr, original_text);
     if (!had_text && ::OpenClipboard(nullptr) != FALSE) {
         restored = ::EmptyClipboard() != FALSE;
         ::CloseClipboard();
@@ -114,7 +114,7 @@ bool VerifyDroppedFiles() {
     std::memcpy(reinterpret_cast<BYTE*>(drop) + drop->pFiles, paths, path_bytes);
     ::GlobalUnlock(memory);
 
-    const auto files = mwtl::ReadDroppedFiles(reinterpret_cast<HDROP>(memory));
+    const auto files = mwfl::ReadDroppedFiles(reinterpret_cast<HDROP>(memory));
     return files.size() == 2 && files[0] == L"C:\\first.txt" &&
            files[1] == L"D:\\folder\\second.txt";
 }
@@ -126,18 +126,18 @@ int main(int argc, char** argv) {
     const bool skip_clipboard = argc == 2 && std::string_view(argv[1]) == "--skip-clipboard";
     if (clipboard_only) return VerifyClipboardRoundTrip() ? EXIT_SUCCESS : 6;
 
-    mwtl::UiFont font;
+    mwfl::UiFont font;
     if (!font.CreateMessageFont(144) || font.GetHandle() == nullptr) return 1;
 
-    constexpr wchar_t key[] = L"Software\\mwtl\\Tests\\DesktopTest";
+    constexpr wchar_t key[] = L"Software\\mwfl\\Tests\\DesktopTest";
     constexpr wchar_t value[] = L"Placement";
-    mwtl::SavedWindowPlacement saved{};
+    mwfl::SavedWindowPlacement saved{};
     saved.placement.flags = WPF_ASYNCWINDOWPLACEMENT;
     saved.placement.showCmd = SW_SHOWNORMAL;
     saved.placement.rcNormalPosition = {10, 20, 410, 320};
-    if (!mwtl::SaveWindowPlacementToRegistry(HKEY_CURRENT_USER, key, value, saved)) return 2;
-    mwtl::SavedWindowPlacement loaded{};
-    const bool loaded_ok = mwtl::LoadWindowPlacementFromRegistry(
+    if (!mwfl::SaveWindowPlacementToRegistry(HKEY_CURRENT_USER, key, value, saved)) return 2;
+    mwfl::SavedWindowPlacement loaded{};
+    const bool loaded_ok = mwfl::LoadWindowPlacementFromRegistry(
         HKEY_CURRENT_USER, key, value, loaded);
     ::RegDeleteTreeW(HKEY_CURRENT_USER, key);
     if (!loaded_ok || loaded.placement.rcNormalPosition.left != 10 ||
@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
     if (!skip_clipboard && !VerifyClipboardRoundTrip()) return 6;
     if (!VerifyDroppedFiles()) return 7;
 
-    const int accelerator_result = mwtl::Application(::GetModuleHandleW(nullptr))
+    const int accelerator_result = mwfl::Application(::GetModuleHandleW(nullptr))
         .Run<AcceleratorWindow>(SW_SHOWNOACTIVATE);
     if (accelerator_result != 0 || !accelerator_seen) return 8;
 

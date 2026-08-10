@@ -1,9 +1,9 @@
-#include <mwtl/appearance.h>
-#include <mwtl/native_host.h>
+#include <mwfl/appearance.h>
+#include <mwfl/native_host.h>
 
 #include <commctrl.h>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 constexpr UINT_PTR kNativeHostSubclassId = 1;
@@ -190,4 +190,4 @@ LRESULT NativeHost::ProcessMessage(HWND window, UINT message, WPARAM wparam,
     return ::DefSubclassProc(window, message, wparam, lparam);
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

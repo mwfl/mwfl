@@ -14,7 +14,7 @@ foreach(required IN ITEMS
         components/common-controls.html
         components/window.html
         components/hello.html
-        assets/mwtl-mark.svg
+        assets/mwfl-mark.svg
         assets/site.js
         styles.css
         llms.txt
@@ -65,7 +65,7 @@ foreach(marker IN ITEMS
         "app.manifest"
         "cmake -S . -B build"
         "cmake --build build"
-        "mwtl_hello.exe"
+        "mwfl_hello.exe"
         "Visual Studio 18 2026"
         "Visual Studio 17 2022"
         "Troubleshooting")
@@ -82,7 +82,7 @@ if(NOT building MATCHES "tutorial.html" OR
 endif()
 
 file(READ "${SITE_ROOT}/optional-integrations.html" optional_integrations)
-foreach(marker IN ITEMS "mwtl::ribbon" "mwtl::mdi" "mwtl::graphics"
+foreach(marker IN ITEMS "mwfl::ribbon" "mwfl::mdi" "mwfl::graphics"
         "TaskbarCreated" "HelpRequest" "docs/tutorials/ribbon.md"
         "docs/tutorials/mdi.md" "docs/tutorials/graphics-help.md")
     if(NOT optional_integrations MATCHES "${marker}")
@@ -92,7 +92,7 @@ endforeach()
 
 file(READ "${SITE_ROOT}/notepad.html" notepad)
 foreach(marker IN ITEMS "templates/basic-app" "DocumentState" "WriteTextFileAtomic"
-        "mwtl.notepad_gui" "mwtl_notepad.exe" "Visual Studio 18 2026"
+        "mwfl.notepad_gui" "mwfl_notepad.exe" "Visual Studio 18 2026"
         "Visual Studio 17 2022")
     if(NOT notepad MATCHES "${marker}")
         message(FATAL_ERROR "Notepad tutorial is missing required marker: ${marker}")

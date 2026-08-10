@@ -1,9 +1,9 @@
-#include <mwtl/docking_auto_hide.h>
+#include <mwfl/docking_auto_hide.h>
 
 #include <stdexcept>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     using namespace std::chrono_literals;
 
     bool threw = false;

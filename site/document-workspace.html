@@ -1,33 +1,33 @@
 <!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Build a two-window native C++20 document workspace with mwtl.">
-  <link rel="canonical" href="https://everettjf.github.io/mwtl/document-workspace.html">
-  <title>Multi-document workspace — mwtl</title>
-  <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
+  <meta name="description" content="Build a two-window native C++20 document workspace with mwfl.">
+  <link rel="canonical" href="https://mwfl.github.io/document-workspace.html">
+  <title>Multi-document workspace — mwfl</title>
+  <link rel="icon" type="image/svg+xml" href="assets/mwfl-mark.svg">
   <link rel="stylesheet" href="styles.css?v=20260810a">
-  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
   <script defer src="assets/site.js?v=20260810a"></script>
 </head><body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><div class="shell nav">
-    <a class="brand" href="index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
-    <nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a class="active" href="tutorial.html">Get started</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="llms.txt">For coding agents</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
+    <a class="brand" href="index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
+    <nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a class="active" href="tutorial.html">Get started</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="llms.txt">For coding agents</a><a href="https://github.com/mwfl/mwfl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
   </div></header>
   <main id="main" class="shell prose guide">
     <div class="hero"><div class="eyebrow">Reference application · Windows 10+ · C++20</div>
       <h1>Build a real multi-document workspace.</h1>
       <p class="lede">Two top-level windows, stable identity, native tabs, atomic files, safe movement, versioned sessions, recently closed history, and coordinated shutdown.</p>
-      <div class="actions"><a class="button primary" href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/document-workspace.md">Follow the complete tutorial</a><a class="button" href="https://github.com/everettjf/mwtl/blob/main/examples/document_workspace/main.cpp">Read the compiled source</a></div>
+      <div class="actions"><a class="button primary" href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/document-workspace.md">Follow the complete tutorial</a><a class="button" href="https://github.com/mwfl/mwfl/blob/main/examples/document_workspace/main.cpp">Read the compiled source</a></div>
     </div>
     <div class="requirements"><div><strong>Toolchain</strong><span>VS 2026 · MSVC · x64</span></div><div><strong>Identity</strong><span>Stable nonzero IDs</span></div><div><strong>Ownership</strong><span>Application contents · borrowed HWNDs</span></div><div><strong>Proof</strong><span>Offline GUI self-test</span></div></div>
     <section><h2>Build and verify</h2><pre><code>cmake --preset vs2026-x64
-cmake --build --preset vs2026-x64-debug --target mwtl_document_workspace
-ctest --preset vs2026-x64-debug -R "^mwtl\.document_workspace_gui$" --output-on-failure</code></pre></section>
+cmake --build --preset vs2026-x64-debug --target mwfl_document_workspace
+ctest --preset vs2026-x64-debug -R "^mwfl\.document_workspace_gui$" --output-on-failure</code></pre></section>
     <section><h2>Keep ownership explicit</h2><p><code>DocumentWorkspaceModel</code> owns metadata snapshots only. Text, undo buffers, file stamps, and page destruction remain application-owned by <code>DocumentId</code>. Native tab data stores an integer ID, never a pointer.</p></section>
     <section><h2>Transfer without loss</h2><p><code>TransferDocumentWithPage</code> accepts destination metadata before reparenting the page and removing source ownership. Failure restores metadata and HWND parentage.</p></section>
     <section><h2>Restore defensively</h2><p>Sessions are versioned, bounded, and atomically replaced. Application validators classify missing, changed, or untrusted paths before content callbacks run.</p></section>
     <section><h2>Close only after every decision</h2><p>Inspect both windows, collect Save/Discard/Cancel decisions, finish saves, then commit closes. Cancellation never tears down one workspace early.</p></section>
   </main>
-  <footer class="site-footer"><div class="shell"><span>mwtl · Modern Windows Thin Layer</span><a href="https://github.com/everettjf/mwtl">Source and license</a></div></footer>
+  <footer class="site-footer"><div class="shell"><span>mwfl · Modern Windows Foundation Layer</span><a href="https://github.com/mwfl/mwfl">Source and license</a></div></footer>
 </body></html>

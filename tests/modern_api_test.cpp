@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <array>
 #include <chrono>
@@ -6,37 +6,37 @@
 #include <stdexcept>
 
 using namespace std::chrono_literals;
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 namespace {
 
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::Label>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::Button>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::TextBox>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::CheckBox>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::RadioButton>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::GroupBox>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::ListBox>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::ComboBox>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::ProgressBar>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::Slider>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::ScrollBar>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::TreeView>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::ListView>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::Header>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::TabControl>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::ComboBoxEx>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::DateTimePicker>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::MonthCalendar>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::HotKey>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::IpAddress>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::UpDown>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::SysLink>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::Toolbar>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::StatusBar>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::Rebar>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::Pager>);
-static_assert(mwtl::IntrinsicallyMeasurable<mwtl::Animation>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::Label>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::Button>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::TextBox>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::CheckBox>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::RadioButton>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::GroupBox>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::ListBox>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::ComboBox>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::ProgressBar>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::Slider>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::ScrollBar>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::TreeView>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::ListView>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::Header>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::TabControl>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::ComboBoxEx>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::DateTimePicker>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::MonthCalendar>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::HotKey>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::IpAddress>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::UpDown>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::SysLink>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::Toolbar>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::StatusBar>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::Rebar>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::Pager>);
+static_assert(mwfl::IntrinsicallyMeasurable<mwfl::Animation>);
 
 bool command_seen = false;
 bool key_seen = false;
@@ -47,11 +47,11 @@ bool scroll_seen = false;
 int scroll_failure = 0;
 int notify_failure = 0;
 
-class ModernApiWindow final : public mwtl::WindowBase {
+class ModernApiWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        mwtl::ControlHost ui{*this};
-        ui.Add(label_, L"Modern API test", mwtl::LabelOptions{});
+        mwfl::ControlHost ui{*this};
+        ui.Add(label_, L"Modern API test", mwfl::LabelOptions{});
         ui.Add(text_, L"native edit");
         if (label_.GetId().value != 0x4000 ||
             text_.GetId().value != 0x4001) {
@@ -66,7 +66,7 @@ public:
         ui.Add(list_, kList);
         ui.Add(slider_, kSlider);
 
-        ui.Add(tree_, {220}, mwtl::TreeViewOptions{});
+        ui.Add(tree_, {220}, mwfl::TreeViewOptions{});
         ui.Add(list_view_, {221});
         ui.Add(header_, {222});
         ui.Add(tabs_, {223});
@@ -79,10 +79,10 @@ public:
         ui.Add(spin_, {229});
         ui.Add(link_, {230}, L"<a href=\"https://example.test\">link</a>");
         ui.Add(rebar_, {231});
-        mwtl::ControlHost rebar_ui{rebar_};
+        mwfl::ControlHost rebar_ui{rebar_};
         rebar_ui.Add(toolbar_, {232});
         ui.Add(pager_, {233});
-        mwtl::ControlHost pager_ui{pager_};
+        mwfl::ControlHost pager_ui{pager_};
         pager_ui.Add(pager_label_, {234}, L"pager");
         ui.Add(animation_, {235});
         ui.Add(scroll_, {236});
@@ -108,15 +108,15 @@ public:
               has_intrinsic_size(animation_))) {
             throw std::runtime_error("missing intrinsic control size");
         }
-        mwtl::Must(tooltip_.Create(rebar_.GetHwnd()), "create tooltip");
-        mwtl::Must(images_.Create(16, 16), "create image list");
-        mwtl::Must(timer_.Start(*this, kTimer, 1ms), "start timer");
+        mwfl::Must(tooltip_.Create(rebar_.GetHwnd()), "create tooltip");
+        mwfl::Must(images_.Create(16, 16), "create image list");
+        mwfl::Must(timer_.Start(*this, kTimer, 1ms), "start timer");
 
         check_.SetChecked(true).SetEnabled(true);
-        mwtl::SelectionAdapter<mwtl::ComboBox, int> combo_items{combo_};
-        mwtl::Must(combo_items.Add(L"first", 10), "add typed ComboBox item");
-        mwtl::Must(combo_items.Add(L"second", 20), "add typed ComboBox item");
-        mwtl::Must(combo_items.SelectValue(20), "select typed ComboBox value");
+        mwfl::SelectionAdapter<mwfl::ComboBox, int> combo_items{combo_};
+        mwfl::Must(combo_items.Add(L"first", 10), "add typed ComboBox item");
+        mwfl::Must(combo_items.Add(L"second", 20), "add typed ComboBox item");
+        mwfl::Must(combo_items.SelectValue(20), "select typed ComboBox value");
         if (!combo_items.GetSelectedValue() ||
             combo_items.GetSelectedValue()->get() != 20 ||
             combo_.GetItemText(1) != L"second" || combo_.GetItemText(2)) {
@@ -124,10 +124,10 @@ public:
         }
         progress_.SetRange(0, 100).SetValue(64);
         radio_.SetChecked(true);
-        mwtl::SelectionAdapter<mwtl::ListBox, std::wstring> list_items{list_};
-        mwtl::Must(list_items.Add(L"first", L"alpha"), "add typed ListBox item");
-        mwtl::Must(list_items.Add(L"second", L"beta"), "add typed ListBox item");
-        mwtl::Must(list_items.SelectValue(L"beta"), "select typed ListBox value");
+        mwfl::SelectionAdapter<mwfl::ListBox, std::wstring> list_items{list_};
+        mwfl::Must(list_items.Add(L"first", L"alpha"), "add typed ListBox item");
+        mwfl::Must(list_items.Add(L"second", L"beta"), "add typed ListBox item");
+        mwfl::Must(list_items.SelectValue(L"beta"), "select typed ListBox value");
         if (!list_items.GetSelectedValue() ||
             list_items.GetSelectedValue()->get() != L"beta" ||
             list_.GetItemText(0) != L"first") {
@@ -137,52 +137,52 @@ public:
         const HTREEITEM root = tree_.AddItem({1001}, L"root");
         static_cast<void>(tree_.AddItem({1002}, L"child", root));
         static_cast<void>(tree_.Expand(root));
-        const std::array list_columns{mwtl::ColumnSpec{L"name", 80}};
-        mwtl::Must(mwtl::AddColumns(list_view_, list_columns),
+        const std::array list_columns{mwfl::ColumnSpec{L"name", 80}};
+        mwfl::Must(mwfl::AddColumns(list_view_, list_columns),
                    "populate ListView columns");
         const int list_row = list_view_.AddItem({1101}, L"item");
         static_cast<void>(list_view_.SetSubItem(list_row, 0, L"updated"));
-        mwtl::Must(mwtl::AddColumns(header_, {{L"header", 80}}),
+        mwfl::Must(mwfl::AddColumns(header_, {{L"header", 80}}),
                    "populate Header columns");
-        mwtl::Must(tab_model_.Add({{901}, L"first", false, true}), "add first stable tab");
-        mwtl::Must(tab_model_.Add({{902}, L"second", true, true}), "add second stable tab");
-        mwtl::Must(tab_model_.Select({902}), "select stable tab");
-        mwtl::Must(tabs_.Synchronize(tab_model_), "synchronize native tabs");
-        mwtl::Must(tabs_.SetSelection(mwtl::TabId{901}), "select first tab for keyboard test");
+        mwfl::Must(tab_model_.Add({{901}, L"first", false, true}), "add first stable tab");
+        mwfl::Must(tab_model_.Add({{902}, L"second", true, true}), "add second stable tab");
+        mwfl::Must(tab_model_.Select({902}), "select stable tab");
+        mwfl::Must(tabs_.Synchronize(tab_model_), "synchronize native tabs");
+        mwfl::Must(tabs_.SetSelection(mwfl::TabId{901}), "select first tab for keyboard test");
         ::SendMessageW(tabs_.GetHwnd(), WM_KEYDOWN, VK_RIGHT, 0);
-        if (tabs_.GetSelectedTabId() != mwtl::TabId{902}) {
+        if (tabs_.GetSelectedTabId() != mwfl::TabId{902}) {
             throw std::runtime_error("native tab keyboard navigation failed");
         }
         TCITEMW native_tab{};
         native_tab.mask = TCIF_PARAM;
-        if (tabs_.GetSelectedTabId() != mwtl::TabId{902} ||
+        if (tabs_.GetSelectedTabId() != mwfl::TabId{902} ||
             TabCtrl_GetItem(tabs_.GetHwnd(), 1, &native_tab) == FALSE || native_tab.lParam != 902 ||
-            tabs_.SetSelection(mwtl::TabId{999})) {
+            tabs_.SetSelection(mwfl::TabId{999})) {
             throw std::runtime_error("stable native tab state failed");
         }
-        if (!tabs_.RemoveTab(mwtl::TabId{901}) ||
-            tabs_.GetSelectedTabId() != mwtl::TabId{902} ||
+        if (!tabs_.RemoveTab(mwfl::TabId{901}) ||
+            tabs_.GetSelectedTabId() != mwfl::TabId{902} ||
             !tabs_.Synchronize(tab_model_)) {
             throw std::runtime_error("unselected native tab removal failed");
         }
         static_cast<void>(TabCtrl_SetCurSel(tabs_.GetHwnd(), -1));
-        if (!tabs_.SetSelection(0) || tabs_.GetSelectedTabId() != mwtl::TabId{901} ||
-            !tabs_.SetSelection(mwtl::TabId{902}) || !tabs_.RemoveTab(mwtl::TabId{902}) ||
-            tabs_.GetSelectedTabId() != mwtl::TabId{901}) {
+        if (!tabs_.SetSelection(0) || tabs_.GetSelectedTabId() != mwfl::TabId{901} ||
+            !tabs_.SetSelection(mwfl::TabId{902}) || !tabs_.RemoveTab(mwfl::TabId{902}) ||
+            tabs_.GetSelectedTabId() != mwfl::TabId{901}) {
             throw std::runtime_error("native tab selection or removal failed");
         }
-        mwtl::SelectionAdapter<mwtl::ComboBoxEx, int> combo_ex_items{combo_ex_};
-        mwtl::Must(combo_ex_items.Add(L"combo", 42), "add typed ComboBoxEx item");
-        mwtl::Must(combo_ex_items.Select(0), "select typed ComboBoxEx item");
+        mwfl::SelectionAdapter<mwfl::ComboBoxEx, int> combo_ex_items{combo_ex_};
+        mwfl::Must(combo_ex_items.Add(L"combo", 42), "add typed ComboBoxEx item");
+        mwfl::Must(combo_ex_items.Select(0), "select typed ComboBoxEx item");
         if (!combo_ex_items.GetSelectedValue() ||
             combo_ex_items.GetSelectedValue()->get() != 42 ||
             combo_ex_.GetItemText(0) != L"combo") {
             throw std::runtime_error("typed ComboBoxEx state failed");
         }
-        hot_key_.SetValue(mwtl::HotKeyValue{'K', HOTKEYF_CONTROL});
-        ip_.SetValue(mwtl::IpAddressValue{{127, 0, 0, 1}});
+        hot_key_.SetValue(mwfl::HotKeyValue{'K', HOTKEYF_CONTROL});
+        ip_.SetValue(mwfl::IpAddressValue{{127, 0, 0, 1}});
         spin_.SetBuddy(spin_text_).SetRange(0, 100).SetValue(42);
-        mwtl::Command toolbar_command({600}, L"Tool");
+        mwfl::Command toolbar_command({600}, L"Tool");
         const int command_image = images_.AddIcon(
             ::LoadIconW(nullptr, IDI_APPLICATION));
         if (command_image < 0 || !toolbar_.SetImageList(images_))
@@ -219,11 +219,11 @@ public:
         static_cast<void>(rebar_.AddBand(toolbar_, L"Band", 120));
         pager_.SetChild(pager_label_);
         scroll_.SetRange(0, 100).SetValue(31);
-        static_cast<void>(mwtl::InitializeFlatScrollBars(scroll_.GetHwnd()));
+        static_cast<void>(mwfl::InitializeFlatScrollBars(scroll_.GetHwnd()));
         const std::array status_parts{120, -1};
         static_cast<void>(status_bar_.SetParts(status_parts));
-        const std::array status_texts{mwtl::StatusPartText{0, L"ready"}};
-        mwtl::Must(mwtl::SetPartTexts(status_bar_, status_texts),
+        const std::array status_texts{mwfl::StatusPartText{0, L"ready"}};
+        mwfl::Must(mwfl::SetPartTexts(status_bar_, status_texts),
                    "populate status text");
         static_cast<void>(tooltip_.AddTool(toolbar_.GetHwnd(), L"tooltip"));
         if (!combo_.SetSelection(1) || combo_.GetSelection() != 1 ||
@@ -235,11 +235,11 @@ public:
         }
 
         SetLayout(
-            mwtl::Row()
+            mwfl::Row()
                 .Margin(8.0_dip)
                 .Gap(8.0_dip)
-                .Add(label_, mwtl::Stretch())
-                .Add(button_, mwtl::Fixed(100.0_dip)));
+                .Add(label_, mwfl::Stretch())
+                .Add(button_, mwfl::Fixed(100.0_dip)));
 
         button_.Click();
         ::SendMessageW(GetHwnd(), WM_KEYDOWN, VK_SPACE, 1);
@@ -251,91 +251,91 @@ public:
                        reinterpret_cast<LPARAM>(slider_.GetHwnd()));
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
         if (event.IsClicked(button_)) {
             command_seen = text_.GetText() == L"native edit";
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnKeyDown(const mwtl::KeyEvent& event) override {
+    mwfl::EventResult OnKeyDown(const mwfl::KeyEvent& event) override {
         key_seen = event.virtual_key == VK_SPACE && event.repeat_count == 1;
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnNotify(const mwtl::NotifyEvent& event) override {
-        if (!event.Is(button_, NM_CLICK)) return mwtl::EventResult::Propagate();
+    mwfl::EventResult OnNotify(const mwfl::NotifyEvent& event) override {
+        if (!event.Is(button_, NM_CLICK)) return mwfl::EventResult::Propagate();
         notify_seen = true;
         if (event.GetId() != kButton) notify_failure |= 1;
         if (event.GetControl() != button_.GetHwnd()) notify_failure |= 4;
-        return mwtl::EventResult::Handled(1);
+        return mwfl::EventResult::Handled(1);
     }
 
-    mwtl::EventResult OnScroll(const mwtl::ScrollEvent& event) override {
+    mwfl::EventResult OnScroll(const mwfl::ScrollEvent& event) override {
         scroll_seen = true;
         if (!event.IsFrom(slider_)) scroll_failure |= 1;
         if (!event.horizontal) scroll_failure |= 2;
         if (event.request != SB_THUMBPOSITION) scroll_failure |= 4;
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage& message) override {
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage& message) override {
         if (message.id == kCustomMessage) {
             custom_seen = message.wparam == 42;
-            return mwtl::EventResult::Handled(77);
+            return mwfl::EventResult::Handled(77);
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnTimer(mwtl::TimerId id) override {
+    mwfl::EventResult OnTimer(mwfl::TimerId id) override {
         if (id == kTimer) {
             timer_seen = true;
             timer_.Stop();
             ::PostMessageW(GetHwnd(), WM_CLOSE, 0, 0);
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
     static constexpr UINT kCustomMessage = WM_APP + 76;
-    static constexpr mwtl::ControlId kButton{202};
-    static constexpr mwtl::ControlId kCheck{203};
-    static constexpr mwtl::ControlId kCombo{204};
-    static constexpr mwtl::ControlId kProgress{205};
-    static constexpr mwtl::ControlId kGroup{206};
-    static constexpr mwtl::ControlId kRadio{207};
-    static constexpr mwtl::ControlId kList{208};
-    static constexpr mwtl::ControlId kSlider{209};
-    static constexpr mwtl::TimerId kTimer{9};
+    static constexpr mwfl::ControlId kButton{202};
+    static constexpr mwfl::ControlId kCheck{203};
+    static constexpr mwfl::ControlId kCombo{204};
+    static constexpr mwfl::ControlId kProgress{205};
+    static constexpr mwfl::ControlId kGroup{206};
+    static constexpr mwfl::ControlId kRadio{207};
+    static constexpr mwfl::ControlId kList{208};
+    static constexpr mwfl::ControlId kSlider{209};
+    static constexpr mwfl::TimerId kTimer{9};
 
-    mwtl::Label label_;
-    mwtl::TextBox text_;
-    mwtl::Button button_;
-    mwtl::CheckBox check_;
-    mwtl::ComboBox combo_;
-    mwtl::ProgressBar progress_;
-    mwtl::GroupBox group_;
-    mwtl::RadioButton radio_;
-    mwtl::ListBox list_;
-    mwtl::Slider slider_;
-    mwtl::TreeView tree_; mwtl::ListView list_view_; mwtl::Header header_;
-    mwtl::TabControl tabs_; mwtl::TabWorkspaceModel tab_model_;
-    mwtl::ComboBoxEx combo_ex_; mwtl::DateTimePicker date_;
-    mwtl::MonthCalendar calendar_; mwtl::HotKey hot_key_; mwtl::IpAddress ip_;
-    mwtl::ImageList images_;
-    mwtl::TextBox spin_text_; mwtl::UpDown spin_; mwtl::SysLink link_; mwtl::Rebar rebar_; mwtl::Toolbar toolbar_;
-    mwtl::Pager pager_; mwtl::Label pager_label_; mwtl::Animation animation_;
-    mwtl::ScrollBar scroll_; mwtl::StatusBar status_bar_; mwtl::Tooltip tooltip_;
-    mwtl::UiTimer timer_;
+    mwfl::Label label_;
+    mwfl::TextBox text_;
+    mwfl::Button button_;
+    mwfl::CheckBox check_;
+    mwfl::ComboBox combo_;
+    mwfl::ProgressBar progress_;
+    mwfl::GroupBox group_;
+    mwfl::RadioButton radio_;
+    mwfl::ListBox list_;
+    mwfl::Slider slider_;
+    mwfl::TreeView tree_; mwfl::ListView list_view_; mwfl::Header header_;
+    mwfl::TabControl tabs_; mwfl::TabWorkspaceModel tab_model_;
+    mwfl::ComboBoxEx combo_ex_; mwfl::DateTimePicker date_;
+    mwfl::MonthCalendar calendar_; mwfl::HotKey hot_key_; mwfl::IpAddress ip_;
+    mwfl::ImageList images_;
+    mwfl::TextBox spin_text_; mwfl::UpDown spin_; mwfl::SysLink link_; mwfl::Rebar rebar_; mwfl::Toolbar toolbar_;
+    mwfl::Pager pager_; mwfl::Label pager_label_; mwfl::Animation animation_;
+    mwfl::ScrollBar scroll_; mwfl::StatusBar status_bar_; mwfl::Tooltip tooltip_;
+    mwfl::UiTimer timer_;
 };
 
 }  // namespace
 
 int main() {
     const int result =
-        mwtl::Application(::GetModuleHandleW(nullptr)).Run<ModernApiWindow>(SW_HIDE);
+        mwfl::Application(::GetModuleHandleW(nullptr)).Run<ModernApiWindow>(SW_HIDE);
     if (result != 0) return 10;
     if (!command_seen) return 11;
     if (!key_seen) return 12;

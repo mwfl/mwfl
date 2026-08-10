@@ -2,42 +2,42 @@
 
 This tutorial targets Windows 10 or later, Visual Studio 2026, MSVC C++20,
 and x64. Scintilla is an optional pinned component and is not fetched by core
-`mwtl::mwtl` consumers.
+`mwfl::mwfl` consumers.
 
 ## 1. Build and run
 
 ```powershell
 cmake --preset vs2026-x64-scintilla
-cmake --build --preset vs2026-x64-scintilla-debug --target mwtl_code_editor_demo
-./build/presets/vs2026-x64-scintilla/examples/code_editor/Debug/mwtl_code_editor_demo.exe
+cmake --build --preset vs2026-x64-scintilla-debug --target mwfl_code_editor_demo
+./build/presets/vs2026-x64-scintilla/examples/code_editor/Debug/mwfl_code_editor_demo.exe
 ```
 
 CMake verifies the official Scintilla 5.6.5 source and x64 runtime archives.
 The target copies `Scintilla.dll` beside the executable. If it is absent,
 `ScintillaRuntime::LoadAdjacent` returns a structured status and the reference
-application explains that `mwtl_deploy_scintilla(target)` is required.
+application explains that `mwfl_deploy_scintilla(target)` is required.
 
 ## 2. Link and deploy
 
 ```cmake
-find_package(mwtl CONFIG REQUIRED COMPONENTS scintilla)
+find_package(mwfl CONFIG REQUIRED COMPONENTS scintilla)
 add_executable(my_editor WIN32 main.cpp)
-target_link_libraries(my_editor PRIVATE mwtl::scintilla)
-mwtl_deploy_scintilla(my_editor)
+target_link_libraries(my_editor PRIVATE mwfl::scintilla)
+mwfl_deploy_scintilla(my_editor)
 ```
 
-For source consumption, configure mwtl with `MWTL_BUILD_SCINTILLA=ON` and use
+For source consumption, configure mwfl with `MWFL_BUILD_SCINTILLA=ON` and use
 the same target and deployment helper.
 
 ## 3. Load before creating the control
 
 ```cpp
-mwtl::ScintillaRuntime runtime_;
-mwtl::ScintillaEditor editor_;
+mwfl::ScintillaRuntime runtime_;
+mwfl::ScintillaEditor editor_;
 
-mwtl::Must(runtime_.LoadAdjacent(), "load Scintilla.dll");
-ui.AddNative(editor_, mwtl::ControlId{600}, mwtl::RectDip{}, runtime_);
-mwtl::Must(editor_.ConfigureCodeEditing(), "configure editor");
+mwfl::Must(runtime_.LoadAdjacent(), "load Scintilla.dll");
+ui.AddNative(editor_, mwfl::ControlId{600}, mwfl::RectDip{}, runtime_);
+mwfl::Must(editor_.ConfigureCodeEditing(), "configure editor");
 ```
 
 The runtime state is shared with created editors, so destroying the lightweight
@@ -60,7 +60,7 @@ after a successful atomic file write, call `SetSavePoint` and
 
 ```powershell
 ctest --test-dir build/presets/vs2026-x64-scintilla -C Debug `
-  -R "mwtl.(scintilla_text|scintilla_native|code_editor_gui)"
+  -R "mwfl.(scintilla_text|scintilla_native|code_editor_gui)"
 ```
 
 The GUI self-test creates a local Unicode source file, opens it, finds and

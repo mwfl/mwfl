@@ -14,8 +14,8 @@ sorting. No application pointer is stored in native item data. Splitter forwards
 attached-pane notifications to the top-level window, where `HandleNotification`
 services real `LVN_GETDISPINFO` requests and captures callback exceptions.
 
-`mwtl.explorer_model` proves filtering and stable identities across sorts.
-`mwtl.explorer_gui` launches the real executable and checks native composition,
+`mwfl.explorer_model` proves filtering and stable identities across sorts.
+`mwfl.explorer_gui` launches the real executable and checks native composition,
 image-list borrowing, MSAA names, TreeView navigation, virtual mapping, sorting,
 keyboard Refresh, tabs, context routing, responsive pane geometry, theme/system
 messages, and 40-cycle menu resource bounds.

@@ -1,9 +1,9 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <array>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     std::uint64_t next_id = 1;
     for (int cycle = 0; cycle < 250; ++cycle) {
         DocumentWorkspaceModel left{{1}, 16};

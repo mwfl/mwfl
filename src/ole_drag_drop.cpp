@@ -1,11 +1,11 @@
-#include <mwtl/ole_drag_drop.h>
+#include <mwfl/ole_drag_drop.h>
 
 #include <objbase.h>
 #include <wrl/implements.h>
 
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 using Microsoft::WRL::ClassicCom;
@@ -274,4 +274,4 @@ OleDropTargetRegistrationResult RegisterOleDropTarget(
     return result;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

@@ -9,11 +9,11 @@ param(
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'developer-tools.ps1')
 
-Write-Host 'mwtl developer environment'
+Write-Host 'mwfl developer environment'
 Write-Host "  OS: $([Environment]::OSVersion.VersionString)"
 Write-Host "  Process architecture: $([Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture)"
 
-$installations = @(Get-MwtlVisualStudioInstallations)
+$installations = @(Get-MwflVisualStudioInstallations)
 if ($installations.Count -eq 0) {
     throw 'No supported Visual Studio installation was found.'
 }
@@ -26,8 +26,8 @@ foreach ($item in $installations) {
     Write-Host "  Visual Studio $($item.Year): $($item.Version) ($($features -join ', '))"
 }
 
-$selected = Resolve-MwtlToolchain -VisualStudio $VisualStudio -Architecture $Architecture
-$presets = Get-MwtlPresetNames -Toolchain $selected -Architecture $Architecture
+$selected = Resolve-MwflToolchain -VisualStudio $VisualStudio -Architecture $Architecture
+$presets = Get-MwflPresetNames -Toolchain $selected -Architecture $Architecture
 Write-Host "  Selected: Visual Studio $($selected.Year), $Architecture"
 Write-Host "  CMake: $($selected.CMake)"
 Write-Host "  Compiler: $($selected.Compiler)"
@@ -37,7 +37,7 @@ Write-Host "  Fast validation: ./scripts/verify.ps1 -Mode Fast -VisualStudio $($
 Write-Host '  Reproduce this environment: open .vsconfig with Visual Studio Installer'
 
 $missingOffline = @()
-foreach ($name in @('MWTL_WTL_SOURCE_DIR', 'MWTL_WIL_SOURCE_DIR')) {
+foreach ($name in @('MWFL_WTL_SOURCE_DIR', 'MWFL_WIL_SOURCE_DIR')) {
     if (-not [Environment]::GetEnvironmentVariable($name)) {
         $missingOffline += $name
     }

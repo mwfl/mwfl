@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <commctrl.h>
 #include <oleacc.h>
@@ -64,8 +64,8 @@ DWORD GuiResources() noexcept {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
-    using mwtl::operator""_dip;
+    using namespace mwfl;
+    using mwfl::operator""_dip;
 
     const HWND parent = ::CreateWindowExW(0, L"STATIC", L"Native host test parent",
                                           WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 640, 480,

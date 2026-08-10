@@ -1,4 +1,4 @@
-#include <mwtl/appearance.h>
+#include <mwfl/appearance.h>
 
 #include <oleacc.h>
 
@@ -6,9 +6,9 @@
 #include <string>
 
 int main() {
-    if (mwtl::ApplyWindowAppearance(nullptr)) return EXIT_FAILURE;
-    static_cast<void>(mwtl::IsHighContrastEnabled());
-    static_cast<void>(mwtl::IsSystemDarkModePreferred());
+    if (mwfl::ApplyWindowAppearance(nullptr)) return EXIT_FAILURE;
+    static_cast<void>(mwfl::IsHighContrastEnabled());
+    static_cast<void>(mwfl::IsSystemDarkModePreferred());
 
     const HWND parent = ::CreateWindowExW(0, L"STATIC", L"appearance-test",
         WS_OVERLAPPED, 0, 0, 320, 200, nullptr, nullptr,
@@ -18,7 +18,7 @@ int main() {
 
     const HWND child = ::CreateWindowExW(0, L"STATIC", L"", WS_CHILD,
         0, 0, 100, 20, parent, nullptr, ::GetModuleHandleW(nullptr), nullptr);
-    if (child == nullptr || !mwtl::SetAccessibleName(child, L"Status summary"))
+    if (child == nullptr || !mwfl::SetAccessibleName(child, L"Status summary"))
         return EXIT_FAILURE;
     wchar_t visible_text[2]{};
     if (::GetWindowTextW(child, visible_text, 2) != 0) return EXIT_FAILURE;
@@ -39,9 +39,9 @@ int main() {
     ::SysFreeString(accessible_name);
     if (!name_matches) return EXIT_FAILURE;
 
-    mwtl::AppearanceOptions options;
-    options.color_mode = mwtl::ColorMode::dark;
-    options.backdrop = mwtl::Backdrop::mica;
-    return mwtl::ApplyWindowAppearance(parent, options)
+    mwfl::AppearanceOptions options;
+    options.color_mode = mwfl::ColorMode::dark;
+    options.backdrop = mwfl::Backdrop::mica;
+    return mwfl::ApplyWindowAppearance(parent, options)
         ? EXIT_SUCCESS : EXIT_FAILURE;
 }

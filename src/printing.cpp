@@ -1,4 +1,4 @@
-#include <mwtl/printing.h>
+#include <mwfl/printing.h>
 
 #include <winspool.h>
 
@@ -6,7 +6,7 @@
 #include <cmath>
 #include <limits>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 std::wstring Copy(const wchar_t* value) { return value ? value : L""; }
@@ -186,4 +186,4 @@ PrinterListResult EnumerateLocalPrinters() {
     return result;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

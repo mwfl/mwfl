@@ -1,6 +1,6 @@
 # Legacy MDI recipes
 
-- Prefer `DocumentWorkspaceModel` for new products; request `mwtl::mdi` only for
+- Prefer `DocumentWorkspaceModel` for new products; request `mwfl::mdi` only for
   traditional Windows MDI interoperability.
 - Store documents by `MdiChildId`; never use a global current-document pointer.
 - Create `MdiHost` on the frame UI thread and resize its owned MDICLIENT.

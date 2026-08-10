@@ -1,4 +1,4 @@
-#include <mwtl/help.h>
+#include <mwfl/help.h>
 
 #include <htmlhelp.h>
 #include <shellapi.h>
@@ -7,7 +7,7 @@
 #include <cwctype>
 #include <ranges>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 HelpResult Result(HelpStatus status, DWORD error = ERROR_SUCCESS) noexcept {
@@ -129,4 +129,4 @@ HelpResult LaunchHelp(HWND owner, const HelpRequest& request) noexcept {
     return LaunchHelpWithBackend(owner, request, DefaultBackend);
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

@@ -1,4 +1,4 @@
-#include <mwtl/dialog.h>
+#include <mwfl/dialog.h>
 
 #include <windows.h>
 
@@ -14,7 +14,7 @@
 
 extern WTL::CAppModule _Module;
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 constexpr UINT kAcceptDialog = WM_APP + 0x51B;
@@ -375,4 +375,4 @@ INT_PTR CALLBACK Dialog::Procedure(HWND window, UINT message, WPARAM wparam,
     return FALSE;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

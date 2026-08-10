@@ -1,4 +1,4 @@
-#include <mwtl/imaging.h>
+#include <mwfl/imaging.h>
 
 #include <wincodec.h>
 #include <wrl/client.h>
@@ -7,7 +7,7 @@
 #include <cmath>
 #include <limits>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 ImageDecodeStatus MapDecodeError(HRESULT error) noexcept {
@@ -208,4 +208,4 @@ void ImageViewportModel::ClampPan() noexcept {
     pan_.y.value = std::clamp(pan_.y.value, -overflow_y * 0.5f, overflow_y * 0.5f);
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

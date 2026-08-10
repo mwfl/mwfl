@@ -1,14 +1,14 @@
-#include <mwtl/file_association.h>
+#include <mwfl/file_association.h>
 
-mwtl::FileAssociationResult RegisterFixtureAssociation(
+mwfl::FileAssociationResult RegisterFixtureAssociation(
     const std::filesystem::path& executable) {
-    mwtl::FileAssociationSpec spec{
-        .extension = L".mwtlfixture",
-        .prog_id = L"mwtl.agent.fixture.document",
-        .owner_id = L"mwtl.agent.fixture",
-        .display_name = L"mwtl Agent fixture",
+    mwfl::FileAssociationSpec spec{
+        .extension = L".mwflfixture",
+        .prog_id = L"mwfl.agent.fixture.document",
+        .owner_id = L"mwfl.agent.fixture",
+        .display_name = L"mwfl Agent fixture",
         .executable = executable,
         .icon = executable,
         .verbs = {{L"open", L"Open", {}}}};
-    return mwtl::RegisterPerUserFileAssociation(spec);
+    return mwfl::RegisterPerUserFileAssociation(spec);
 }

@@ -1,8 +1,8 @@
-#include <mwtl/command_controls.h>
+#include <mwfl/command_controls.h>
 
 #include <string>
 
-namespace mwtl {
+namespace mwfl {
 namespace { bool Initialize(DWORD classes) noexcept { INITCOMMONCONTROLSEX value{sizeof(value), classes}; return ::InitCommonControlsEx(&value) != FALSE; } }
 
 bool Toolbar::Create(HWND parent, ControlId id, RectDip bounds, ToolbarOptions options) {
@@ -80,4 +80,4 @@ bool Animation::Open(HINSTANCE module, UINT resource_id) noexcept { return IsWin
 bool Animation::Play(UINT repeat_count, UINT from, UINT to) noexcept { return IsWindow() && Animate_Play(GetHwnd(), from, to, repeat_count) != FALSE; }
 Animation& Animation::Stop() noexcept { if (IsWindow()) Animate_Stop(GetHwnd()); return *this; }
 
-}  // namespace mwtl
+}  // namespace mwfl

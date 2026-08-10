@@ -1,16 +1,16 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <string>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 namespace {
 
-class LayoutGalleryWindow final : public mwtl::WindowBase {
+class LayoutGalleryWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         SetTitle(L"Responsive layout gallery");
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(title_, L"Responsive layout gallery");
         ui.Add(subtitle_, L"Resize the window and switch density to see nested Row, Column, Overlay, Auto, Fixed, and Stretch behavior.");
         ui.Add(compact_, L"Compact");
@@ -34,27 +34,27 @@ public:
         ui.Add(explainer_, L"Layout recipe");
         ui.Add(recipe_, L"Root Column\r\n  Toolbar: Auto\r\n  Content Row: Stretch\r\n    Cards: weighted Stretch\r\n  Footer: Fixed");
         ui.Add(status_, L"Comfortable density | resize to test");
-        mwtl::Must(mwtl::AddItems(team_, {L"Research", L"Design systems", L"Developer experience"}), "populate teams");
+        mwfl::Must(mwfl::AddItems(team_, {L"Research", L"Design systems", L"Developer experience"}), "populate teams");
         team_.SetSelection(2);
         comfortable_.SetChecked(true);
-        mwtl::SetDialogDefaultButton(GetHwnd(), static_cast<UINT>(save_.GetId().value));
-        mwtl::ApplyWindowAppearance(GetHwnd(), {mwtl::ColorMode::system, mwtl::Backdrop::mica});
+        mwfl::SetDialogDefaultButton(GetHwnd(), static_cast<UINT>(save_.GetId().value));
+        mwfl::ApplyWindowAppearance(GetHwnd(), {mwfl::ColorMode::system, mwfl::Backdrop::mica});
         ApplyFont(GetDpiContext().GetDpi());
         RebuildLayout();
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
         if (event.IsClicked(compact_)) {
             compact_.SetChecked(true); comfortable_.SetChecked(false); compact_mode_ = true;
             status_.SetText(L"Compact density | gaps and card padding reduced");
             RebuildLayout();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.IsClicked(comfortable_)) {
             compact_.SetChecked(false); comfortable_.SetChecked(true); compact_mode_ = false;
             status_.SetText(L"Comfortable density | resize to test");
             RebuildLayout();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.IsClicked(long_text_)) {
             long_content_ = !long_content_;
@@ -62,52 +62,52 @@ public:
             email_label_.SetText(long_content_ ? L"Primary contact email address" : L"Email");
             status_.SetText(long_content_ ? L"Long content enabled | Auto measurement updated" : L"Short content restored");
             RebuildLayout();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.IsClicked(save_)) {
             status_.SetText(L"Saved | the footer remains fixed while content stretches");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnDpiChanged(const mwtl::DpiChangedEvent& event) override {
-        ApplyFont(event.dpi_x); return mwtl::EventResult::Propagate();
+    mwfl::EventResult OnDpiChanged(const mwfl::DpiChangedEvent& event) override {
+        ApplyFont(event.dpi_x); return mwfl::EventResult::Propagate();
     }
 
 private:
-    mwtl::LayoutNode ProfileCard(mwtl::Dip pad, mwtl::Dip gap) {
-        return mwtl::Overlay().Add(profile_).Add(
-            mwtl::Column().Margin({pad, 36.0_dip, pad, pad}).Gap(gap)
-                .Add(mwtl::Row().Gap(gap)
-                    .Add(avatar_, mwtl::Fixed(62.0_dip), {.alignment = mwtl::CrossAlignment::center})
-                    .Add(mwtl::Column().Gap(4.0_dip).Add(name_, mwtl::Auto()).Add(role_, mwtl::Stretch()), mwtl::Stretch())
-                    .Add(active_, mwtl::Fixed(74.0_dip), {.alignment = mwtl::CrossAlignment::start}), mwtl::Fixed(110.0_dip))
-                .Add(mwtl::Column(), mwtl::Stretch())
-                .Add(mwtl::Overlay().Add(metrics_).Add(
-                    mwtl::Row().Margin({14.0_dip, 30.0_dip, 14.0_dip, 10.0_dip}).Gap(gap)
-                        .Add(metric_a_, mwtl::Stretch(1.0f)).Add(metric_b_, mwtl::Stretch(1.4f)).Add(metric_c_, mwtl::Stretch(1.0f))),
-                    mwtl::Fixed(96.0_dip)));
+    mwfl::LayoutNode ProfileCard(mwfl::Dip pad, mwfl::Dip gap) {
+        return mwfl::Overlay().Add(profile_).Add(
+            mwfl::Column().Margin({pad, 36.0_dip, pad, pad}).Gap(gap)
+                .Add(mwfl::Row().Gap(gap)
+                    .Add(avatar_, mwfl::Fixed(62.0_dip), {.alignment = mwfl::CrossAlignment::center})
+                    .Add(mwfl::Column().Gap(4.0_dip).Add(name_, mwfl::Auto()).Add(role_, mwfl::Stretch()), mwfl::Stretch())
+                    .Add(active_, mwfl::Fixed(74.0_dip), {.alignment = mwfl::CrossAlignment::start}), mwfl::Fixed(110.0_dip))
+                .Add(mwfl::Column(), mwfl::Stretch())
+                .Add(mwfl::Overlay().Add(metrics_).Add(
+                    mwfl::Row().Margin({14.0_dip, 30.0_dip, 14.0_dip, 10.0_dip}).Gap(gap)
+                        .Add(metric_a_, mwfl::Stretch(1.0f)).Add(metric_b_, mwfl::Stretch(1.4f)).Add(metric_c_, mwfl::Stretch(1.0f))),
+                    mwfl::Fixed(96.0_dip)));
     }
 
-    mwtl::LayoutNode FormCard(mwtl::Dip pad, mwtl::Dip gap) {
+    mwfl::LayoutNode FormCard(mwfl::Dip pad, mwfl::Dip gap) {
         const auto label_width = long_content_ ? 190.0_dip : 74.0_dip;
-        return mwtl::Overlay().Add(form_).Add(
-            mwtl::Column().Margin({pad, 36.0_dip, pad, pad}).Gap(gap)
-                .Add(mwtl::Row().Gap(gap).Add(email_label_, mwtl::Fixed(label_width), {.alignment = mwtl::CrossAlignment::center}).Add(email_, mwtl::Stretch()), mwtl::Fixed(38.0_dip))
-                .Add(mwtl::Row().Gap(gap).Add(team_label_, mwtl::Fixed(label_width), {.alignment = mwtl::CrossAlignment::center}).Add(team_, mwtl::Stretch()), mwtl::Fixed(38.0_dip))
-                .Add(mwtl::Row().Add(mwtl::Column(), mwtl::Stretch()).Add(save_, mwtl::Fixed(140.0_dip)), mwtl::Fixed(42.0_dip))
-                .Add(mwtl::Overlay().Add(explainer_).Add(mwtl::Column().Margin({14.0_dip, 30.0_dip, 14.0_dip, 12.0_dip}).Add(recipe_, mwtl::Stretch())), mwtl::Stretch()));
+        return mwfl::Overlay().Add(form_).Add(
+            mwfl::Column().Margin({pad, 36.0_dip, pad, pad}).Gap(gap)
+                .Add(mwfl::Row().Gap(gap).Add(email_label_, mwfl::Fixed(label_width), {.alignment = mwfl::CrossAlignment::center}).Add(email_, mwfl::Stretch()), mwfl::Fixed(38.0_dip))
+                .Add(mwfl::Row().Gap(gap).Add(team_label_, mwfl::Fixed(label_width), {.alignment = mwfl::CrossAlignment::center}).Add(team_, mwfl::Stretch()), mwfl::Fixed(38.0_dip))
+                .Add(mwfl::Row().Add(mwfl::Column(), mwfl::Stretch()).Add(save_, mwfl::Fixed(140.0_dip)), mwfl::Fixed(42.0_dip))
+                .Add(mwfl::Overlay().Add(explainer_).Add(mwfl::Column().Margin({14.0_dip, 30.0_dip, 14.0_dip, 12.0_dip}).Add(recipe_, mwfl::Stretch())), mwfl::Stretch()));
     }
 
     void RebuildLayout() {
         const auto gap = compact_mode_ ? 7.0_dip : 12.0_dip;
         const auto pad = compact_mode_ ? 14.0_dip : 22.0_dip;
-        SetLayout(mwtl::Column().Margin(compact_mode_ ? 16.0_dip : 24.0_dip).Gap(gap)
-            .Add(title_, mwtl::Fixed(34.0_dip)).Add(subtitle_, mwtl::Fixed(28.0_dip))
-            .Add(mwtl::Row().Gap(8.0_dip).Add(compact_, mwtl::Fixed(105.0_dip)).Add(comfortable_, mwtl::Fixed(120.0_dip)).Add(long_text_, mwtl::Fixed(160.0_dip)), mwtl::Fixed(34.0_dip))
-            .Add(mwtl::Row().Gap(gap).Add(ProfileCard(pad, gap), mwtl::Fixed(560.0_dip)).Add(FormCard(pad, gap), mwtl::Stretch()), mwtl::Stretch())
-            .Add(status_, mwtl::Fixed(30.0_dip)));
+        SetLayout(mwfl::Column().Margin(compact_mode_ ? 16.0_dip : 24.0_dip).Gap(gap)
+            .Add(title_, mwfl::Fixed(34.0_dip)).Add(subtitle_, mwfl::Fixed(28.0_dip))
+            .Add(mwfl::Row().Gap(8.0_dip).Add(compact_, mwfl::Fixed(105.0_dip)).Add(comfortable_, mwfl::Fixed(120.0_dip)).Add(long_text_, mwfl::Fixed(160.0_dip)), mwfl::Fixed(34.0_dip))
+            .Add(mwfl::Row().Gap(gap).Add(ProfileCard(pad, gap), mwfl::Fixed(560.0_dip)).Add(FormCard(pad, gap), mwfl::Stretch()), mwfl::Stretch())
+            .Add(status_, mwfl::Fixed(30.0_dip)));
     }
     void ApplyFont(UINT dpi) {
         if (!font_.CreateMessageFont(dpi)) return;
@@ -116,17 +116,17 @@ private:
     }
     bool compact_mode_{};
     bool long_content_{};
-    mwtl::Label title_, subtitle_, avatar_, name_, role_, active_, metric_a_, metric_b_, metric_c_, email_label_, team_label_, recipe_, status_;
-    mwtl::RadioButton compact_, comfortable_;
-    mwtl::Button long_text_, save_;
-    mwtl::GroupBox profile_, metrics_, form_, explainer_;
-    mwtl::TextBox email_;
-    mwtl::ComboBox team_;
-    mwtl::UiFont font_;
+    mwfl::Label title_, subtitle_, avatar_, name_, role_, active_, metric_a_, metric_b_, metric_c_, email_label_, team_label_, recipe_, status_;
+    mwfl::RadioButton compact_, comfortable_;
+    mwfl::Button long_text_, save_;
+    mwfl::GroupBox profile_, metrics_, form_, explainer_;
+    mwfl::TextBox email_;
+    mwfl::ComboBox team_;
+    mwfl::UiFont font_;
 };
 
 }  // namespace
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
-    return mwtl::RunApplication<LayoutGalleryWindow>(instance, show, {.title = L"Responsive layout gallery", .initial_bounds = {{}, {1180.0_dip, 760.0_dip}}, .use_default_bounds = false});
+    return mwfl::RunApplication<LayoutGalleryWindow>(instance, show, {.title = L"Responsive layout gallery", .initial_bounds = {{}, {1180.0_dip, 760.0_dip}}, .use_default_bounds = false});
 }

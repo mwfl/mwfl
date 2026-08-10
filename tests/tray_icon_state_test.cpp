@@ -1,8 +1,8 @@
-#include <mwtl/tray_icon.h>
+#include <mwfl/tray_icon.h>
 
 int main() {
-    using mwtl::TrayIconState;
-    using mwtl::TrayIconStateModel;
+    using mwfl::TrayIconState;
+    using mwfl::TrayIconStateModel;
 
     TrayIconStateModel state;
     if (state.GetState() != TrayIconState::detached || !state.CanAdd() || state.CanModify() ||

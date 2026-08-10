@@ -1,6 +1,6 @@
 Set-StrictMode -Version Latest
 
-function Get-MwtlVisualStudioInstallations {
+function Get-MwflVisualStudioInstallations {
     $vswhere = Join-Path ([Environment]::GetFolderPath('ProgramFilesX86')) `
         'Microsoft Visual Studio\Installer\vswhere.exe'
     if (-not (Test-Path -LiteralPath $vswhere)) {
@@ -44,7 +44,7 @@ function Get-MwtlVisualStudioInstallations {
     } | Sort-Object Year -Descending)
 }
 
-function Resolve-MwtlToolchain {
+function Resolve-MwflToolchain {
     param(
         [ValidateSet('Auto', '2022', '2026')]
         [string]$VisualStudio = 'Auto',
@@ -52,7 +52,7 @@ function Resolve-MwtlToolchain {
         [string]$Architecture = 'x64'
     )
 
-    $installations = @(Get-MwtlVisualStudioInstallations)
+    $installations = @(Get-MwflVisualStudioInstallations)
     if ($VisualStudio -eq 'Auto') {
         $selected = $installations | Select-Object -First 1
     } else {
@@ -91,7 +91,7 @@ function Resolve-MwtlToolchain {
     return $selected
 }
 
-function Get-MwtlPresetNames {
+function Get-MwflPresetNames {
     param(
         [Parameter(Mandatory)]$Toolchain,
         [ValidateSet('x64', 'ARM64')]

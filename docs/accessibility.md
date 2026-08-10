@@ -1,6 +1,6 @@
 # Accessibility and keyboard checklist
 
-mwtl uses native HWND controls, so standard controls retain Windows keyboard,
+mwfl uses native HWND controls, so standard controls retain Windows keyboard,
 high-contrast, and accessibility behavior. Applications are still responsible
 for meaningful names, navigation order, grouping, and validation feedback.
 
@@ -25,7 +25,7 @@ for meaningful names, navigation order, grouping, and validation feedback.
    mnemonics, Enter, Space, and Escape.
 2. Inspect with Narrator and Accessibility Insights: names, roles, states, focus
    order, and live status changes must be understandable.
-3. Enable Windows high contrast. mwtl suppresses cosmetic DWM preferences, but
+3. Enable Windows high contrast. mwfl suppresses cosmetic DWM preferences, but
    application-owned colors and GDI drawing must also remain legible.
 4. Validate 100%, 200%, and 300% per-monitor DPI, including moving the window
    between monitors.

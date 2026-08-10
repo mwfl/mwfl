@@ -1,4 +1,4 @@
-#include <mwtl/mdi.h>
+#include <mwfl/mdi.h>
 
 #include <shellapi.h>
 
@@ -48,11 +48,11 @@ public:
         window_class.hInstance = instance;
         window_class.hCursor = ::LoadCursorW(nullptr, IDC_ARROW);
         window_class.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-        window_class.lpszClassName = L"mwtl.mdi.reference.frame";
+        window_class.lpszClassName = L"mwfl.mdi.reference.frame";
         if (!::RegisterClassW(&window_class)) return Fail(L"frame registration failed");
         menu_ = CreateApplicationMenu();
         frame_ = ::CreateWindowExW(0, window_class.lpszClassName,
-            L"mwtl Legacy MDI Workspace", WS_OVERLAPPEDWINDOW,
+            L"mwfl Legacy MDI Workspace", WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, CW_USEDEFAULT, 960, 680, nullptr, menu_, instance, this);
         if (!frame_) return Fail(L"frame creation failed");
         HMENU window_menu = ::GetSubMenu(menu_, 1);
@@ -135,9 +135,9 @@ private:
             }
             break;
         case CommandClose: CloseActive(false); break;
-        case CommandCascade: host_.Arrange(mwtl::MdiArrange::cascade); break;
-        case CommandTileHorizontal: host_.Arrange(mwtl::MdiArrange::tile_horizontal); break;
-        case CommandTileVertical: host_.Arrange(mwtl::MdiArrange::tile_vertical); break;
+        case CommandCascade: host_.Arrange(mwfl::MdiArrange::cascade); break;
+        case CommandTileHorizontal: host_.Arrange(mwfl::MdiArrange::tile_horizontal); break;
+        case CommandTileVertical: host_.Arrange(mwfl::MdiArrange::tile_vertical); break;
         case CommandExit: ::SendMessageW(frame_, WM_CLOSE, 0, 0); break;
         default: return host_.FrameDefault(WM_COMMAND, command, 0);
         }
@@ -145,7 +145,7 @@ private:
     }
 
     void CreateDocument() {
-        const mwtl::MdiChildId id{next_id_++};
+        const mwfl::MdiChildId id{next_id_++};
         const std::wstring title = L"Document " + std::to_wstring(id.value);
         if (!model_.Add({id, title})) { FailSelfTest(L"model add failed"); return; }
         auto created = host_.CreateChild(id, {WS_VISIBLE | WS_OVERLAPPEDWINDOW,
@@ -169,7 +169,7 @@ private:
         if (!created) { model_.Remove(id, true); FailSelfTest(L"child creation failed"); }
     }
 
-    void RefreshTitle(mwtl::MdiChildId id) {
+    void RefreshTitle(mwfl::MdiChildId id) {
         const auto* document = model_.Find(id);
         HWND child = host_.GetChild(id);
         if (!document || !child) return;
@@ -186,7 +186,7 @@ private:
         if (!document) return false;
         if (document->dirty && !discard) {
             if (self_test_) return false;
-            if (::MessageBoxW(frame_, L"Discard unsaved changes?", L"mwtl MDI",
+            if (::MessageBoxW(frame_, L"Discard unsaved changes?", L"mwfl MDI",
                     MB_OKCANCEL | MB_ICONWARNING) != IDOK) return false;
         }
         return static_cast<bool>(host_.Close(*active));
@@ -196,7 +196,7 @@ private:
         bool dirty = false;
         for (const auto& child : model_.GetChildren()) dirty |= child.dirty;
         if (dirty && !self_test_ && ::MessageBoxW(frame_,
-                L"Discard all unsaved changes?", L"mwtl MDI",
+                L"Discard all unsaved changes?", L"mwfl MDI",
                 MB_OKCANCEL | MB_ICONWARNING) != IDOK) return false;
         while (const auto active = model_.GetActiveId())
             if (!host_.Close(*active, true)) return false;
@@ -249,8 +249,8 @@ private:
     HWND frame_ = nullptr;
     HMENU menu_ = nullptr;
     HACCEL accelerators_ = nullptr;
-    mwtl::MdiWorkspaceModel model_;
-    mwtl::MdiHost host_;
+    mwfl::MdiWorkspaceModel model_;
+    mwfl::MdiHost host_;
     std::uint64_t next_id_ = 1;
 };
 

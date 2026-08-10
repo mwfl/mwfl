@@ -3,25 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="mwtl basic controls: move-only owners of real system child windows with DIP bounds and command events.">
-  <link rel="canonical" href="https://everettjf.github.io/mwtl/components/controls.html">
-  <title>Native controls — mwtl</title>
+  <meta name="description" content="mwfl basic controls: move-only owners of real system child windows with DIP bounds and command events.">
+  <link rel="canonical" href="https://mwfl.github.io/components/controls.html">
+  <title>Native controls — mwfl</title>
   <meta name="theme-color" content="#f7f9ff">
-  <link rel="icon" type="image/svg+xml" href="../assets/mwtl-mark.svg">
+  <link rel="icon" type="image/svg+xml" href="../assets/mwfl-mark.svg">
   <link rel="stylesheet" href="../styles.css?v=20260810a">
-  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
   <script defer src="../assets/site.js?v=20260810a"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell nav">
-      <a class="brand" href="../index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="../assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+      <a class="brand" href="../index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="../assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
       <nav class="nav-links" aria-label="Main navigation">
         <a class="active" href="index.html">Components</a>
         <a href="../tutorial.html">Get started</a>
         <a href="../changelog.html">Changelog</a>
-        <a href="https://github.com/everettjf/mwtl">GitHub</a>
+        <a href="https://github.com/mwfl/mwfl">GitHub</a>
         <button class="theme-toggle" type="button" aria-label="Toggle color theme"></button>
       </nav>
     </div>
@@ -29,31 +29,31 @@
   <main id="main" class="shell prose">
     <div class="eyebrow">Components</div><h1>Modern wrappers, native HWNDs</h1>
     <p>Label, Button, TextBox, CheckBox, RadioButton, GroupBox, ComboBox, ListBox, ProgressBar, and Slider are move-only owners of real system child windows. The gallery executable creates every supported wrapper. DIP bounds, UTF-16 text, command events, and direct <code>GetHwnd()</code> access coexist.</p>
-    <pre data-title="controls/main.cpp"><code>using mwtl::operator""_dip;
+    <pre data-title="controls/main.cpp"><code>using mwfl::operator""_dip;
 
 void BuildUI() override {
-    mwtl::ControlHost ui{*this};
+    mwfl::ControlHost ui{*this};
     ui.Add(name, L"Ada");
     ui.Add(greet, L"Greet");
-    SetLayout(mwtl::Row().Margin(24.0_dip).Gap(16.0_dip)
-        .Add(name, mwtl::Stretch())
-        .Add(greet, mwtl::Fixed(120.0_dip)));
+    SetLayout(mwfl::Row().Margin(24.0_dip).Gap(16.0_dip)
+        .Add(name, mwfl::Stretch())
+        .Add(greet, mwfl::Fixed(120.0_dip)));
 }
 
-mwtl::EventResult OnCommand(const mwtl::CommandEvent&amp; event) override {
+mwfl::EventResult OnCommand(const mwfl::CommandEvent&amp; event) override {
     if (event.IsClicked(greet)) {
         SetTitle(L"Hello, " + name.GetText());
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
-    return mwtl::EventResult::Propagate();
+    return mwfl::EventResult::Propagate();
 }</code></pre>
     <p><code>UiTimer</code> complements the controls with typed IDs, <code>std::chrono</code> intervals, move-only ownership, and automatic <code>KillTimer</code>.</p>
-    <p>Repository source: <a href="https://github.com/everettjf/mwtl/tree/main/examples/controls">examples/controls</a></p>
+    <p>Repository source: <a href="https://github.com/mwfl/mwfl/tree/main/examples/controls">examples/controls</a></p>
   </main>
   <footer class="site-footer">
     <div class="shell footer">
       <span>Return to the <a href="index.html">component reference</a></span>
-      <nav aria-label="Footer"><a href="index.html">Components</a><a href="https://github.com/everettjf/mwtl">GitHub</a></nav>
+      <nav aria-label="Footer"><a href="index.html">Components</a><a href="https://github.com/mwfl/mwfl">GitHub</a></nav>
     </div>
   </footer>
 </body>

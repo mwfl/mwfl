@@ -1,5 +1,5 @@
-#include <mwtl/mwtl.h>
-#include <mwtl/printing_settings.h>
+#include <mwfl/mwfl.h>
+#include <mwfl/printing_settings.h>
 
 #include <algorithm>
 #include <array>
@@ -8,22 +8,22 @@
 #include <string_view>
 #include <vector>
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
 namespace {
-constexpr mwtl::ControlId kPrevious{841};
-constexpr mwtl::ControlId kNext{842};
-constexpr mwtl::ControlId kZoomOut{843};
-constexpr mwtl::ControlId kZoomIn{844};
-constexpr mwtl::ControlId kSettings{845};
-constexpr mwtl::ControlId kPrint{846};
+constexpr mwfl::ControlId kPrevious{841};
+constexpr mwfl::ControlId kNext{842};
+constexpr mwfl::ControlId kZoomOut{843};
+constexpr mwfl::ControlId kZoomIn{844};
+constexpr mwfl::ControlId kSettings{845};
+constexpr mwfl::ControlId kPrint{846};
 constexpr UINT kRunSelfTest = WM_APP + 0x1B0;
 bool g_self_test = false;
 
 std::vector<std::wstring> MakeDocument() {
     std::vector<std::wstring> lines;
     lines.reserve(83);
-    lines.push_back(L"mwtl printing and preview reference");
+    lines.push_back(L"mwfl printing and preview reference");
     lines.push_back(L"The same PrintPage range renders on screen and on the printer DC.");
     lines.push_back(L"");
     for (int index = 1; index <= 80; ++index)
@@ -32,7 +32,7 @@ std::vector<std::wstring> MakeDocument() {
     return lines;
 }
 
-bool RenderPage(HDC dc, RECT bounds, const mwtl::PrintPage& page,
+bool RenderPage(HDC dc, RECT bounds, const mwfl::PrintPage& page,
                 const std::vector<std::wstring>& lines, bool preview) {
     if (!dc || bounds.right <= bounds.left || bounds.bottom <= bounds.top ||
         page.content_begin < 0 || page.content_end < page.content_begin)
@@ -67,17 +67,17 @@ bool RenderPage(HDC dc, RECT bounds, const mwtl::PrintPage& page,
     return true;
 }
 
-class PrintingWindow final : public mwtl::WindowBase {
+class PrintingWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        SetTitle(L"mwtl Print Preview");
+        SetTitle(L"mwfl Print Preview");
         ::SetWindowPos(GetHwnd(), nullptr, 0, 0, 1000, 820,
                        SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
         lines_ = MakeDocument();
-        pages_ = mwtl::PaginateContent(static_cast<std::int64_t>(lines_.size()), 32);
+        pages_ = mwfl::PaginateContent(static_cast<std::int64_t>(lines_.size()), 32);
         preview_.SetPageCount(pages_.size());
 
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(previous_, kPrevious, L"Previous (Page Up)", {0.0_dip, 0.0_dip, 130.0_dip, 32.0_dip});
         ui.Add(next_, kNext, L"Next (Page Down)", {0.0_dip, 0.0_dip, 120.0_dip, 32.0_dip});
         ui.Add(zoom_out_, kZoomOut, L"Zoom -", {0.0_dip, 0.0_dip, 80.0_dip, 32.0_dip});
@@ -86,22 +86,22 @@ public:
                {0.0_dip, 0.0_dip, 135.0_dip, 32.0_dip});
         ui.Add(print_, kPrint, L"Print", {0.0_dip, 0.0_dip, 80.0_dip, 32.0_dip});
         ui.Add(status_, L"");
-        SetLayout(mwtl::Column()
+        SetLayout(mwfl::Column()
                       .Margin(10.0_dip)
                       .Gap(8.0_dip)
-                      .Add(mwtl::Row().Gap(6.0_dip)
-                               .Add(previous_, mwtl::Auto())
-                               .Add(next_, mwtl::Auto())
-                               .Add(zoom_out_, mwtl::Auto())
-                               .Add(zoom_in_, mwtl::Auto())
-                               .Add(settings_button_, mwtl::Auto())
-                               .Add(print_, mwtl::Auto()),
-                           mwtl::Auto())
-                      .Add(status_, mwtl::Auto()));
-        mwtl::Must(mwtl::SetAccessibleName(GetHwnd(), L"Document print preview"),
+                      .Add(mwfl::Row().Gap(6.0_dip)
+                               .Add(previous_, mwfl::Auto())
+                               .Add(next_, mwfl::Auto())
+                               .Add(zoom_out_, mwfl::Auto())
+                               .Add(zoom_in_, mwfl::Auto())
+                               .Add(settings_button_, mwfl::Auto())
+                               .Add(print_, mwfl::Auto()),
+                           mwfl::Auto())
+                      .Add(status_, mwfl::Auto()));
+        mwfl::Must(mwfl::SetAccessibleName(GetHwnd(), L"Document print preview"),
                    "name print preview window");
-        mwtl::ApplyWindowAppearance(GetHwnd());
-        const auto printers = mwtl::EnumerateLocalPrinters();
+        mwfl::ApplyWindowAppearance(GetHwnd());
+        const auto printers = mwfl::EnumerateLocalPrinters();
         const std::wstring discovery = printers
             ? L" | " + std::to_wstring(printers.printers.size()) + L" printer(s) discovered"
             : L" | printer discovery unavailable";
@@ -110,62 +110,62 @@ public:
             throw std::runtime_error("post printing self-test failed");
     }
 
-    mwtl::EventResult OnCommand(const mwtl::CommandEvent& event) override {
-        if (event.IsClicked(previous_)) { MovePage(-1); return mwtl::EventResult::Handled(); }
-        if (event.IsClicked(next_)) { MovePage(1); return mwtl::EventResult::Handled(); }
-        if (event.IsClicked(zoom_out_)) { Zoom(0.8); return mwtl::EventResult::Handled(); }
-        if (event.IsClicked(zoom_in_)) { Zoom(1.25); return mwtl::EventResult::Handled(); }
+    mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
+        if (event.IsClicked(previous_)) { MovePage(-1); return mwfl::EventResult::Handled(); }
+        if (event.IsClicked(next_)) { MovePage(1); return mwfl::EventResult::Handled(); }
+        if (event.IsClicked(zoom_out_)) { Zoom(0.8); return mwfl::EventResult::Handled(); }
+        if (event.IsClicked(zoom_in_)) { Zoom(1.25); return mwfl::EventResult::Handled(); }
         if (event.IsClicked(settings_button_)) {
             ConfigurePrinter();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        if (event.IsClicked(print_)) { PrintDocument(); return mwtl::EventResult::Handled(); }
-        return mwtl::EventResult::Propagate();
+        if (event.IsClicked(print_)) { PrintDocument(); return mwfl::EventResult::Handled(); }
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnKeyDown(const mwtl::KeyEvent& event) override {
-        if (event.virtual_key == VK_PRIOR) { MovePage(-1); return mwtl::EventResult::Handled(); }
-        if (event.virtual_key == VK_NEXT) { MovePage(1); return mwtl::EventResult::Handled(); }
+    mwfl::EventResult OnKeyDown(const mwfl::KeyEvent& event) override {
+        if (event.virtual_key == VK_PRIOR) { MovePage(-1); return mwfl::EventResult::Handled(); }
+        if (event.virtual_key == VK_NEXT) { MovePage(1); return mwfl::EventResult::Handled(); }
         if (event.virtual_key == VK_HOME && preview_.SelectPage(0)) {
-            Refresh(L"First page"); return mwtl::EventResult::Handled();
+            Refresh(L"First page"); return mwfl::EventResult::Handled();
         }
         if (event.virtual_key == VK_END && !pages_.empty() &&
             preview_.SelectPage(pages_.size() - 1)) {
-            Refresh(L"Last page"); return mwtl::EventResult::Handled();
+            Refresh(L"Last page"); return mwfl::EventResult::Handled();
         }
         if (event.virtual_key == VK_ADD || event.virtual_key == VK_OEM_PLUS) {
-            Zoom(1.25); return mwtl::EventResult::Handled();
+            Zoom(1.25); return mwfl::EventResult::Handled();
         }
         if (event.virtual_key == VK_SUBTRACT || event.virtual_key == VK_OEM_MINUS) {
-            Zoom(0.8); return mwtl::EventResult::Handled();
+            Zoom(0.8); return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
-    mwtl::EventResult OnPaint(mwtl::PaintEvent& event) override {
+    mwfl::EventResult OnPaint(mwfl::PaintEvent& event) override {
         RECT client{};
         ::GetClientRect(GetHwnd(), &client);
-        const auto dpi = mwtl::DpiContext::FromWindow(GetHwnd());
+        const auto dpi = mwfl::DpiContext::FromWindow(GetHwnd());
         const int top = dpi.ToPixels(82.0_dip);
         const int bottom = dpi.ToPixels(38.0_dip);
         RECT viewport{client.left + 12, client.top + top, client.right - 12,
                       client.bottom - bottom};
         DrawPreview(event.GetDC(), viewport);
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
         if (event.id == WM_THEMECHANGED || event.id == WM_SYSCOLORCHANGE ||
             event.id == WM_SETTINGCHANGE) {
-            mwtl::ApplyWindowAppearance(GetHwnd());
+            mwfl::ApplyWindowAppearance(GetHwnd());
             ::InvalidateRect(GetHwnd(), nullptr, TRUE);
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
         if (event.id == kRunSelfTest) {
             RunSelfTest();
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
@@ -228,12 +228,12 @@ private:
 
     bool EnsureSettings() {
         if (settings_.IsValid()) return true;
-        const auto default_printer = mwtl::QueryDefaultPrinter();
+        const auto default_printer = mwfl::QueryDefaultPrinter();
         if (!default_printer) {
             UpdateStatus(L"No default printer is available");
             return false;
         }
-        auto loaded = mwtl::LoadPrinterSettings(default_printer.name);
+        auto loaded = mwfl::LoadPrinterSettings(default_printer.name);
         if (!loaded) {
             UpdateStatus(L"Printer settings could not be loaded");
             return false;
@@ -243,13 +243,13 @@ private:
     }
 
     void ConfigurePrinter() {
-        mwtl::PrinterSettings initial;
+        mwfl::PrinterSettings initial;
         if (EnsureSettings()) initial = settings_.Clone();
-        auto result = mwtl::ShowPrintDialog(GetHwnd(), std::move(initial));
-        if (result.action == mwtl::PrintDialogAction::accepted) {
+        auto result = mwfl::ShowPrintDialog(GetHwnd(), std::move(initial));
+        if (result.action == mwfl::PrintDialogAction::accepted) {
             settings_ = std::move(result.settings);
             Refresh(L"Printer settings updated");
-        } else if (result.action == mwtl::PrintDialogAction::cancelled) {
+        } else if (result.action == mwfl::PrintDialogAction::cancelled) {
             UpdateStatus(L"Printer settings cancelled");
         } else {
             UpdateStatus(L"Printer dialog failed");
@@ -258,18 +258,18 @@ private:
 
     void PrintDocument() {
         if (!EnsureSettings()) return;
-        auto backend = mwtl::CreatePrinterBackend(settings_);
+        auto backend = mwfl::CreatePrinterBackend(settings_);
         if (!backend) { UpdateStatus(L"Printer device could not be opened"); return; }
-        mwtl::PrintJob job(std::move(backend.backend));
-        const auto result = mwtl::PrintPages(job, L"mwtl printing reference", pages_,
-            [this](HDC dc, const mwtl::PrintPage& page) {
+        mwfl::PrintJob job(std::move(backend.backend));
+        const auto result = mwfl::PrintPages(job, L"mwfl printing reference", pages_,
+            [this](HDC dc, const mwfl::PrintPage& page) {
                 RECT bounds{0, 0, ::GetDeviceCaps(dc, HORZRES), ::GetDeviceCaps(dc, VERTRES)};
                 return RenderPage(dc, bounds, page, lines_, false);
-            }, [](const mwtl::PrintPage&) {
+            }, [](const mwfl::PrintPage&) {
                 return (::GetAsyncKeyState(VK_ESCAPE) & 0x8000) != 0;
             });
-        if (result == mwtl::PrintOperationStatus::success) UpdateStatus(L"Document printed");
-        else if (result == mwtl::PrintOperationStatus::cancelled)
+        if (result == mwfl::PrintOperationStatus::success) UpdateStatus(L"Document printed");
+        else if (result == mwfl::PrintOperationStatus::cancelled)
             UpdateStatus(L"Printing cancelled safely (Esc)");
         else UpdateStatus(L"Printing failed");
     }
@@ -307,16 +307,16 @@ private:
     }
 
     std::vector<std::wstring> lines_;
-    std::vector<mwtl::PrintPage> pages_;
-    mwtl::PrintPreviewModel preview_;
-    mwtl::PrinterSettings settings_;
-    mwtl::Button previous_, next_, zoom_out_, zoom_in_, settings_button_, print_;
-    mwtl::Label status_;
+    std::vector<mwfl::PrintPage> pages_;
+    mwfl::PrintPreviewModel preview_;
+    mwfl::PrinterSettings settings_;
+    mwfl::Button previous_, next_, zoom_out_, zoom_in_, settings_button_, print_;
+    mwfl::Label status_;
 };
 }  // namespace
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
     g_self_test = std::wstring_view{::GetCommandLineW()}.find(L"--self-test") !=
                   std::wstring_view::npos;
-    return mwtl::RunApplication<PrintingWindow>(instance, show_command);
+    return mwfl::RunApplication<PrintingWindow>(instance, show_command);
 }

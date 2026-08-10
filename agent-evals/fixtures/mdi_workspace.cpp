@@ -1,4 +1,4 @@
-#include <mwtl/mdi.h>
+#include <mwfl/mdi.h>
 
 class LegacyWorkspace final {
 public:
@@ -9,8 +9,8 @@ public:
                host_.CreateChild({2});
     }
 
-    mwtl::MdiModelResult SaveActive() noexcept {
-        return mwtl::RouteMdiActiveChild(model_, [this](mwtl::MdiChildId id) {
+    mwfl::MdiModelResult SaveActive() noexcept {
+        return mwfl::RouteMdiActiveChild(model_, [this](mwfl::MdiChildId id) {
             last_saved_ = id;
             model_.SetDirty(id, false);
         });
@@ -23,7 +23,7 @@ public:
     }
 
 private:
-    mwtl::MdiChildId last_saved_{};
-    mwtl::MdiWorkspaceModel model_;
-    mwtl::MdiHost host_;
+    mwfl::MdiChildId last_saved_{};
+    mwfl::MdiWorkspaceModel model_;
+    mwfl::MdiHost host_;
 };

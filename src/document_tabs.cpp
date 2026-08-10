@@ -1,4 +1,4 @@
-#include <mwtl/document_tabs.h>
+#include <mwfl/document_tabs.h>
 
 #include <commctrl.h>
 
@@ -6,7 +6,7 @@
 #include <ranges>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 
 bool DocumentTabWorkspaceAdapter::IsAttached() const noexcept {
     if (!tabs_ || !::IsWindow(tabs_)) return false;
@@ -220,4 +220,4 @@ DocumentTabResult TransferDocumentWithPage(
     return {DocumentTabStatus::success, destination.GetActiveId()};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

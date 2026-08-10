@@ -1,4 +1,4 @@
-#include <mwtl/graphics.h>
+#include <mwfl/graphics.h>
 
 #include <shellapi.h>
 
@@ -26,16 +26,16 @@ public:
         type.hInstance = instance;
         type.hCursor = ::LoadCursorW(nullptr, IDC_ARROW);
         type.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-        type.lpszClassName = L"mwtl.graphics.interop.reference";
+        type.lpszClassName = L"mwfl.graphics.interop.reference";
         if (!::RegisterClassW(&type)) return Fail(L"registration failed");
         HMENU menu = ::CreateMenu();
         ::AppendMenuW(menu, MF_STRING, ExportPng, L"Export &PNG");
         ::AppendMenuW(menu, MF_STRING, SaveEmf, L"Save &EMF");
         frame_ = ::CreateWindowExW(0, type.lpszClassName,
-            L"mwtl EMF and GDI+ Interop", WS_OVERLAPPEDWINDOW,
+            L"mwfl EMF and GDI+ Interop", WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, CW_USEDEFAULT, 760, 560, nullptr, menu, instance, this);
         if (!frame_) return Fail(L"window creation failed");
-        auto recorded = mwtl::RecordEnhancedMetafile(nullptr, L"mwtl graphics", [](HDC dc) {
+        auto recorded = mwfl::RecordEnhancedMetafile(nullptr, L"mwfl graphics", [](HDC dc) {
             HPEN pen = ::CreatePen(PS_SOLID, 5, RGB(30, 90, 180));
             HBRUSH brush = ::CreateSolidBrush(RGB(220, 235, 255));
             HGDIOBJ old_pen = ::SelectObject(dc, pen);
@@ -86,14 +86,14 @@ private:
             RECT bounds{};
             ::GetClientRect(frame_, &bounds);
             ::InflateRect(&bounds, -30, -30);
-            mwtl::PlayEnhancedMetafile(dc, metafile_, bounds);
+            mwfl::PlayEnhancedMetafile(dc, metafile_, bounds);
             ::EndPaint(frame_, &paint);
             return 0;
         }
         case WM_COMMAND:
             if (LOWORD(wparam) == ExportPng) Export(DefaultPath(L"png"));
             else if (LOWORD(wparam) == SaveEmf)
-                mwtl::SaveEnhancedMetafile(metafile_, DefaultPath(L"emf"));
+                mwfl::SaveEnhancedMetafile(metafile_, DefaultPath(L"emf"));
             return 0;
         case RunSelfTest: SelfTest(); return 0;
         case WM_DESTROY: ::PostQuitMessage(failed_ ? 1 : 0); return 0;
@@ -103,12 +103,12 @@ private:
 
     std::filesystem::path DefaultPath(std::wstring_view extension) const {
         return std::filesystem::temp_directory_path() /
-            (L"mwtl-graphics-reference-" + std::to_wstring(::GetCurrentProcessId()) +
+            (L"mwfl-graphics-reference-" + std::to_wstring(::GetCurrentProcessId()) +
              L"." + std::wstring(extension));
     }
 
-    mwtl::GraphicsResult Export(const std::filesystem::path& path) {
-        return mwtl::ExportGdiPlusPng(path, 640, 400,
+    mwfl::GraphicsResult Export(const std::filesystem::path& path) {
+        return mwfl::ExportGdiPlusPng(path, 640, 400,
             [](Gdiplus::Graphics& graphics) {
                 graphics.Clear(Gdiplus::Color(255, 248, 250, 252));
                 Gdiplus::SolidBrush brush(Gdiplus::Color(255, 30, 90, 180));
@@ -124,9 +124,9 @@ private:
         std::error_code ignored;
         std::filesystem::remove(emf, ignored);
         std::filesystem::remove(png, ignored);
-        if (!mwtl::SaveEnhancedMetafile(metafile_, emf))
+        if (!mwfl::SaveEnhancedMetafile(metafile_, emf))
             return FailSelfTest(L"EMF save failed");
-        auto loaded = mwtl::LoadEnhancedMetafile(emf);
+        auto loaded = mwfl::LoadEnhancedMetafile(emf);
         if (!loaded) return FailSelfTest(L"EMF load failed");
         if (!Export(png) || !Export(png)) return FailSelfTest(L"PNG export failed");
         std::ifstream stream(png, std::ios::binary);
@@ -163,7 +163,7 @@ private:
     bool failed_ = false;
     std::optional<std::filesystem::path> result_;
     HWND frame_ = nullptr;
-    mwtl::EnhancedMetafile metafile_;
+    mwfl::EnhancedMetafile metafile_;
 };
 
 }  // namespace

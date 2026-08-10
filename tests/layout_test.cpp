@@ -1,5 +1,5 @@
-#include <mwtl/layout.h>
-#include <mwtl/controls.h>
+#include <mwfl/layout.h>
+#include <mwfl/controls.h>
 
 #include <windows.h>
 #include <wil/resource.h>
@@ -25,8 +25,8 @@ bool Near(int actual, int expected, int tolerance = 1) {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
-    using mwtl::operator""_dip;
+    using namespace mwfl;
+    using mwfl::operator""_dip;
 
     const HWND parent = ::CreateWindowExW(
         0, L"STATIC", L"layout parent", WS_OVERLAPPED,

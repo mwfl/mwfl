@@ -1,18 +1,18 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 
-class SystemWindow final : public mwtl::WindowBase {
+class SystemWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override { SetTitle(L"Native system lifecycle messages"); }
 
-    mwtl::EventResult OnMessage(const mwtl::WindowMessage& message) noexcept override {
+    mwfl::EventResult OnMessage(const mwfl::WindowMessage& message) noexcept override {
         if (message.id == WM_QUERYENDSESSION) {
-            return mwtl::EventResult::Handled(TRUE);
+            return mwfl::EventResult::Handled(TRUE);
         }
         if (message.id == WM_GETOBJECT) {
             // A consumer can return UiaReturnRawElementProvider(...) here.
-            return mwtl::EventResult::Propagate();
+            return mwfl::EventResult::Propagate();
         }
         const bool lifecycle_message =
             message.id == WM_DISPLAYCHANGE || message.id == WM_SETTINGCHANGE ||
@@ -20,19 +20,19 @@ public:
             message.id == WM_IME_STARTCOMPOSITION ||
             message.id == WM_IME_COMPOSITION || message.id == WM_ENDSESSION;
         if (!lifecycle_message) {
-            return mwtl::EventResult::Propagate();
+            return mwfl::EventResult::Propagate();
         }
         wchar_t title[96]{};
         ::swprintf_s(title, L"Native lifecycle message: 0x%04X", message.id);
         SetTitle(title);
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<SystemWindow>(
+    return mwfl::RunApplication<SystemWindow>(
         instance,
         show_command,
         {},
-        {.com_apartment = mwtl::ComApartment::sta});
+        {.com_apartment = mwfl::ComApartment::sta});
 }

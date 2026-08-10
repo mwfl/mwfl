@@ -1,10 +1,10 @@
-#include <mwtl/document_coordination.h>
+#include <mwfl/document_coordination.h>
 
 #include <array>
 #include <stdexcept>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     DocumentWorkspaceModel workspace{{1}};
     if (!workspace.Add({{11}, L"One", {}, true, true, false}) ||
         !workspace.Add({{22}, L"Two", {}, false, false, true})) return 1;

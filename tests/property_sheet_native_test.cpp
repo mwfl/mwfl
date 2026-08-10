@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <windows.h>
 #include <commctrl.h>
@@ -22,8 +22,8 @@ void PumpPendingMessages() {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
-    using mwtl::operator""_dip;
+    using namespace mwfl;
+    using mwfl::operator""_dip;
 
     INITCOMMONCONTROLSEX controls{sizeof(controls), ICC_WIN95_CLASSES};
     if (::InitCommonControlsEx(&controls) == FALSE) return 1;
@@ -91,7 +91,7 @@ int main() {
     advanced_page = &pages[1];
 
     PropertySheetDialog sheet;
-    if (!sheet.CreateModeless({.title = L"mwtl property sheet", .start_page = PropertyPageId{1}},
+    if (!sheet.CreateModeless({.title = L"mwfl property sheet", .start_page = PropertyPageId{1}},
                               pages) ||
         !sheet.IsWindow() || !sheet.IsOwnerThread() || pages[0].GetHwnd() == nullptr ||
         pages[1].GetHwnd() != nullptr)

@@ -1,4 +1,4 @@
-#include <mwtl/recent_files.h>
+#include <mwfl/recent_files.h>
 
 #include <algorithm>
 #include <limits>
@@ -6,7 +6,7 @@
 #include <string>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 constexpr DWORD kSchemaVersion = 1;
 
@@ -139,4 +139,4 @@ SettingsWriteResult SaveRecentFilesToRegistry(
         : SettingsWriteResult{.status = StatusFromError(error), .native_error = error};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

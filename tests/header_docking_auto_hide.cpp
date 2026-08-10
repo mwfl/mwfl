@@ -1,3 +1,3 @@
-#include <mwtl/docking_auto_hide.h>
+#include <mwfl/docking_auto_hide.h>
 
-static_assert(sizeof(mwtl::DockAutoHideState) <= sizeof(int));
+static_assert(sizeof(mwfl::DockAutoHideState) <= sizeof(int));

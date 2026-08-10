@@ -21,7 +21,7 @@ dialogs; and persistent window placement.
 6. Capture placement in `OnClose()` and then propagate normal closing.
 
 Use this shape when generating editors, viewers, small IDE-like tools, and
-document utilities. `mwtl.notepad_gui` drives command/accelerator routing,
+document utilities. `mwfl.notepad_gui` drives command/accelerator routing,
 MSAA names, theme refresh, responsive geometry, resource bounds, and real file
 state; the focused model suites prove encoding, atomic save, search, history,
 recent files, and single-instance activation without HWNDs.

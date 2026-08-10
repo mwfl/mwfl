@@ -3,25 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Browse mwtl components, complete code, and native Windows UI results.">
-  <link rel="canonical" href="https://everettjf.github.io/mwtl/components/">
-  <title>Components — mwtl</title>
+  <meta name="description" content="Browse mwfl components, complete code, and native Windows UI results.">
+  <link rel="canonical" href="https://mwfl.github.io/components/">
+  <title>Components — mwfl</title>
   <meta name="theme-color" content="#f7f9ff">
-  <link rel="icon" type="image/svg+xml" href="../assets/mwtl-mark.svg">
+  <link rel="icon" type="image/svg+xml" href="../assets/mwfl-mark.svg">
   <link rel="stylesheet" href="../styles.css?v=20260810a">
-  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
   <script defer src="../assets/site.js?v=20260810a"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header docs-topbar">
     <div class="nav">
-      <a class="brand" href="../index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="../assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+      <a class="brand" href="../index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="../assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
       <nav class="nav-links" aria-label="Main navigation">
         <a class="active" href="index.html" aria-current="page">Components</a>
         <a href="../tutorial.html">Get started</a>
         <a href="../changelog.html">Changelog</a>
-        <a href="https://github.com/everettjf/mwtl">GitHub</a>
+        <a href="https://github.com/mwfl/mwfl">GitHub</a>
         <button class="theme-toggle" type="button" aria-label="Toggle color theme"></button>
       </nav>
     </div>
@@ -66,7 +66,7 @@
         <div class="doc-heading"><div><span class="tag">Foundation</span><h2>Application</h2></div><p>Initializes WTL, creates the stack-owned main window, runs the message loop, and guarantees cleanup.</p></div>
         <div class="example-grid single-code">
           <pre data-title="Complete entry point"><code>int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
-    return mwtl::RunApplication&lt;MainWindow&gt;(instance, show);
+    return mwfl::RunApplication&lt;MainWindow&gt;(instance, show);
 }</code></pre>
           <div class="result-note"><strong>No application subclass.</strong><span>Failures become non-zero process exit codes. Exceptions are contained before crossing <code>wWinMain</code>.</span></div>
         </div>
@@ -75,18 +75,18 @@
       <section id="window" class="doc-section">
         <div class="doc-heading"><div><span class="tag">Foundation</span><h2>Window</h2></div><p>Derive from <code>WindowBase</code> and override only the typed events the application needs.</p></div>
         <div class="example-grid">
-          <pre data-title="window.cpp"><code>class MainWindow final : public mwtl::WindowBase {
+          <pre data-title="window.cpp"><code>class MainWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         SetTitle(L"My app");
     }
 
-    mwtl::EventResult OnKeyDown(const mwtl::KeyEvent&amp; event) override {
+    mwfl::EventResult OnKeyDown(const mwfl::KeyEvent&amp; event) override {
         if (event.virtual_key == VK_ESCAPE) Close();
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 };</code></pre>
-          <figure class="preview-panel"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/hello.png" alt="mwtl Hello native window" width="975" height="357" loading="lazy" decoding="async"><figcaption>A real Unicode, Per-Monitor V2 HWND window.</figcaption></figure>
+          <figure class="preview-panel"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/hello.png" alt="mwfl Hello native window" width="975" height="357" loading="lazy" decoding="async"><figcaption>A real Unicode, Per-Monitor V2 HWND window.</figcaption></figure>
         </div>
       </section>
 
@@ -94,25 +94,25 @@ public:
         <div class="doc-heading"><div><span class="tag">Foundation</span><h2>Timer</h2></div><p>A move-only RAII timer with chrono intervals and typed IDs.</p></div>
         <div class="code-panel compact"><pre data-title="timer.cpp"><code>heartbeat_.Start(*this, {1}, 1s);
 
-mwtl::EventResult OnTimer(mwtl::TimerId id) override {
+mwfl::EventResult OnTimer(mwfl::TimerId id) override {
     status_.SetText(L"Tick");
-    return mwtl::EventResult::Handled();
+    return mwfl::EventResult::Handled();
 }</code></pre></div>
       </section>
 
       <section id="desktop" class="doc-section">
         <div class="doc-heading"><div><span class="tag">Foundation</span><h2>Desktop integration</h2></div><p>Owned native menus and accelerators, custom modal/modeless forms, system file/folder dialogs, Unicode clipboard, shell drops, persistent placement, DPI fonts, and focus navigation.</p></div>
-        <div class="code-panel compact"><pre data-title="desktop.cpp"><code>mwtl::Menu bar, file;
+        <div class="code-panel compact"><pre data-title="desktop.cpp"><code>mwfl::Menu bar, file;
 bar.Create();
 file.CreatePopup();
 file.AppendCommand(100, L"Open\tCtrl+O");
 bar.AppendSubmenu(std::move(file), L"File");
 bar.AttachToWindow(GetHwnd());
 
-const auto picked = mwtl::ShowOpenFileDialog({.owner = GetHwnd()});
+const auto picked = mwfl::ShowOpenFileDialog({.owner = GetHwnd()});
 if (picked.accepted) Open(picked.path);
 
-mwtl::Dialog form({.owner = GetHwnd(), .title = L"Profile"});
+mwfl::Dialog form({.owner = GetHwnd(), .title = L"Profile"});
 const auto result = form.ShowModal();</code></pre></div>
       </section>
 
@@ -128,112 +128,112 @@ if (fired) Activate(*fired);
 
 if (tray_.IsTaskbarCreated(message)) tray_.Recreate();
 else if (auto event = tray_.Decode(message)) RouteTray(*event);</code></pre>
-          <figure class="preview-panel"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/hot-corners.png" alt="mwtl multi-monitor Hot Corners utility" width="655" height="287" loading="lazy" decoding="async"><figcaption>Four actions on every attached monitor, with display-change refresh and one-shot dwell behavior.</figcaption></figure>
+          <figure class="preview-panel"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/hot-corners.png" alt="mwfl multi-monitor Hot Corners utility" width="655" height="287" loading="lazy" decoding="async"><figcaption>Four actions on every attached monitor, with display-change refresh and one-shot dwell behavior.</figcaption></figure>
         </div>
       </section>
 
       <section id="explorer" class="doc-section">
         <div class="doc-heading"><div><span class="tag">Reference application</span><h2>Explorer-style shell</h2></div><p>A complete native composition: Rebar and image-backed Toolbar, stable Tabs, keyboard Splitter, TreeView navigation, owner-data ListView, responsive StatusBar, accelerators, and context commands.</p></div>
-        <div class="code-panel compact"><pre data-title="explorer.cpp"><code>mwtl::ControlHost panes{splitter_};
+        <div class="code-panel compact"><pre data-title="explorer.cpp"><code>mwfl::ControlHost panes{splitter_};
 panes.Add(tree_, {204}, {});
 panes.Add(list_, {205}, {},
-    mwtl::ListViewOptions{.virtual_data = true});
+    mwfl::ListViewOptions{.virtual_data = true});
 splitter_.AttachPanes(tree_.GetHwnd(), list_.GetHwnd());
 
 list_.SetVirtualModel(model_);
-SetLayout(mwtl::Column()
-    .Add(rebar_, mwtl::Auto())
-    .Add(tabs_, mwtl::Fixed(34.0_dip))
-    .Add(splitter_, mwtl::Stretch())
-    .Add(status_, mwtl::Auto()));</code></pre></div>
+SetLayout(mwfl::Column()
+    .Add(rebar_, mwfl::Auto())
+    .Add(tabs_, mwfl::Fixed(34.0_dip))
+    .Add(splitter_, mwfl::Stretch())
+    .Add(status_, mwfl::Auto()));</code></pre></div>
         <div class="native-note"><strong>Owner-data notifications still reach the window.</strong> Splitter forwards attached-pane notifications, commands, and context menus to its parent with the original result.</div>
-        <p class="source-link"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/explorer-application.md">Build the complete Explorer application step by step →</a></p>
+        <p class="source-link"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/explorer-application.md">Build the complete Explorer application step by step →</a></p>
       </section>
 
       <section id="form-controls" class="doc-section">
         <div class="doc-heading"><div><span class="tag">Basic controls</span><h2>Native form controls</h2></div><p>Label, Button, TextBox, CheckBox, RadioButton, GroupBox, ComboBox, ListBox, ProgressBar, Slider, and ScrollBar.</p></div>
         <div class="example-grid">
-          <pre data-title="Create and configure"><code>mwtl::ControlHost ui{*this};
-ui.Add(name_, L"mwtl developer");
+          <pre data-title="Create and configure"><code>mwfl::ControlHost ui{*this};
+ui.Add(name_, L"mwfl developer");
 ui.Add(greet_, L"Say hello");
 ui.Add(enabled_, L"Button enabled");
 ui.Add(accent_);
 ui.Add(progress_);
 
-mwtl::Must(mwtl::AddItems(
+mwfl::Must(mwfl::AddItems(
     accent_, {L"Sky blue", L"Graphite", L"Forest"}));
 progress_.SetRange(0, 100);
 progress_.SetValue(64);</code></pre>
-          <figure class="preview-panel"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="mwtl native form controls example" width="1462" height="806" loading="lazy" decoding="async"><figcaption>System controls retain native keyboard, IME, accessibility, and theme behavior.</figcaption></figure>
+          <figure class="preview-panel"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="mwfl native form controls example" width="1462" height="806" loading="lazy" decoding="async"><figcaption>System controls retain native keyboard, IME, accessibility, and theme behavior.</figcaption></figure>
         </div>
       </section>
 
       <section id="events" class="doc-section">
         <div class="doc-heading"><div><span class="tag">Basic controls</span><h2>Command events</h2></div><p>Match the originating control without message-map macros or manual HWND comparisons.</p></div>
-        <div class="code-panel compact"><pre data-title="events.cpp"><code>mwtl::EventResult OnCommand(const mwtl::CommandEvent&amp; event) override {
+        <div class="code-panel compact"><pre data-title="events.cpp"><code>mwfl::EventResult OnCommand(const mwfl::CommandEvent&amp; event) override {
     if (event.IsClicked(greet_)) {
         status_.SetText(L"Hello, " + name_.GetText());
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
-    return mwtl::EventResult::Propagate();
+    return mwfl::EventResult::Propagate();
 }</code></pre></div>
       </section>
 
       <section id="control-catalog" class="doc-section">
         <div class="doc-heading"><div><span class="tag">Complete coverage</span><h2>All 27 native controls</h2></div><p>Every public child-control wrapper is shown with current creation code, its native result, and a link to the executable example that exercises it.</p></div>
         <div class="component-catalog">
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="Label in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>Label</h3><pre><code>ui.Add(label_, L"Status");</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp">Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="Button in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>Button</h3><pre><code>ui.Add(button_, L"Save");</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp">Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="TextBox in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>TextBox</h3><pre><code>ui.Add(name_, L"Ada");</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp">Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="CheckBox in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>CheckBox</h3><pre><code>ui.Add(enabled_, L"Enabled");</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp">Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="RadioButton in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>RadioButton</h3><pre><code>ui.Add(choice_, L"Option A");</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp">Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="GroupBox in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>GroupBox</h3><pre><code>ui.Add(group_, L"Choices");</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp">Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="ComboBox in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>ComboBox</h3><pre><code>ui.Add(combo_);
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="Label in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>Label</h3><pre><code>ui.Add(label_, L"Status");</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp">Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="Button in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>Button</h3><pre><code>ui.Add(button_, L"Save");</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp">Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="TextBox in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>TextBox</h3><pre><code>ui.Add(name_, L"Ada");</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp">Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="CheckBox in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>CheckBox</h3><pre><code>ui.Add(enabled_, L"Enabled");</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp">Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="RadioButton in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>RadioButton</h3><pre><code>ui.Add(choice_, L"Option A");</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp">Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="GroupBox in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>GroupBox</h3><pre><code>ui.Add(group_, L"Choices");</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp">Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="ComboBox in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>ComboBox</h3><pre><code>ui.Add(combo_);
 SelectionAdapter&lt;ComboBox, ThemeId&gt; themes{combo_};
-themes.Add(L"Dark", ThemeId::dark);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp">Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="ListBox in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>ListBox</h3><pre><code>ui.Add(list_);
-mwtl::AddItems(list_, items);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp">Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="ProgressBar in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>ProgressBar</h3><pre><code>ui.Add(progress_).SetValue(64);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp">Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="Slider in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>Slider</h3><pre><code>ui.Add(slider_).SetValue(50);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp">Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="ScrollBar in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>ScrollBar</h3><pre><code>ui.Add(scroll_).SetRange(0, 100);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="Keyboard-operable Splitter in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Splitter</h3><pre><code>ui.Add(splitter_);
-splitter_.AttachPanes(left, right);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="TreeView in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>TreeView</h3><pre><code>ui.Add(tree_);
-tree_.AddItem(L"Root");</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="ListView in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>ListView</h3><pre><code>ui.Add(list_);
-list_.AddItem(L"Row");</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="Header in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Header</h3><pre><code>ui.Add(header_);
-header_.AddColumn(L"Column", 160);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="TabControl in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>TabControl</h3><pre><code>model.Add({{1}, L"Tree", false, true});
-tabs_.Synchronize(model);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="ComboBoxEx in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>ComboBoxEx</h3><pre><code>ui.Add(combo_ex_);
-combo_ex_.AddItem(L"Native");</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="DateTimePicker in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>DateTimePicker</h3><pre><code>ui.Add(date_);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="MonthCalendar in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>MonthCalendar</h3><pre><code>ui.Add(calendar_);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="HotKey in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>HotKey</h3><pre><code>ui.Add(hot_key_);
-hot_key_.SetValue('K', HOTKEYF_CONTROL);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="IpAddress in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>IpAddress</h3><pre><code>ui.Add(ip_);
-ip_.SetValue(127, 0, 0, 1);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="UpDown in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>UpDown</h3><pre><code>ui.Add(spin_);
-spin_.SetBuddy(number_);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="SysLink in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>SysLink</h3><pre><code>ui.Add(link_, L"&lt;a&gt;Docs&lt;/a&gt;");</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="Toolbar in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Toolbar</h3><pre><code>band.Add(toolbar_);
-mwtl::AddButtons(toolbar_, buttons);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="StatusBar in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>StatusBar</h3><pre><code>ui.Add(status_);
-status_.SetParts({700, -1});</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="Rebar in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Rebar</h3><pre><code>ui.Add(rebar_);
-rebar_.AddBand(toolbar_, L"", 360);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="Pager in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Pager</h3><pre><code>ui.Add(pager_);
-pager_.SetChild(content_);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
-          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="Animation in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Animation</h3><pre><code>ui.Add(animation_);
-animation_.Open(instance, resource_id);</code></pre><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+themes.Add(L"Dark", ThemeId::dark);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp">Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="ListBox in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>ListBox</h3><pre><code>ui.Add(list_);
+mwfl::AddItems(list_, items);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp">Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="ProgressBar in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>ProgressBar</h3><pre><code>ui.Add(progress_).SetValue(64);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp">Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="Slider in the controls example" width="1462" height="806" loading="lazy" decoding="async"><h3>Slider</h3><pre><code>ui.Add(slider_).SetValue(50);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp">Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="ScrollBar in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>ScrollBar</h3><pre><code>ui.Add(scroll_).SetRange(0, 100);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="Keyboard-operable Splitter in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Splitter</h3><pre><code>ui.Add(splitter_);
+splitter_.AttachPanes(left, right);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="TreeView in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>TreeView</h3><pre><code>ui.Add(tree_);
+tree_.AddItem(L"Root");</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="ListView in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>ListView</h3><pre><code>ui.Add(list_);
+list_.AddItem(L"Row");</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="Header in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Header</h3><pre><code>ui.Add(header_);
+header_.AddColumn(L"Column", 160);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="TabControl in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>TabControl</h3><pre><code>model.Add({{1}, L"Tree", false, true});
+tabs_.Synchronize(model);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="ComboBoxEx in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>ComboBoxEx</h3><pre><code>ui.Add(combo_ex_);
+combo_ex_.AddItem(L"Native");</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="DateTimePicker in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>DateTimePicker</h3><pre><code>ui.Add(date_);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="MonthCalendar in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>MonthCalendar</h3><pre><code>ui.Add(calendar_);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="HotKey in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>HotKey</h3><pre><code>ui.Add(hot_key_);
+hot_key_.SetValue('K', HOTKEYF_CONTROL);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="IpAddress in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>IpAddress</h3><pre><code>ui.Add(ip_);
+ip_.SetValue(127, 0, 0, 1);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="UpDown in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>UpDown</h3><pre><code>ui.Add(spin_);
+spin_.SetBuddy(number_);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="SysLink in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>SysLink</h3><pre><code>ui.Add(link_, L"&lt;a&gt;Docs&lt;/a&gt;");</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="Toolbar in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Toolbar</h3><pre><code>band.Add(toolbar_);
+mwfl::AddButtons(toolbar_, buttons);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="StatusBar in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>StatusBar</h3><pre><code>ui.Add(status_);
+status_.SetParts({700, -1});</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="Rebar in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Rebar</h3><pre><code>ui.Add(rebar_);
+rebar_.AddBand(toolbar_, L"", 360);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="Pager in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Pager</h3><pre><code>ui.Add(pager_);
+pager_.SetChild(content_);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
+          <article class="component-card"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="Animation in the common controls example" width="1920" height="1020" loading="lazy" decoding="async"><h3>Animation</h3><pre><code>ui.Add(animation_);
+animation_.Open(instance, resource_id);</code></pre><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Common Controls example</a></article>
         </div>
       </section>
 
       <section id="data-navigation" class="doc-section">
         <div class="doc-heading"><div><span class="tag">Common Controls</span><h2>Data and navigation</h2></div><p><code>TreeView</code>, <code>ListView</code>, <code>Header</code>, <code>TabControl</code>, and <code>ComboBoxEx</code>.</p></div>
         <div class="example-grid">
-          <pre data-title="TreeView + ListView"><code>mwtl::ControlHost ui{*this};
+          <pre data-title="TreeView + ListView"><code>mwfl::ControlHost ui{*this};
 ui.Add(tree_);
 ui.Add(list_, ListViewOptions{.virtual_data = true});
 
@@ -241,20 +241,20 @@ const auto root = tree_.AddItem({101}, L"Common Controls");
 tree_.AddChild({102}, L"Navigation", {101});
 tree_.Expand({101});
 
-mwtl::Must(mwtl::AddColumns(list_, {
+mwfl::Must(mwfl::AddColumns(list_, {
     {L"Control", 170},
     {L"Ownership", 150},
 }));
 list_.SetVirtualModel(model_);
 list_.SetSelected({302});
 // Route WM_NOTIFY through HandleNotification.</code></pre>
-          <figure class="preview-panel common-preview"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="Complete Windows Common Controls gallery" width="1920" height="1020" loading="lazy" decoding="async"><figcaption>The complete populated gallery. Continue below for the other families.</figcaption></figure>
+          <figure class="preview-panel common-preview"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="Complete Windows Common Controls gallery" width="1920" height="1020" loading="lazy" decoding="async"><figcaption>The complete populated gallery. Continue below for the other families.</figcaption></figure>
         </div>
       </section>
 
       <section id="date-input" class="doc-section">
         <div class="doc-heading"><div><span class="tag">Common Controls</span><h2>Date and input</h2></div><p><code>DateTimePicker</code>, <code>MonthCalendar</code>, <code>HotKey</code>, <code>IpAddress</code>, <code>UpDown</code>, and <code>SysLink</code>.</p></div>
-        <div class="code-panel compact"><pre data-title="date_input.cpp"><code>mwtl::ControlHost ui{*this};
+        <div class="code-panel compact"><pre data-title="date_input.cpp"><code>mwfl::ControlHost ui{*this};
 ui.Add(date_);
 ui.Add(calendar_);
 ui.Add(hot_key_);
@@ -269,37 +269,37 @@ spin_.SetRange(0, 100);</code></pre></div>
 
       <section id="commands" class="doc-section">
         <div class="doc-heading"><div><span class="tag">Common Controls</span><h2>Commands and containers</h2></div><p><code>Toolbar</code>, <code>StatusBar</code>, <code>Rebar</code>, <code>Pager</code>, and <code>Animation</code>.</p></div>
-        <div class="code-panel compact"><pre data-title="commands.cpp"><code>mwtl::ControlHost ui{*this};
+        <div class="code-panel compact"><pre data-title="commands.cpp"><code>mwfl::ControlHost ui{*this};
 ui.Add(rebar_, {200}, rebar_bounds);
-mwtl::ControlHost band{rebar_};
+mwfl::ControlHost band{rebar_};
 band.Add(toolbar_, {201}, toolbar_bounds);
-mwtl::Must(mwtl::AddButtons(
+mwfl::Must(mwfl::AddButtons(
     toolbar_, {{{500}, L"Task Dialog"}}));
 toolbar_.AutoSize();
 rebar_.AddBand(toolbar_, L"", 360);
 
 ui.Add(status_, {219}, status_bounds);
 status_.SetParts({700, 980, -1});
-mwtl::Must(mwtl::SetPartTexts(
+mwfl::Must(mwfl::SetPartTexts(
     status_, {{0, L"Native controls ready"}}));</code></pre></div>
       </section>
 
       <section id="layout" class="doc-section">
         <div class="doc-heading"><div><span class="tag">Responsive layout</span><h2>Rows, columns, and overlays</h2></div><p>Compose DPI-aware layouts with margins, gaps, fixed, automatic, and weighted stretch tracks. The window rearranges attached controls on every resize.</p></div>
-        <div class="code-panel compact"><pre data-title="layout.cpp"><code>using mwtl::operator""_dip;
+        <div class="code-panel compact"><pre data-title="layout.cpp"><code>using mwfl::operator""_dip;
 
 SetLayout(
-    mwtl::Column()
+    mwfl::Column()
         .Margin(16.0_dip)
         .Gap(10.0_dip)
-        .Add(title_, mwtl::Auto())
+        .Add(title_, mwfl::Auto())
         .Add(
-            mwtl::Row()
+            mwfl::Row()
                 .Gap(8.0_dip)
-                .Add(name_, mwtl::Stretch())
-                .Add(greet_, mwtl::Fixed(100.0_dip)),
-            mwtl::Stretch())
-        .Add(status_, mwtl::Auto()));</code></pre></div>
+                .Add(name_, mwfl::Stretch())
+                .Add(greet_, mwfl::Fixed(100.0_dip)),
+            mwfl::Stretch())
+        .Add(status_, mwfl::Auto()));</code></pre></div>
       </section>
 
       <section id="settings" class="doc-section">
@@ -316,7 +316,7 @@ if (!saved.Succeeded()) {
 committed_ = std::move(candidate);
 return true;</code></pre></div>
         <div class="native-note"><strong>Cancel is predictable.</strong> Controls are an editable projection, not the source of truth. Each page's reset callback restores the last committed value.</div>
-        <p class="source-link"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/settings-application.md">Follow the complete beginner tutorial on GitHub →</a></p>
+        <p class="source-link"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/settings-application.md">Follow the complete beginner tutorial on GitHub →</a></p>
       </section>
 
       <section id="resources" class="doc-section">
@@ -331,10 +331,10 @@ tooltip_.UpdateTool(button_.GetHwnd(), L"Updated text owned by Tooltip");
 const auto selected = popup_.TrackResult(GetHwnd(), screen_point);
 if (selected) PostMessageW(GetHwnd(), WM_COMMAND, selected.command, 0);
 
-const auto result = mwtl::ShowTaskDialog(
-    GetHwnd(), L"mwtl", L"Native Task Dialog", L"Real Common Controls UI.");</code></pre></div>
+const auto result = mwfl::ShowTaskDialog(
+    GetHwnd(), L"mwfl", L"Native Task Dialog", L"Real Common Controls UI.");</code></pre></div>
         <div class="native-note"><strong>Need more Win32?</strong> Call <code>::SendMessageW(control.GetHwnd(), ...)</code>. Thin wrappers do not close the native API surface.</div>
-        <p class="source-link"><a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Open the complete gallery source on GitHub →</a></p>
+        <p class="source-link"><a href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp">Open the complete gallery source on GitHub →</a></p>
       </section>
     </main>
   </div>

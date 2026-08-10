@@ -1,12 +1,12 @@
-#include <mwtl/appearance.h>
-#include <mwtl/splitter.h>
+#include <mwfl/appearance.h>
+#include <mwfl/splitter.h>
 
 #include <windowsx.h>
 
 #include <algorithm>
 #include <cmath>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 float Clean(float value) noexcept {
@@ -408,4 +408,4 @@ void Splitter::InvalidateBar() noexcept {
     if (window != nullptr) ::InvalidateRect(window, nullptr, FALSE);
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

@@ -1,8 +1,8 @@
-# mwtl repository guide for coding agents
+# mwfl repository guide for coding agents
 
 This file is the authoritative development contract for Codex, Claude Code,
-and other coding agents working on mwtl itself. For generating applications
-that consume mwtl, start with `docs/agent-usage.md` instead.
+and other coding agents working on mwfl itself. For generating applications
+that consume mwfl, start with `docs/agent-usage.md` instead.
 
 ## Project constraints
 
@@ -18,7 +18,7 @@ that consume mwtl, start with `docs/agent-usage.md` instead.
 
 | Path | Responsibility |
 |---|---|
-| `include/mwtl/` | Stable and provisional public C++ API |
+| `include/mwfl/` | Stable and provisional public C++ API |
 | `src/` | Library implementation |
 | `src/detail/` | Internal implementation; never application API |
 | `tests/` | Unit, lifecycle, integration, package, and metadata tests |
@@ -40,7 +40,7 @@ sources found below a build tree as repository code.
 - Ownership of HWNDs and other native handles must remain explicit.
 - Preserve the native Win32 escape hatch; do not add a closed abstraction layer.
 - Layout values are DIPs; raw Win32 geometry is normally pixels.
-- Do not expose `mwtl::detail` or `src/detail` in public signatures.
+- Do not expose `mwfl::detail` or `src/detail` in public signatures.
 - Stable API changes follow `docs/stability.md`.
 
 ## Change rules

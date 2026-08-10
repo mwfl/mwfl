@@ -1,5 +1,5 @@
-#include <mwtl/d2d_host.h>
-#include <mwtl/appearance.h>
+#include <mwfl/d2d_host.h>
+#include <mwfl/appearance.h>
 
 #include <commctrl.h>
 #include <windowsx.h>
@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 constexpr UINT_PTR kD2DHostSubclassId = 1;
 }
@@ -254,4 +254,4 @@ LRESULT D2DHost::ProcessMessage(HWND window, UINT message, WPARAM wparam,
     }
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

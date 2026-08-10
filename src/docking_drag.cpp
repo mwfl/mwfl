@@ -1,9 +1,9 @@
-#include <mwtl/docking_drag.h>
+#include <mwfl/docking_drag.h>
 
 #include <algorithm>
 #include <cmath>
 
-namespace mwtl {
+namespace mwfl {
 
 bool DockRectDip::IsValid() const noexcept {
     return std::isfinite(x) && std::isfinite(y) && std::isfinite(width) &&
@@ -136,4 +136,4 @@ DockDragCommitResult DockDragSession::Commit(
     return {DockDragCommitStatus::success, DockLayoutStatus::success, nullptr};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

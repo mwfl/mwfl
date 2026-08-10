@@ -1,6 +1,6 @@
-#include <mwtl/binding.h>
+#include <mwfl/binding.h>
 
 void HeaderBindingCompiles() {
-    mwtl::ChangeGate gate;
+    mwfl::ChangeGate gate;
     static_cast<void>(gate);
 }

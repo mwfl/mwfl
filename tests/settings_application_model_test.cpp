@@ -9,7 +9,7 @@ namespace {
 class TestKey final {
 public:
     TestKey()
-        : path_(L"Software\\mwtl\\Tests\\SettingsApplication-" +
+        : path_(L"Software\\mwfl\\Tests\\SettingsApplication-" +
                 std::to_wstring(::GetCurrentProcessId()) + L"-" +
                 std::to_wstring(::GetTickCount64())) {}
     TestKey(const TestKey&) = delete;

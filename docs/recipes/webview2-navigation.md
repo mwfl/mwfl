@@ -4,8 +4,8 @@ Link the optional component and keep the host plus address box as window
 members:
 
 ```cmake
-find_package(mwtl CONFIG REQUIRED COMPONENTS webview2)
-target_link_libraries(my_app PRIVATE mwtl::webview2)
+find_package(mwfl CONFIG REQUIRED COMPONENTS webview2)
+target_link_libraries(my_app PRIVATE mwfl::webview2)
 ```
 
 Create the host first, then initialize it asynchronously. Disable or reject
@@ -13,8 +13,8 @@ navigation until `WebView2HostState::ready`:
 
 ```cpp
 browser_.Initialize({}, {
-    .initialized = [this](mwtl::WebView2InitializationResult result) {
-        go_.SetEnabled(result.state == mwtl::WebView2HostState::ready);
+    .initialized = [this](mwfl::WebView2InitializationResult result) {
+        go_.SetEnabled(result.state == mwfl::WebView2HostState::ready);
     },
     .navigation_completed = [this](bool ok, HRESULT error) {
         status_.SetText(ok ? L"Navigation complete" : L"Navigation failed");

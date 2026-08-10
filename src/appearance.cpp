@@ -1,4 +1,4 @@
-#include <mwtl/appearance.h>
+#include <mwfl/appearance.h>
 
 #include <dwmapi.h>
 #include <initguid.h>
@@ -8,7 +8,7 @@
 
 #include <wil/resource.h>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 using DwmSetWindowAttributeFn = HRESULT(WINAPI*)(HWND, DWORD, LPCVOID, DWORD);
@@ -94,4 +94,4 @@ bool SetDialogDefaultButton(HWND window, UINT command_id) noexcept {
     return ::SendMessageW(window, DM_SETDEFID, command_id, 0) != 0;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

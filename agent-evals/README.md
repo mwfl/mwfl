@@ -1,7 +1,7 @@
-# mwtl coding-agent evaluations
+# mwfl coding-agent evaluations
 
 This suite measures whether a coding agent can turn a natural-language Windows
-UI request into correct, compilable mwtl code without inventing APIs or
+UI request into correct, compilable mwfl code without inventing APIs or
 violating lifecycle rules.
 
 `tasks.json` contains thirty-four prompts and their required evidence. `fixtures/`
@@ -45,7 +45,7 @@ independent blind-run evidence.
 The normal repository build compiles the core fixtures and the printing, OLE,
 Shell, Ribbon, MDI, and graphics fixtures. A build with both third-party
 components enabled also compiles the WebView2 and Scintilla integration fixtures. Asset consistency
-is checked by `mwtl.agent_evals` and by:
+is checked by `mwfl.agent_evals` and by:
 
 ```powershell
 ./scripts/verify.ps1 -Mode Docs

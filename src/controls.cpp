@@ -1,4 +1,4 @@
-#include <mwtl/controls.h>
+#include <mwfl/controls.h>
 #include <wil/resource.h>
 
 #include <utility>
@@ -6,7 +6,7 @@
 #include <cassert>
 #include <cwchar>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 RECT ResolveControlBounds(HWND parent, RectDip bounds) noexcept {
@@ -561,4 +561,4 @@ ScrollBar& ScrollBar::SetRange(int minimum, int maximum) noexcept { if (IsWindow
 ScrollBar& ScrollBar::SetValue(int value) noexcept { if (IsWindow()) ::SetScrollPos(GetHwnd(), SB_CTL, value, TRUE); return *this; }
 int ScrollBar::GetValue() const noexcept { return IsWindow() ? ::GetScrollPos(GetHwnd(), SB_CTL) : 0; }
 
-}  // namespace mwtl
+}  // namespace mwfl

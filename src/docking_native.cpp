@@ -1,8 +1,8 @@
-#include <mwtl/docking_native.h>
+#include <mwfl/docking_native.h>
 
 #include <algorithm>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 
 DockNativeResult Result(DockNativeStatus status, DWORD error = ERROR_SUCCESS) noexcept {
@@ -255,4 +255,4 @@ HWND DockNativeWorkspaceAdapter::FindGroup(DockGroupId id) const noexcept {
     return found == groups_.end() ? nullptr : found->host;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

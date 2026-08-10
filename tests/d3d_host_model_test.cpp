@@ -1,7 +1,7 @@
-#include <mwtl/d3d_host.h>
+#include <mwfl/d3d_host.h>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     D3DRenderStateModel model;
     if (model.GetState() != D3DRenderState::empty || model.BeginFrame()) return 1;
     if (!model.MarkReady() || !model.BeginFrame() || model.BeginFrame()) return 2;

@@ -1,1 +1,1 @@
-mwtl_add_example(mwtl_timer_demo main.cpp)
+mwfl_add_example(mwfl_timer_demo main.cpp)

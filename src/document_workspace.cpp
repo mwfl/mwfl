@@ -1,4 +1,4 @@
-#include <mwtl/document_workspace.h>
+#include <mwfl/document_workspace.h>
 
 #include <windows.h>
 
@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 bool SamePath(const std::filesystem::path& left,
               const std::filesystem::path& right) {
@@ -304,4 +304,4 @@ DocumentWorkspaceResult TransferDocument(
     return {DocumentWorkspaceStatus::success, destination.GetActiveId()};
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

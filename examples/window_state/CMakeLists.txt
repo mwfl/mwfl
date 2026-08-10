@@ -1,1 +1,1 @@
-mwtl_add_example(mwtl_window_state_demo main.cpp)
+mwfl_add_example(mwfl_window_state_demo main.cpp)

@@ -65,7 +65,7 @@ if(NOT total_points EQUAL 100)
 endif()
 
 file(READ "${PROJECT_ROOT}/agent-evals/run-eval.ps1" runner)
-foreach(term IN ITEMS MWTL_AGENT_EVAL_CANDIDATE first_compile public_api_only thread_safe)
+foreach(term IN ITEMS MWFL_AGENT_EVAL_CANDIDATE first_compile public_api_only thread_safe)
     if(NOT runner MATCHES "${term}")
         message(FATAL_ERROR "agent evaluation runner lacks ${term}")
     endif()

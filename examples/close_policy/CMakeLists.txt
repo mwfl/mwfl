@@ -1,1 +1,1 @@
-mwtl_add_example(mwtl_close_policy_demo main.cpp)
+mwfl_add_example(mwfl_close_policy_demo main.cpp)

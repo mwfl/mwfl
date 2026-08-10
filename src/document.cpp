@@ -1,9 +1,9 @@
-#include <mwtl/document.h>
+#include <mwfl/document.h>
 
 #include <stdexcept>
 #include <utility>
 
-namespace mwtl {
+namespace mwfl {
 
 DocumentState::DocumentState(std::wstring untitled_name)
     : untitled_name_(std::move(untitled_name)) {
@@ -47,4 +47,4 @@ DocumentTransition DocumentState::EvaluateTransition(
         : DocumentTransition::cancelled;
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

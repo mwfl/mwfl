@@ -1,13 +1,13 @@
-#include <mwtl/text_history.h>
+#include <mwfl/text_history.h>
 
 #include <cstdlib>
 #include <stdexcept>
 
 int main() {
-    try { mwtl::TextHistory invalid{1}; return EXIT_FAILURE; }
+    try { mwfl::TextHistory invalid{1}; return EXIT_FAILURE; }
     catch (const std::invalid_argument&) {}
 
-    mwtl::TextHistory history{4};
+    mwfl::TextHistory history{4};
     if (history.IsModified() || history.CanUndo() || history.CanRedo()) return EXIT_FAILURE;
     if (!history.Record(L"a") || !history.Record(L"ab") || !history.IsModified()) return EXIT_FAILURE;
     history.MarkSaved();

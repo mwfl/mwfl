@@ -15,7 +15,7 @@
       "theme": "real-sdi-application",
       "acceptance": "docs/milestones/0.2.md",
       "reflection": "docs/reflections/0.2.md",
-      "evidence": ["examples/notepad", "tests/document_test.cpp", "mwtl.notepad_gui"]
+      "evidence": ["examples/notepad", "tests/document_test.cpp", "mwfl.notepad_gui"]
     },
     {
       "version": "0.3",
@@ -24,7 +24,7 @@
       "acceptance": "docs/milestones/0.3.md",
       "reflection": "docs/reflections/0.3.md",
       "depends_on": "0.2",
-      "evidence": ["examples/property_sheet", "examples/hot_corners", "examples/explorer", "mwtl.settings_application_gui", "mwtl.hot_corners_self_test", "mwtl.explorer_gui"],
+      "evidence": ["examples/property_sheet", "examples/hot_corners", "examples/explorer", "mwfl.settings_application_gui", "mwfl.hot_corners_self_test", "mwfl.explorer_gui"],
       "ci_run": 31330590815
     },
     {
@@ -34,7 +34,7 @@
       "acceptance": "docs/milestones/0.4.md",
       "reflection": "docs/reflections/0.4.md",
       "depends_on": "0.3",
-      "evidence": ["examples/browser", "examples/code_editor", "examples/drawing", "examples/image_viewer", "mwtl.webview2_native", "mwtl.scintilla_native", "mwtl.d2d_host_native", "mwtl.d3d_host_native", "mwtl.package_consumer"]
+      "evidence": ["examples/browser", "examples/code_editor", "examples/drawing", "examples/image_viewer", "mwfl.webview2_native", "mwfl.scintilla_native", "mwfl.d2d_host_native", "mwfl.d3d_host_native", "mwfl.package_consumer"]
     },
     {
       "version": "0.5",
@@ -43,7 +43,7 @@
       "acceptance": "docs/milestones/0.5.md",
       "reflection": "docs/reflections/0.5.md",
       "depends_on": "0.4",
-      "evidence": ["examples/printing", "examples/ole_drag_drop", "examples/shell_integration", "mwtl.printing_gui", "mwtl.ole_drag_drop_gui", "mwtl.shell_integration_gui", "mwtl.integration_stress", "mwtl.package_consumer"]
+      "evidence": ["examples/printing", "examples/ole_drag_drop", "examples/shell_integration", "mwfl.printing_gui", "mwfl.ole_drag_drop_gui", "mwfl.shell_integration_gui", "mwfl.integration_stress", "mwfl.package_consumer"]
     },
     {
       "version": "0.6",
@@ -52,7 +52,7 @@
       "acceptance": "docs/milestones/0.6.md",
       "reflection": "docs/reflections/0.6.md",
       "depends_on": "0.5",
-      "evidence": ["examples/document_workspace", "mwtl.document_workspace", "mwtl.document_coordination", "mwtl.document_session", "mwtl.document_tabs_native", "mwtl.document_workspace_stress", "mwtl.document_workspace_gui", "mwtl.package_consumer"]
+      "evidence": ["examples/document_workspace", "mwfl.document_workspace", "mwfl.document_coordination", "mwfl.document_session", "mwfl.document_tabs_native", "mwfl.document_workspace_stress", "mwfl.document_workspace_gui", "mwfl.package_consumer"]
     },
     {
       "version": "0.7",
@@ -61,7 +61,7 @@
       "acceptance": "docs/milestones/0.7.md",
       "reflection": "docs/reflections/0.7.md",
       "depends_on": "0.6",
-      "evidence": ["examples/docking_workspace", "mwtl.docking_workspace", "mwtl.docking_session", "mwtl.docking_monitor", "mwtl.docking_drag", "mwtl.docking_preview_native", "mwtl.docking_native", "mwtl.docking_auto_hide", "mwtl.docking_keyboard", "mwtl.docking_floating_native", "mwtl.docking_stress_native", "mwtl.docking_workspace_gui", "mwtl.package_consumer"]
+      "evidence": ["examples/docking_workspace", "mwfl.docking_workspace", "mwfl.docking_session", "mwfl.docking_monitor", "mwfl.docking_drag", "mwfl.docking_preview_native", "mwfl.docking_native", "mwfl.docking_auto_hide", "mwfl.docking_keyboard", "mwfl.docking_floating_native", "mwfl.docking_stress_native", "mwfl.docking_workspace_gui", "mwfl.package_consumer"]
     },
     {
       "version": "0.8",
@@ -70,7 +70,7 @@
       "acceptance": "docs/milestones/0.8.md",
       "reflection": "docs/reflections/0.8.md",
       "depends_on": "0.7",
-      "evidence": ["examples/ribbon_workspace", "examples/mdi_workspace", "examples/graphics_interop", "examples/shell_integration", "mwtl.ribbon_model", "mwtl.ribbon_native", "mwtl.ribbon_workspace_gui", "mwtl.mdi_model", "mwtl.mdi_native", "mwtl.mdi_workspace_gui", "mwtl.graphics", "mwtl.graphics_interop_gui", "mwtl.help", "mwtl.shell_integration", "mwtl.integration_stress", "mwtl.package_consumer"]
+      "evidence": ["examples/ribbon_workspace", "examples/mdi_workspace", "examples/graphics_interop", "examples/shell_integration", "mwfl.ribbon_model", "mwfl.ribbon_native", "mwfl.ribbon_workspace_gui", "mwfl.mdi_model", "mwfl.mdi_native", "mwfl.mdi_workspace_gui", "mwfl.graphics", "mwfl.graphics_interop_gui", "mwfl.help", "mwfl.shell_integration", "mwfl.integration_stress", "mwfl.package_consumer"]
     }
   ]
 }

@@ -1,5 +1,5 @@
-#include <mwtl/ribbon.h>
-#include <mwtl/settings_store.h>
+#include <mwfl/ribbon.h>
+#include <mwfl/settings_store.h>
 
 #include <shellapi.h>
 
@@ -15,21 +15,21 @@
 namespace {
 
 constexpr UINT RunSelfTest = WM_APP + 90;
-constexpr mwtl::RibbonCommandId ModeRibbon{1010};
-constexpr mwtl::RibbonCommandId ContextRibbon{1020};
-constexpr mwtl::RibbonCommandId RecentRibbon{1030};
-constexpr mwtl::ControlId ModeCommand{2010};
-constexpr mwtl::ControlId ContextCommand{2020};
-constexpr mwtl::ControlId RecentCommand{2030};
+constexpr mwfl::RibbonCommandId ModeRibbon{1010};
+constexpr mwfl::RibbonCommandId ContextRibbon{1020};
+constexpr mwfl::RibbonCommandId RecentRibbon{1030};
+constexpr mwfl::ControlId ModeCommand{2010};
+constexpr mwfl::ControlId ContextCommand{2020};
+constexpr mwfl::ControlId RecentCommand{2030};
 
 class RibbonApplication final {
 public:
     RibbonApplication(bool self_test, std::optional<std::filesystem::path> result)
         : self_test_(self_test), result_(std::move(result)),
           settings_(HKEY_CURRENT_USER,
-              self_test ? L"Software\\mwtl\\Tests\\Ribbon-" +
+              self_test ? L"Software\\mwfl\\Tests\\Ribbon-" +
                               std::to_wstring(::GetCurrentProcessId())
-                        : L"Software\\mwtl\\Examples\\RibbonWorkspace", 1) {}
+                        : L"Software\\mwfl\\Examples\\RibbonWorkspace", 1) {}
 
     int Run(HINSTANCE instance, int show) {
         const HRESULT initialized = ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
@@ -40,9 +40,9 @@ public:
         type.hInstance = instance;
         type.hCursor = ::LoadCursorW(nullptr, IDC_ARROW);
         type.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-        type.lpszClassName = L"mwtl.ribbon.reference";
+        type.lpszClassName = L"mwfl.ribbon.reference";
         if (!::RegisterClassW(&type)) return Fail(L"frame registration failed");
-        frame_ = ::CreateWindowExW(0, type.lpszClassName, L"mwtl Ribbon Workspace",
+        frame_ = ::CreateWindowExW(0, type.lpszClassName, L"mwfl Ribbon Workspace",
             WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 900, 620,
             nullptr, nullptr, instance, this);
         if (!frame_) return Fail(L"frame creation failed");
@@ -52,15 +52,15 @@ public:
         BuildCommands();
         const auto created = ribbon_.Create(frame_, model_, commands_);
         if (created) ribbon_available_ = true;
-        else if (created.status != mwtl::RibbonHostStatus::unavailable)
+        else if (created.status != mwfl::RibbonHostStatus::unavailable)
             return Fail(L"Ribbon creation failed");
         if (ribbon_available_ &&
-            !ribbon_.Load(instance, L"MWTL_RIBBON_REFERENCE_RIBBON"))
+            !ribbon_.Load(instance, L"MWFL_RIBBON_REFERENCE_RIBBON"))
             return Fail(L"Ribbon resource load failed");
         LoadSettings();
         const std::array recent{
-            mwtl::RibbonRecentItem{L"welcome", L"Welcome", L"C:\\welcome.txt"},
-            mwtl::RibbonRecentItem{L"notes", L"Notes", L"C:\\notes.txt"}};
+            mwfl::RibbonRecentItem{L"welcome", L"Welcome", L"C:\\welcome.txt"},
+            mwfl::RibbonRecentItem{L"notes", L"Notes", L"C:\\notes.txt"}};
         if (!model_.SetRecentItems(recent)) return Fail(L"recent items failed");
         UpdatePresentation();
         ::ShowWindow(frame_, self_test_ ? SW_HIDE : show);
@@ -119,20 +119,20 @@ private:
     }
 
     void BuildCommands() {
-        commands_.Add(mwtl::Command(ModeCommand, L"Switch mode", [this] {
+        commands_.Add(mwfl::Command(ModeCommand, L"Switch mode", [this] {
             mode_ = mode_ == 1 ? 2u : 1u;
             model_.SetActiveModes(mode_);
             if (ribbon_available_) native_ok_ = native_ok_ && ribbon_.SetModes(mode_);
             UpdatePresentation();
         }));
-        commands_.Add(mwtl::Command(ContextCommand, L"Toggle context", [this] {
+        commands_.Add(mwfl::Command(ContextCommand, L"Toggle context", [this] {
             context_visible_ = !context_visible_;
             model_.SetContextVisible({7}, context_visible_);
             if (ribbon_available_) native_ok_ = native_ok_ && ribbon_.InvalidateAll();
             UpdatePresentation();
         }));
-        commands_.Add(mwtl::Command(RecentCommand, L"Add recent item", [this] {
-            auto items = std::vector<mwtl::RibbonRecentItem>(
+        commands_.Add(mwfl::Command(RecentCommand, L"Add recent item", [this] {
+            auto items = std::vector<mwfl::RibbonRecentItem>(
                 model_.GetRecentItems().begin(), model_.GetRecentItems().end());
             items.push_back({L"item-" + std::to_wstring(items.size()),
                 L"Recent item", L"C:\\recent.txt"});
@@ -159,13 +159,13 @@ private:
 
     void LoadSettings() {
         const std::array schema{
-            mwtl::SettingDefinition{L"Mode", mwtl::SettingType::dword, 4, true},
-            mwtl::SettingDefinition{L"Context", mwtl::SettingType::dword, 4, true}};
+            mwfl::SettingDefinition{L"Mode", mwfl::SettingType::dword, 4, true},
+            mwfl::SettingDefinition{L"Context", mwfl::SettingType::dword, 4, true}};
         const auto loaded = settings_.Load(schema);
         if (loaded) {
-            if (const auto* value = mwtl::FindSetting(loaded.values, L"Mode"))
+            if (const auto* value = mwfl::FindSetting(loaded.values, L"Mode"))
                 mode_ = std::get<std::uint32_t>(value->data) == 2 ? 2u : 1u;
-            if (const auto* value = mwtl::FindSetting(loaded.values, L"Context"))
+            if (const auto* value = mwfl::FindSetting(loaded.values, L"Context"))
                 context_visible_ = std::get<std::uint32_t>(value->data) != 0;
         }
         model_.SetActiveModes(mode_);
@@ -175,8 +175,8 @@ private:
 
     bool SaveSettings() {
         const std::array values{
-            mwtl::SettingValue{L"Mode", mode_},
-            mwtl::SettingValue{L"Context", context_visible_ ? 1u : 0u}};
+            mwfl::SettingValue{L"Mode", mode_},
+            mwfl::SettingValue{L"Context", context_visible_ ? 1u : 0u}};
         return static_cast<bool>(settings_.Save(values));
     }
 
@@ -197,8 +197,8 @@ private:
         if (!native_ok_) return FailSelfTest(L"native Ribbon update");
         if (!SaveSettings()) return FailSelfTest(L"settings save");
         const std::array schema{
-            mwtl::SettingDefinition{L"Mode", mwtl::SettingType::dword, 4, true},
-            mwtl::SettingDefinition{L"Context", mwtl::SettingType::dword, 4, true}};
+            mwfl::SettingDefinition{L"Mode", mwfl::SettingType::dword, 4, true},
+            mwfl::SettingDefinition{L"Context", mwfl::SettingType::dword, 4, true}};
         if (!settings_.Load(schema)) return FailSelfTest(L"settings reload");
         const std::array<std::wstring_view, 2> names{L"Mode", L"Context"};
         settings_.RemoveOwned(names);
@@ -234,10 +234,10 @@ private:
     std::optional<std::filesystem::path> result_;
     HWND frame_ = nullptr;
     HWND content_ = nullptr;
-    mwtl::RibbonCommandModel model_;
-    mwtl::CommandSet commands_;
-    mwtl::RibbonFrameworkHost ribbon_;
-    mwtl::VersionedSettingsStore settings_;
+    mwfl::RibbonCommandModel model_;
+    mwfl::CommandSet commands_;
+    mwfl::RibbonFrameworkHost ribbon_;
+    mwfl::VersionedSettingsStore settings_;
 };
 
 }  // namespace

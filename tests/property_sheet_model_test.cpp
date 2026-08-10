@@ -1,10 +1,10 @@
-#include <mwtl/property_sheet.h>
+#include <mwfl/property_sheet.h>
 
 #include <cstdlib>
 #include <string>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
 
     PropertySheetModel model;
     if (model.Add({{}, L"invalid"}) || !model.Add({{1}, L"General"}) ||

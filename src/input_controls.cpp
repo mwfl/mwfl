@@ -1,6 +1,6 @@
-#include <mwtl/input_controls.h>
+#include <mwfl/input_controls.h>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
 bool Initialize(DWORD classes) noexcept { INITCOMMONCONTROLSEX value{sizeof(value), classes}; return ::InitCommonControlsEx(&value) != FALSE; }
 }
@@ -43,4 +43,4 @@ int UpDown::GetValue() const noexcept { return IsWindow() ? static_cast<int>(::S
 
 bool SysLink::Create(HWND parent, ControlId id, std::wstring_view markup, RectDip bounds, SysLinkOptions options) { return Initialize(ICC_LINK_CLASS) && CreateNative(WC_LINK, parent, id, markup, bounds, options.style, options.extended_style); }
 
-}  // namespace mwtl
+}  // namespace mwfl

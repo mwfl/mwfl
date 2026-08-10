@@ -3,32 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="mwtl — Modern Windows Thin Layer — brings typed events and DPI-aware responsive layout to native Windows controls.">
-  <link rel="canonical" href="https://everettjf.github.io/mwtl/">
-  <title>mwtl — Modern Windows Thin Layer</title>
+  <meta name="description" content="mwfl — Modern Windows Foundation Layer — brings typed events and DPI-aware responsive layout to native Windows controls.">
+  <link rel="canonical" href="https://mwfl.github.io/">
+  <title>mwfl — Modern Windows Foundation Layer</title>
   <meta property="og:type" content="website">
-  <meta property="og:title" content="mwtl — Modern Windows Thin Layer">
+  <meta property="og:title" content="mwfl — Modern Windows Foundation Layer">
   <meta property="og:description" content="Real HWND controls, typed events, checked setup, and DPI-aware responsive layout — without closing off Win32.">
-  <meta property="og:url" content="https://everettjf.github.io/mwtl/">
-  <meta property="og:image" content="https://everettjf.github.io/mwtl/assets/mwtl-mark.svg">
+  <meta property="og:url" content="https://mwfl.github.io/">
+  <meta property="og:image" content="https://mwfl.github.io/assets/mwfl-mark.svg">
   <meta name="theme-color" content="#f7f9ff">
-  <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
+  <link rel="icon" type="image/svg+xml" href="assets/mwfl-mark.svg">
   <link rel="stylesheet" href="styles.css?v=20260810a">
-  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
   <script defer src="assets/site.js?v=20260810a"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell nav">
-      <a class="brand" href="index.html" aria-label="MWTL — Modern Windows Thin Layer"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+      <a class="brand" href="index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="components/index.html">Components</a>
         <a href="tutorial.html">Get started</a>
         <a href="building.html">Build reference</a>
         <a href="changelog.html">Changelog</a>
         <a href="llms.txt">For coding agents</a>
-        <a href="https://github.com/everettjf/mwtl">GitHub</a>
+        <a href="https://github.com/mwfl/mwfl">GitHub</a>
         <button class="theme-toggle" type="button" aria-label="Toggle color theme"></button>
       </nav>
     </div>
@@ -37,7 +37,7 @@
   <main id="main">
     <section class="shell home-hero">
       <div class="hero-copy">
-        <div class="eyebrow">Modern Windows Thin Layer</div>
+        <div class="eyebrow">Modern Windows Foundation Layer</div>
         <h1>Native Windows UI, with less&nbsp;ceremony.</h1>
         <p class="lede">Concise creation, typed events, checked batches, and DPI-aware responsive layout around real HWND controls — without closing off Win32.</p>
         <div class="actions">
@@ -50,28 +50,28 @@
         </div>
       </div>
       <figure class="hero-demo">
-        <pre data-title="hello/main.cpp"><code>#include &lt;mwtl/mwtl.h&gt;
+        <pre data-title="hello/main.cpp"><code>#include &lt;mwfl/mwfl.h&gt;
 
-using mwtl::operator""_dip;
+using mwfl::operator""_dip;
 
-class MainWindow final : public mwtl::WindowBase {
+class MainWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        SetTitle(L"Hello, mwtl");
+        SetTitle(L"Hello, mwfl");
 
-        mwtl::ControlHost ui{*this};
+        mwfl::ControlHost ui{*this};
         ui.Add(message_, L"Native UI, modern C++20.");
         ui.Add(close_, L"Close");
 
-        SetLayout(mwtl::Column()
+        SetLayout(mwfl::Column()
             .Margin(24_dip).Gap(12_dip)
-            .Add(message_, mwtl::Auto())
-            .Add(close_, mwtl::Fixed(36_dip)));
+            .Add(message_, mwfl::Auto())
+            .Add(close_, mwfl::Fixed(36_dip)));
     }
 
 private:
-    mwtl::Label message_;
-    mwtl::Button close_;
+    mwfl::Label message_;
+    mwfl::Button close_;
 };</code></pre>
         <figcaption>A complete window — no message-map macros, no generated application object.</figcaption>
       </figure>
@@ -81,11 +81,11 @@ private:
       <div class="cta-band">
         <div>
           <div class="eyebrow">First public release</div>
-          <h2>mwtl 0.1.0 is available.</h2>
+          <h2>mwfl 0.1.0 is available.</h2>
           <p>Download the tested VS2026/MSVC x64 package, or review the public baseline.</p>
         </div>
         <div class="actions">
-          <a class="button primary" href="https://github.com/everettjf/mwtl/releases/tag/v0.1.0">Download</a>
+          <a class="button primary" href="https://github.com/mwfl/mwfl/releases/tag/v0.1.0">Download</a>
           <a class="button" href="changelog.html">Read the changelog</a>
         </div>
       </div>
@@ -127,13 +127,13 @@ private:
         <h2 id="layout-title">Resize real controls.</h2>
         <p>Layout nodes keep non-owning HWND references and rearrange automatically on <code>WM_SIZE</code>.</p>
       </div>
-      <pre data-title="layout.cpp"><code>using mwtl::operator""_dip;
+      <pre data-title="layout.cpp"><code>using mwfl::operator""_dip;
 
 SetLayout(
-    mwtl::Row()
+    mwfl::Row()
         .Gap(8_dip)
-        .Add(name_, mwtl::Stretch(1.0f, 160_dip))
-        .Add(save_, mwtl::Fixed(96_dip)));</code></pre>
+        .Add(name_, mwfl::Stretch(1.0f, 160_dip))
+        .Add(save_, mwfl::Fixed(96_dip)));</code></pre>
     </section>
 
     <section class="shell quick-code" aria-labelledby="events-title">
@@ -142,12 +142,12 @@ SetLayout(
         <h2 id="events-title">Match controls, not IDs.</h2>
         <p>Command events identify the originating control without message-map macros or manual HWND comparisons.</p>
       </div>
-      <pre data-title="events.cpp"><code>mwtl::EventResult OnCommand(const mwtl::CommandEvent&amp; event) override {
+      <pre data-title="events.cpp"><code>mwfl::EventResult OnCommand(const mwfl::CommandEvent&amp; event) override {
     if (event.IsClicked(greet_)) {
         status_.SetText(L"Hello, " + name_.GetText());
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
-    return mwtl::EventResult::Propagate();
+    return mwfl::EventResult::Propagate();
 }</code></pre>
     </section>
 
@@ -156,13 +156,13 @@ SetLayout(
       <h2 id="examples-title">Real native UI, ready to explore.</h2>
       <p class="lede">A focused selection of content-rich applications. Select a card for a larger native screenshot, then open its complete source in a new window.</p>
       <div class="example-catalog">
-        <a class="example-card" href="https://github.com/everettjf/mwtl/blob/main/examples/controls/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/controls.png" alt="Controls example" width="1462" height="806" loading="lazy" decoding="async"><strong>Controls</strong><span>Complete form-control gallery</span></a>
-        <a class="example-card" href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/common-controls.png" alt="Common Controls example" width="1920" height="1020" loading="lazy" decoding="async"><strong>Common Controls</strong><span>Complete specialized gallery</span></a>
-        <a class="example-card" href="https://github.com/everettjf/mwtl/blob/main/examples/form_binding/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/form-binding.png" alt="Form binding example" width="920" height="560" loading="lazy" decoding="async"><strong>Form binding</strong><span>Live model validation and preview</span></a>
-        <a class="example-card" href="https://github.com/everettjf/mwtl/blob/main/examples/commands/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/commands.png" alt="Commands example" width="1080" height="680" loading="lazy" decoding="async"><strong>Commands</strong><span>Menu, toolbar, and shortcuts in sync</span></a>
-        <a class="example-card" href="https://github.com/everettjf/mwtl/blob/main/examples/desktop_integration/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/desktop-integration.png" alt="Desktop integration example" width="1120" height="720" loading="lazy" decoding="async"><strong>Desktop integration</strong><span>Dialogs, clipboard, drop, persistence</span></a>
-        <a class="example-card" href="https://github.com/everettjf/mwtl/blob/main/examples/layout_gallery/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/layout-gallery.png" alt="Layout gallery example" width="1180" height="760" loading="lazy" decoding="async"><strong>Layout gallery</strong><span>Responsive rows, columns, and overlays</span></a>
-        <a class="example-card" href="markdown-editor.html"><img src="https://raw.githubusercontent.com/everettjf/mwtl/main/docs/images/examples/markdown-editor.png" alt="Markdown Editor example" width="1400" height="900" loading="lazy" decoding="async"><strong>Markdown Editor</strong><span>Local-first editing and offline GFM preview</span></a>
+        <a class="example-card" href="https://github.com/mwfl/mwfl/blob/main/examples/controls/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/controls.png" alt="Controls example" width="1462" height="806" loading="lazy" decoding="async"><strong>Controls</strong><span>Complete form-control gallery</span></a>
+        <a class="example-card" href="https://github.com/mwfl/mwfl/blob/main/examples/common_controls/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/common-controls.png" alt="Common Controls example" width="1920" height="1020" loading="lazy" decoding="async"><strong>Common Controls</strong><span>Complete specialized gallery</span></a>
+        <a class="example-card" href="https://github.com/mwfl/mwfl/blob/main/examples/form_binding/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/form-binding.png" alt="Form binding example" width="920" height="560" loading="lazy" decoding="async"><strong>Form binding</strong><span>Live model validation and preview</span></a>
+        <a class="example-card" href="https://github.com/mwfl/mwfl/blob/main/examples/commands/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/commands.png" alt="Commands example" width="1080" height="680" loading="lazy" decoding="async"><strong>Commands</strong><span>Menu, toolbar, and shortcuts in sync</span></a>
+        <a class="example-card" href="https://github.com/mwfl/mwfl/blob/main/examples/desktop_integration/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/desktop-integration.png" alt="Desktop integration example" width="1120" height="720" loading="lazy" decoding="async"><strong>Desktop integration</strong><span>Dialogs, clipboard, drop, persistence</span></a>
+        <a class="example-card" href="https://github.com/mwfl/mwfl/blob/main/examples/layout_gallery/main.cpp"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/layout-gallery.png" alt="Layout gallery example" width="1180" height="760" loading="lazy" decoding="async"><strong>Layout gallery</strong><span>Responsive rows, columns, and overlays</span></a>
+        <a class="example-card" href="markdown-editor.html"><img src="https://raw.githubusercontent.com/everettjf/mwfl/main/docs/images/examples/markdown-editor.png" alt="Markdown Editor example" width="1400" height="900" loading="lazy" decoding="async"><strong>Markdown Editor</strong><span>Local-first editing and offline GFM preview</span></a>
       </div>
       <p class="catalog-more"><a href="components/catalog.html">Search all 42 capabilities and 44 runnable examples <span aria-hidden="true">↗</span></a></p>
     </section>
@@ -177,11 +177,11 @@ SetLayout(
       <div class="cta-band">
         <div>
           <h2>Start with one CMake block.</h2>
-          <p><code>FetchContent</code> pulls mwtl and its pinned WTL/WIL dependencies — no manual paths.</p>
+          <p><code>FetchContent</code> pulls mwfl and its pinned WTL/WIL dependencies — no manual paths.</p>
         </div>
         <div class="actions">
           <a class="button primary" href="tutorial.html">Build your first app</a>
-          <a class="button" href="https://github.com/everettjf/mwtl">Star on GitHub</a>
+          <a class="button" href="https://github.com/mwfl/mwfl">Star on GitHub</a>
         </div>
       </div>
     </section>
@@ -189,13 +189,13 @@ SetLayout(
 
   <footer class="site-footer">
     <div class="shell footer">
-      <span>Modern Windows Thin Layer · MIT licensed · Windows 10 1809+ · x64 / ARM64</span>
+      <span>Modern Windows Foundation Layer · MIT licensed · Windows 10 1809+ · x64 / ARM64</span>
       <nav aria-label="Footer">
         <a href="components/index.html">Components</a>
         <a href="tutorial.html">Get started</a>
         <a href="changelog.html">Changelog</a>
-        <a href="https://github.com/everettjf/mwtl">GitHub</a>
-        <a href="https://github.com/everettjf/mwtl/blob/main/LICENSE">License</a>
+        <a href="https://github.com/mwfl/mwfl">GitHub</a>
+        <a href="https://github.com/mwfl/mwfl/blob/main/LICENSE">License</a>
       </nav>
     </div>
   </footer>

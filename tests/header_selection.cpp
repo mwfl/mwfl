@@ -1,8 +1,8 @@
-#include <mwtl/selection.h>
+#include <mwfl/selection.h>
 
-#include <mwtl/controls.h>
+#include <mwfl/controls.h>
 
-void selection_header_probe(mwtl::ComboBox& combo) {
-    mwtl::SelectionAdapter<mwtl::ComboBox, int> items{combo};
+void selection_header_probe(mwfl::ComboBox& combo) {
+    mwfl::SelectionAdapter<mwfl::ComboBox, int> items{combo};
     static_cast<void>(items.Size());
 }

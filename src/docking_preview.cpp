@@ -1,13 +1,13 @@
-#include <mwtl/docking_preview.h>
+#include <mwfl/docking_preview.h>
 
-#include <mwtl/appearance.h>
-#include <mwtl/dpi.h>
+#include <mwfl/appearance.h>
+#include <mwfl/dpi.h>
 
 #include <algorithm>
 
-namespace mwtl {
+namespace mwfl {
 namespace {
-constexpr wchar_t class_name[] = L"mwtl.DockPreviewWindow";
+constexpr wchar_t class_name[] = L"mwfl.DockPreviewWindow";
 }
 
 DockPreviewWindow::~DockPreviewWindow() noexcept { Destroy(); }
@@ -140,4 +140,4 @@ LRESULT CALLBACK DockPreviewWindow::WindowProcedure(
     return ::DefWindowProcW(window, message, wparam, lparam);
 }
 
-}  // namespace mwtl
+}  // namespace mwfl

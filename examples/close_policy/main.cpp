@@ -1,10 +1,10 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 #include <exception>
 #include <stdexcept>
 
-class ClosePolicyWindow final : public mwtl::WindowBase {
+class ClosePolicyWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         if (!SetTitle(L"Close policy demo — close twice to exit")) {
@@ -12,13 +12,13 @@ public:
         }
     }
 
-    mwtl::EventResult OnClose() override {
+    mwfl::EventResult OnClose() override {
         if (!close_confirmed_) {
             close_confirmed_ = true;
             SetTitle(L"Close requested once — close again to confirm");
-            return mwtl::EventResult::Handled();
+            return mwfl::EventResult::Handled();
         }
-        return mwtl::EventResult::Propagate();
+        return mwfl::EventResult::Propagate();
     }
 
 private:
@@ -26,5 +26,5 @@ private:
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<ClosePolicyWindow>(instance, show_command);
+    return mwfl::RunApplication<ClosePolicyWindow>(instance, show_command);
 }

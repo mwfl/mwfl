@@ -10,8 +10,8 @@ Open **Developer PowerShell for VS 2026** at the repository root:
 
 ```powershell
 cmake --preset vs2026-x64
-cmake --build --preset vs2026-x64-debug --target mwtl_explorer_demo
-& .\build\presets\vs2026-x64\examples\explorer\Debug\mwtl_explorer_demo.exe
+cmake --build --preset vs2026-x64-debug --target mwfl_explorer_demo
+& .\build\presets\vs2026-x64\examples\explorer\Debug\mwfl_explorer_demo.exe
 ```
 
 Use the folder tree, click list columns, drag the splitter, press F5, switch
@@ -23,18 +23,18 @@ Copy the maintained C++20/Per-Monitor-V2 template and the canonical Explorer
 sources into a separate project:
 
 ```powershell
-Copy-Item -Recurse .\templates\basic-app ..\mwtl-explorer-tutorial
+Copy-Item -Recurse .\templates\basic-app ..\mwfl-explorer-tutorial
 Copy-Item .\examples\explorer\main.cpp, `
   .\examples\explorer\explorer_model.cpp, `
   .\examples\explorer\explorer_model.h `
-  ..\mwtl-explorer-tutorial
-Set-Location ..\mwtl-explorer-tutorial
+  ..\mwfl-explorer-tutorial
+Set-Location ..\mwfl-explorer-tutorial
 ```
 
 Change the executable line in `CMakeLists.txt`:
 
 ```cmake
-add_executable(mwtl_basic_app WIN32
+add_executable(mwfl_basic_app WIN32
     main.cpp explorer_model.cpp explorer_model.h app.manifest)
 ```
 
@@ -42,9 +42,9 @@ Configure against the checkout, build, and run before editing:
 
 ```powershell
 cmake -S . -B build -G "Visual Studio 18 2026" -A x64 `
-  -DMWTL_SOURCE_DIR=D:/GitHub/mwtl
+  -DMWFL_SOURCE_DIR=D:/GitHub/mwfl
 cmake --build build --config Debug
-& .\build\Debug\mwtl_basic_app.exe
+& .\build\Debug\mwfl_basic_app.exe
 ```
 
 ## 3. Define stable application data
@@ -54,18 +54,18 @@ must be unique, stable, and nonzero:
 
 ```cpp
 struct FileEntry {
-    mwtl::ListItemId id;
-    mwtl::TreeItemId folder;
+    mwfl::ListItemId id;
+    mwfl::TreeItemId folder;
     std::wstring name;
     std::wstring type;
     std::uint64_t size_bytes;
     int image_index;
 };
 
-class ExplorerModel final : public mwtl::VirtualListModel {
+class ExplorerModel final : public mwfl::VirtualListModel {
 public:
     std::size_t GetRowCount() const noexcept override;
-    mwtl::ListItemId GetRowId(std::size_t row) const noexcept override;
+    mwfl::ListItemId GetRowId(std::size_t row) const noexcept override;
     std::wstring GetCellText(std::size_t row, int column) const override;
 };
 ```
@@ -96,14 +96,14 @@ until their HWNDs are destroyed.
 Create Splitter under the main window. Its two panes must be direct children:
 
 ```cpp
-ui.Add(splitter, {203}, {}, mwtl::SplitterOptions{
+ui.Add(splitter, {203}, {}, mwfl::SplitterOptions{
     .constraints = {180.0_dip, 320.0_dip, 6.0_dip},
     .initial_position = 250.0_dip,
 });
-mwtl::ControlHost panes{splitter};
+mwfl::ControlHost panes{splitter};
 panes.Add(tree, {204}, {});
-panes.Add(list, {205}, {}, mwtl::ListViewOptions{.virtual_data = true});
-mwtl::Must(splitter.AttachPanes(tree.GetHwnd(), list.GetHwnd()),
+panes.Add(list, {205}, {}, mwfl::ListViewOptions{.virtual_data = true});
+mwfl::Must(splitter.AttachPanes(tree.GetHwnd(), list.GetHwnd()),
            "attach Explorer panes");
 ```
 
@@ -117,7 +117,7 @@ Insert the root and children with `TreeItemId`. Add Name, Type, and Size columns
 then attach the shared model:
 
 ```cpp
-mwtl::AddColumns(list, {{L"Name", 300}, {L"Type", 210}, {L"Size", 120}});
+mwfl::AddColumns(list, {{L"Name", 300}, {L"Type", 210}, {L"Size", 120}});
 list.SetVirtualModel(model);
 ```
 
@@ -127,7 +127,7 @@ At the beginning of `OnNotify`, let the ListView service owner-data callbacks:
 LRESULT result = 0;
 if (list.HandleNotification(event.header, result)) {
     if (auto error = list.TakeVirtualException()) std::rethrow_exception(error);
-    return mwtl::EventResult::Handled(result);
+    return mwfl::EventResult::Handled(result);
 }
 ```
 
@@ -142,11 +142,11 @@ Let Rebar and StatusBar use intrinsic height, keep tabs fixed, and stretch the
 splitter:
 
 ```cpp
-SetLayout(mwtl::Column()
-    .Add(rebar, mwtl::Auto())
-    .Add(tabs, mwtl::Fixed(34.0_dip))
-    .Add(splitter, mwtl::Stretch())
-    .Add(status, mwtl::Auto()));
+SetLayout(mwfl::Column()
+    .Add(rebar, mwfl::Auto())
+    .Add(tabs, mwfl::Fixed(34.0_dip))
+    .Add(splitter, mwfl::Stretch())
+    .Add(status, mwfl::Auto()));
 ```
 
 Update status-part right edges from `OnResize`. Name Toolbar, TreeView, ListView,
@@ -165,9 +165,9 @@ and accelerators.
 
 ```powershell
 cmake --build --preset vs2026-x64-debug `
-  --target mwtl_explorer_demo mwtl_explorer_model_test mwtl_splitter_native_test
+  --target mwfl_explorer_demo mwfl_explorer_model_test mwfl_splitter_native_test
 ctest --test-dir build/presets/vs2026-x64 -C Debug `
-  -R "^mwtl[.](explorer_model|explorer_gui|splitter_native)$" `
+  -R "^mwfl[.](explorer_model|explorer_gui|splitter_native)$" `
   --output-on-failure
 ```
 

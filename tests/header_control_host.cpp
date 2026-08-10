@@ -1,6 +1,6 @@
-#include <mwtl/control_host.h>
+#include <mwfl/control_host.h>
 
-void mwtl_header_control_host_smoke() {
-    mwtl::ControlHost host(nullptr);
+void mwfl_header_control_host_smoke() {
+    mwfl::ControlHost host(nullptr);
     (void)host.GetParent();
 }

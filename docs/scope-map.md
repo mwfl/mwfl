@@ -1,4 +1,4 @@
-# mwtl capability and scope map
+# mwfl capability and scope map
 
 This map prevents humans and coding agents from guessing that an API exists
 because it is present in MFC, WTL, Win32++, wxWidgets, or WinUI. Public headers
@@ -6,7 +6,7 @@ remain authoritative.
 
 ## Supported directly
 
-| Capability | Primary mwtl surface | Canonical example |
+| Capability | Primary mwfl surface | Canonical example |
 |---|---|---|
 | Application and top-level window lifecycle | `Application`, `WindowBase` | `application`, `window` |
 | Core HWND controls | `ControlHost`, controls | `controls` |
@@ -27,7 +27,7 @@ remain authoritative.
 
 ## Use raw Win32 through the escape hatch
 
-These are compatible with mwtl but intentionally remain ordinary platform APIs:
+These are compatible with mwfl but intentionally remain ordinary platform APIs:
 
 - owner-drawn and custom-drawn controls beyond the provided paint hooks;
 - registry schemas beyond the focused placement helpers;
@@ -42,7 +42,7 @@ exception safety.
 
 ## Compose a focused third-party library
 
-Do not grow mwtl into a wrapper for these ecosystems:
+Do not grow mwfl into a wrapper for these ecosystems:
 
 | Need | Recommended composition |
 |---|---|
@@ -53,7 +53,7 @@ Do not grow mwtl into a wrapper for these ecosystems:
 | Media playback | Media Foundation or a dedicated playback component |
 | Embedded GPU rendering | Direct2D/Direct3D swap chain in a native host |
 
-The application owns the third-party object's lifecycle and uses mwtl for the
+The application owns the third-party object's lifecycle and uses mwfl for the
 surrounding native window, commands, layout, and thread handoff.
 
 ## Intentionally out of scope
@@ -71,11 +71,11 @@ surrounding native window, commands, layout, and thread handoff.
 Document applications, modern tabbed workspaces, docking, optional Ribbon,
 legacy MDI, EMF/GDI+, expanded taskbar behavior, and safe contextual Help are
 current public capabilities. Ribbon, MDI, graphics, and shell integrations are
-independent components; none expands the minimum `mwtl::mwtl` surface. Their
+independent components; none expands the minimum `mwfl::mwfl` surface. Their
 dependency order and evidence are defined in the
 [Windows desktop capability roadmap](win32xx-parity-roadmap.md).
 
-Coverage is measured by the desktop application scenarios mwtl can implement.
+Coverage is measured by the desktop application scenarios mwfl can implement.
 It does not imply compatibility with another framework's API, and it does not
 relax the Windows 10+, C++20, x64/ARM64, explicit-ownership design constraints.
 
@@ -83,5 +83,5 @@ relax the Windows 10+, C++20, x64/ARM64, explicit-ownership design constraints.
 
 Richer UI Automation providers, media playback, shell extensions, and
 application-specific Ribbon property types require an explicit future project
-decision. Agents must use the composition paths above rather than invent mwtl
+decision. Agents must use the composition paths above rather than invent mwfl
 symbols.

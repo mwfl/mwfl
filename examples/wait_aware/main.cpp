@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <cstdlib>
 #include <chrono>
@@ -8,7 +8,7 @@ HWND demo_window = nullptr;
 unsigned idle_ticks = 0;
 }
 
-class WaitWindow final : public mwtl::WindowBase {
+class WaitWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         demo_window = GetHwnd();
@@ -18,7 +18,7 @@ public:
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
     using namespace std::chrono_literals;
-    mwtl::WaitAwareMessagePump pump({
+    mwfl::WaitAwareMessagePump pump({
         .idle_interval = 500ms,
         .on_idle = [] {
         ++idle_ticks;
@@ -27,5 +27,5 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
         ::SetWindowTextW(demo_window, title);
         },
     });
-    return mwtl::RunApplication<WaitWindow>(instance, show_command, pump);
+    return mwfl::RunApplication<WaitWindow>(instance, show_command, pump);
 }

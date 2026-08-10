@@ -1,4 +1,4 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <chrono>
 #include <cstdlib>
@@ -7,7 +7,7 @@
 
 using namespace std::chrono_literals;
 
-class TimerWindow final : public mwtl::WindowBase {
+class TimerWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
         ::SetWindowPos(GetHwnd(), nullptr, 0, 0, 900, 560,
@@ -20,23 +20,23 @@ public:
         }
     }
 
-    mwtl::EventResult OnTimer(mwtl::TimerId timer_id) override {
+    mwfl::EventResult OnTimer(mwfl::TimerId timer_id) override {
         if (timer_id != kTimer) {
-            return mwtl::EventResult::Propagate();
+            return mwfl::EventResult::Propagate();
         }
         wchar_t title[96]{};
         _snwprintf_s(title, _countof(title), _TRUNCATE,
                      L"WM_TIMER tick %u", ++ticks_);
         SetTitle(title);
-        return mwtl::EventResult::Handled();
+        return mwfl::EventResult::Handled();
     }
 
 private:
-    static constexpr mwtl::TimerId kTimer{1};
-    mwtl::UiTimer timer_;
+    static constexpr mwfl::TimerId kTimer{1};
+    mwfl::UiTimer timer_;
     unsigned int ticks_ = 0;
 };
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
-    return mwtl::RunApplication<TimerWindow>(instance, show_command);
+    return mwfl::RunApplication<TimerWindow>(instance, show_command);
 }

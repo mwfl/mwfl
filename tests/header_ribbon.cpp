@@ -1,3 +1,3 @@
-#include <mwtl/ribbon.h>
+#include <mwfl/ribbon.h>
 
-static_assert(sizeof(mwtl::RibbonCommandId) == sizeof(std::uint32_t));
+static_assert(sizeof(mwfl::RibbonCommandId) == sizeof(std::uint32_t));

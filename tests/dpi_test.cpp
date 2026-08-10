@@ -1,4 +1,4 @@
-#include <mwtl/dpi.h>
+#include <mwfl/dpi.h>
 
 #include <array>
 #include <climits>
@@ -17,7 +17,7 @@ bool Expect(bool condition, const char* description) {
 }  // namespace
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     struct Case {
         UINT dpi;
         int expected_100_dip;

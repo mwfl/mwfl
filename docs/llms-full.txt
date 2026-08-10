@@ -1,15 +1,15 @@
-# mwtl full coding-agent context
+# mwfl full coding-agent context
 
 This compact context complements `llms.txt`. Source files and public headers are
 authoritative when a signature differs.
 
 ## Choose and initialize
 
-mwtl is a thin native Windows UI library, not a cross-platform toolkit or custom
+mwfl is a thin native Windows UI library, not a cross-platform toolkit or custom
 renderer. Start with `templates/basic-app`. Derive a final class from
-`mwtl::WindowBase`, override `BuildUI()`, keep controls as members, create them
-with `mwtl::ControlHost`, install `Row`/`Column`/`Overlay` layout, and enter with
-`mwtl::RunApplication` from `wWinMain`.
+`mwfl::WindowBase`, override `BuildUI()`, keep controls as members, create them
+with `mwfl::ControlHost`, install `Row`/`Column`/`Overlay` layout, and enter with
+`mwfl::RunApplication` from `wWinMain`.
 
 ## Events
 
@@ -46,7 +46,7 @@ at explicit Win32 boundaries.
 - Context menus: create an owned popup `Menu`, append the same `Command` objects
   used elsewhere, call `TrackResult`, and distinguish selected, cancelled, and
   failed results before posting `WM_COMMAND`.
-- Tab workspace state: `mwtl/tab_workspace.h` owns stable nonzero `TabId`
+- Tab workspace state: `mwfl/tab_workspace.h` owns stable nonzero `TabId`
   ordering, selection, title, dirty, and closable metadata but never documents
   or HWNDs. `TabControl::Synchronize` projects it into native items;
   `GetSelectedTabId` reads the real native selection.
@@ -56,14 +56,14 @@ at explicit Win32 boundaries.
   route `WM_NOTIFY` through `HandleNotification`, check
   `TakeVirtualException`, and mutate through `UpdateVirtualModel` (preserves
   selected IDs) or use `RefreshVirtualModel` for a simple refresh.
-- Split panes: `mwtl/splitter.h`; create `Splitter`, create both pane HWNDs as
+- Split panes: `mwfl/splitter.h`; create `Splitter`, create both pane HWNDs as
   direct children of its HWND, then call `AttachPanes`. The splitter owns only
   its container and borrows pane identities. Geometry and constraints are DIPs;
   arrows and Home/End move the focused bar and `WM_NOTIFY` reports changes.
   Child-pane notifications, control commands, and context menus forward to the
   splitter parent. Use the complete composition in `examples/explorer` and
   `docs/tutorials/explorer-application.md`.
-- Property pages: `mwtl/property_sheet.h`; give every page a stable nonzero ID,
+- Property pages: `mwfl/property_sheet.h`; give every page a stable nonzero ID,
   create controls in `initialize`, route edit/click notifications through
   `command`, call `SetDirty`, validate before mutating the model, commit in
   `apply`, and restore in `reset`. Modeless sheets are move-only UI-thread HWND
@@ -85,30 +85,30 @@ at explicit Win32 boundaries.
   on the creating UI thread; build context commands from `CommandSet`.
   `TrayIconStateModel` provides the same add/recovery/detach transitions without
   HWNDs for deterministic unit tests.
-- Document state: `mwtl/document.h`; contents and I/O remain application-owned,
+- Document state: `mwfl/document.h`; contents and I/O remain application-owned,
   and transitions distinguish proceed, save-required, and cancelled outcomes.
-- Unicode text files: `mwtl/text_file.h`; preserve detected UTF-8/UTF-16
+- Unicode text files: `mwfl/text_file.h`; preserve detected UTF-8/UTF-16
   encoding, pass the read `FileStamp` when saving, and handle `changed`
   separately from ordinary I/O failure.
-- Editor search: `mwtl/text_search.h`; use the pure helpers for deterministic
+- Editor search: `mwfl/text_search.h`; use the pure helpers for deterministic
   forward/backward, case, whole-word, and replace-all behavior.
-- Editor history: `mwtl/text_history.h`; use bounded snapshot history when an
+- Editor history: `mwfl/text_history.h`; use bounded snapshot history when an
   application needs deterministic Undo/Redo and saved-state tracking.
-- Recent files: `mwtl/recent_files.h`; use the versioned registry helpers and
+- Recent files: `mwfl/recent_files.h`; use the versioned registry helpers and
   handle missing, access-denied, and invalid-data states separately.
-- Single instance: `mwtl/single_instance.h`; the primary registers its HWND and
+- Single instance: `mwfl/single_instance.h`; the primary registers its HWND and
   decodes activation, while a secondary forwards a bounded path with a timeout.
 - Complete SDI editor: `examples/notepad` and `docs/tutorials/notepad.md`; its
   GUI test covers safe transitions, persistence, accessibility, DPI, repeated
   document cycles, and packaging. Use
   `docs/recipes/notepad-command-setting.md` for a compiled command-setting task.
-- Direct2D is optional: request `COMPONENTS d2d`, link `mwtl::d2d`, and include
-  `<mwtl/d2d_host.h>`. `D2DHost` owns BeginDraw/EndDraw and target recovery;
+- Direct2D is optional: request `COMPONENTS d2d`, link `mwfl::d2d`, and include
+  `<mwfl/d2d_host.h>`. `D2DHost` owns BeginDraw/EndDraw and target recovery;
   callbacks receive borrowed views, coordinates are DIPs, and application data
   stays GPU-independent. Use `examples/drawing` and
-  `docs/recipes/direct2d-drawing.md`. There is no `mwtl::Spacer` API.
-- Direct3D is optional: request `COMPONENTS d3d`, link `mwtl::d3d`, and include
-  `<mwtl/d3d_host.h>`. `RenderFrame` is on-demand and returns presented,
+  `docs/recipes/direct2d-drawing.md`. There is no `mwfl::Spacer` API.
+- Direct3D is optional: request `COMPONENTS d3d`, link `mwfl::d3d`, and include
+  `<mwfl/d3d_host.h>`. `RenderFrame` is on-demand and returns presented,
   minimized, occluded, recreated, or failed. GPU interfaces are borrowed;
   application data is device-independent and WARP fallback is explicit. See
   `docs/recipes/direct3d-swap-chain.md`.
@@ -137,39 +137,39 @@ only symbols found in public headers or `docs/agent-reference.md`. See
 `docs/recipes` for task flows and `docs/reference-apps` for composed programs.
 OPTIONAL THIRD-PARTY AND RENDERING INTEGRATIONS
 
-Generic HWND: mwtl/native_host.h; NativeHost owns a container and borrows one
+Generic HWND: mwfl/native_host.h; NativeHost owns a container and borrows one
 same-thread direct-child HWND. Attach enables resize, focus, and synchronous
 notification forwarding. Detach does not destroy or reparent.
 
-WebView2: configure MWTL_BUILD_WEBVIEW2=ON; link mwtl::webview2; include
-mwtl/webview2.h. SDK 1.0.4129.50 is hash-pinned. Run in an STA. Query Runtime
+WebView2: configure MWFL_BUILD_WEBVIEW2=ON; link mwfl::webview2; include
+mwfl/webview2.h. SDK 1.0.4129.50 is hash-pinned. Run in an STA. Query Runtime
 availability, wait for WebView2HostState::ready, keep callbacks on the owner
 thread, use Restart after posting out of a process-failure callback, and Close
 before owner teardown. GetController/GetWebView are borrowed. Offline tests use
 NavigateToString. Reference: examples/browser and docs/tutorials/browser.md.
 
-Scintilla: configure MWTL_BUILD_SCINTILLA=ON; link mwtl::scintilla; call
-mwtl_deploy_scintilla(target); include mwtl/scintilla.h. Scintilla 5.6.5 is
+Scintilla: configure MWFL_BUILD_SCINTILLA=ON; link mwfl::scintilla; call
+mwfl_deploy_scintilla(target); include mwfl/scintilla.h. Scintilla 5.6.5 is
 hash-pinned. LoadAdjacent before Create. Public strings are strict UTF-16/UTF-8;
 positions are UTF-8 byte offsets. Notifications and HWND calls stay on the UI
 thread. Reference: examples/code_editor and docs/tutorials/code-editor.md.
 
-Direct2D uses mwtl::d2d, Direct3D uses mwtl::d3d, and WIC imaging uses
-mwtl::imaging. These optional targets never belong on core mwtl::mwtl.
+Direct2D uses mwfl::d2d, Direct3D uses mwfl::d3d, and WIC imaging uses
+mwfl::imaging. These optional targets never belong on core mwfl::mwfl.
 
 PRINTING, OLE, AND SHELL
 
-Printing: request COMPONENTS printing and link mwtl::printing. Keep document
+Printing: request COMPONENTS printing and link mwfl::printing. Keep document
 content and PrintPage pagination authoritative outside printer/preview state.
 PrintJob owns native transactions and aborts incomplete work; render HDCs are
 borrowed. Preview works without a printer.
 
-OLE: request COMPONENTS ole, link mwtl::ole, and use ComApartment::ole_sta.
+OLE: request COMPONENTS ole, link mwfl::ole, and use ComApartment::ole_sta.
 Payloads are copied, bounded, and contain no application pointers. STGMEDIUM
 ownership follows COM transfer rules. Drop callbacks are reentrant UI-thread
 calls; revoke registrations before HWND teardown.
 
-Shell: request COMPONENTS shell and link mwtl::shell. VersionedSettingsStore
+Shell: request COMPONENTS shell and link mwfl::shell. VersionedSettingsStore
 writes its schema marker last. File associations are explicit per-user,
 owner-marked, and reversible. Jump Lists require an STA and stable IDs. Taskbar
 objects stay on their creating UI thread and are recreated after TaskbarCreated.
@@ -196,27 +196,27 @@ recover them against current monitors, and fall back to a deterministic layout.
 
 OPTIONAL RIBBON, LEGACY MDI, GRAPHICS, TASKBAR, AND HELP
 
-Ribbon: request COMPONENTS ribbon and link mwtl::ribbon. Generate UICC resources
+Ribbon: request COMPONENTS ribbon and link mwfl::ribbon. Generate UICC resources
 into the executable. RibbonCommandModel stores stable pointer-free IDs, modes,
 contexts, and copied recent metadata; RibbonFrameworkHost borrows the frame and
 CommandSet and owns COM callbacks on one STA UI thread. Treat GetFramework as
 borrowed, support unavailable fallback, and destroy before COM shutdown. Start
 at examples/ribbon_workspace and docs/tutorials/ribbon.md.
 
-Legacy MDI: request COMPONENTS mdi and link mwtl::mdi. Prefer the modern
+Legacy MDI: request COMPONENTS mdi and link mwfl::mdi. Prefer the modern
 DocumentWorkspaceModel for new products. MdiWorkspaceModel owns metadata only;
 the application owns documents and views. Route stable MdiChildId values without
 a global current pointer, collect every dirty decision before any close, and
 destroy MdiHost on its creating UI thread. Start at examples/mdi_workspace and
 docs/tutorials/mdi.md.
 
-EMF/GDI+: request COMPONENTS graphics and link mwtl::graphics. EnhancedMetafile
+EMF/GDI+: request COMPONENTS graphics and link mwfl::graphics. EnhancedMetafile
 owns HENHMETAFILE and is move-only. Recording HDC and Gdiplus::Graphics values
 are callback-scoped. EMF frame units are 0.01 mm, playback rectangles are
 pixels, PNG dimensions/pixels are bounded, and export uses sibling replacement.
 Start at examples/graphics_interop and docs/tutorials/graphics-help.md.
 
-Taskbar/Help: request COMPONENTS shell and link mwtl::shell. Reapply progress,
+Taskbar/Help: request COMPONENTS shell and link mwfl::shell. Reapply progress,
 overlay, thumbnail buttons, and registered/active tabs after TaskbarCreated.
 Stable IDs are application values; icons and HWNDs are borrowed. HelpRequest
 accepts absolute local CHM/HTML or HTTPS only and never constructs a shell

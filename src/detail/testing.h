@@ -1,8 +1,8 @@
 #pragma once
 
-#ifdef MWTL_TESTING
+#ifdef MWFL_TESTING
 
-namespace mwtl::detail {
+namespace mwfl::detail {
 
 struct LifecycleSnapshot {
     int module_initialized;
@@ -14,6 +14,6 @@ struct LifecycleSnapshot {
 void ResetLifecycleSnapshotForTesting() noexcept;
 LifecycleSnapshot GetLifecycleSnapshotForTesting() noexcept;
 
-}  // namespace mwtl::detail
+}  // namespace mwfl::detail
 
 #endif

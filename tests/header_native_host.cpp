@@ -1,6 +1,6 @@
-#include <mwtl/native_host.h>
+#include <mwfl/native_host.h>
 
-void mwtl_header_native_host_probe() {
-    mwtl::NativeHostStateModel state;
+void mwfl_header_native_host_probe() {
+    mwfl::NativeHostStateModel state;
     static_cast<void>(state.GetState());
 }

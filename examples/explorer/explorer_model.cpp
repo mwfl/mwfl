@@ -25,12 +25,12 @@ ExplorerModel::ExplorerModel()
              {{1002}, {10}, L"Roadmap.md", L"Markdown document", 42 * 1024, 1},
              {{2001}, {20}, L"Architecture.png", L"PNG image", 3 * 1024 * 1024, 2},
              {{2002}, {20}, L"Prototype.jpg", L"JPEG image", 5 * 1024 * 1024, 2},
-             {{3001}, {30}, L"mwtl-samples.zip", L"ZIP archive", 8 * 1024 * 1024, 3},
+             {{3001}, {30}, L"mwfl-samples.zip", L"ZIP archive", 8 * 1024 * 1024, 3},
              {{3002}, {30}, L"Release checklist.pdf", L"PDF document", 760 * 1024, 1}} {
     RebuildVisible();
 }
 
-bool ExplorerModel::SelectFolder(mwtl::TreeItemId id) {
+bool ExplorerModel::SelectFolder(mwfl::TreeItemId id) {
     if (std::ranges::find(folders_, id, &FolderEntry::id) == folders_.end()) return false;
     selected_folder_ = id;
     RebuildVisible();
@@ -43,9 +43,9 @@ void ExplorerModel::Sort(FileColumn column, bool ascending) {
     RebuildVisible();
 }
 
-mwtl::ListItemId ExplorerModel::GetRowId(std::size_t row) const noexcept {
+mwfl::ListItemId ExplorerModel::GetRowId(std::size_t row) const noexcept {
     const FileEntry* file = GetFile(row);
-    return file == nullptr ? mwtl::ListItemId{} : file->id;
+    return file == nullptr ? mwfl::ListItemId{} : file->id;
 }
 
 std::wstring ExplorerModel::GetCellText(std::size_t row, int column) const {

@@ -1,6 +1,6 @@
-#include <mwtl/d2d_host.h>
+#include <mwfl/d2d_host.h>
 
 int main() {
-    mwtl::D2DRenderStateModel model;
-    return model.MarkReady() && model.GetState() == mwtl::D2DRenderState::ready ? 0 : 1;
+    mwfl::D2DRenderStateModel model;
+    return model.MarkReady() && model.GetState() == mwfl::D2DRenderState::ready ? 0 : 1;
 }

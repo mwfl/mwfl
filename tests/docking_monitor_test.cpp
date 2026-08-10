@@ -1,10 +1,10 @@
-#include <mwtl/docking_monitor.h>
+#include <mwfl/docking_monitor.h>
 
 #include <array>
 #include <cmath>
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     const std::array monitors{
         DockMonitorWorkArea{L"left", -1920, 0, 1920, 1040, 96, false},
         DockMonitorWorkArea{L"primary", 0, 0, 2560, 1400, 144, true},

@@ -1,4 +1,4 @@
-#include <mwtl/shell_integration.h>
+#include <mwfl/shell_integration.h>
 
 #include <array>
 #include <atomic>
@@ -12,7 +12,7 @@ LRESULT CALLBACK Procedure(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     TaskbarProgressModel progress;
     if (!progress.IsValid() || progress.SetValue(2, 1) || !progress.SetValue(1, 4) ||
         progress.state != TaskbarProgressState::normal ||
@@ -39,7 +39,7 @@ int main() {
     WNDCLASSW type{};
     type.lpfnWndProc = Procedure;
     type.hInstance = ::GetModuleHandleW(nullptr);
-    type.lpszClassName = L"mwtl.ShellIntegrationTest";
+    type.lpszClassName = L"mwfl.ShellIntegrationTest";
     if (!::RegisterClassW(&type) && ::GetLastError() != ERROR_CLASS_ALREADY_EXISTS) return 6;
     HWND window = ::CreateWindowExW(0, type.lpszClassName, L"", WS_OVERLAPPED,
                                      0, 0, 100, 100, nullptr, nullptr, type.hInstance, nullptr);
@@ -79,7 +79,7 @@ int main() {
     taskbar.Reset();
     ::DestroyWindow(window);
 
-    const std::wstring app_id = L"mwtl.Tests.JumpList." +
+    const std::wstring app_id = L"mwfl.Tests.JumpList." +
                                 std::to_wstring(::GetCurrentProcessId());
     JumpListCommitOptions options{app_id, L"C:\\Windows\\System32\\notepad.exe",
                                   std::vector<JumpListTask>(tasks.begin(), tasks.end())};

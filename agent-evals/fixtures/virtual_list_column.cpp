@@ -1,15 +1,15 @@
-#include <mwtl/mwtl.h>
+#include <mwfl/mwfl.h>
 
 #include <memory>
 
 namespace {
 
-class FileModel final : public mwtl::VirtualListModel {
+class FileModel final : public mwfl::VirtualListModel {
 public:
     std::size_t GetRowCount() const noexcept override { return 2; }
-    mwtl::ListItemId GetRowId(std::size_t row) const noexcept override {
-        constexpr mwtl::ListItemId ids[]{{101}, {102}};
-        return row < 2 ? ids[row] : mwtl::ListItemId{};
+    mwfl::ListItemId GetRowId(std::size_t row) const noexcept override {
+        constexpr mwfl::ListItemId ids[]{{101}, {102}};
+        return row < 2 ? ids[row] : mwfl::ListItemId{};
     }
     std::wstring GetCellText(std::size_t row, int column) const override {
         if (row >= 2) return {};
@@ -19,29 +19,29 @@ public:
     }
 };
 
-class VirtualColumnEval final : public mwtl::WindowBase {
+class VirtualColumnEval final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
-        mwtl::ControlHost ui{*this};
-        ui.Add(list_, {200}, mwtl::RectDip{},
-               mwtl::ListViewOptions{.virtual_data = true});
-        mwtl::AddColumns(list_, {{L"Name", 240}, {L"Size", 120}});
-        mwtl::Must(list_.SetVirtualModel(model_), "attach file model");
-        SetLayout(mwtl::Column().Add(list_, mwtl::Stretch()));
+        mwfl::ControlHost ui{*this};
+        ui.Add(list_, {200}, mwfl::RectDip{},
+               mwfl::ListViewOptions{.virtual_data = true});
+        mwfl::AddColumns(list_, {{L"Name", 240}, {L"Size", 120}});
+        mwfl::Must(list_.SetVirtualModel(model_), "attach file model");
+        SetLayout(mwfl::Column().Add(list_, mwfl::Stretch()));
     }
 
-    mwtl::EventResult OnNotify(const mwtl::NotifyEvent& event) override {
-        if (!event.IsFrom(list_)) return mwtl::EventResult::Propagate();
+    mwfl::EventResult OnNotify(const mwfl::NotifyEvent& event) override {
+        if (!event.IsFrom(list_)) return mwfl::EventResult::Propagate();
         LRESULT result = 0;
         if (!list_.HandleNotification(event.header, result))
-            return mwtl::EventResult::Propagate();
+            return mwfl::EventResult::Propagate();
         if (auto error = list_.TakeVirtualException()) std::rethrow_exception(error);
-        return mwtl::EventResult::Handled(result);
+        return mwfl::EventResult::Handled(result);
     }
 
 private:
     std::shared_ptr<FileModel> model_ = std::make_shared<FileModel>();
-    mwtl::ListView list_;
+    mwfl::ListView list_;
 };
 
 }  // namespace

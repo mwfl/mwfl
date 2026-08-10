@@ -46,7 +46,7 @@ constexpr Palette kDark{RGB(201, 209, 217), RGB(13, 17, 23), RGB(139, 148, 158),
                         RGB(210, 168, 255), RGB(88, 166, 255), RGB(126, 231, 135),
                         RGB(22, 27, 34), RGB(255, 166, 87), RGB(38, 79, 120)};
 
-void SetColours(mwtl::ScintillaEditor& editor, int style, COLORREF foreground,
+void SetColours(mwfl::ScintillaEditor& editor, int style, COLORREF foreground,
                 COLORREF background) noexcept {
     editor.Send(kStyleSetFore, style, foreground);
     editor.Send(kStyleSetBack, style, background);
@@ -71,7 +71,7 @@ bool MarkdownSyntax::LoadAdjacent() noexcept {
     return module_ != nullptr;
 }
 
-bool MarkdownSyntax::Attach(mwtl::ScintillaEditor& editor) noexcept {
+bool MarkdownSyntax::Attach(mwfl::ScintillaEditor& editor) noexcept {
     if (!LoadAdjacent()) return false;
     const auto create = reinterpret_cast<CreateLexer>(::GetProcAddress(module_, "CreateLexer"));
     if (!create) return false;
@@ -83,7 +83,7 @@ bool MarkdownSyntax::Attach(mwtl::ScintillaEditor& editor) noexcept {
     return true;
 }
 
-void MarkdownSyntax::ApplyTheme(mwtl::ScintillaEditor& editor, EditorTheme theme) const noexcept {
+void MarkdownSyntax::ApplyTheme(mwfl::ScintillaEditor& editor, EditorTheme theme) const noexcept {
     const Palette& palette = theme == EditorTheme::dark ? kDark : kLight;
     SetColours(editor, kStyleDefault, palette.foreground, palette.background);
     editor.Send(kStyleClearAll);
@@ -121,8 +121,8 @@ void MarkdownSyntax::ApplyTheme(mwtl::ScintillaEditor& editor, EditorTheme theme
     ::InvalidateRect(editor.GetHwnd(), nullptr, FALSE);
 }
 
-int MarkdownSyntax::StyleAt(const mwtl::ScintillaEditor& editor,
-                            mwtl::ScintillaPosition position) const noexcept {
+int MarkdownSyntax::StyleAt(const mwfl::ScintillaEditor& editor,
+                            mwfl::ScintillaPosition position) const noexcept {
     return static_cast<int>(editor.Send(kGetStyleAt, static_cast<WPARAM>(position)));
 }
 

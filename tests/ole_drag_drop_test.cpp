@@ -1,4 +1,4 @@
-#include <mwtl/ole_drag_drop.h>
+#include <mwfl/ole_drag_drop.h>
 
 #include <atomic>
 #include <thread>
@@ -10,7 +10,7 @@ LRESULT CALLBACK WindowProcedure(HWND window, UINT message, WPARAM wparam, LPARA
 }
 
 int main() {
-    using namespace mwtl;
+    using namespace mwfl;
     if (FAILED(::OleInitialize(nullptr))) return 1;
     struct Uninitialize { ~Uninitialize() { ::OleUninitialize(); } } uninitialize;
 
@@ -51,7 +51,7 @@ int main() {
     WNDCLASSW type{};
     type.lpfnWndProc = WindowProcedure;
     type.hInstance = ::GetModuleHandleW(nullptr);
-    type.lpszClassName = L"mwtl.OleDropTargetTest";
+    type.lpszClassName = L"mwfl.OleDropTargetTest";
     if (!::RegisterClassW(&type) && ::GetLastError() != ERROR_CLASS_ALREADY_EXISTS) return 9;
     HWND window = ::CreateWindowExW(0, type.lpszClassName, L"", WS_OVERLAPPED,
                                      0, 0, 100, 100, nullptr, nullptr, type.hInstance, nullptr);

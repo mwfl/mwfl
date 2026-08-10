@@ -1,1 +1,1 @@
-mwtl_add_example(mwtl_hot_corners_demo main.cpp hot_corner_model.cpp)
+mwfl_add_example(mwfl_hot_corners_demo main.cpp hot_corner_model.cpp)

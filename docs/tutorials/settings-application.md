@@ -6,12 +6,12 @@ Visual Studio 2022 remains a supported compatibility generator.
 
 ## 1. Verify the repository build
 
-Open **Developer PowerShell for VS 2026** at the mwtl checkout and run:
+Open **Developer PowerShell for VS 2026** at the mwfl checkout and run:
 
 ```powershell
 cmake --preset vs2026-x64
-cmake --build --preset vs2026-x64-debug --target mwtl_property_sheet_demo
-& .\build\presets\vs2026-x64\examples\property_sheet\Debug\mwtl_property_sheet_demo.exe
+cmake --build --preset vs2026-x64-debug --target mwfl_property_sheet_demo
+& .\build\presets\vs2026-x64\examples\property_sheet\Debug\mwfl_property_sheet_demo.exe
 ```
 
 The host window should show the committed profile summary. Select **Open
@@ -24,18 +24,18 @@ template, then copy the canonical implementation so every later edit starts
 from a compiling baseline:
 
 ```powershell
-Copy-Item -Recurse .\templates\basic-app ..\mwtl-settings-tutorial
+Copy-Item -Recurse .\templates\basic-app ..\mwfl-settings-tutorial
 Copy-Item .\examples\property_sheet\main.cpp, `
   .\examples\property_sheet\settings_model.cpp, `
   .\examples\property_sheet\settings_model.h `
-  ..\mwtl-settings-tutorial
-Set-Location ..\mwtl-settings-tutorial
+  ..\mwfl-settings-tutorial
+Set-Location ..\mwfl-settings-tutorial
 ```
 
 In `CMakeLists.txt`, change the executable sources to:
 
 ```cmake
-add_executable(mwtl_basic_app WIN32
+add_executable(mwfl_basic_app WIN32
     main.cpp settings_model.cpp settings_model.h app.manifest)
 ```
 
@@ -43,9 +43,9 @@ Configure it against the checkout and run it before making changes:
 
 ```powershell
 cmake -S . -B build -G "Visual Studio 18 2026" -A x64 `
-  -DMWTL_SOURCE_DIR=D:/GitHub/mwtl
+  -DMWFL_SOURCE_DIR=D:/GitHub/mwfl
 cmake --build build --config Debug
-& .\build\Debug\mwtl_basic_app.exe
+& .\build\Debug\mwfl_basic_app.exe
 ```
 
 ## 3. Keep application state outside HWNDs
@@ -77,19 +77,19 @@ Never delete or close `HKEY_CURRENT_USER`.
 ## 5. Create the profile page
 
 Give every page a stable nonzero ID. Create controls in `initialize`, then attach
-the ordinary mwtl layout to the page:
+the ordinary mwfl layout to the page:
 
 ```cpp
-pages.emplace_back(mwtl::PropertyPageOptions{
+pages.emplace_back(mwfl::PropertyPageOptions{
     {1}, L"Profile",
     {.initialize = [&](HWND page) {
-         mwtl::ControlHost ui{page};
+         mwfl::ControlHost ui{page};
          ui.Add(name_label, {101}, L"Display name", {});
          ui.Add(name, {102}, committed.display_name, {});
-         return pages[0].SetLayout(mwtl::Column()
+         return pages[0].SetLayout(mwfl::Column()
              .Margin(16.0_dip).Gap(8.0_dip)
-             .Add(name_label, mwtl::Fixed(24.0_dip))
-             .Add(name, mwtl::Fixed(34.0_dip)));
+             .Add(name_label, mwfl::Fixed(24.0_dip))
+             .Add(name, mwfl::Fixed(34.0_dip)));
      }});
 ```
 
@@ -131,9 +131,9 @@ a borrowed escape hatch for native `PSM_*` messages, not an ownership transfer.
 
 ```powershell
 cmake --build --preset vs2026-x64-debug `
-  --target mwtl_settings_application_model_test mwtl_property_sheet_demo
+  --target mwfl_settings_application_model_test mwfl_property_sheet_demo
 ctest --test-dir build/presets/vs2026-x64 -C Debug `
-  -R "^mwtl[.](settings_application_model|settings_application_gui)$" `
+  -R "^mwfl[.](settings_application_model|settings_application_gui)$" `
   --output-on-failure
 ```
 

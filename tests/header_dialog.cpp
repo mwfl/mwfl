@@ -1,7 +1,7 @@
-#include <mwtl/dialog.h>
+#include <mwfl/dialog.h>
 
 void ConsumeDialogHeader() {
-    mwtl::DialogOptions options;
-    mwtl::Dialog dialog{std::move(options)};
+    mwfl::DialogOptions options;
+    mwfl::Dialog dialog{std::move(options)};
     static_cast<void>(dialog);
 }
