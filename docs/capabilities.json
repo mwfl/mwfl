@@ -71,6 +71,14 @@
       "constraints": ["schema and input sizes are bounded", "atomic replacement preserves the previous complete file", "unknown extension records are tolerated", "application validators classify missing changed and untrusted paths", "document contents remain application-owned", "restore is incremental and callback exceptions never escape"]
     },
     {
+      "id": "native-document-tabs",
+      "intent": ["show documents in native tabs", "move a document page between windows", "route native tab selection", "arrange document pages"],
+      "symbols": ["mwtl::DocumentTabWorkspaceAdapter", "mwtl::DocumentPageBinding", "mwtl::TransferDocumentWithPage"],
+      "headers": ["mwtl/document_tabs.h"],
+      "tests": ["mwtl.document_tabs_native", "mwtl.package_consumer"],
+      "constraints": ["the adapter borrows all HWNDs", "pages must be direct TabControl children on the creating UI thread", "native item data stores stable integer IDs and never pointers", "application owns document contents and page destruction", "cross-window transfer rolls back metadata and parentage before reporting failure"]
+    },
+    {
       "id": "tab-workspace-state",
       "intent": ["track application tabs", "keep stable tab identity", "synchronize a native tab control"],
       "symbols": ["mwtl::TabWorkspaceModel", "mwtl::TabId", "mwtl::TabControl"],

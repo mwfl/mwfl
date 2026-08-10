@@ -17,6 +17,7 @@
 #include <mwtl/document.h>
 #include <mwtl/document_coordination.h>
 #include <mwtl/document_session.h>
+#include <mwtl/document_tabs.h>
 #include <mwtl/document_workspace.h>
 #include <mwtl/events.h>
 #include <mwtl/error.h>

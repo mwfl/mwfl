@@ -47,9 +47,9 @@ foreach(header IN LISTS public_headers)
         math(EXPR core_header_bytes "${core_header_bytes} + ${header_bytes}")
     endif()
 endforeach()
-if(core_header_bytes GREATER 163840)
+if(core_header_bytes GREATER 172032)
     message(FATAL_ERROR
-        "core top-level public headers exceeded 160 KiB: ${core_header_bytes}")
+        "core top-level public headers exceeded 168 KiB: ${core_header_bytes}")
 endif()
 if(optional_header_bytes GREATER 65536)
     message(FATAL_ERROR

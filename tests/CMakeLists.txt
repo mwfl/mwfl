@@ -273,6 +273,11 @@ target_compile_features(mwtl_header_document_session PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_document_session PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwtl_header_document_session PRIVATE mwtl::mwtl)
 
+add_library(mwtl_header_document_tabs OBJECT header_document_tabs.cpp)
+target_compile_features(mwtl_header_document_tabs PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_document_tabs PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_document_tabs PRIVATE mwtl::mwtl)
+
 add_executable(mwtl_document_workspace_test document_workspace_test.cpp)
 target_compile_features(mwtl_document_workspace_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_document_workspace_test PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -293,6 +298,13 @@ target_compile_options(mwtl_document_session_test PRIVATE /W4 /permissive- /EHsc
 target_link_libraries(mwtl_document_session_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.document_session COMMAND mwtl_document_session_test)
 set_tests_properties(mwtl.document_session PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+add_executable(mwtl_document_tabs_native_test document_tabs_native_test.cpp)
+target_compile_features(mwtl_document_tabs_native_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_document_tabs_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_document_tabs_native_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.document_tabs_native COMMAND mwtl_document_tabs_native_test)
+set_tests_properties(mwtl.document_tabs_native PROPERTIES TIMEOUT 20 LABELS "native;unit")
 
 add_executable(mwtl_splitter_test splitter_test.cpp)
 target_compile_features(mwtl_splitter_test PRIVATE cxx_std_20)

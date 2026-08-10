@@ -17,6 +17,8 @@ int main() {
     mwtl::DocumentSession document_session;
     document_session.workspaces.push_back(mwtl::CaptureWorkspaceSession(documents));
     const auto serialized_session = mwtl::SerializeDocumentSession(document_session);
+    mwtl::DocumentTabWorkspaceAdapter document_tabs;
+    static_cast<void>(document_tabs.GetPages());
     const auto dpi = mwtl::DpiContext::FromDpi(144);
     const mwtl::RectDip concise{mwtl::Dip{1.0f}, mwtl::Dip{2.0f}, mwtl::Dip{3.0f}, mwtl::Dip{4.0f}};
     mwtl::LayoutHost layout(mwtl::Column().Margin(mwtl::Dip{8.0f}));
