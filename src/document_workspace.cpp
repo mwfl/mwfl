@@ -110,6 +110,47 @@ DocumentWorkspaceResult DocumentWorkspaceModel::Close(DocumentId id, bool rememb
     return Success();
 }
 
+DocumentWorkspaceResult DocumentWorkspaceModel::CloseMany(
+    std::span<const DocumentId> ids) {
+    if (ids.empty()) return {DocumentWorkspaceStatus::invalid_argument, active_};
+    std::vector<DocumentId> unique;
+    unique.reserve(ids.size());
+    for (const auto id : ids) {
+        if (!id || std::ranges::find(unique, id) != unique.end())
+            return {DocumentWorkspaceStatus::invalid_argument, active_};
+        if (!Find(id)) return {DocumentWorkspaceStatus::not_found, active_};
+        unique.push_back(id);
+    }
+    const auto closing = [&](DocumentId id) {
+        return std::ranges::find(unique, id) != unique.end();
+    };
+    std::vector<WorkspaceDocument> remaining;
+    remaining.reserve(documents_.size() - unique.size());
+    for (const auto& document : documents_)
+        if (!closing(document.id)) remaining.push_back(document);
+
+    std::optional<DocumentId> next_active = active_;
+    if (next_active && closing(*next_active)) {
+        next_active.reset();
+        const auto old_active = FindIndex(*active_).value_or(0);
+        for (std::size_t index = old_active; index < documents_.size(); ++index) {
+            if (!closing(documents_[index].id)) { next_active = documents_[index].id; break; }
+        }
+        if (!next_active) {
+            for (std::size_t index = old_active; index > 0; --index) {
+                if (!closing(documents_[index - 1].id)) {
+                    next_active = documents_[index - 1].id;
+                    break;
+                }
+            }
+        }
+    }
+    documents_.swap(remaining);
+    active_ = next_active;
+    ++revision_;
+    return Success();
+}
+
 DocumentWorkspaceResult DocumentWorkspaceModel::Move(DocumentId id,
                                                        std::size_t index) noexcept {
     const auto current = FindIndex(id);

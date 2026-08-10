@@ -55,6 +55,14 @@
       "constraints": ["UI-thread logical model owns metadata snapshots only", "applications own contents undo buffers and page HWNDs keyed by stable DocumentId", "Windows paths deduplicate case-insensitively after lexical normalization", "destination adoption precedes source removal", "stale source commits require destination rollback"]
     },
     {
+      "id": "active-document-coordination",
+      "intent": ["route a command to the active document", "close all documents safely", "save dirty documents before shutdown"],
+      "symbols": ["mwtl::BuildActiveDocumentCommandProjection", "mwtl::ApplyActiveDocumentCommandProjection", "mwtl::RouteActiveDocument", "mwtl::BuildCoordinatedClosePlan", "mwtl::ExecuteCoordinatedClose"],
+      "headers": ["mwtl/document_coordination.h"],
+      "tests": ["mwtl.document_coordination", "mwtl.package_consumer"],
+      "constraints": ["route stable IDs and never capture document pointers", "handlers and save I/O remain application-owned", "save callbacks run before one atomic close commit", "callback exceptions and reentrant revision changes are structured results", "any pre-commit failure leaves all documents open"]
+    },
+    {
       "id": "tab-workspace-state",
       "intent": ["track application tabs", "keep stable tab identity", "synchronize a native tab control"],
       "symbols": ["mwtl::TabWorkspaceModel", "mwtl::TabId", "mwtl::TabControl"],

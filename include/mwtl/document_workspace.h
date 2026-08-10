@@ -83,6 +83,9 @@ public:
     DocumentWorkspaceResult Add(WorkspaceDocument document,
                                 std::optional<std::size_t> index = std::nullopt);
     DocumentWorkspaceResult Close(DocumentId id, bool remember = true);
+    // Validates every ID and builds the remaining vector before one commit.
+    // Intended for coordinated shutdown; closed entries are not remembered.
+    DocumentWorkspaceResult CloseMany(std::span<const DocumentId> ids);
     DocumentWorkspaceResult Move(DocumentId id, std::size_t index) noexcept;
     DocumentWorkspaceResult Activate(DocumentId id) noexcept;
     DocumentWorkspaceResult SetDirty(DocumentId id, bool dirty) noexcept;

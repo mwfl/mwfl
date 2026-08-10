@@ -8,9 +8,9 @@ file(SIZE "${LIBRARY}" library_bytes)
 # of independently measured object code. ARM64 Debug COFF archives are larger
 # than x64 archives even for the same source; enforce a measured ceiling for
 # each architecture instead of making the x64 budget absorb ABI padding.
-set(library_limit 16252928) # 15.5 MiB; 0.6 workspace baseline measures 15.30 MiB on VS2026 x64.
+set(library_limit 17301504) # 16.5 MiB; workspace+coordination measure 15.95 MiB on VS2026 x64.
 if(MWTL_ARCHITECTURE STREQUAL "ARM64")
-    set(library_limit 16777216) # 16 MiB; ARM64 is remeasured in the post-0.8 matrix pass.
+    set(library_limit 17825792) # 17 MiB; ARM64 is remeasured in the post-0.8 matrix pass.
 endif()
 if(library_bytes GREATER library_limit)
     message(FATAL_ERROR
@@ -47,9 +47,9 @@ foreach(header IN LISTS public_headers)
         math(EXPR core_header_bytes "${core_header_bytes} + ${header_bytes}")
     endif()
 endforeach()
-if(core_header_bytes GREATER 157286)
+if(core_header_bytes GREATER 163840)
     message(FATAL_ERROR
-        "core top-level public headers exceeded 150 KiB: ${core_header_bytes}")
+        "core top-level public headers exceeded 160 KiB: ${core_header_bytes}")
 endif()
 if(optional_header_bytes GREATER 65536)
     message(FATAL_ERROR

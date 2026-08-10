@@ -1,5 +1,6 @@
 #include <mwtl/document_workspace.h>
 
+#include <array>
 #include <cmath>
 #include <stdexcept>
 
@@ -57,6 +58,19 @@ int main() {
         left.GetRecentlyClosed().size() != 2 || left.GetRecentlyClosed()[0].id != third.id)
         return 15;
     if (left.ReopenRecentlyClosed(99).status != DocumentWorkspaceStatus::not_found) return 16;
+
+    DocumentWorkspaceModel batch{{80}};
+    if (!batch.Add({{801}, L"One"}) || !batch.Add({{802}, L"Two"}) ||
+        !batch.Add({{803}, L"Three"}) || !batch.Activate({802})) return 19;
+    const std::array duplicate_close{DocumentId{801}, DocumentId{801}};
+    if (batch.CloseMany(duplicate_close).status != DocumentWorkspaceStatus::invalid_argument ||
+        batch.GetCount() != 3) return 20;
+    const std::array missing_close{DocumentId{801}, DocumentId{999}};
+    if (batch.CloseMany(missing_close).status != DocumentWorkspaceStatus::not_found ||
+        batch.GetCount() != 3) return 21;
+    const std::array close_two{DocumentId{801}, DocumentId{802}};
+    if (!batch.CloseMany(close_two) || batch.GetCount() != 1 ||
+        batch.GetActiveId() != DocumentId{803} || !batch.GetRecentlyClosed().empty()) return 22;
 
     DocumentWorkspaceModel rollback_source{{90}};
     DocumentWorkspaceModel rollback_destination{{91}};
