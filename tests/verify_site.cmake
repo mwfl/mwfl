@@ -5,6 +5,7 @@ foreach(required IN ITEMS
         tutorial.html
         building.html
         changelog.html
+        blog-v0.1.html
         optional-integrations.html
         notepad.html
         components/index.html
@@ -105,6 +106,19 @@ foreach(marker IN ITEMS "First public release" "0.1.0" "releases/tag/v0.1.0" "x6
         message(FATAL_ERROR "changelog is missing release marker: ${marker}")
     endif()
 endforeach()
+
+file(READ "${SITE_ROOT}/blog-v0.1.html" launch_blog)
+foreach(marker IN ITEMS "mwtl 0.1.0" "41" "43" "Coding Agent"
+        "Visual Studio 2026" "FetchContent" "releases/tag/v0.1.0"
+        "components/catalog.html")
+    if(NOT launch_blog MATCHES "${marker}")
+        message(FATAL_ERROR "launch blog is missing required marker: ${marker}")
+    endif()
+endforeach()
+file(READ "${SITE_ROOT}/index.html" home_page)
+if(NOT home_page MATCHES "blog-v0.1.html")
+    message(FATAL_ERROR "home page does not link the launch blog")
+endif()
 
 file(READ "${SITE_ROOT}/styles.css" site_css)
 if(NOT site_css MATCHES "@media \\(max-width: 480px\\)" OR
