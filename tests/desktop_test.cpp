@@ -21,13 +21,33 @@ public:
             ::KillTimer(GetHwnd(), 2);
             static_cast<void>(Close());
         }).SetShortcut({FVIRTKEY, VK_F6}));
-        mwtl::Menu bar;
+        command_set_.Add(mwtl::Command({702}, L"Mutable"));
         mwtl::Menu commands;
-        if (!bar.Create() || !commands.CreatePopup() ||
+        if (!menu_.Create() || !commands.CreatePopup() ||
             !commands.AppendCommand(*command_set_.Find({701})) ||
-            !bar.AppendSubmenu(std::move(commands), L"Test") ||
-            !bar.AttachToWindow(GetHwnd())) {
+            !commands.AppendCommand(*command_set_.Find({702})) ||
+            !menu_.AppendSubmenu(std::move(commands), L"Test") ||
+            !menu_.AttachToWindow(GetHwnd())) {
             throw std::runtime_error("menu fixture failed");
+        }
+        auto* mutable_command = command_set_.Find({702});
+        mutable_command->SetText(L"Updated").SetEnabled(false).SetChecked(true);
+        if (!menu_.UpdateCommand(*mutable_command)) {
+            throw std::runtime_error("attached menu update failed");
+        }
+        const HMENU popup = ::GetSubMenu(menu_.GetHandle(), 0);
+        wchar_t text[32]{};
+        const UINT state = ::GetMenuState(popup, 702, MF_BYCOMMAND);
+        if (::GetMenuStringW(popup, 702, text, 32, MF_BYCOMMAND) == 0 ||
+            std::wstring_view{text} != L"Updated" ||
+            (state & (MF_DISABLED | MF_GRAYED)) == 0 ||
+            (state & MF_CHECKED) == 0) {
+            throw std::runtime_error("attached menu state did not propagate");
+        }
+        mutable_command->SetVisible(false);
+        if (!menu_.UpdateCommand(*mutable_command) ||
+            ::GetMenuState(popup, 702, MF_BYCOMMAND) != static_cast<UINT>(-1)) {
+            throw std::runtime_error("hidden menu command was not removed");
         }
         if (!accelerators_.Create(command_set_)) {
             throw std::runtime_error("accelerator fixture failed");
@@ -55,6 +75,7 @@ public:
 private:
     mwtl::AcceleratorTable accelerators_;
     mwtl::CommandSet command_set_;
+    mwtl::Menu menu_;
 };
 
 bool VerifyClipboardRoundTrip() {

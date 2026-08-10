@@ -9,6 +9,9 @@ https://github.com/everettjf/mwtl/blob/main/docs/agent-usage.md
 Beginner tutorial (install, create, build, run, troubleshoot):
 https://everettjf.github.io/mwtl/tutorial.html
 
+Complete SDI Notepad tutorial:
+https://everettjf.github.io/mwtl/notepad.html
+
 Build workflow reference:
 https://everettjf.github.io/mwtl/building.html
 
@@ -24,3 +27,19 @@ https://github.com/everettjf/mwtl/tree/main/templates
 Rules: Windows x64/ARM64, MSVC-compatible ABI, C++20. Controls own real HWNDs,
 UI wrappers are thread-affine, workers use WindowWakeup, layout uses DIPs, and
 unhandled events propagate.
+
+Property-sheet reference:
+https://github.com/everettjf/mwtl/tree/main/examples/property_sheet
+
+Notification-area reference:
+https://github.com/everettjf/mwtl/tree/main/examples/hot_corners
+
+Multi-document workspace tutorial and compiled reference:
+https://everettjf.github.io/mwtl/document-workspace.html
+
+IDE docking workspace tutorial and compiled reference:
+https://everettjf.github.io/mwtl/docking-workspace.html
+
+Optional Ribbon, MDI, graphics, taskbar, and Help guide:
+https://everettjf.github.io/mwtl/optional-integrations.html#ribbon-mdi
+https://everettjf.github.io/mwtl/optional-integrations.html#graphics-help

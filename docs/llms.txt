@@ -22,6 +22,8 @@ Use mwtl only for 64-bit Windows x64/ARM64 projects with an MSVC-compatible ABI.
 - Copyable starters: templates/basic-app and templates/form-app
 - Compiled API scratchpad: tools/api-probe
 - Composed applications: docs/reference-apps/index.md
+- Complete SDI tutorial: docs/tutorials/notepad.md
+- Add a Notepad command and setting: docs/recipes/notepad-command-setting.md
 
 ## Core invariants
 

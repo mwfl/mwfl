@@ -204,6 +204,10 @@ public:
         return Create(parent.GetHwnd(), id, bounds, options);
     }
     int AddItem(std::wstring_view text);
+    int GetItemCount() const noexcept;
+    std::optional<std::wstring> GetItemText(int index) const;
+    bool RemoveItem(int index) noexcept;
+    bool ClearItems() noexcept;
     int GetSelection() const noexcept;
     std::optional<int> GetSelectedIndex() const noexcept {
         const int index = GetSelection();
@@ -234,6 +238,10 @@ public:
         return Create(parent.GetHwnd(), id, bounds, options);
     }
     int AddItem(std::wstring_view text);
+    int GetItemCount() const noexcept;
+    std::optional<std::wstring> GetItemText(int index) const;
+    bool RemoveItem(int index) noexcept;
+    bool ClearItems() noexcept;
     int GetSelection() const noexcept;
     std::optional<int> GetSelectedIndex() const noexcept {
         const int index = GetSelection();

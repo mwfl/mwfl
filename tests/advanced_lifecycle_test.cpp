@@ -27,6 +27,7 @@ enum class Mode {
     wake_latency,
     idle_efficiency,
     com_sta,
+    ole_sta,
     com_conflict,
     pump_exception,
     after_dispatch_exception,
@@ -117,13 +118,16 @@ public:
                 }
                 wake_posted.store(posted, std::memory_order_release);
             });
-        } else if (mode == Mode::com_sta) {
+        } else if (mode == Mode::com_sta || mode == Mode::ole_sta) {
             APTTYPE apartment{};
             APTTYPEQUALIFIER qualifier{};
+            const HRESULT repeated_ole = mode == Mode::ole_sta ? ::OleInitialize(nullptr) : S_OK;
             com_verified.store(
                 SUCCEEDED(::CoGetApartmentType(&apartment, &qualifier)) &&
-                    (apartment == APTTYPE_STA || apartment == APTTYPE_MAINSTA),
+                    (apartment == APTTYPE_STA || apartment == APTTYPE_MAINSTA) &&
+                    (mode != Mode::ole_sta || repeated_ole == S_FALSE),
                 std::memory_order_release);
+            if (mode == Mode::ole_sta && SUCCEEDED(repeated_ole)) ::OleUninitialize();
             ::PostMessageW(GetHwnd(), WM_CLOSE, 0, 0);
         }
     }
@@ -240,6 +244,7 @@ int main(int argc, char** argv) {
     else if (std::strcmp(argv[1], "wake_latency") == 0) mode = Mode::wake_latency;
     else if (std::strcmp(argv[1], "idle_efficiency") == 0) mode = Mode::idle_efficiency;
     else if (std::strcmp(argv[1], "com_sta") == 0) mode = Mode::com_sta;
+    else if (std::strcmp(argv[1], "ole_sta") == 0) mode = Mode::ole_sta;
     else if (std::strcmp(argv[1], "com_conflict") == 0) mode = Mode::com_conflict;
     else if (std::strcmp(argv[1], "pump_exception") == 0) mode = Mode::pump_exception;
     else if (std::strcmp(argv[1], "after_dispatch_exception") == 0) mode = Mode::after_dispatch_exception;
@@ -290,6 +295,7 @@ int main(int argc, char** argv) {
         SUCCEEDED(::CoInitializeEx(nullptr, COINIT_MULTITHREADED));
     if (mode == Mode::com_conflict && !injected_com_mta) return 31;
     const mwtl::ApplicationOptions application_options{
+        mode == Mode::ole_sta ? mwtl::ComApartment::ole_sta :
         (mode == Mode::com_sta || mode == Mode::com_conflict) ? mwtl::ComApartment::sta
                               : mwtl::ComApartment::none};
     mwtl::Application application(::GetModuleHandleW(nullptr), application_options);
@@ -322,7 +328,8 @@ int main(int argc, char** argv) {
     if (!custom_verified.load(std::memory_order_acquire)) return 25;
     if (mode == Mode::wakeup &&
         (!wake_posted.load(std::memory_order_acquire) || wakeup.TryWake())) return 26;
-    if (mode == Mode::com_sta && !com_verified.load(std::memory_order_acquire)) return 27;
+    if ((mode == Mode::com_sta || mode == Mode::ole_sta) &&
+        !com_verified.load(std::memory_order_acquire)) return 27;
     if (mode == Mode::wake_stress &&
         (!wake_posted.load(std::memory_order_acquire) || wake_count.load() != 2000 ||
          !input_observed.load(std::memory_order_acquire))) return 28;

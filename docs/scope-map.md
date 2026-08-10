@@ -20,16 +20,19 @@ remain authoritative.
 | Window placement and shell integration | desktop helpers | `desktop_integration`, `hot_corners` |
 | DWM appearance and accessibility helpers | appearance helpers | `appearance` |
 | Raw HWND and native message interoperability | `GetHwnd`, `WindowMessage` | `native_message` |
+| Printing, preview, settings, and native jobs | `PrintPreviewModel`, `PrinterSettings`, `PrintJob` | `printing` |
+| OLE data objects and drag/drop | `OleDataObjectBuilder`, OLE source/target helpers | `ole_drag_drop` |
+| Versioned settings, associations, Jump Lists, taskbar, and Help | focused settings and shell helpers | `shell_integration` |
+| Modern document, docking, Ribbon, MDI, EMF, and GDI+ workflows | independent optional/focused components | corresponding workspace/interoperability examples |
 
 ## Use raw Win32 through the escape hatch
 
 These are compatible with mwtl but intentionally remain ordinary platform APIs:
 
 - owner-drawn and custom-drawn controls beyond the provided paint hooks;
-- printing and print preview;
 - registry schemas beyond the focused placement helpers;
 - custom window classes and uncommon control messages;
-- OLE drag/drop beyond file drops;
+- OLE formats and behaviors beyond the focused data/source/target helpers;
 - shell extensions, hooks, services, and system-wide hotkeys;
 - advanced accessibility providers and UI Automation peers.
 
@@ -65,10 +68,11 @@ surrounding native window, commands, layout, and thread handoff.
 
 ## Long-term parity scope
 
-Document applications, modern tabbed workspaces, docking, optional Ribbon
-integration, and legacy MDI are not part of the current public API. They are now
-long-term capability targets rather than permanently excluded features. Their
-dependency order and acceptance criteria are defined in the
+Document applications, modern tabbed workspaces, docking, optional Ribbon,
+legacy MDI, EMF/GDI+, expanded taskbar behavior, and safe contextual Help are
+current public capabilities. Ribbon, MDI, graphics, and shell integrations are
+independent components; none expands the minimum `mwtl::mwtl` surface. Their
+dependency order and evidence are defined in the
 [Win32++ capability parity roadmap](win32xx-parity-roadmap.md).
 
 Parity is measured by the desktop application scenarios mwtl can implement. It
@@ -77,7 +81,7 @@ Windows 10+, C++20, x64/ARM64, explicit-ownership design constraints.
 
 ## Candidate capabilities requiring an explicit project decision
 
-Property sheets, tray abstraction, WebView2 hosting helpers, Scintilla hosting,
-print helpers, and richer UI Automation support may be evaluated in future.
-Until accepted into the public API and stability policy, agents must use the
-composition paths above rather than invent mwtl symbols.
+Richer UI Automation providers, media playback, shell extensions, and
+application-specific Ribbon property types require an explicit future project
+decision. Agents must use the composition paths above rather than invent mwtl
+symbols.

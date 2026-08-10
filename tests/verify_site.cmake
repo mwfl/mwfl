@@ -3,6 +3,8 @@ foreach(required IN ITEMS
         tutorial.html
         building.html
         changelog.html
+        optional-integrations.html
+        notepad.html
         components/index.html
         components/application.html
         components/controls.html
@@ -48,6 +50,24 @@ if(NOT building MATCHES "tutorial.html" OR
    NOT building MATCHES "scripts/verify.ps1")
     message(FATAL_ERROR "build reference is missing beginner or contributor guidance")
 endif()
+
+file(READ "${SITE_ROOT}/optional-integrations.html" optional_integrations)
+foreach(marker IN ITEMS "mwtl::ribbon" "mwtl::mdi" "mwtl::graphics"
+        "TaskbarCreated" "HelpRequest" "docs/tutorials/ribbon.md"
+        "docs/tutorials/mdi.md" "docs/tutorials/graphics-help.md")
+    if(NOT optional_integrations MATCHES "${marker}")
+        message(FATAL_ERROR "optional integration guide is missing marker: ${marker}")
+    endif()
+endforeach()
+
+file(READ "${SITE_ROOT}/notepad.html" notepad)
+foreach(marker IN ITEMS "templates/basic-app" "DocumentState" "WriteTextFileAtomic"
+        "mwtl.notepad_gui" "mwtl_notepad.exe" "Visual Studio 18 2026"
+        "Visual Studio 17 2022")
+    if(NOT notepad MATCHES "${marker}")
+        message(FATAL_ERROR "Notepad tutorial is missing required marker: ${marker}")
+    endif()
+endforeach()
 
 file(READ "${SITE_ROOT}/changelog.html" changelog)
 foreach(marker IN ITEMS "First public release" "0.1.0" "releases/tag/v0.1.0" "x64" "ARM64")

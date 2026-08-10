@@ -46,21 +46,24 @@ bool Application::BeginRun() noexcept {
     running_ = true;
 
     if (options_.com_apartment != ComApartment::none) {
-        const DWORD flags = options_.com_apartment == ComApartment::sta
-            ? COINIT_APARTMENTTHREADED
-            : COINIT_MULTITHREADED;
-        const HRESULT com_result = ::CoInitializeEx(nullptr, flags);
+        const bool use_ole = options_.com_apartment == ComApartment::ole_sta;
+        const DWORD flags = options_.com_apartment == ComApartment::mta
+            ? COINIT_MULTITHREADED
+            : COINIT_APARTMENTTHREADED;
+        const HRESULT com_result = use_ole ? ::OleInitialize(nullptr)
+                                           : ::CoInitializeEx(nullptr, flags);
         if (FAILED(com_result)) {
             detail::ReportHresult(
                 com_result == RPC_E_CHANGED_MODE
                     ? L"COM apartment mode conflict"
-                    : L"CoInitializeEx",
+                    : (use_ole ? L"OleInitialize" : L"CoInitializeEx"),
                 com_result,
                 true);
             running_ = false;
             return false;
         }
-        com_uninitialize_.activate();
+        if (use_ole) ole_initialized_ = true;
+        else com_uninitialize_.activate();
     }
 
     const HRESULT result = _Module.Init(nullptr, instance_);
@@ -81,7 +84,12 @@ bool Application::BeginRun() noexcept {
 #ifdef MWTL_TESTING
         ++detail::lifecycle_snapshot.module_terminated;
 #endif
-        com_uninitialize_.reset();
+        if (ole_initialized_) {
+            ::OleUninitialize();
+            ole_initialized_ = false;
+        } else {
+            com_uninitialize_.reset();
+        }
         running_ = false;
         return false;
     }
@@ -131,7 +139,12 @@ void Application::EndRun() noexcept {
         ++detail::lifecycle_snapshot.module_terminated;
 #endif
     }
-    com_uninitialize_.reset();
+    if (ole_initialized_) {
+        ::OleUninitialize();
+        ole_initialized_ = false;
+    } else {
+        com_uninitialize_.reset();
+    }
     running_ = false;
 }
 

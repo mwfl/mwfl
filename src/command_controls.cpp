@@ -19,24 +19,48 @@ bool Toolbar::AddTextButton(ControlId command, std::wstring_view text) {
     return ::SendMessageW(GetHwnd(), TB_ADDBUTTONSW, 1, reinterpret_cast<LPARAM>(&button)) != FALSE;
 }
 bool Toolbar::AddCommand(const Command& command) {
-    return AddTextButton(command.GetId(), command.GetText()) &&
+    if (!IsWindow()) return false;
+    if (command.GetImageIndex() && *command.GetImageIndex() < 0) return false;
+    const std::wstring text{command.GetText()};
+    const LRESULT string_index = ::SendMessageW(
+        GetHwnd(), TB_ADDSTRINGW, 0, reinterpret_cast<LPARAM>(text.c_str()));
+    if (string_index < 0) return false;
+    TBBUTTON button{};
+    button.iBitmap = command.GetImageIndex().value_or(I_IMAGENONE);
+    button.idCommand = command.GetId().value;
+    button.fsState = TBSTATE_ENABLED;
+    button.fsStyle = BTNS_BUTTON | BTNS_AUTOSIZE | BTNS_SHOWTEXT;
+    button.iString = string_index;
+    return ::SendMessageW(GetHwnd(), TB_ADDBUTTONSW, 1,
+                          reinterpret_cast<LPARAM>(&button)) != FALSE &&
         UpdateCommand(command);
 }
 bool Toolbar::UpdateCommand(const Command& command) noexcept {
     if (!IsWindow()) return false;
+    if (command.GetImageIndex() && *command.GetImageIndex() < 0) return false;
     const WPARAM id = static_cast<WPARAM>(command.GetId().value);
     const LRESULT enabled = ::SendMessageW(
         GetHwnd(), TB_ENABLEBUTTON, id, MAKELPARAM(command.IsEnabled(), 0));
     const LRESULT checked = ::SendMessageW(
         GetHwnd(), TB_CHECKBUTTON, id, MAKELPARAM(command.IsChecked(), 0));
+    const LRESULT visible = ::SendMessageW(
+        GetHwnd(), TB_HIDEBUTTON, id, MAKELPARAM(!command.IsVisible(), 0));
     const std::wstring text{command.GetText()};
     TBBUTTONINFOW info{};
     info.cbSize = sizeof(info);
-    info.dwMask = TBIF_TEXT;
+    info.dwMask = TBIF_TEXT | TBIF_IMAGE;
     info.pszText = const_cast<wchar_t*>(text.c_str());
+    info.iImage = command.GetImageIndex().value_or(I_IMAGENONE);
     const LRESULT named = ::SendMessageW(
         GetHwnd(), TB_SETBUTTONINFOW, id, reinterpret_cast<LPARAM>(&info));
-    return enabled != FALSE && checked != FALSE && named != FALSE;
+    return enabled != FALSE && checked != FALSE && visible != FALSE &&
+        named != FALSE;
+}
+bool Toolbar::SetImageList(const ImageList& images) noexcept {
+    if (!IsWindow() || images.GetHandle() == nullptr) return false;
+    ::SendMessageW(GetHwnd(), TB_SETIMAGELIST, 0,
+                   reinterpret_cast<LPARAM>(images.GetHandle()));
+    return true;
 }
 Toolbar& Toolbar::AutoSize() noexcept { if (IsWindow()) ::SendMessageW(GetHwnd(), TB_AUTOSIZE, 0, 0); return *this; }
 

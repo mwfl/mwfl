@@ -127,37 +127,98 @@ RECT ClampRectToWorkArea(RECT rect) noexcept {
 }  // namespace
 
 Menu::~Menu() noexcept { Reset(); }
-Menu::Menu(Menu&& other) noexcept : menu_(std::exchange(other.menu_, nullptr)) {}
+Menu::Menu(Menu&& other) noexcept
+    : menu_(std::exchange(other.menu_, nullptr)),
+      owns_menu_(std::exchange(other.owns_menu_, false)),
+      kind_(std::exchange(other.kind_, MenuKind::none)) {}
 Menu& Menu::operator=(Menu&& other) noexcept {
-    if (this != &other) { Reset(); menu_ = std::exchange(other.menu_, nullptr); }
+    if (this != &other) {
+        Reset();
+        menu_ = std::exchange(other.menu_, nullptr);
+        owns_menu_ = std::exchange(other.owns_menu_, false);
+        kind_ = std::exchange(other.kind_, MenuKind::none);
+    }
     return *this;
 }
-bool Menu::Create() noexcept { Reset(); menu_ = ::CreateMenu(); return menu_ != nullptr; }
-bool Menu::CreatePopup() noexcept { Reset(); menu_ = ::CreatePopupMenu(); return menu_ != nullptr; }
+bool Menu::Create() noexcept {
+    Reset();
+    menu_ = ::CreateMenu();
+    owns_menu_ = menu_ != nullptr;
+    kind_ = menu_ != nullptr ? MenuKind::menu_bar : MenuKind::none;
+    return menu_ != nullptr;
+}
+bool Menu::CreatePopup() noexcept {
+    Reset();
+    menu_ = ::CreatePopupMenu();
+    owns_menu_ = menu_ != nullptr;
+    kind_ = menu_ != nullptr ? MenuKind::popup : MenuKind::none;
+    return menu_ != nullptr;
+}
 bool Menu::AppendCommand(UINT id, std::wstring_view text, bool enabled) {
+    if (menu_ == nullptr || id == 0) {
+        ::SetLastError(ERROR_INVALID_PARAMETER);
+        return false;
+    }
     const std::wstring value = Terminate(text);
-    return menu_ != nullptr && ::AppendMenuW(menu_, MF_STRING | (enabled ? MF_ENABLED : MF_GRAYED), id, value.c_str()) != FALSE;
+    return ::AppendMenuW(menu_, MF_STRING | (enabled ? MF_ENABLED : MF_GRAYED), id,
+                         value.c_str()) != FALSE;
 }
 bool Menu::AppendSeparator() noexcept {
     return menu_ != nullptr && ::AppendMenuW(menu_, MF_SEPARATOR, 0, nullptr) != FALSE;
 }
 bool Menu::AppendSubmenu(Menu&& submenu, std::wstring_view text, bool enabled) {
-    if (menu_ == nullptr || submenu.menu_ == nullptr) return false;
+    if (menu_ == nullptr || submenu.menu_ == nullptr || submenu.kind_ != MenuKind::popup ||
+        !submenu.owns_menu_) {
+        ::SetLastError(ERROR_INVALID_PARAMETER);
+        return false;
+    }
     const std::wstring value = Terminate(text);
     if (::AppendMenuW(menu_, MF_POPUP | (enabled ? MF_ENABLED : MF_GRAYED),
                       reinterpret_cast<UINT_PTR>(submenu.menu_), value.c_str()) == FALSE) return false;
     submenu.menu_ = nullptr;
+    submenu.owns_menu_ = false;
+    submenu.kind_ = MenuKind::none;
     return true;
 }
 bool Menu::AttachToWindow(HWND window) noexcept {
-    if (menu_ == nullptr || window == nullptr || ::SetMenu(window, menu_) == FALSE) return false;
-    menu_ = nullptr;
+    if (menu_ == nullptr || kind_ != MenuKind::menu_bar || window == nullptr ||
+        ::IsWindow(window) == FALSE) {
+        ::SetLastError(ERROR_INVALID_PARAMETER);
+        return false;
+    }
+    const HMENU previous = ::GetMenu(window);
+    if (::SetMenu(window, menu_) == FALSE) return false;
+    owns_menu_ = false;
+    kind_ = MenuKind::attached;
+    if (previous != nullptr && previous != menu_) ::DestroyMenu(previous);
     return ::DrawMenuBar(window) != FALSE;
 }
-UINT Menu::Track(HWND owner, POINT point, UINT flags) const noexcept {
-    return menu_ == nullptr ? 0 : ::TrackPopupMenu(menu_, flags, point.x, point.y, 0, owner, nullptr);
+PopupMenuResult Menu::TrackResult(HWND owner, POINT point, UINT flags) const noexcept {
+    if (menu_ == nullptr || kind_ != MenuKind::popup) {
+        return {PopupMenuStatus::failed, 0, ERROR_INVALID_MENU_HANDLE};
+    }
+    if (owner == nullptr || ::IsWindow(owner) == FALSE) {
+        return {PopupMenuStatus::failed, 0, ERROR_INVALID_WINDOW_HANDLE};
+    }
+    const UINT command = static_cast<UINT>(::TrackPopupMenuEx(
+        menu_, flags | TPM_RETURNCMD, point.x, point.y, owner, nullptr));
+    if (command != 0) return {PopupMenuStatus::selected, command, ERROR_SUCCESS};
+    // TrackPopupMenuEx documents no extended error information for a zero
+    // result. Once the menu and owner preconditions above are valid, zero is
+    // the native cancellation result; GetLastError may contain an unrelated
+    // value left by menu-window internals on older Windows runners.
+    return {PopupMenuStatus::cancelled, 0, ERROR_SUCCESS};
 }
-void Menu::Reset() noexcept { if (menu_ != nullptr) ::DestroyMenu(std::exchange(menu_, nullptr)); }
+UINT Menu::Track(HWND owner, POINT point, UINT flags) const noexcept {
+    return TrackResult(owner, point, flags).command;
+}
+void Menu::Reset() noexcept {
+    if (menu_ == nullptr) return;
+    if (owns_menu_) ::DestroyMenu(menu_);
+    menu_ = nullptr;
+    owns_menu_ = false;
+    kind_ = MenuKind::none;
+}
 
 AcceleratorTable::~AcceleratorTable() noexcept { Reset(); }
 AcceleratorTable::AcceleratorTable(AcceleratorTable&& other) noexcept : table_(std::exchange(other.table_, nullptr)) {}
@@ -213,6 +274,11 @@ bool AcceleratorTable::Create(const CommandSet& commands) {
 }
 
 bool Menu::AppendCommand(const Command& command) {
+    if (!command.IsVisible()) return true;
+    if (command.GetId().value <= 0) {
+        ::SetLastError(ERROR_INVALID_PARAMETER);
+        return false;
+    }
     if (!AppendCommand(static_cast<UINT>(command.GetId().value),
                        command.GetText(), command.IsEnabled())) {
         return false;
@@ -225,15 +291,24 @@ bool Menu::AppendCommand(const Command& command) {
 }
 
 bool Menu::UpdateCommand(const Command& command) noexcept {
-    if (menu_ == nullptr || command.GetId().value < 0) return false;
+    if (menu_ == nullptr || command.GetId().value <= 0) return false;
     const UINT id = static_cast<UINT>(command.GetId().value);
+    if (!command.IsVisible()) {
+        return ::DeleteMenu(menu_, id, MF_BYCOMMAND) != FALSE;
+    }
     const UINT enabled = command.IsEnabled() ? MF_ENABLED : MF_GRAYED;
     const UINT checked = command.IsChecked() ? MF_CHECKED : MF_UNCHECKED;
     const bool enabled_ok = ::EnableMenuItem(menu_, id, MF_BYCOMMAND | enabled) !=
         -1;
     const bool checked_ok = ::CheckMenuItem(menu_, id, MF_BYCOMMAND | checked) !=
         static_cast<DWORD>(-1);
-    return enabled_ok && checked_ok;
+    MENUITEMINFOW item{};
+    item.cbSize = sizeof(item);
+    item.fMask = MIIM_STRING;
+    const std::wstring text{command.GetText()};
+    item.dwTypeData = const_cast<wchar_t*>(text.c_str());
+    const bool text_ok = ::SetMenuItemInfoW(menu_, id, FALSE, &item) != FALSE;
+    return enabled_ok && checked_ok && text_ok;
 }
 
 bool SetClipboardText(HWND owner, std::wstring_view text) noexcept {

@@ -26,12 +26,22 @@ public:
     std::wstring_view GetText() const noexcept { return text_; }
     bool IsEnabled() const noexcept { return enabled_; }
     bool IsChecked() const noexcept { return checked_; }
+    bool IsVisible() const noexcept { return visible_; }
+    const std::optional<int>& GetImageIndex() const noexcept {
+        return image_index_;
+    }
     const std::optional<CommandShortcut>& GetShortcut() const noexcept {
         return shortcut_;
     }
     Command& SetText(std::wstring value) { text_ = std::move(value); return *this; }
     Command& SetEnabled(bool value) noexcept { enabled_ = value; return *this; }
     Command& SetChecked(bool value) noexcept { checked_ = value; return *this; }
+    Command& SetVisible(bool value) noexcept { visible_ = value; return *this; }
+    Command& SetImageIndex(int value) noexcept {
+        image_index_ = value;
+        return *this;
+    }
+    Command& ClearImageIndex() noexcept { image_index_.reset(); return *this; }
     Command& SetHandler(Handler value) { handler_ = std::move(value); return *this; }
     Command& SetShortcut(CommandShortcut value) noexcept {
         shortcut_ = value;
@@ -46,6 +56,8 @@ private:
     Handler handler_;
     bool enabled_ = true;
     bool checked_ = false;
+    bool visible_ = true;
+    std::optional<int> image_index_;
     std::optional<CommandShortcut> shortcut_;
 };
 

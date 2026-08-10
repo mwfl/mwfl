@@ -4,7 +4,7 @@ This suite measures whether a coding agent can turn a natural-language Windows
 UI request into correct, compilable mwtl code without inventing APIs or
 violating lifecycle rules.
 
-`tasks.json` contains ten prompts and their required evidence. `fixtures/`
+`tasks.json` contains thirty-four prompts and their required evidence. `fixtures/`
 contains minimal known-good public-API baselines compiled by the repository.
 The baselines are not supplied to an agent during a blind run. `rubric.json`
 defines a 100-point score and `score-result.ps1` calculates it from recorded
@@ -35,9 +35,16 @@ The fixture matching each task is the golden public-API patch. It is compiled
 with `/W4 /permissive- /WX`; it is a structural reference, not a byte-for-byte
 answer requirement.
 
+Checked-in results under `results/` state whether a run was blind or performed
+inside the implementation task. `11-notepad-setting-codex.json` records the
+current in-task Codex run and its first-compile evidence; it does not claim
+independent blind-run evidence.
+
 ## Verify the suite
 
-The normal repository build compiles all ten fixture sources. Asset consistency
+The normal repository build compiles the core fixtures and the printing, OLE,
+Shell, Ribbon, MDI, and graphics fixtures. A build with both third-party
+components enabled also compiles the WebView2 and Scintilla integration fixtures. Asset consistency
 is checked by `mwtl.agent_evals` and by:
 
 ```powershell

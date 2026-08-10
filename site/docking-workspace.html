@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Build a native C++20 IDE-style docking workspace with mwtl.">
+  <link rel="canonical" href="https://everettjf.github.io/mwtl/docking-workspace.html">
+  <title>Docking workspace - mwtl</title>
+  <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
+  <link rel="stylesheet" href="styles.css?v=20260808k">
+  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script defer src="assets/site.js?v=20260808k"></script>
+</head><body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><div class="shell nav">
+    <a class="brand" href="index.html" aria-label="MWTL - Modern Windows Thin Layer"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+    <nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a class="active" href="tutorial.html">Get started</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="llms.txt">For coding agents</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
+  </div></header>
+  <main id="main" class="shell prose guide">
+    <div class="hero"><div class="eyebrow">Reference application / Windows 10+ / C++20</div>
+      <h1>Build a real IDE-style docking workspace.</h1>
+      <p class="lede">Documents and tools with native tabs, splits, floating and auto-hidden panels, mouse and keyboard docking, monitor recovery, and versioned layout restore.</p>
+      <div class="actions"><a class="button primary" href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/docking-workspace.md">Follow the complete tutorial</a><a class="button" href="https://github.com/everettjf/mwtl/blob/main/examples/docking_workspace/main.cpp">Read the compiled source</a></div>
+    </div>
+    <div class="requirements"><div><strong>Toolchain</strong><span>VS 2026 / MSVC / x64</span></div><div><strong>Identity</strong><span>Stable nonzero logical IDs</span></div><div><strong>Ownership</strong><span>Application content / borrowed HWNDs</span></div><div><strong>Proof</strong><span>Offline GUI self-test</span></div></div>
+    <section><h2>Build and verify</h2><pre><code>cmake --preset vs2026-x64
+cmake --build --preset vs2026-x64-debug --target mwtl_docking_workspace_demo
+ctest --test-dir build/presets/vs2026-x64 -C Debug \
+  -R "mwtl\.(docking_|manifest\.mwtl_docking_workspace_demo)" --output-on-failure</code></pre><p>Repeat with Release for the approved 0.7 local gate.</p></section>
+    <section><h2>Keep state logical</h2><p><code>DockLayoutModel</code> owns pointer-free metadata snapshots. Your application owns documents, tool state, commands, and HWND lifetimes. Panel, group, node, and floating-host IDs remain stable across runs and are never derived from native handles.</p></section>
+    <section><h2>Commit without losing the source</h2><p>Every change follows propose, native prepare/adopt, logical commit, then native commit. Failed or stale changes roll native parentage, visibility, styles, and focus back to the original snapshot.</p></section>
+    <section><h2>Make dragging optional</h2><p>Pointer capture uses the system drag threshold and a nonactivating DPI-aware preview. Escape, capture loss, destruction, or failure cancels safely. The same targets are available through arrow and Tab navigation with Enter to accept.</p></section>
+    <section><h2>Restore defensively</h2><p>Layouts are versioned, bounded, pointer-free, and atomically replaced. Floating DIPs are recovered against current monitor work areas. Unknown, malformed, cyclic, or unreachable state falls back to a deterministic default.</p></section>
+    <section><h2>Choose a focused recipe</h2><p>The <a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/docking-workspace.md">docking recipe index</a> covers panel registration, tabs, splits, mouse and keyboard docking, floating, auto-hide, persistence, custom targets, and safe shutdown.</p></section>
+  </main>
+  <footer class="site-footer"><div class="shell"><span>mwtl / Modern Windows Thin Layer</span><a href="https://github.com/everettjf/mwtl">Source and license</a></div></footer>
+</body></html>

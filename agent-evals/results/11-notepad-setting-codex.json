@@ -1,0 +1,21 @@
+{
+  "task_id": "11-notepad-setting",
+  "agent": "codex",
+  "model": "current-thread",
+  "toolchain": "vs2026-x64-debug",
+  "candidate": "agent-evals/fixtures/notepad_setting.cpp",
+  "score": 100,
+  "maximum": 100,
+  "evidence": {
+    "first_compile": true,
+    "eventual_compile": true,
+    "public_api_only": true,
+    "thread_safe": true,
+    "lifetime_safe": true,
+    "event_semantics": true,
+    "dip_correct": true,
+    "failure_handled": true,
+    "minimal_diff": true
+  },
+  "notes": "Generated from the current Codex task with run-eval.ps1. This is a transparent in-task evaluation, not a blind independent-agent run. The candidate also passes mwtl.notepad_gui command, menu, status, and WS_EX_TOPMOST assertions."
+}

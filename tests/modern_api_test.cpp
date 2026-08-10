@@ -113,39 +113,108 @@ public:
         mwtl::Must(timer_.Start(*this, kTimer, 1ms), "start timer");
 
         check_.SetChecked(true).SetEnabled(true);
-        const std::array combo_items{L"first", L"second"};
-        mwtl::Must(mwtl::AddItems(combo_, combo_items),
-                   "populate ComboBox");
+        mwtl::SelectionAdapter<mwtl::ComboBox, int> combo_items{combo_};
+        mwtl::Must(combo_items.Add(L"first", 10), "add typed ComboBox item");
+        mwtl::Must(combo_items.Add(L"second", 20), "add typed ComboBox item");
+        mwtl::Must(combo_items.SelectValue(20), "select typed ComboBox value");
+        if (!combo_items.GetSelectedValue() ||
+            combo_items.GetSelectedValue()->get() != 20 ||
+            combo_.GetItemText(1) != L"second" || combo_.GetItemText(2)) {
+            throw std::runtime_error("typed ComboBox state failed");
+        }
         progress_.SetRange(0, 100).SetValue(64);
         radio_.SetChecked(true);
-        mwtl::Must(mwtl::AddItems(list_, {L"first", L"second"}),
-                   "populate ListBox");
+        mwtl::SelectionAdapter<mwtl::ListBox, std::wstring> list_items{list_};
+        mwtl::Must(list_items.Add(L"first", L"alpha"), "add typed ListBox item");
+        mwtl::Must(list_items.Add(L"second", L"beta"), "add typed ListBox item");
+        mwtl::Must(list_items.SelectValue(L"beta"), "select typed ListBox value");
+        if (!list_items.GetSelectedValue() ||
+            list_items.GetSelectedValue()->get() != L"beta" ||
+            list_.GetItemText(0) != L"first") {
+            throw std::runtime_error("typed ListBox state failed");
+        }
         slider_.SetRange(0, 100).SetValue(73);
-        const HTREEITEM root = tree_.AddItem(L"root");
-        static_cast<void>(tree_.AddItem(L"child", root));
+        const HTREEITEM root = tree_.AddItem({1001}, L"root");
+        static_cast<void>(tree_.AddItem({1002}, L"child", root));
         static_cast<void>(tree_.Expand(root));
         const std::array list_columns{mwtl::ColumnSpec{L"name", 80}};
         mwtl::Must(mwtl::AddColumns(list_view_, list_columns),
                    "populate ListView columns");
-        const int list_row = list_view_.AddItem(L"item");
+        const int list_row = list_view_.AddItem({1101}, L"item");
         static_cast<void>(list_view_.SetSubItem(list_row, 0, L"updated"));
         mwtl::Must(mwtl::AddColumns(header_, {{L"header", 80}}),
                    "populate Header columns");
-        const std::array tab_names{L"tab"};
-        mwtl::Must(mwtl::AddTabs(tabs_, tab_names), "populate tabs");
-        mwtl::Must(mwtl::AddItems(combo_ex_, {L"combo"}),
-                   "populate ComboBoxEx");
-        static_cast<void>(combo_ex_.SetSelection(0));
+        mwtl::Must(tab_model_.Add({{901}, L"first", false, true}), "add first stable tab");
+        mwtl::Must(tab_model_.Add({{902}, L"second", true, true}), "add second stable tab");
+        mwtl::Must(tab_model_.Select({902}), "select stable tab");
+        mwtl::Must(tabs_.Synchronize(tab_model_), "synchronize native tabs");
+        mwtl::Must(tabs_.SetSelection(mwtl::TabId{901}), "select first tab for keyboard test");
+        ::SendMessageW(tabs_.GetHwnd(), WM_KEYDOWN, VK_RIGHT, 0);
+        if (tabs_.GetSelectedTabId() != mwtl::TabId{902}) {
+            throw std::runtime_error("native tab keyboard navigation failed");
+        }
+        TCITEMW native_tab{};
+        native_tab.mask = TCIF_PARAM;
+        if (tabs_.GetSelectedTabId() != mwtl::TabId{902} ||
+            TabCtrl_GetItem(tabs_.GetHwnd(), 1, &native_tab) == FALSE || native_tab.lParam != 902 ||
+            tabs_.SetSelection(mwtl::TabId{999})) {
+            throw std::runtime_error("stable native tab state failed");
+        }
+        if (!tabs_.RemoveTab(mwtl::TabId{901}) ||
+            tabs_.GetSelectedTabId() != mwtl::TabId{902} ||
+            !tabs_.Synchronize(tab_model_)) {
+            throw std::runtime_error("unselected native tab removal failed");
+        }
+        static_cast<void>(TabCtrl_SetCurSel(tabs_.GetHwnd(), -1));
+        if (!tabs_.SetSelection(0) || tabs_.GetSelectedTabId() != mwtl::TabId{901} ||
+            !tabs_.SetSelection(mwtl::TabId{902}) || !tabs_.RemoveTab(mwtl::TabId{902}) ||
+            tabs_.GetSelectedTabId() != mwtl::TabId{901}) {
+            throw std::runtime_error("native tab selection or removal failed");
+        }
+        mwtl::SelectionAdapter<mwtl::ComboBoxEx, int> combo_ex_items{combo_ex_};
+        mwtl::Must(combo_ex_items.Add(L"combo", 42), "add typed ComboBoxEx item");
+        mwtl::Must(combo_ex_items.Select(0), "select typed ComboBoxEx item");
+        if (!combo_ex_items.GetSelectedValue() ||
+            combo_ex_items.GetSelectedValue()->get() != 42 ||
+            combo_ex_.GetItemText(0) != L"combo") {
+            throw std::runtime_error("typed ComboBoxEx state failed");
+        }
         hot_key_.SetValue(mwtl::HotKeyValue{'K', HOTKEYF_CONTROL});
         ip_.SetValue(mwtl::IpAddressValue{{127, 0, 0, 1}});
         spin_.SetBuddy(spin_text_).SetRange(0, 100).SetValue(42);
         mwtl::Command toolbar_command({600}, L"Tool");
-        toolbar_command.SetChecked(true);
+        const int command_image = images_.AddIcon(
+            ::LoadIconW(nullptr, IDI_APPLICATION));
+        if (command_image < 0 || !toolbar_.SetImageList(images_))
+            throw std::runtime_error("configure toolbar images failed");
+        toolbar_command.SetChecked(true).SetImageIndex(command_image);
         if (!toolbar_.AddCommand(toolbar_command))
             throw std::runtime_error("populate toolbar command failed");
-        toolbar_command.SetChecked(false).SetEnabled(false).SetText(L"Disabled");
+        toolbar_command.SetImageIndex(-1);
+        if (toolbar_.UpdateCommand(toolbar_command))
+            throw std::runtime_error("negative toolbar image index accepted");
+        toolbar_command.SetImageIndex(command_image);
+        toolbar_command.SetChecked(false).SetEnabled(false).SetVisible(false)
+            .SetText(L"Disabled");
         if (!toolbar_.UpdateCommand(toolbar_command))
             throw std::runtime_error("update toolbar command failed");
+        TBBUTTONINFOW toolbar_info{};
+        wchar_t toolbar_text[32]{};
+        toolbar_info.cbSize = sizeof(toolbar_info);
+        toolbar_info.dwMask = TBIF_IMAGE | TBIF_STATE | TBIF_TEXT;
+        toolbar_info.pszText = toolbar_text;
+        toolbar_info.cchText = 32;
+        if (::SendMessageW(toolbar_.GetHwnd(), TB_GETBUTTONINFOW, 600,
+                           reinterpret_cast<LPARAM>(&toolbar_info)) < 0 ||
+            toolbar_info.iImage != command_image ||
+            (toolbar_info.fsState & TBSTATE_ENABLED) != 0 ||
+            (toolbar_info.fsState & TBSTATE_HIDDEN) == 0 ||
+            std::wstring_view{toolbar_text} != L"Disabled") {
+            throw std::runtime_error("toolbar command state did not propagate");
+        }
+        toolbar_command.SetVisible(true);
+        if (!toolbar_.UpdateCommand(toolbar_command))
+            throw std::runtime_error("show toolbar command failed");
         toolbar_.AutoSize();
         static_cast<void>(rebar_.AddBand(toolbar_, L"Band", 120));
         pager_.SetChild(pager_label_);
@@ -252,12 +321,13 @@ private:
     mwtl::ListBox list_;
     mwtl::Slider slider_;
     mwtl::TreeView tree_; mwtl::ListView list_view_; mwtl::Header header_;
-    mwtl::TabControl tabs_; mwtl::ComboBoxEx combo_ex_; mwtl::DateTimePicker date_;
+    mwtl::TabControl tabs_; mwtl::TabWorkspaceModel tab_model_;
+    mwtl::ComboBoxEx combo_ex_; mwtl::DateTimePicker date_;
     mwtl::MonthCalendar calendar_; mwtl::HotKey hot_key_; mwtl::IpAddress ip_;
+    mwtl::ImageList images_;
     mwtl::TextBox spin_text_; mwtl::UpDown spin_; mwtl::SysLink link_; mwtl::Rebar rebar_; mwtl::Toolbar toolbar_;
     mwtl::Pager pager_; mwtl::Label pager_label_; mwtl::Animation animation_;
     mwtl::ScrollBar scroll_; mwtl::StatusBar status_bar_; mwtl::Tooltip tooltip_;
-    mwtl::ImageList images_;
     mwtl::UiTimer timer_;
 };
 

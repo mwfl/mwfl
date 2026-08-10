@@ -5,14 +5,62 @@ static_assert(mwtl::WindowLike<mwtl::Label>);
 static_assert(mwtl::ControlLike<mwtl::Label>);
 
 int main() {
+    mwtl::ComboBox combo;
+    mwtl::SelectionAdapter<mwtl::ComboBox, int> selections{combo};
+    static_cast<void>(selections.Size());
+    mwtl::TabWorkspaceModel tabs;
+    const bool tab_added = tabs.Add({{7}, L"Installed API", false, true});
+    mwtl::DocumentWorkspaceModel documents{{1}};
+    const bool document_added = static_cast<bool>(
+        documents.Add({{1}, L"Installed document", L"C:\\installed.txt"}));
+    const auto document_commands = mwtl::BuildActiveDocumentCommandProjection(documents);
+    const auto document_close = mwtl::BuildCoordinatedClosePlan(documents, {});
+    mwtl::DocumentSession document_session;
+    document_session.workspaces.push_back(mwtl::CaptureWorkspaceSession(documents));
+    const auto serialized_session = mwtl::SerializeDocumentSession(document_session);
+    mwtl::DocumentTabWorkspaceAdapter document_tabs;
+    static_cast<void>(document_tabs.GetPages());
+    mwtl::DockLayoutModel docks{{10}, {100}, mwtl::DockGroupRole::document};
+    const bool dock_group_added = static_cast<bool>(docks.AddDockedGroup(
+        {20}, {200}, mwtl::DockGroupRole::tool, {10}, {300},
+        mwtl::DockEdge::bottom, 0.7));
+    const bool dock_panel_added = static_cast<bool>(docks.AddPanel(
+        {{1}, L"Installed output", mwtl::DockPanelRole::tool}, {20}));
+    const auto serialized_docks = mwtl::SerializeDockingSession(docks.GetSnapshot());
+    mwtl::WindowOptions auxiliary_window;
+    auxiliary_window.quit_on_destroy = false;
     const auto dpi = mwtl::DpiContext::FromDpi(144);
-    const mwtl::RectDip concise{
-        mwtl::Dip{1.0f}, mwtl::Dip{2.0f},
-        mwtl::Dip{3.0f}, mwtl::Dip{4.0f}};
-    mwtl::LayoutHost layout(
-        mwtl::Column().Margin(mwtl::Dip{8.0f}));
+    const mwtl::RectDip concise{mwtl::Dip{1.0f}, mwtl::Dip{2.0f}, mwtl::Dip{3.0f}, mwtl::Dip{4.0f}};
+    mwtl::LayoutHost layout(mwtl::Column().Margin(mwtl::Dip{8.0f}));
+    mwtl::SplitterModel splitter;
+    splitter.SetRatio(0.5f, {mwtl::Dip{400.0f}, mwtl::Dip{200.0f}});
+    const auto split = splitter.Arrange({mwtl::Dip{400.0f}, mwtl::Dip{200.0f}});
+    mwtl::PropertySheetModel property_pages;
+    const bool property_page_added = property_pages.Add({{1}, L"Installed property page"});
+    mwtl::TaskDialogOptions task_dialog{.title = L"Installed Task Dialog API"};
+    mwtl::DialogOptions custom_dialog{.title = L"Installed custom Dialog API"};
+    mwtl::TrayIconOptions tray_icon;
+    mwtl::TooltipOptions tooltip_options{.balloon = true};
+    mwtl::PopupMenuResult popup_result{mwtl::PopupMenuStatus::cancelled};
+    const mwtl::TreeItemId tree_item{8};
+    const mwtl::ListItemId list_item{9};
+    const mwtl::ListViewOptions virtual_list{.virtual_data = true};
     mwtl::Must(layout.HasRoot(), "installed layout");
-    return dpi.ToPixels(mwtl::Dip{2.0f}) == 3 &&
-           concise.size.width == mwtl::Dip{3.0f} && layout.HasRoot()
-        ? 0 : 1;
+    return tab_added && tabs.GetSelectedId() == mwtl::TabId{7} && document_added &&
+                   documents.GetActiveId() == mwtl::DocumentId{1} &&
+                   document_commands.document == mwtl::DocumentId{1} &&
+                   document_close.status == mwtl::CoordinatedCloseStatus::ready &&
+                   !serialized_session.empty() &&
+                   dock_group_added && dock_panel_added && !serialized_docks.empty() &&
+                   !auxiliary_window.quit_on_destroy &&
+                   dpi.ToPixels(mwtl::Dip{2.0f}) == 3 && concise.size.width == mwtl::Dip{3.0f} &&
+                   layout.HasRoot() && split.constraints_satisfied &&
+                   split.first.size.width.value > 0.0f && property_page_added &&
+                   property_pages.GetSelectedId() == mwtl::PropertyPageId{1} &&
+                   task_dialog.title == L"Installed Task Dialog API" &&
+                   custom_dialog.title == L"Installed custom Dialog API" && tray_icon.id == 1 &&
+                   tooltip_options.balloon && popup_result.Cancelled() && tree_item && list_item &&
+                   virtual_list.virtual_data
+               ? 0
+               : 1;
 }

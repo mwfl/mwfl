@@ -1,6 +1,6 @@
 # mwtl examples
 
-The repository includes 27 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Hot Corners is the complete reference application: it combines commands, persistence, background polling, tray integration, accessibility-aware appearance, multi-monitor state, and DPI behavior.
+The repository includes 39 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence.
 
 | Directory | Target | Focus |
 |---|---|---|
@@ -29,8 +29,21 @@ The repository includes 27 focused executables. Each example is intentionally sm
 | `form_binding` | `mwtl_form_binding_demo` | Live bindings, validation, model preview, and explicit `Push()`/`Pull()` flow |
 | `commands` | `mwtl_commands_demo` | Shared command state across menu, toolbar, and keyboard accelerators |
 | `desktop_integration` | `mwtl_desktop_integration_demo` | Modern dialogs, clipboard, file drops, task dialogs, and persistent placement |
+| `document_state` | `mwtl_document_state_demo` | Dirty document state and safe user transition decisions |
+| `notepad` | `mwtl_notepad` | Complete accessible Unicode SDI editor with atomic file operations |
+| `document_workspace` | `mwtl_document_workspace` | Two-window multi-document editor with transfer, sessions, and coordinated close |
 | `appearance` | `mwtl_appearance_demo` | System/light/dark title bars, backdrops, corners, and accessibility helpers |
 | `layout_gallery` | `mwtl_layout_gallery_demo` | Responsive nested rows, columns, overlays, sizing, alignment, and dynamic content |
+| `property_sheet` | `mwtl_property_sheet_demo` | Persistent multi-page Settings with validation and Apply/OK/Cancel |
+| `explorer` | `mwtl_explorer_demo` | Stable TreeView and virtual ListView in a complete Explorer-style shell |
+| `drawing` | `mwtl_drawing_demo` | DPI-aware Direct2D drawing, resource recovery, and SVG export |
+| `image_viewer` | `mwtl_image_viewer_demo` | WIC image decode, Fit/zoom/pan, color policy, and D2D recovery |
+| `printing` | `mwtl_printing_demo` | Shared pagination, preview zoom/navigation, printer settings, safe printing, and Esc cancellation |
+| `ole_drag_drop` | `mwtl_ole_drag_drop_demo` | Unicode, files, custom OLE data, mouse drag/drop, and keyboard alternatives |
+| `shell_integration` | `mwtl_shell_integration_demo` | Versioned settings, reversible association, Jump List, Recent, and taskbar recovery |
+| `code_editor` | `mwtl_code_editor_demo` | Optional pinned Scintilla editor with Unicode files, search/replace, notifications, and dirty state |
+| `browser` | `mwtl_browser_demo` | Optional pinned WebView2 browser with offline welcome, runtime diagnostics, navigation, and process recovery |
+| `docking_workspace` | `mwtl_docking_workspace_demo` | IDE-style document/tool workspace with docking, floating, auto-hide, keyboard navigation, and session restore |
 
 Configure with `MWTL_BUILD_EXAMPLES=ON`, then build one target or all targets:
 
@@ -72,6 +85,13 @@ The examples remain native: every component is a real child HWND and direct Win3
 | Full worker lifecycle | `hot_corners` | wakeup, commands, persistence | reference app |
 | Files and shell integration | `desktop_integration` | dialogs, clipboard, placement | composed |
 | Native look and accessibility | `appearance` | appearance and accessibility helpers | composed |
+| Persistent application settings | `property_sheet` | property pages, task dialogs, versioned state | reference app |
+| Explorer-style desktop shell | `explorer` | stable navigation, virtual data, splitter, commands | reference app |
+| Direct2D drawing | `drawing` | application-owned strokes, resource recovery, SVG export | reference app |
+| Image viewing | `image_viewer` | bounded WIC decode, CPU pixels, zoom/pan, D2D bitmap cache | reference app |
+| Source editing | `code_editor` | Scintilla runtime, UTF-8 byte positions, save points, notifications | reference app |
+| Web content | `browser` | WebView2 runtime, async controller, navigation, process recovery | reference app |
+| Docking workspace | `docking_workspace` | Stable panel identity, transactions, floating hosts, auto-hide, persistence | reference app |
 
 Coding agents should copy a complete example and modify it instead of merging
 unrelated fragments. See `docs/agent-usage.md` for lifetime and threading rules.

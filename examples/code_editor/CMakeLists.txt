@@ -1,0 +1,3 @@
+mwtl_add_example(mwtl_code_editor_demo main.cpp)
+target_link_libraries(mwtl_code_editor_demo PRIVATE mwtl::scintilla)
+mwtl_deploy_scintilla(mwtl_code_editor_demo)

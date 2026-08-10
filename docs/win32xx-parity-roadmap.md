@@ -43,12 +43,17 @@ macros, runtime reflection, or an MFC-style mandatory Document/View framework.
 | Docking workspace | Absent | Modern, serializable, DPI-safe docking model |
 | Windows Ribbon and legacy MDI | Absent | Optional late-stage integration modules |
 
-The detailed parity inventory should eventually live in a machine-readable
-`docs/parity.json`. It must map representative Win32++ capabilities and samples
-to one of: supported, composable, planned convenience layer, planned framework
-capability, or intentionally unsupported.
+The detailed milestone inventory lives in machine-readable `docs/parity.json`.
+[`win32xx-comparison.md`](win32xx-comparison.md) maps representative Win32++
+capabilities and samples to supported, composed, planned, or intentional
+non-goal outcomes with executable evidence.
 
 ## Version roadmap
+
+Machine-readable milestone state is tracked in [`parity.json`](parity.json).
+Detailed acceptance contracts live under [`milestones/`](milestones/), and a
+version cannot advance until its evidence-backed completion reflection exists
+under [`reflections/`](reflections/).
 
 ### 0.2 — Real SDI application foundation
 
@@ -86,6 +91,15 @@ property sheet, and Explorer-style split view.
 
 - reusable native-host lifecycle and focus/navigation contract;
 - optional WebView2 and Scintilla CMake components;
+
+The 0.4 implementation uses isolated `mwtl::webview2` and
+`mwtl::scintilla` targets rather than placing third-party dependencies in the
+core target. WebView2 has structured Runtime discovery, asynchronous
+environment/controller ownership, navigation, focus/accelerator routing,
+process recovery, and deterministic close. Scintilla has pinned binary/source
+identity, strict Unicode conversion, typed notifications, UTF-8 byte positions,
+search/replace, save points, and deployment support. `examples/browser` and
+`examples/code_editor` are complete offline-testable reference applications.
 - Direct2D host and Direct3D swap-chain host;
 - COM event subscription RAII and asynchronous initialization/shutdown safety;
 - DPI-correct third-party child-window hosting.
@@ -126,6 +140,14 @@ This modern tabbed model is higher priority than legacy Windows MDI.
 Reference applications should include a small IDE-style workspace and saved
 multi-monitor layouts. Docking begins only after the document and tab workspace
 models are stable.
+
+Implemented evidence is centered on `examples/docking_workspace`: stable-ID
+logical transactions, rollback-safe borrowed-HWND adoption, tab and split
+composition, owned floating hosts, deterministic auto-hide, DPI-aware
+nonactivating previews, mouse and keyboard targets, monitor recovery, and
+bounded versioned atomic persistence. The focused model/native/session/GUI
+tests and `docs/tutorials/docking-workspace.md` define the verification and
+onboarding path.
 
 ### 0.8 — Optional traditional Windows frameworks
 
@@ -182,11 +204,24 @@ Machine-readable context must state intent, symbols, headers, minimum example,
 ownership, lifetime, thread constraints, failure semantics, composition points,
 known-invalid usage, and the verification command.
 
-A feature is not complete until it passes the maintained x64/ARM64 toolchains,
-relevant Debug/Release configurations, clang-cl where supported, static
-analysis, sanitizer-compatible paths, unit and lifetime tests, DPI and keyboard
-checks, documentation checks, package-consumer tests, and raw HWND
-interoperability verification.
+### Validation phases
+
+For 0.4 through 0.8, feature completion is intentionally judged on the local
+primary matrix only: Visual Studio 2026, MSVC C++20, x64, in both Debug and
+Release. That gate includes applicable unit, lifetime, DPI, keyboard,
+documentation, package-consumer, and raw HWND interoperability checks.
+
+ARM64, Visual Studio 2022, clang-cl, static analysis, sanitizers, coverage,
+Pipeline, and GitHub Actions are deferred work during these releases. Existing
+support files may remain, but failures in that deferred matrix neither block
+feature development nor justify unrelated compatibility changes before 0.8 is
+complete.
+
+After 0.8, run a dedicated compatibility and CI stabilization phase. A feature
+is ready for the subsequent broadly supported release only after the maintained
+x64/ARM64 toolchains, relevant Debug/Release configurations, clang-cl where
+supported, static analysis, sanitizer-compatible paths, package consumers, and
+remote workflows pass again.
 
 ## Immediate execution order
 

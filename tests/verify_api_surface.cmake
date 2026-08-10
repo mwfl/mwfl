@@ -1,7 +1,7 @@
 set(required_headers
     application appearance binding command command_controls concepts control_batch
-    control_host control_resources controls desktop dpi error events
-    input_controls layout message_pump must navigation_controls timer wakeup
+    control_host control_resources controls desktop dialog document dpi error events
+    input_controls layout message_pump must navigation_controls property_sheet recent_files single_instance splitter tab_workspace text_file text_history text_search timer tray_icon wakeup
     window window_options)
 
 file(READ "${PROJECT_ROOT}/docs/reference.md" reference)
@@ -16,7 +16,10 @@ foreach(header IN LISTS required_headers)
 endforeach()
 
 set(required_api
-    "class Application" "class Window" "class WindowBase" "class NativeControl"
+    "class Application" "class Window" "class WindowBase" "class NativeControl" "class NativeHost"
+    "class D2DHost" "class D3DHost"
+    "class ImageViewportModel"
+    "class ScintillaRuntime" "class ScintillaEditor"
     "class LayoutNode" "class MessagePump" "class WindowWakeup"
     "class Error" "class Command" "class CommandSet" "class ChangeGate")
 file(GLOB public_headers "${PROJECT_ROOT}/include/mwtl/*.h")

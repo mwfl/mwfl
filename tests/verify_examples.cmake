@@ -102,7 +102,7 @@ endforeach()
 
 set(all_control_types ${public_control_types}
     TreeView ListView Header TabControl ComboBoxEx DateTimePicker MonthCalendar
-    HotKey IpAddress UpDown SysLink Toolbar StatusBar Rebar Pager Animation)
+    HotKey IpAddress UpDown SysLink Toolbar StatusBar Rebar Pager Animation Splitter)
 foreach(control_type IN LISTS all_control_types)
     if(NOT site_components MATCHES "<h3>${control_type}</h3>")
         message(FATAL_ERROR "Pages component card is missing: ${control_type}")
@@ -111,8 +111,8 @@ endforeach()
 
 string(REGEX MATCHALL "<article class=\"component-card\">" component_cards "${site_components}")
 list(LENGTH component_cards component_card_count)
-if(NOT component_card_count EQUAL 27)
-    message(FATAL_ERROR "Pages must contain exactly 27 control cards; found ${component_card_count}")
+if(NOT component_card_count EQUAL 28)
+    message(FATAL_ERROR "Pages must contain exactly 28 control cards; found ${component_card_count}")
 endif()
 
 # Keep every capture on disk for reference, but feature only visually useful
