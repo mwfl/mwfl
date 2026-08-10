@@ -100,7 +100,7 @@ Status meanings:
 
 | Win32++ compatibility surface | mwtl policy |
 |---|---|
-| Win32++ class names, inheritance hierarchy, message-map syntax, source or binary compatibility | No compatibility layer; migrate by scenario to typed composition. |
+| Win32++ class names, inheritance hierarchy, message-map syntax, source or binary compatibility | No compatibility layer; use task-oriented typed composition. |
 | Windows versions before Windows 10 1809, x86, Visual Studio before 2022, or pre-C++20 dialects | Not supported; historical compatibility must not weaken ownership or error contracts. |
 | Framework string/container/smart-pointer replacements | Use the C++20 standard library. |
 | A wrapper for every Win32 call | Use focused RAII wrappers where ownership/failure is material and `GetHwnd()`/native APIs elsewhere. |
@@ -110,6 +110,6 @@ This table is updated at each reflection gate. A later milestone is not complete
 merely because its row is planned; it needs the executable and automated
 evidence named by that milestone's acceptance checklist.
 
-The ordered implementation and acceptance strategy for the remaining direct
-surfaces is maintained in the
-[modern Win32++ coverage plan](modern-win32xx-coverage-plan.md).
+Current feature planning is organized around Windows UI developer tasks rather
+than compatibility or migration. See the
+[modern Windows UI API coverage plan](windows-ui-modernization-plan.md).

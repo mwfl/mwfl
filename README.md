@@ -23,7 +23,6 @@
   <a href="#quick-start">Quick start</a> &middot;
   <a href="#installation">Installation</a> &middot;
   <a href="#examples">Examples</a> &middot;
-  <a href="#how-it-compares-to-win32">Win32++ comparison</a> &middot;
   <a href="https://everettjf.github.io/mwtl/components/">Components</a> &middot;
   <a href="https://everettjf.github.io/mwtl/">Documentation</a>
 </p>
@@ -45,33 +44,6 @@ hiding native handles, messages, styles, or return values.
 
 Use mwtl when you want Windows to look and behave like Windows, while keeping
 application code readable enough to reason about.
-
-## How it compares to Win32++
-
-mwtl now covers the principal **application scenarios** demonstrated by
-Win32++: SDI and MDI applications, native controls and dialogs, command bars,
-tabs and splitters, property sheets, printing and preview, OLE drag/drop,
-docking, Ribbon, enhanced metafiles/GDI+, shell and taskbar integration,
-Scintilla, WebView2, dark appearance, and Per-Monitor V2 DPI. Each claimed
-scenario has a public API or documented composition path, a runnable example,
-and automated evidence.
-
-This is scenario parity, not a compatibility layer or a class-for-class clone.
-mwtl deliberately targets Windows 10+, C++20, and modern MSVC development. It
-uses typed events, composition, explicit ownership and thread affinity,
-structured failures, CMake targets, and Agent-readable metadata instead of
-legacy compiler support, framework string/container/thread classes, message
-maps, or a mandatory Document/View hierarchy.
-
-Some lower-level Win32++ convenience classes are not direct mwtl APIs today:
-the broad GDI object/DC wrapper catalogue, RichEdit and ScrollView wrappers,
-color/font common-dialog wrappers, a generic ActiveX container, and utility
-wrappers for archives, file search, sockets, synchronization, threads, and
-time. Applications can still implement those scenarios through the raw Win32
-escape hatch, the C++20 standard library, or a focused dependency, but they are
-real API-surface differences rather than features we claim to have cloned.
-See the audited [scenario comparison](docs/win32xx-comparison.md) for the
-evidence and remaining gaps.
 
 ## Quick start
 
@@ -294,9 +266,8 @@ For controlled environments, see the
 
 ## Documentation
 
-- [Win32++ capability parity roadmap](docs/win32xx-parity-roadmap.md)
-- [Audited Win32++ scenario comparison](docs/win32xx-comparison.md)
-- [Modern Win32++ coverage plan](docs/modern-win32xx-coverage-plan.md)
+- [Windows desktop capability roadmap](docs/win32xx-parity-roadmap.md)
+- [Modern Windows UI API coverage plan](docs/windows-ui-modernization-plan.md)
 - [IDE-style docking workspace tutorial](docs/tutorials/docking-workspace.md)
 
 - [Using mwtl with coding agents](docs/agent-usage.md)
@@ -321,3 +292,12 @@ For controlled environments, see the
 
 [MIT](LICENSE). WTL, WIL, and other third-party dependencies retain their own
 licenses.
+
+## Acknowledgements
+
+mwtl builds on decades of Windows desktop engineering. Thank you to the teams
+and communities behind the Windows API, MFC, WTL, WIL, and Win32++ for the
+designs, documentation, examples, and hard-won lessons that helped make native
+Windows development more approachable. Thanks also to the WebView2 and
+Scintilla projects for the optional native integrations used by the reference
+applications.
