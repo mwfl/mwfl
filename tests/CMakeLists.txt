@@ -758,9 +758,9 @@ add_executable(mwtl_integration_stress_test integration_stress_test.cpp)
 target_compile_features(mwtl_integration_stress_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_integration_stress_test PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwtl_integration_stress_test PRIVATE
-    mwtl::printing mwtl::ole mwtl::shell)
+    mwtl::printing mwtl::ole mwtl::shell mwtl::ribbon mwtl::mdi mwtl::graphics)
 add_test(NAME mwtl.integration_stress COMMAND mwtl_integration_stress_test)
-set_tests_properties(mwtl.integration_stress PROPERTIES TIMEOUT 30 LABELS "native;lifecycle")
+set_tests_properties(mwtl.integration_stress PROPERTIES TIMEOUT 60 LABELS "native;lifecycle")
 
 add_executable(mwtl_imaging_decode_test imaging_decode_test.cpp)
 target_compile_features(mwtl_imaging_decode_test PRIVATE cxx_std_20)
