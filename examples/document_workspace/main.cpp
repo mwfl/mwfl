@@ -191,8 +191,7 @@ public:
                     (command && command->IsEnabled() ? MF_ENABLED : MF_GRAYED));
             }
         }
-        status_.SetText(std::wstring{message} + L" — " +
-            std::to_wstring(model().GetCount()) + L" document(s)");
+        status_.SetText(std::wstring{message} + L" — " + projection.status_text);
         SetTitle((index_ == 0 ? L"Workspace A" : L"Workspace B") +
                  std::wstring{L" — mwtl Documents"});
         ::DrawMenuBar(GetHwnd());

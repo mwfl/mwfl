@@ -14,6 +14,7 @@ int main() {
     const bool document_added = static_cast<bool>(
         documents.Add({{1}, L"Installed document", L"C:\\installed.txt"}));
     const auto document_commands = mwtl::BuildActiveDocumentCommandProjection(documents);
+    const auto document_close = mwtl::BuildCoordinatedClosePlan(documents, {});
     mwtl::DocumentSession document_session;
     document_session.workspaces.push_back(mwtl::CaptureWorkspaceSession(documents));
     const auto serialized_session = mwtl::SerializeDocumentSession(document_session);
@@ -41,6 +42,7 @@ int main() {
     return tab_added && tabs.GetSelectedId() == mwtl::TabId{7} && document_added &&
                    documents.GetActiveId() == mwtl::DocumentId{1} &&
                    document_commands.document == mwtl::DocumentId{1} &&
+                   document_close.status == mwtl::CoordinatedCloseStatus::ready &&
                    !serialized_session.empty() &&
                    !auxiliary_window.quit_on_destroy &&
                    dpi.ToPixels(mwtl::Dip{2.0f}) == 3 && concise.size.width == mwtl::Dip{3.0f} &&

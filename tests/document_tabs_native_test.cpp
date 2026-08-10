@@ -2,6 +2,8 @@
 
 #include <commctrl.h>
 
+#include <cstdio>
+
 namespace {
 
 HWND MakeHost(int x) {
@@ -27,6 +29,16 @@ int main() {
     using namespace mwtl;
     INITCOMMONCONTROLSEX controls{sizeof(controls), ICC_TAB_CLASSES};
     if (!::InitCommonControlsEx(&controls)) return 1;
+    // Warm process-wide Common Controls brushes/fonts before measuring the
+    // per-workspace lifecycle delta.
+    const HWND warm_host = MakeHost(0);
+    const HWND warm_tab = ::CreateWindowExW(0, WC_TABCONTROLW, L"", WS_CHILD,
+        0, 0, 10, 10, warm_host, nullptr, ::GetModuleHandleW(nullptr), nullptr);
+    const HWND warm_edit = MakePage(warm_host, 1);
+    ::SetFocus(warm_edit);
+    if (!warm_host || !warm_tab || !warm_edit || !::DestroyWindow(warm_host)) return 26;
+    const DWORD gdi_before = ::GetGuiResources(::GetCurrentProcess(), GR_GDIOBJECTS);
+    const DWORD user_before = ::GetGuiResources(::GetCurrentProcess(), GR_USEROBJECTS);
     const HWND left_host = MakeHost(50);
     const HWND right_host = MakeHost(600);
     if (!left_host || !right_host) return 2;
@@ -87,7 +99,7 @@ int main() {
     if (!transferred || left.Find({22}) || !right.Find({22}) ||
         left_adapter.FindPage({22}) || right_adapter.FindPage({22}) != second_page ||
         ::GetParent(second_page) != right_host ||
-        right.GetActiveId() != DocumentId{22}) return 12;
+        right.GetActiveId() != DocumentId{22} || ::GetFocus() != second_page) return 12;
 
     if (!left.Move({11}, 0) || !left_adapter.Synchronize(left)) return 13;
     if (!left.Close({11}, false) ||
@@ -103,5 +115,13 @@ int main() {
     ::DestroyWindow(wrong_parent);
     ::DestroyWindow(left_host);
     ::DestroyWindow(right_host);
+    const DWORD gdi_after = ::GetGuiResources(::GetCurrentProcess(), GR_GDIOBJECTS);
+    const DWORD user_after = ::GetGuiResources(::GetCurrentProcess(), GR_USEROBJECTS);
+    if (gdi_after > gdi_before + 2 || user_after > user_before + 2) {
+        std::fprintf(stderr, "resource delta: gdi=%lu user=%lu\n",
+            static_cast<unsigned long>(gdi_after - gdi_before),
+            static_cast<unsigned long>(user_after - user_before));
+        return 25;
+    }
     return 0;
 }

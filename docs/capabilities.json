@@ -58,10 +58,10 @@
     {
       "id": "active-document-coordination",
       "intent": ["route a command to the active document", "close all documents safely", "save dirty documents before shutdown"],
-      "symbols": ["mwtl::BuildActiveDocumentCommandProjection", "mwtl::ApplyActiveDocumentCommandProjection", "mwtl::RouteActiveDocument", "mwtl::BuildCoordinatedClosePlan", "mwtl::ExecuteCoordinatedClose"],
+      "symbols": ["mwtl::BuildActiveDocumentCommandProjection", "mwtl::ApplyActiveDocumentCommandProjection", "mwtl::RouteActiveDocument", "mwtl::BuildCoordinatedClosePlan", "mwtl::CommitCoordinatedCloseAfterSaves", "mwtl::ExecuteCoordinatedClose"],
       "headers": ["mwtl/document_coordination.h"],
       "tests": ["mwtl.document_coordination", "mwtl.package_consumer"],
-      "constraints": ["route stable IDs and never capture document pointers", "handlers and save I/O remain application-owned", "save callbacks run before one atomic close commit", "callback exceptions and reentrant revision changes are structured results", "any pre-commit failure leaves all documents open"]
+      "constraints": ["route stable IDs and never capture document pointers", "handlers and save I/O remain application-owned", "asynchronous applications finish every planned save before CommitCoordinatedCloseAfterSaves", "save callbacks run before one atomic close commit", "callback exceptions and reentrant revision changes are structured results", "any pre-commit failure leaves all documents open"]
     },
     {
       "id": "document-session-persistence",

@@ -12,6 +12,7 @@ int main() {
     CommandSet commands;
     commands.Add(Command{{101}, L"Save"}).Add(Command{{102}, L"Close"})
             .Add(Command{{103}, L"Undo"}).Add(Command{{104}, L"Redo"});
+    commands.Find({101})->SetChecked(true).SetShortcut({FVIRTKEY | FCONTROL, 'S'});
     const ActiveDocumentCommandIds ids{{101}, {102}, {103}, {104}};
     auto projection = BuildActiveDocumentCommandProjection(workspace);
     if (projection.document != DocumentId{11} || !projection.can_save ||
@@ -19,7 +20,9 @@ int main() {
         ApplyActiveDocumentCommandProjection(commands, ids, projection) !=
             DocumentCommandProjectionStatus::success ||
         !commands.Find({101})->IsEnabled() || !commands.Find({103})->IsEnabled() ||
-        commands.Find({104})->IsEnabled()) return 2;
+        commands.Find({104})->IsEnabled() || !commands.Find({101})->IsChecked() ||
+        !commands.Find({101})->GetShortcut() ||
+        projection.status_text.find(L"modified") == std::wstring::npos) return 2;
     if (ApplyActiveDocumentCommandProjection(commands, {{101}, {101}, {103}, {104}}, projection) !=
         DocumentCommandProjectionStatus::invalid_argument) return 3;
 
@@ -68,6 +71,19 @@ int main() {
     });
     if (changed.status != CoordinatedCloseStatus::stale_workspace ||
         workspace.GetCount() != 2) return 12;
+
+    auto asynchronous_plan = BuildCoordinatedClosePlan(workspace, save);
+    if (!asynchronous_plan) return 20;
+    workspace.SetViewState({22}, {0, 0, 1, 1.0});
+    if (CommitCoordinatedCloseAfterSaves(workspace, asynchronous_plan).status !=
+            CoordinatedCloseStatus::stale_workspace ||
+        workspace.GetCount() != 2) return 21;
+    asynchronous_plan = BuildCoordinatedClosePlan(workspace, save);
+    if (!CommitCoordinatedCloseAfterSaves(workspace, asynchronous_plan) ||
+        workspace.GetCount() != 0) return 22;
+
+    if (!workspace.Add({{11}, L"One", {}, true}) ||
+        !workspace.Add({{22}, L"Two"})) return 23;
 
     plan = BuildCoordinatedClosePlan(workspace, save);
     if (!ExecuteCoordinatedClose(workspace, plan, [](DocumentId) { return true; }) ||

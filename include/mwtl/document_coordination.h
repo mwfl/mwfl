@@ -24,6 +24,7 @@ struct ActiveDocumentCommandProjection {
     std::optional<DocumentId> document;
     std::wstring save_text = L"Save";
     std::wstring close_text = L"Close";
+    std::wstring status_text = L"No active document";
     bool can_save = false;
     bool can_close = false;
     bool can_undo = false;
@@ -39,7 +40,8 @@ enum class DocumentCommandProjectionStatus {
     command_not_found,
 };
 
-// Updates presentation only. Handlers remain application-owned and should use
+// Updates text/enabled presentation only. Existing checked state, shortcut,
+// visibility, image, and handlers remain application-owned and should use
 // RouteActiveDocument at invocation time rather than capture a document pointer.
 DocumentCommandProjectionStatus ApplyActiveDocumentCommandProjection(
     CommandSet& commands, const ActiveDocumentCommandIds& ids,
@@ -115,6 +117,13 @@ struct CoordinatedCloseResult {
         return status == CoordinatedCloseStatus::success;
     }
 };
+
+// Commit phase for applications that complete plan.save_before_close through
+// asynchronous workflows. The application must call this only after every
+// requested save succeeds. A changed revision rejects the stale plan.
+CoordinatedCloseResult CommitCoordinatedCloseAfterSaves(
+    DocumentWorkspaceModel& workspace,
+    const CoordinatedClosePlan& plan) noexcept;
 
 // Runs every save before one CloseMany commit. Callback failure, cancellation,
 // exception, or any reentrant workspace mutation leaves all documents open.

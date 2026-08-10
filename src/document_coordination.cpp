@@ -25,6 +25,10 @@ ActiveDocumentCommandProjection BuildActiveDocumentCommandProjection(
     if (!document) { result.document.reset(); return result; }
     result.save_text = L"Save " + document->title;
     result.close_text = L"Close " + document->title;
+    result.status_text = document->title;
+    if (document->dirty) result.status_text += L" — modified";
+    result.status_text += L" — " + std::to_wstring(workspace.GetCount()) +
+                          L" document(s)";
     result.can_save = document->dirty;
     result.can_close = true;
     result.can_undo = document->can_undo;
@@ -106,6 +110,25 @@ CoordinatedClosePlan BuildCoordinatedClosePlan(
     return plan;
 }
 
+CoordinatedCloseResult CommitCoordinatedCloseAfterSaves(
+    DocumentWorkspaceModel& workspace, const CoordinatedClosePlan& plan) noexcept {
+    if (!plan)
+        return {CoordinatedCloseStatus::invalid_argument, {}, {}};
+    if (workspace.GetRevision() != plan.workspace_revision)
+        return {CoordinatedCloseStatus::stale_workspace, {}, {}};
+    if (plan.close_documents.empty())
+        return {CoordinatedCloseStatus::success, {}, {}};
+    try {
+        const auto closed = workspace.CloseMany(plan.close_documents);
+        if (!closed)
+            return {CoordinatedCloseStatus::commit_failure, {}, {}};
+    } catch (...) {
+        return {CoordinatedCloseStatus::commit_failure, {},
+                std::current_exception()};
+    }
+    return {CoordinatedCloseStatus::success, {}, {}};
+}
+
 CoordinatedCloseResult ExecuteCoordinatedClose(
     DocumentWorkspaceModel& workspace, const CoordinatedClosePlan& plan,
     const DocumentSaveHandler& save) noexcept {
@@ -128,15 +151,7 @@ CoordinatedCloseResult ExecuteCoordinatedClose(
         if (workspace.GetRevision() != plan.workspace_revision)
             return {CoordinatedCloseStatus::stale_workspace, id, {}};
     }
-    try {
-        const auto closed = workspace.CloseMany(plan.close_documents);
-        if (!closed)
-            return {CoordinatedCloseStatus::commit_failure, {}, {}};
-    } catch (...) {
-        return {CoordinatedCloseStatus::commit_failure, {},
-                std::current_exception()};
-    }
-    return {CoordinatedCloseStatus::success, {}, {}};
+    return CommitCoordinatedCloseAfterSaves(workspace, plan);
 }
 
 }  // namespace mwtl
