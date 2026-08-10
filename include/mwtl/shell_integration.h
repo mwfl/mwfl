@@ -41,6 +41,13 @@ struct TaskbarProgressModel {
     bool IsValid() const noexcept;
 };
 
+struct TaskbarThumbnailButton {
+    UINT id = 0;
+    HICON icon = nullptr;  // borrowed for the call; the Shell copies it.
+    std::wstring tooltip;
+    THUMBBUTTONFLAGS flags = THBF_ENABLED;
+};
+
 // UI-thread object. Recreate after the registered TaskbarCreated message.
 class TaskbarWindowIntegration final {
 public:
@@ -50,6 +57,12 @@ public:
     ShellResult Apply(const TaskbarProgressModel& progress) noexcept;
     // icon is borrowed for the call. The Shell copies it. nullptr clears.
     ShellResult SetOverlayIcon(HICON icon, std::wstring_view accessible_description) noexcept;
+    // At most seven stable nonzero IDs. First call adds; later calls update.
+    ShellResult SetThumbnailButtons(
+        std::span<const TaskbarThumbnailButton> buttons) noexcept;
+    ShellResult RegisterTab(HWND tab, HWND insert_before = nullptr) noexcept;
+    ShellResult UnregisterTab(HWND tab) noexcept;
+    ShellResult SetActiveTab(HWND tab) noexcept;
     ShellResult Clear() noexcept;
     void Reset() noexcept;
     bool IsAvailable() const noexcept { return taskbar_ != nullptr; }
@@ -61,6 +74,7 @@ private:
     HWND window_ = nullptr;
     DWORD thread_id_ = 0;
     Microsoft::WRL::ComPtr<ITaskbarList3> taskbar_;
+    bool thumbnail_buttons_added_ = false;
 };
 
 struct JumpListTask {

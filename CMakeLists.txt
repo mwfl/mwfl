@@ -177,6 +177,7 @@ target_link_libraries(mwtl_ole PUBLIC mwtl PRIVATE ole32 shell32)
 add_library(mwtl_shell STATIC
     src/settings_store.cpp
     src/file_association.cpp
+    src/help.cpp
     src/shell_integration.cpp)
 add_library(mwtl::shell ALIAS mwtl_shell)
 set_target_properties(mwtl_shell PROPERTIES EXPORT_NAME shell)
@@ -188,7 +189,7 @@ endif()
 target_include_directories(mwtl_shell PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(mwtl_shell PUBLIC mwtl PRIVATE advapi32 shell32 ole32 propsys)
+target_link_libraries(mwtl_shell PUBLIC mwtl PRIVATE advapi32 shell32 ole32 propsys htmlhelp)
 
 add_library(mwtl_ribbon STATIC src/ribbon.cpp)
 add_library(mwtl::ribbon ALIAS mwtl_ribbon)

@@ -3,9 +3,11 @@
 #include <propkey.h>
 #include <propvarutil.h>
 #include <shlobj_core.h>
+#include <strsafe.h>
 #include <wil/resource.h>
 
 #include <algorithm>
+#include <array>
 #include <cwctype>
 #include <limits>
 #include <utility>
@@ -194,6 +196,72 @@ ShellResult TaskbarWindowIntegration::SetOverlayIcon(
     return {MapError(SUCCEEDED(result) ? S_OK : result), result};
 }
 
+ShellResult TaskbarWindowIntegration::SetThumbnailButtons(
+    std::span<const TaskbarThumbnailButton> buttons) noexcept {
+    const auto check = CheckThread();
+    if (!check) return check;
+    if (!taskbar_) return {ShellStatus::unavailable, E_NOINTERFACE};
+    if (buttons.empty() || buttons.size() > 7)
+        return {ShellStatus::invalid_argument, E_INVALIDARG};
+    std::array<THUMBBUTTON, 7> native{};
+    for (std::size_t index = 0; index < buttons.size(); ++index) {
+        const auto& button = buttons[index];
+        constexpr THUMBBUTTONFLAGS allowed = static_cast<THUMBBUTTONFLAGS>(
+            THBF_DISABLED | THBF_DISMISSONCLICK | THBF_NOBACKGROUND |
+            THBF_HIDDEN | THBF_NONINTERACTIVE);
+        if (button.id == 0 || button.tooltip.size() >= std::size(native[index].szTip) ||
+            button.tooltip.find(L'\0') != std::wstring::npos ||
+            (button.flags & ~allowed) != 0 ||
+            std::any_of(buttons.begin(), buttons.begin() + static_cast<std::ptrdiff_t>(index),
+                        [&](const auto& existing) { return existing.id == button.id; }))
+            return {ShellStatus::invalid_argument, E_INVALIDARG};
+        native[index].dwMask = THB_FLAGS | THB_TOOLTIP;
+        native[index].iId = button.id;
+        native[index].dwFlags = button.flags;
+        if (button.icon) {
+            native[index].dwMask |= THB_ICON;
+            native[index].hIcon = button.icon;
+        }
+        if (!button.tooltip.empty())
+            ::StringCchCopyNW(native[index].szTip, std::size(native[index].szTip),
+                              button.tooltip.data(), button.tooltip.size());
+    }
+    const HRESULT result = thumbnail_buttons_added_
+        ? taskbar_->ThumbBarUpdateButtons(window_, static_cast<UINT>(buttons.size()), native.data())
+        : taskbar_->ThumbBarAddButtons(window_, static_cast<UINT>(buttons.size()), native.data());
+    if (SUCCEEDED(result)) thumbnail_buttons_added_ = true;
+    return {MapError(result), result};
+}
+
+ShellResult TaskbarWindowIntegration::RegisterTab(HWND tab, HWND insert_before) noexcept {
+    const auto check = CheckThread();
+    if (!check) return check;
+    if (!taskbar_) return {ShellStatus::unavailable, E_NOINTERFACE};
+    if (!tab || !::IsWindow(tab) || (insert_before && !::IsWindow(insert_before)))
+        return {ShellStatus::invalid_argument, E_INVALIDARG};
+    HRESULT result = taskbar_->RegisterTab(tab, window_);
+    if (SUCCEEDED(result)) result = taskbar_->SetTabOrder(tab, insert_before);
+    return {MapError(result), result};
+}
+
+ShellResult TaskbarWindowIntegration::UnregisterTab(HWND tab) noexcept {
+    const auto check = CheckThread();
+    if (!check) return check;
+    if (!taskbar_) return {ShellStatus::unavailable, E_NOINTERFACE};
+    if (!tab || !::IsWindow(tab)) return {ShellStatus::invalid_argument, E_INVALIDARG};
+    const HRESULT result = taskbar_->UnregisterTab(tab);
+    return {MapError(result), result};
+}
+
+ShellResult TaskbarWindowIntegration::SetActiveTab(HWND tab) noexcept {
+    const auto check = CheckThread();
+    if (!check) return check;
+    if (!taskbar_) return {ShellStatus::unavailable, E_NOINTERFACE};
+    if (!tab || !::IsWindow(tab)) return {ShellStatus::invalid_argument, E_INVALIDARG};
+    const HRESULT result = taskbar_->SetTabActive(tab, window_, 0);
+    return {MapError(result), result};
+}
+
 ShellResult TaskbarWindowIntegration::Clear() noexcept {
     TaskbarProgressModel none;
     auto result = Apply(none);
@@ -205,6 +273,7 @@ void TaskbarWindowIntegration::Reset() noexcept {
     taskbar_.Reset();
     window_ = nullptr;
     thread_id_ = 0;
+    thumbnail_buttons_added_ = false;
 }
 
 UINT TaskbarWindowIntegration::GetTaskbarCreatedMessage() noexcept {

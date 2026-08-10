@@ -97,6 +97,18 @@ target_link_libraries(mwtl_graphics_test PRIVATE mwtl::graphics)
 add_test(NAME mwtl.graphics COMMAND mwtl_graphics_test)
 set_tests_properties(mwtl.graphics PROPERTIES TIMEOUT 30 LABELS "native;integration")
 
+add_library(mwtl_header_help OBJECT header_help.cpp)
+target_compile_features(mwtl_header_help PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_help PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_help PRIVATE mwtl::shell)
+
+add_executable(mwtl_help_test help_test.cpp)
+target_compile_features(mwtl_help_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_help_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_help_test PRIVATE mwtl::shell)
+add_test(NAME mwtl.help COMMAND mwtl_help_test)
+set_tests_properties(mwtl.help PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
 find_program(MWTL_UICC_EXECUTABLE NAMES uicc.exe
     HINTS
         "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/x86"
