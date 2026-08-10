@@ -509,3 +509,49 @@ is for application-coordinated auxiliary top-level windows.
 
 See `examples/document_workspace`, `docs/tutorials/document-workspace.md`, and
 `docs/recipes/multi-document-workspace.md`.
+
+## Docking workspace
+
+`<mwtl/docking_workspace.h>` owns the stable-ID logical graph and explicit
+proposal/commit transaction. `<mwtl/docking_native.h>` projects snapshots into
+application-owned panel and group HWNDs with prepare/adopt/rollback/commit.
+`<mwtl/docking_drag.h>`, `<mwtl/docking_preview.h>`, and
+`<mwtl/docking_keyboard.h>` separate input, target selection, non-destructive
+feedback, and acceptance. `<mwtl/docking_floating.h>`,
+`<mwtl/docking_auto_hide.h>`, and `<mwtl/docking_monitor.h>` define auxiliary
+host and monitor policy. `<mwtl/docking_session.h>` owns versioned persistence.
+All are core `mwtl::mwtl` surfaces for Windows 10+ C++20 applications.
+
+`DockLayoutModel` owns metadata copies only. `DockPanelId`, `DockGroupId`,
+`DockNodeId`, and `DockFloatingHostId` are stable nonzero application IDs;
+they are never HWNDs or pointers. Applications own content, commands,
+documents, and HWND destruction. Proposals do not mutate the model. Prepare and
+adopt native moves first, commit the logical transaction second, then commit
+the adoption; rollback restores parent, styles, visibility, and focus after a
+failure or stale revision.
+
+Native adapters and hosts are creating-UI-thread-only. They validate process,
+thread, parentage, and stale-window boundaries and borrow panel/group HWNDs.
+`DockFloatingWindow` owns its auxiliary top-level HWND, borrows one content
+host, applies DPI/minimum-size policy, restores content during teardown, and
+does not post process quit. `DockPreviewWindow` is nonactivating and
+input-transparent. Callback exceptions are contained at every native boundary.
+
+`DockDragSession` retains logical snapshots only. Hit testing consumes bounded
+screen-space DIP targets; pointer capture, preview HWNDs, and adoption remain
+application/native responsibilities. Escape, capture loss, destruction,
+invalid proposals, rejected adoption, stale transactions, reentrancy, and
+exceptions cancel without half-committed state. `DockKeyboardSession` exposes
+the same targets through arrows, Tab/Shift+Tab, Enter, Escape, and accessible
+announcements.
+
+Docking sessions contain only logical IDs, ratios, edges, bounded text, and DIP
+placement. The parser is versioned and bounded, accepts unknown optional tagged
+fields, and rejects malformed, duplicate, truncated, oversized, cyclic, or
+unsupported graphs. Atomic file save replaces only a completely written
+candidate. Recover floating placement against injectable current monitor work
+areas before native adoption and use a deterministic safe default on failure.
+
+See `examples/docking_workspace`,
+`docs/tutorials/docking-workspace.md`, and
+`docs/recipes/docking-workspace.md`.

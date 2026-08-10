@@ -61,7 +61,7 @@ Status meanings:
 
 | Win32++ capability or sample family | mwtl direction | Status |
 |---|---|---|
-| `CDocker`, docking and RibbonDockFrame samples | Stable-ID serializable dock panels, floating windows and accessible drag previews | planned for 0.7 |
+| `CDocker`, docking and RibbonDockFrame samples | Stable-ID transactional dock panels, split/tab groups, floating and auto-hide hosts, accessible pointer/keyboard previews, monitor recovery, and bounded layout persistence | supported; `examples/docking_workspace`, docking model/native/session/GUI tests |
 | `CRibbon` / RibbonFrame samples | Optional Windows Ribbon integration, never required by the core | planned for 0.8 |
 | Traditional `CMDIFrame`/`CMDIChild` | Optional adapter after the modern multi-document workspace is complete | planned for 0.8 |
 

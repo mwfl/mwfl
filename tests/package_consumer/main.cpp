@@ -20,6 +20,13 @@ int main() {
     const auto serialized_session = mwtl::SerializeDocumentSession(document_session);
     mwtl::DocumentTabWorkspaceAdapter document_tabs;
     static_cast<void>(document_tabs.GetPages());
+    mwtl::DockLayoutModel docks{{10}, {100}, mwtl::DockGroupRole::document};
+    const bool dock_group_added = static_cast<bool>(docks.AddDockedGroup(
+        {20}, {200}, mwtl::DockGroupRole::tool, {10}, {300},
+        mwtl::DockEdge::bottom, 0.7));
+    const bool dock_panel_added = static_cast<bool>(docks.AddPanel(
+        {{1}, L"Installed output", mwtl::DockPanelRole::tool}, {20}));
+    const auto serialized_docks = mwtl::SerializeDockingSession(docks.GetSnapshot());
     mwtl::WindowOptions auxiliary_window;
     auxiliary_window.quit_on_destroy = false;
     const auto dpi = mwtl::DpiContext::FromDpi(144);
@@ -44,6 +51,7 @@ int main() {
                    document_commands.document == mwtl::DocumentId{1} &&
                    document_close.status == mwtl::CoordinatedCloseStatus::ready &&
                    !serialized_session.empty() &&
+                   dock_group_added && dock_panel_added && !serialized_docks.empty() &&
                    !auxiliary_window.quit_on_destroy &&
                    dpi.ToPixels(mwtl::Dip{2.0f}) == 3 && concise.size.width == mwtl::Dip{3.0f} &&
                    layout.HasRoot() && split.constraints_satisfied &&

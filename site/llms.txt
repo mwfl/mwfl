@@ -36,3 +36,6 @@ https://github.com/everettjf/mwtl/tree/main/examples/hot_corners
 
 Multi-document workspace tutorial and compiled reference:
 https://everettjf.github.io/mwtl/document-workspace.html
+
+IDE docking workspace tutorial and compiled reference:
+https://everettjf.github.io/mwtl/docking-workspace.html

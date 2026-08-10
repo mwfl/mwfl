@@ -283,3 +283,27 @@ Start browser changes from `examples/browser`, editor changes from
 `examples/code_editor`, HWND hosting from `docs/recipes/native-host.md`, and
 rendering changes from the corresponding reference application. Each supports
 deterministic local tests without network or dialogs.
+
+## Docking workspaces
+
+- Start at `examples/docking_workspace` and
+  `docs/tutorials/docking-workspace.md`; use
+  `docs/recipes/docking-workspace.md` for focused edits.
+- Stable `DockPanelId`, `DockGroupId`, `DockNodeId`, and
+  `DockFloatingHostId` values are application identities. Never derive them
+  from HWNDs, pointers, vector positions, or process-local state.
+- `DockLayoutModel` owns metadata snapshots only. The application owns panel
+  content, commands, documents, and HWND lifetimes.
+- For every change: `Propose`, prepare/adopt with
+  `DockNativeWorkspaceAdapter`, commit the model, then commit the adoption.
+  Roll back native adoption if logical commit fails.
+- `DockDragSession` separates target hit testing, proposal, preview, and commit.
+  Escape, capture loss, destruction, stale state, rejection, reentrancy, and
+  callback exceptions must preserve the original layout.
+- Provide `DockKeyboardSession` whenever pointer targets exist. Floating hosts
+  are owned auxiliary windows; panel HWNDs remain borrowed. Persistence is
+  bounded, versioned, pointer-free, atomic where possible, and restored only
+  after monitor recovery and graph validation.
+- Focused local gate:
+  `ctest --test-dir build/presets/vs2026-x64 -C Debug -R "mwtl.docking_"`;
+  repeat with Release.

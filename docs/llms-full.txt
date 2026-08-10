@@ -176,3 +176,20 @@ objects stay on their creating UI thread and are recreated after TaskbarCreated.
 Handle unavailable, rejected, access, and COM failures. Reference:
 examples/printing, examples/ole_drag_drop, examples/shell_integration, and
 docs/tutorials/printing-ole-shell.md.
+
+DOCKING WORKSPACES
+
+Start at examples/docking_workspace, docs/tutorials/docking-workspace.md, and
+docs/recipes/docking-workspace.md. DockLayoutModel owns pointer-free metadata;
+the application owns panel content, documents, commands, and HWNDs. IDs for
+panels, groups, nodes, and floating hosts are stable, nonzero application IDs,
+never HWNDs or pointers. All native work remains on the creating UI thread.
+
+Mutations use propose -> native prepare/adopt -> logical commit -> native
+commit. Roll back adoption if commit fails. DockDragSession separates hit test,
+proposal, nonactivating preview, and commit; Escape, capture loss, destruction,
+stale state, rejected adoption, and exceptions cancel without losing the source
+layout. Expose the same targets through DockKeyboardSession. Floating windows
+own auxiliary top-level HWNDs and borrow panel hosts; they do not post process
+quit. Save only bounded, versioned, pointer-free committed snapshots in DIPs,
+recover them against current monitors, and fall back to a deterministic layout.

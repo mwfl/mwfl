@@ -19,6 +19,15 @@ is more important than compile-time isolation.
 | `mwtl/dialog.h` | retained-layout modal and modeless native dialogs with structured results |
 | `mwtl/desktop.h` | menus, accelerators, dialogs, clipboard, shell and placement helpers |
 | `mwtl/document.h` | `DocumentState`, dirty tracking, and unsaved-transition decisions |
+| `mwtl/docking_workspace.h` | stable-ID panel/group/split graph and transactional mutations |
+| `mwtl/docking_native.h` | rollback-safe borrowed-HWND docking projection |
+| `mwtl/docking_drag.h` | cancellable target/proposal/commit drag sessions |
+| `mwtl/docking_preview.h` | nonactivating DPI-aware native docking preview |
+| `mwtl/docking_keyboard.h` | spatial and sequential accessible docking navigation |
+| `mwtl/docking_floating.h` | owned auxiliary floating host with borrowed content |
+| `mwtl/docking_auto_hide.h` | deterministic auto-hide timing and pin policy |
+| `mwtl/docking_monitor.h` | injectable floating-placement monitor recovery |
+| `mwtl/docking_session.h` | bounded versioned pointer-free layout persistence |
 | `mwtl/dpi.h` | DIP geometry and `DpiContext` |
 | `mwtl/error.h` | checked-operation `Error` and diagnostic context |
 | `mwtl/events.h` | typed message events and `EventResult` |

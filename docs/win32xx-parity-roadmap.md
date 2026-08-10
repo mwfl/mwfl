@@ -141,6 +141,14 @@ Reference applications should include a small IDE-style workspace and saved
 multi-monitor layouts. Docking begins only after the document and tab workspace
 models are stable.
 
+Implemented evidence is centered on `examples/docking_workspace`: stable-ID
+logical transactions, rollback-safe borrowed-HWND adoption, tab and split
+composition, owned floating hosts, deterministic auto-hide, DPI-aware
+nonactivating previews, mouse and keyboard targets, monitor recovery, and
+bounded versioned atomic persistence. The focused model/native/session/GUI
+tests and `docs/tutorials/docking-workspace.md` define the verification and
+onboarding path.
+
 ### 0.8 — Optional traditional Windows frameworks
 
 - Windows Ribbon Framework integration bound to `CommandSet`;
