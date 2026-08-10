@@ -14,16 +14,16 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/everettjf/mwtl/actions/workflows/ci.yml"><img src="https://github.com/everettjf/mwtl/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-17a589.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/C%2B%2B-20-146c94.svg" alt="C++20">
-  <img src="https://img.shields.io/badge/platform-Windows%20x64%20%7C%20ARM64-ff9f43.svg" alt="Windows x64 and ARM64">
+  <img src="https://img.shields.io/badge/platform-Windows%2010%2B%20x64-ff9f43.svg" alt="Windows 10 or newer on x64">
 </p>
 
 <p align="center">
   <a href="#quick-start">Quick start</a> &middot;
   <a href="#installation">Installation</a> &middot;
   <a href="#examples">Examples</a> &middot;
+  <a href="#how-it-compares-to-win32">Win32++ comparison</a> &middot;
   <a href="https://everettjf.github.io/mwtl/components/">Components</a> &middot;
   <a href="https://everettjf.github.io/mwtl/">Documentation</a>
 </p>
@@ -41,10 +41,37 @@ hiding native handles, messages, styles, or return values.
 
 | Native by design | Modern where it matters | Small and transparent | Ready for real desktop work |
 |---|---|---|---|
-| Real HWND controls, Win32 messages, styles, handles, and return values remain available. | Typed events, RAII resources, C++20 ranges, checked setup, and responsive layout remove repetitive plumbing. | No custom renderer, virtual DOM, code generator, reflection system, or message-map macros. | Per-Monitor V2 DPI, ARM64, accessibility helpers, shell integration, worker wakeups, and wait-aware pumping. |
+| Real HWND controls, Win32 messages, styles, handles, and return values remain available. | Typed events, RAII resources, C++20 ranges, checked setup, and responsive layout remove repetitive plumbing. | No custom renderer, virtual DOM, code generator, reflection system, or message-map macros. | Per-Monitor V2 DPI, accessibility helpers, shell integration, worker wakeups, and wait-aware pumping. |
 
 Use mwtl when you want Windows to look and behave like Windows, while keeping
 application code readable enough to reason about.
+
+## How it compares to Win32++
+
+mwtl now covers the principal **application scenarios** demonstrated by
+Win32++: SDI and MDI applications, native controls and dialogs, command bars,
+tabs and splitters, property sheets, printing and preview, OLE drag/drop,
+docking, Ribbon, enhanced metafiles/GDI+, shell and taskbar integration,
+Scintilla, WebView2, dark appearance, and Per-Monitor V2 DPI. Each claimed
+scenario has a public API or documented composition path, a runnable example,
+and automated evidence.
+
+This is scenario parity, not a compatibility layer or a class-for-class clone.
+mwtl deliberately targets Windows 10+, C++20, and modern MSVC development. It
+uses typed events, composition, explicit ownership and thread affinity,
+structured failures, CMake targets, and Agent-readable metadata instead of
+legacy compiler support, framework string/container/thread classes, message
+maps, or a mandatory Document/View hierarchy.
+
+Some lower-level Win32++ convenience classes are not direct mwtl APIs today:
+the broad GDI object/DC wrapper catalogue, RichEdit and ScrollView wrappers,
+color/font common-dialog wrappers, a generic ActiveX container, and utility
+wrappers for archives, file search, sockets, synchronization, threads, and
+time. Applications can still implement those scenarios through the raw Win32
+escape hatch, the C++20 standard library, or a focused dependency, but they are
+real API-surface differences rather than features we claim to have cloned.
+See the audited [scenario comparison](docs/win32xx-comparison.md) for the
+evidence and remaining gaps.
 
 ## Quick start
 
@@ -139,6 +166,10 @@ offline WTL/WIL sources, and building this repository.
   window placement, custom modal/modeless dialogs, task dialogs, image lists,
   tooltips, and RAII notification-area icons;
 - wait-aware message pumping and lifetime-safe worker wakeups.
+- complete SDI and modern multi-document workflows, session restore, command
+  routing, docking, floating windows, auto-hide, and optional legacy MDI;
+- printing and preview, OLE drag/drop, versioned settings, file associations,
+  Jump Lists, taskbar integration, contextual Help, Ribbon, EMF, and GDI+;
 - optional, isolated Direct2D, Direct3D, WIC imaging, pinned Scintilla, and
   pinned WebView2 components with reference applications and offline self-tests.
 
@@ -154,13 +185,13 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
 
-The repository contains 39 independently buildable programs. Each link opens
+The repository contains 43 independently buildable programs. Each link opens
 the complete source. Start with **Hello** for the smallest application,
 **Controls** for the basic widget set, or **Hot corners** for a complete
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 39 runnable examples</strong></summary>
+<summary><strong>Browse all 43 runnable examples</strong></summary>
 
 <br>
 
@@ -206,6 +237,9 @@ multi-monitor utility.
 | Printing | [examples/printing/main.cpp](examples/printing/main.cpp) | Shared pagination, preview, printer settings, and balanced native print jobs |
 | OLE drag/drop | [examples/ole_drag_drop/main.cpp](examples/ole_drag_drop/main.cpp) | Unicode, files, and custom formats through native OLE drag/drop |
 | Shell integration | [examples/shell_integration/main.cpp](examples/shell_integration/main.cpp) | Associations, Jump Lists, taskbar state, and versioned settings |
+| Ribbon Workspace | [examples/ribbon_workspace/main.cpp](examples/ribbon_workspace/main.cpp) | Optional Windows Ribbon commands, modes, context, recent items, and fallback |
+| MDI Workspace | [examples/mdi_workspace/main.cpp](examples/mdi_workspace/main.cpp) | Optional traditional MDI with stable child identity and coordinated close |
+| Graphics Interop | [examples/graphics_interop/main.cpp](examples/graphics_interop/main.cpp) | Enhanced metafile lifecycle and bounded GDI+ PNG export |
 
 </details>
 
@@ -220,20 +254,15 @@ content-rich examples with screenshots and source links.
 
 ## Build this repository
 
-Requirements: Windows 10 1809 or newer, x64 or ARM64, Visual Studio 2022 or newer with
-MSVC, a Windows SDK and C++ ATL, CMake 3.21 or newer, and C++20.
+The authoritative 0.8 development and acceptance environment is Windows 10
+1809 or newer, x64, Visual Studio 2026 with MSVC, a Windows SDK and C++ ATL,
+CMake 3.21 or newer, and C++20.
 
 ```powershell
 cmake --preset vs2026-x64
 cmake --build --preset vs2026-x64-debug
 ctest --preset vs2026-x64-debug
 ```
-
-Visual Studio 2022 is also supported: replace `vs2026` with `vs2022` in
-the configure, build, and test preset names. Visual Studio 2026 is recommended.
-
-On an ARM64 development machine use `vs2026-arm64` and
-`vs2026-arm64-debug` (or the corresponding VS 2022 presets).
 
 Build and test Release:
 
@@ -246,11 +275,12 @@ For repository development, `./scripts/doctor.ps1` discovers the supported
 toolchains and `./scripts/verify.ps1 -Mode Fast` runs the standard edit loop.
 
 The project rejects non-Windows, non-MSVC-compatible ABI, and 32-bit
-configurations. CI validates MSVC x64 and ARM64, clang-cl (with its GUI-launch
-self-test covered by the MSVC matrices due to a hosted-runner activation issue), AddressSanitizer,
-Debug/Release, public-header independence, package consumption, manifests,
-examples, resource lifetime, API surface, deterministic property cases, and a
-74% native source-coverage floor with an archived Cobertura report.
+configurations. The completed 0.8 gate passes all 162 tests in both VS2026 x64
+Debug and Release, including public-header independence, package consumption,
+manifests, examples, GUI self-tests, resource lifetime, API surface, and
+deterministic property cases. VS2022, ARM64, clang-cl, sanitizers, coverage,
+static analysis, Pipeline, and GitHub Actions are a separate post-0.8
+compatibility pass and are not claimed by this README yet.
 
 ## Dependencies
 
@@ -262,6 +292,7 @@ For controlled environments, see the
 ## Documentation
 
 - [Win32++ capability parity roadmap](docs/win32xx-parity-roadmap.md)
+- [Audited Win32++ scenario comparison](docs/win32xx-comparison.md)
 - [IDE-style docking workspace tutorial](docs/tutorials/docking-workspace.md)
 
 - [Using mwtl with coding agents](docs/agent-usage.md)

@@ -20,16 +20,19 @@ remain authoritative.
 | Window placement and shell integration | desktop helpers | `desktop_integration`, `hot_corners` |
 | DWM appearance and accessibility helpers | appearance helpers | `appearance` |
 | Raw HWND and native message interoperability | `GetHwnd`, `WindowMessage` | `native_message` |
+| Printing, preview, settings, and native jobs | `PrintPreviewModel`, `PrinterSettings`, `PrintJob` | `printing` |
+| OLE data objects and drag/drop | `OleDataObjectBuilder`, OLE source/target helpers | `ole_drag_drop` |
+| Versioned settings, associations, Jump Lists, taskbar, and Help | focused settings and shell helpers | `shell_integration` |
+| Modern document, docking, Ribbon, MDI, EMF, and GDI+ workflows | independent optional/focused components | corresponding workspace/interoperability examples |
 
 ## Use raw Win32 through the escape hatch
 
 These are compatible with mwtl but intentionally remain ordinary platform APIs:
 
 - owner-drawn and custom-drawn controls beyond the provided paint hooks;
-- printing and print preview;
 - registry schemas beyond the focused placement helpers;
 - custom window classes and uncommon control messages;
-- OLE drag/drop beyond file drops;
+- OLE formats and behaviors beyond the focused data/source/target helpers;
 - shell extensions, hooks, services, and system-wide hotkeys;
 - advanced accessibility providers and UI Automation peers.
 

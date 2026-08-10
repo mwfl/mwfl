@@ -1,12 +1,41 @@
 # Win32++ scenario comparison
 
-This is an application-scenario map, not an API compatibility promise. The
-comparison uses the Win32++ 10.2 project description, class catalogue, and
-published samples as the reference inventory:
+This is an application-scenario map, not an API compatibility promise. It was
+re-audited on 2026-08-10 against the Win32++ 10.2 project description, class
+catalogue, current GitHub mirror, and published samples:
 
 - [Win32++ project and documentation](https://win32-framework.sourceforge.net/)
 - [Win32++ class description](https://win32-framework.sourceforge.net/description.htm)
 - [Win32++ published sample inventory](https://sourceforge.net/projects/win32-framework/files/)
+- [Win32++ current GitHub mirror](https://github.com/DavidNash2024/Win32xx)
+
+## Audit conclusion
+
+For Windows 10+ desktop **application scenarios**, mwtl covers the main Win32++
+families: frames and dialogs, SDI/MDI, native controls, commands, property
+sheets, tabs/splitters, printing/preview, OLE, shell integration, docking,
+Ribbon, EMF/GDI+, Scintilla, WebView2, dark appearance, and Per-Monitor V2 DPI.
+The supported/composed rows below name executable evidence for those claims.
+
+This does not mean every Win32++ class has a direct mwtl counterpart. A program
+can reproduce the remaining scenarios through mwtl's raw HWND/native-message
+escape hatch, standard C++20, or focused dependencies, but direct API parity is
+not yet complete. The most material differences are recorded here instead of
+being hidden behind the broader scenario-parity claim.
+
+| Win32++ surface without a direct mwtl equivalent | Current mwtl path | Classification |
+|---|---|---|
+| Broad `CDC`/GDI object family (`CBitmap`, `CBrush`, `CPen`, `CFont`, `CPalette`, `CRgn`, specialized DCs) | `PaintEvent`, `UiFont`, EMF/GDI+ helpers, Direct2D, or scoped raw GDI | composable gap |
+| `CRichEdit` and `CScrollView` convenience classes | native-host/raw HWND composition; Scintilla for source editing | composable gap |
+| `CColorDialog` and `CFontDialog` wrappers | call the native common-dialog APIs with the owner HWND | small direct-API gap |
+| Generic `CAXHost`/legacy `CWebBrowser` ActiveX container | optional WebView2 for web content; raw COM hosting for other controls | intentional modern replacement |
+| `CArchive`, `CFileFind`, and framework file utilities beyond text/document workflows | standard filesystem/streams or focused application serialization | intentional standard-library composition |
+| `CSocket` | a dedicated networking library or Winsock plus `WindowWakeup` | intentional non-UI composition |
+| Framework mutex/event/semaphore/thread/time/string/container classes | C++20 standard library and explicit Win32 wait handles where the UI pump must participate | intentional modern replacement |
+
+Accordingly, the accurate statement is: **the major Win32++ application
+categories have tested mwtl answers, but mwtl is not yet a class-for-class
+superset of every Win32++ convenience wrapper.**
 
 Status meanings:
 
