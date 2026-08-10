@@ -14,6 +14,7 @@
 #include <mwtl/dpi.h>
 #include <mwtl/desktop.h>
 #include <mwtl/dialog.h>
+#include <mwtl/docking_session.h>
 #include <mwtl/docking_workspace.h>
 #include <mwtl/document.h>
 #include <mwtl/document_coordination.h>
