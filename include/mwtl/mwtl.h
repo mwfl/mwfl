@@ -16,6 +16,7 @@
 #include <mwtl/dialog.h>
 #include <mwtl/docking_auto_hide.h>
 #include <mwtl/docking_drag.h>
+#include <mwtl/docking_floating.h>
 #include <mwtl/docking_keyboard.h>
 #include <mwtl/docking_monitor.h>
 #include <mwtl/docking_native.h>
