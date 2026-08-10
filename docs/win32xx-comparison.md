@@ -109,3 +109,7 @@ Status meanings:
 This table is updated at each reflection gate. A later milestone is not complete
 merely because its row is planned; it needs the executable and automated
 evidence named by that milestone's acceptance checklist.
+
+The ordered implementation and acceptance strategy for the remaining direct
+surfaces is maintained in the
+[modern Win32++ coverage plan](modern-win32xx-coverage-plan.md).

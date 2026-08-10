@@ -414,6 +414,47 @@ code:not(pre code) {
 .component-card pre { min-height: 4.6rem; margin: 0 1rem .8rem; padding: .7rem .8rem; font-size: .77rem; }
 .component-card a { margin: auto 1rem 1rem; font-size: .86rem; font-weight: 600; }
 
+/* ---------- Complete capability catalog ---------- */
+.catalog-nav-link { font-weight: 700; color: var(--accent) !important; }
+.catalog-page { padding-bottom: 6rem; }
+.catalog-hero { max-width: 920px; padding: 5rem 0 2.5rem; }
+.catalog-hero h1 { margin-bottom: 1.25rem; }
+.catalog-hero > p { max-width: 800px; color: var(--muted); font-size: 1.08rem; }
+.catalog-stats { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 2rem; }
+.catalog-stats span { padding: .65rem .9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); }
+.catalog-stats strong { color: var(--text); }
+.catalog-tools { position: sticky; z-index: 5; top: 0; padding: 1rem 0; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--background) 92%, transparent); backdrop-filter: blur(14px); }
+.catalog-tools label { display: block; margin-bottom: .45rem; font-size: .82rem; font-weight: 700; }
+.catalog-tools input { width: min(680px, 100%); padding: .8rem 1rem; border: 1px solid var(--line-strong); border-radius: .65rem; background: var(--surface); color: var(--text); font: inherit; }
+.catalog-tools input:focus { outline: 3px solid var(--accent-soft); border-color: var(--accent); }
+.catalog-filters { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .8rem; }
+.catalog-filters button { padding: .48rem .75rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); cursor: pointer; }
+.catalog-filters button:hover, .catalog-filters button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+.catalog-result { margin: .7rem 0 0; color: var(--muted); font-size: .86rem; }
+.capability-group { padding: 3rem 0 1rem; }
+.capability-group > h2 { margin-bottom: 1.25rem; }
+.capability-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+.capability-card { display: flex; min-width: 0; flex-direction: column; padding: 1.25rem; border: 1px solid var(--line); border-radius: .9rem; background: var(--surface); box-shadow: var(--card-shadow); }
+.capability-card[hidden], .capability-group[hidden] { display: none; }
+.capability-kind { color: var(--accent); font: 700 .68rem/1.2 "Cascadia Code", Consolas, monospace; letter-spacing: .07em; text-transform: uppercase; }
+.capability-card h3 { margin: .5rem 0 .7rem; font-size: 1.12rem; }
+.capability-card > p { margin: 0 0 .9rem; color: var(--muted); }
+.capability-symbols, .capability-headers { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .75rem; }
+.capability-symbols code, .capability-headers code { overflow-wrap: anywhere; }
+.capability-headers { opacity: .75; font-size: .78rem; }
+.capability-card nav { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: auto; padding-top: .5rem; }
+.capability-card nav a { font-size: .86rem; font-weight: 700; }
+.capability-card details { margin-top: 1rem; padding-top: .8rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; }
+.capability-card summary { color: var(--text); cursor: pointer; font-weight: 700; }
+.catalog-reference, .catalog-next { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .8fr); gap: 2rem; align-items: center; margin-top: 4rem; padding: 2rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface-2); }
+.catalog-reference .window { margin: 0; }
+.usage-library { padding: 5rem 0 2rem; }
+.usage-library > p { max-width: 760px; color: var(--muted); }
+.usage-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
+.usage-list { columns: 2; padding: 0; list-style: none; }
+.usage-list li { break-inside: avoid; margin: 0 0 .55rem; }
+.catalog-next { grid-template-columns: minmax(0, 1fr) auto; }
+
 /* ---------- Footer ---------- */
 .site-footer { border-top: 1px solid var(--line); }
 .footer {
@@ -448,7 +489,9 @@ code:not(pre code) {
     -webkit-overflow-scrolling: touch;
   }
   .hero-demo pre::-webkit-scrollbar { display: none; }
-  .quick-code, .home-strip, .doc-heading, .example-grid, .requirements { grid-template-columns: 1fr; }
+  .quick-code, .home-strip, .doc-heading, .example-grid, .requirements, .catalog-reference, .catalog-next, .usage-columns { grid-template-columns: 1fr; }
+  .capability-grid { grid-template-columns: 1fr; }
+  .usage-list { columns: 1; }
   .cta-band { padding: 1.5rem 1.3rem; }
   .docs-topbar { padding: 0 1rem; }
   .docs-layout { display: block; }

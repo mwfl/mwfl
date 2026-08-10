@@ -57,6 +57,10 @@ sources found below a build tree as repository code.
   categories, including GUI self-test when applicable.
 - CMake/package change: run package consumer in Debug and Release.
 - Documentation/site/example catalog change: run the docs and metadata modes.
+- Capability metadata change: run `./scripts/generate-site-components.ps1`,
+  commit the generated `site/components/catalog.html`, and run the docs mode.
+  The Pages verifier requires every capability, recipe, and tutorial to remain
+  discoverable from the generated catalog.
 
 See `docs/development-architecture.md` and `docs/change-matrix.json` for the
 full path-to-validation map.
