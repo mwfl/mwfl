@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="全面介绍 mwtl 0.1.0：一个使用现代 C++20 组织原生 Windows UI 开发的轻量库。">
+  <link rel="canonical" href="https://everettjf.github.io/mwtl/blog-v0.1.html">
+  <title>mwtl 0.1.0：用现代 C++20 重新组织原生 Windows UI 开发</title>
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="mwtl 0.1.0：用现代 C++20 重新组织原生 Windows UI 开发">
+  <meta property="og:description" content="真实 HWND、类型化事件、DPI 布局、43 个示例，以及为 Coding Agent 设计的完整开发入口。">
+  <meta property="og:url" content="https://everettjf.github.io/mwtl/blog-v0.1.html">
+  <meta property="og:image" content="https://everettjf.github.io/mwtl/assets/mwtl-mark.svg">
+  <link rel="icon" type="image/svg+xml" href="assets/mwtl-mark.svg">
+  <link rel="stylesheet" href="styles.css?v=20260810a">
+  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script defer src="assets/site.js?v=20260810a"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-header"><div class="shell nav">
+    <a class="brand" href="index.html" aria-label="MWTL"><img src="assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+    <nav class="nav-links" aria-label="主导航"><a href="components/index.html">Components</a><a href="tutorial.html">Get started</a><a href="changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="切换颜色主题"></button></nav>
+  </div></header>
+  <main id="main" class="article-shell">
+    <article class="article">
+      <header class="article-hero"><div class="eyebrow">First public preview &middot; mwtl 0.1.0</div><h1>用现代 C++20，重新组织原生 Windows UI 开发</h1><p class="lede">真实 HWND、类型化事件、DPI 感知布局、43 个可运行示例，以及一套真正面向 Coding Agent 的开发入口。</p><p class="article-meta">2026 年 8 月 10 日 &middot; Modern Windows Thin Layer</p></header>
+      <p>Windows 桌面开发从来不缺能力。Win32 API 稳定、成熟、覆盖广泛，真实 HWND 可以与系统控件、Shell、COM、Direct2D、Direct3D、WebView2 以及大量既有组件直接协作。真正让人犹豫的，往往是使用这些能力时必须反复处理的样板代码：窗口类注册、消息分发、句柄生命周期、DPI 换算、控件布局、失败检查，以及后台线程与 UI 线程之间的交接。</p>
+      <p>这正是 <strong>mwtl（Modern Windows Thin Layer）</strong> 想解决的问题。今天，我们发布 <strong>mwtl 0.1.0</strong>，这是项目的第一个公开试用版本。</p>
+      <aside class="article-callout"><strong>一句话介绍：</strong>mwtl 是面向 Windows 10+、C++20 和 Microsoft Visual C++ 的轻量原生 UI 库；它让 Win32 更容易使用，但不会把 Win32 藏起来。</aside>
+      <h2>为什么还要做一个原生 Windows UI 库</h2>
+      <p>很多 Windows UI 方案要求开发者在两种极端之间选择：完全直接使用 Win32，获得最大的控制力但承担大量机械工作；或者采用更完整的应用框架，获得更高层的模型，同时接受它的对象体系、生命周期、渲染方式和项目结构。</p>
+      <p>mwtl 选择中间的位置。它只抽象那些能够明显改善安全性和开发体验的部分：</p>
+      <ul><li>用 RAII 表达窗口、控件、菜单、计时器和系统资源的所有权；</li><li>用类型化事件替代消息映射宏和重复的参数解码；</li><li>用 DIP 与 Per-Monitor V2 布局处理现代高 DPI 窗口；</li><li>用明确的结果、错误和取消状态表达失败；</li><li>用安全的唤醒对象处理后台线程到 UI 线程的交接；</li><li>在每一层保留 <code>GetHwnd()</code>、原生消息和 Windows SDK 互操作出口。</li></ul>
+      <p>如果应用需要调用一个 mwtl 尚未封装的 Windows API，不需要等待框架支持，也不需要绕过框架。拿到 HWND，继续使用原生 API 即可。这种“薄”不是功能少，而是不建立第二套世界。</p>
+      <h2>一扇窗口可以有多简单</h2>
+      <pre data-title="main.cpp"><code>#include &lt;mwtl/mwtl.h&gt;
+
+using mwtl::operator""_dip;
+
+class MainWindow final : public mwtl::WindowBase {
+public:
+    void BuildUI() override {
+        mwtl::ControlHost ui{*this};
+        ui.Add(name_, L"");
+        ui.Add(greet_, L"Say hello");
+
+        SetLayout(mwtl::Column().Margin(24_dip).Gap(12_dip)
+            .Add(name_, mwtl::Fixed(32_dip))
+            .Add(greet_, mwtl::Fixed(36_dip)));
+    }
+
+    mwtl::EventResult OnCommand(const mwtl::CommandEvent&amp; event) override {
+        if (event.IsClicked(greet_)) {
+            SetTitle(L"Hello, " + name_.GetText());
+            return mwtl::EventResult::Handled();
+        }
+        return mwtl::EventResult::Propagate();
+    }
+
+private:
+    mwtl::TextBox name_;
+    mwtl::Button greet_;
+};</code></pre>
+      <p>这里没有消息映射宏、生成的应用对象或虚拟控件树。控件拥有真实 HWND，布局使用 DIP，命令事件可以直接匹配控件；任何时候仍然可以通过 <code>GetHwnd()</code> 使用原生接口。</p>
+      <h2>0.1.0 已经包含什么</h2>
+      <p>首个版本不是只有一个 Hello World。仓库包含 <strong>41 个有文档的能力切片、43 个可编译示例、34 个 Coding Agent 任务评测</strong>，以及从小型示例到完整参考应用的连续学习路径。</p>
+      <p>基础能力包括应用生命周期、窗口、键盘/鼠标/命令事件、计时器、工作线程唤醒、Per-Monitor DPI、响应式布局和常用 Windows 控件。桌面能力覆盖菜单、工具栏、状态栏、TreeView、ListView、属性页、任务对话框、托盘图标、剪贴板、拖放、打印、图像解码、Shell 集成、单实例应用和设置持久化。</p>
+      <p>Notepad、Explorer 风格界面、多文档工作区、Ribbon、MDI、IDE 风格 Docking、绘图、图片浏览、打印与 OLE 拖放均有参考应用。WebView2 和 Scintilla 是独立可选组件，不会让核心目标承担不需要的依赖。</p>
+      <div class="article-actions"><a class="button primary" href="components/catalog.html">浏览完整组件目录</a><a class="button" href="https://github.com/everettjf/mwtl/tree/main/examples">查看 43 个示例</a></div>
+      <h2>为 Coding Agent 设计</h2>
+      <p>现代库的使用者不仅是人，也包括 Codex、Claude Code 等 Coding Agent。仅有一份长 API 手册并不足以让 Agent 稳定生成正确代码；它还需要清楚知道任务对应哪些头文件、符号、约束、示例和测试。</p>
+      <p>mwtl 提供 <code>AGENTS.md</code>、任务到 API 的机器索引、能力与示例 JSON、不同上下文预算的 <code>llms.txt</code>，以及 34 个只依赖公开 API 的评测 fixture。CI 会检查每个能力是否能追溯到真实源码、CMake 目标、示例、教程和测试。</p>
+      <h2>我们如何验证第一个公开版本</h2>
+      <p>0.1.0 的主要开发与发布门禁是 Visual Studio 2026、Microsoft Visual C++、C++20 和 x64。核心 Debug 与 Release 各通过 162 项测试；启用 WebView2 与 Scintilla 后，各通过 170 项测试。覆盖独立头文件编译、单元测试、原生窗口生命周期、GUI self-test、资源预算、安装包消费、文档、元数据和完整示例构建。</p>
+      <p>正式资产由同一标签自动构建，当前提供经过测试的 x64 ZIP 与 SHA-256 校验文件。项目源码仍保留 ARM64 目标，但 0.1.0 的公开二进制门禁刻意聚焦 x64。</p>
+      <h2>适合谁，也不适合谁</h2>
+      <p>mwtl 适合希望构建轻量、原生、可长期维护的 Windows 桌面程序，并希望继续直接使用 Windows SDK 的 C++ 团队。它尤其适合工具软件、内部桌面应用、编辑器、系统托盘程序、Shell 集成应用和既有 HWND/COM 组件的组合。</p>
+      <p>它不是跨平台 UI 框架，不提供自定义渲染的虚拟控件体系，也不追求兼容旧 Windows、x86、历史消息映射语法或其他框架的类层级。</p>
+      <h2>五分钟开始试用</h2>
+      <pre data-title="CMakeLists.txt"><code>include(FetchContent)
+FetchContent_Declare(
+    mwtl
+    GIT_REPOSITORY https://github.com/everettjf/mwtl.git
+    GIT_TAG v0.1.0)
+FetchContent_MakeAvailable(mwtl)
+
+add_executable(my_app WIN32 main.cpp)
+target_compile_features(my_app PRIVATE cxx_std_20)
+target_link_libraries(my_app PRIVATE mwtl::mwtl)</code></pre>
+      <h2>这只是公开试用的开始</h2>
+      <p>0.1.0 的目标不是宣布 API 已经终结，而是建立一个足够完整、可测试、可讨论的公开基线。下一阶段会继续围绕现代 Windows UI API 展开，包括 RichEdit、可滚动内容、聚焦的 GDI 所有权封装和剩余常用对话框。</p>
+      <p>如果你仍然喜欢原生 Windows 的能力，却希望用更现代、更简洁的 C++20 方式组织它，欢迎试用 mwtl 0.1.0。Star、Issue、真实项目反馈，以及“这段代码还能不能更简单”的讨论，都会帮助我们决定下一步。</p>
+      <div class="article-actions final"><a class="button primary" href="https://github.com/everettjf/mwtl">在 GitHub 查看 mwtl</a><a class="button" href="https://github.com/everettjf/mwtl/releases/tag/v0.1.0">下载 0.1.0</a><a class="button" href="tutorial.html">跟随教程开始</a></div>
+    </article>
+  </main>
+  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Thin Layer &middot; MIT licensed &middot; Windows 10 1809+</span><nav aria-label="页脚"><a href="components/index.html">Components</a><a href="tutorial.html">Get started</a><a href="https://github.com/everettjf/mwtl">GitHub</a></nav></div></footer>
+</body>
+</html>

@@ -266,6 +266,7 @@ For controlled environments, see the
 
 ## Documentation
 
+- [Read the 0.1.0 launch story](https://everettjf.github.io/mwtl/blog-v0.1.html)
 - [Windows desktop capability roadmap](docs/win32xx-parity-roadmap.md)
 - [First public preview readiness plan](docs/release-readiness.md)
 - [Modern Windows UI API coverage plan](docs/windows-ui-modernization-plan.md)
