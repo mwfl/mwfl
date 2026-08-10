@@ -26,6 +26,10 @@ constexpr mwtl::ControlId kStatus{911};
 constexpr mwtl::ControlId kOuterSplitter{912};
 constexpr mwtl::ControlId kInnerSplitter{913};
 constexpr UINT kRunSelfTest = WM_APP + 0x180;
+constexpr UINT kDockMouseBegin = WM_APP + 0x181;
+constexpr UINT kDockMouseMove = WM_APP + 0x182;
+constexpr UINT kDockMouseEnd = WM_APP + 0x183;
+constexpr UINT kDockMouseCancel = WM_APP + 0x184;
 
 constexpr mwtl::DockPanelId kMainDocument{1};
 constexpr mwtl::DockPanelId kReadmeDocument{2};
@@ -37,6 +41,11 @@ constexpr mwtl::DockGroupId kBottomTools{30};
 constexpr mwtl::DockGroupId kFloatingTools{31};
 
 bool g_self_test = false;
+
+struct DockMouseEvent {
+    mwtl::DockPanelId panel{};
+    POINT screen{};
+};
 
 HWND CreatePane(HWND parent, int id, const wchar_t* name) {
     return ::CreateWindowExW(WS_EX_CONTROLPARENT, L"STATIC", name,
@@ -58,7 +67,9 @@ public:
             !mwtl::SetAccessibleName(host_, accessible_name) ||
             !mwtl::SetAccessibleName(tabs_.GetHwnd(), accessible_name) ||
             !::SetWindowSubclass(host_, Procedure,
-                static_cast<UINT_PTR>(id), reinterpret_cast<DWORD_PTR>(this)))
+                static_cast<UINT_PTR>(id), reinterpret_cast<DWORD_PTR>(this)) ||
+            !::SetWindowSubclass(tabs_.GetHwnd(), TabProcedure,
+                static_cast<UINT_PTR>(id + 100), reinterpret_cast<DWORD_PTR>(this)))
             return false;
         return true;
     }
@@ -107,6 +118,80 @@ public:
     mwtl::DockGroupId GetGroup() const noexcept { return group_; }
 
 private:
+    void SendMouseEvent(UINT message, POINT screen) noexcept {
+        if (!event_target_ || !drag_panel_) return;
+        DockMouseEvent event{drag_panel_, screen};
+        ::SendMessageW(event_target_, message, 0,
+                       reinterpret_cast<LPARAM>(&event));
+    }
+
+    static LRESULT CALLBACK TabProcedure(HWND window, UINT message, WPARAM wparam,
+                                         LPARAM lparam, UINT_PTR subclass_id,
+                                         DWORD_PTR reference) noexcept {
+        auto* self = reinterpret_cast<GroupView*>(reference);
+        if (!self) return ::DefSubclassProc(window, message, wparam, lparam);
+        if (message == WM_LBUTTONDOWN) {
+            const LRESULT result = ::DefSubclassProc(window, message, wparam, lparam);
+            const auto selected = self->tabs_.GetSelectedTabId();
+            self->drag_panel_ = selected ? mwtl::DockPanelId{selected->value}
+                                         : mwtl::DockPanelId{};
+            ::GetCursorPos(&self->drag_start_);
+            self->dragging_ = false;
+            if (self->drag_panel_) ::SetCapture(window);
+            return result;
+        }
+        if (message == WM_MOUSEMOVE && self->drag_panel_ &&
+            ::GetCapture() == window) {
+            POINT screen{};
+            ::GetCursorPos(&screen);
+            const int dx = (std::max)(::GetSystemMetrics(SM_CXDRAG), 1);
+            const int dy = (std::max)(::GetSystemMetrics(SM_CYDRAG), 1);
+            if (!self->dragging_ &&
+                (std::abs(screen.x - self->drag_start_.x) >= dx ||
+                 std::abs(screen.y - self->drag_start_.y) >= dy)) {
+                self->dragging_ = true;
+                self->SendMouseEvent(kDockMouseBegin, screen);
+            }
+            if (self->dragging_) self->SendMouseEvent(kDockMouseMove, screen);
+            return 0;
+        }
+        if (message == WM_KEYDOWN && wparam == VK_ESCAPE && self->drag_panel_) {
+            const bool notify = self->dragging_;
+            self->dragging_ = false;
+            self->drag_panel_ = {};
+            if (::GetCapture() == window) ::ReleaseCapture();
+            if (notify && self->event_target_)
+                ::SendMessageW(self->event_target_, kDockMouseCancel, 0, 0);
+            return 0;
+        }
+        if (message == WM_LBUTTONUP && self->drag_panel_) {
+            POINT screen{};
+            ::GetCursorPos(&screen);
+            const bool dragging = self->dragging_;
+            self->dragging_ = false;
+            if (dragging) self->SendMouseEvent(kDockMouseEnd, screen);
+            self->drag_panel_ = {};
+            if (::GetCapture() == window) ::ReleaseCapture();
+            if (dragging) return 0;
+        }
+        if ((message == WM_CAPTURECHANGED || message == WM_CANCELMODE) &&
+            self->drag_panel_) {
+            const bool notify = self->dragging_;
+            self->dragging_ = false;
+            self->drag_panel_ = {};
+            if (notify && self->event_target_)
+                ::SendMessageW(self->event_target_, kDockMouseCancel, 0, 0);
+        }
+        if (message == WM_NCDESTROY) {
+            if (self->dragging_ && self->event_target_)
+                ::SendMessageW(self->event_target_, kDockMouseCancel, 0, 0);
+            self->dragging_ = false;
+            self->drag_panel_ = {};
+            ::RemoveWindowSubclass(window, TabProcedure, subclass_id);
+        }
+        return ::DefSubclassProc(window, message, wparam, lparam);
+    }
+
     static LRESULT CALLBACK Procedure(HWND window, UINT message, WPARAM wparam,
                                       LPARAM lparam, UINT_PTR subclass_id,
                                       DWORD_PTR reference) noexcept {
@@ -127,6 +212,9 @@ private:
     mwtl::DockGroupId group_{};
     mwtl::TabControl tabs_;
     std::vector<std::pair<mwtl::DockPanelId, HWND>> panels_;
+    mwtl::DockPanelId drag_panel_{};
+    POINT drag_start_{};
+    bool dragging_ = false;
 };
 
 mwtl::DockLayoutSnapshot DefaultLayout() {
@@ -263,6 +351,19 @@ public:
     }
 
     mwtl::EventResult OnMessage(const mwtl::WindowMessage& event) override {
+        if (event.id == kDockMouseCancel) {
+            CancelMouseDock(mwtl::DockDragCancelReason::capture_lost);
+            return mwtl::EventResult::Handled();
+        }
+        if (event.id == kDockMouseBegin || event.id == kDockMouseMove ||
+            event.id == kDockMouseEnd) {
+            const auto* mouse = reinterpret_cast<const DockMouseEvent*>(event.lparam);
+            if (!mouse) return mwtl::EventResult::Handled();
+            if (event.id == kDockMouseBegin) BeginMouseDock(mouse->panel, mouse->screen);
+            else if (event.id == kDockMouseMove) UpdateMouseDock(mouse->screen);
+            else EndMouseDock(mouse->screen);
+            return mwtl::EventResult::Handled();
+        }
         if (event.id != kRunSelfTest) return mwtl::EventResult::Propagate();
         try {
             RunSelfTest();
@@ -473,6 +574,106 @@ private:
                              L"Solution Explorer pinned");
     }
 
+    mwtl::DockPointDip ScreenPointDip(POINT point) const noexcept {
+        const auto dpi = GetDpiContext();
+        return {dpi.FromPixels(point.x).value, dpi.FromPixels(point.y).value};
+    }
+
+    std::optional<mwtl::DockMutation> MutationForTarget(
+        mwtl::DockPanelId panel, const mwtl::DockDropTarget& target) {
+        if (target.kind == mwtl::DockTargetKind::tab_group)
+            return mwtl::MakePinDockMutation(panel, target.group);
+        if (target.kind == mwtl::DockTargetKind::auto_hide) {
+            mwtl::DockMutation mutation;
+            mutation.kind = mwtl::DockMutationKind::auto_hide;
+            mutation.panel = panel;
+            mutation.edge = target.edge;
+            return mutation;
+        }
+        if (target.kind == mwtl::DockTargetKind::floating && panel == kOutputPanel &&
+            model_.FindPanelGroup(panel) != kFloatingTools) {
+            const mwtl::DockFloatingPlacement placement{720, 120, 520, 340, L"primary"};
+            if (!EnsureFloating(placement)) return std::nullopt;
+            mwtl::DockMutation mutation;
+            mutation.kind = mwtl::DockMutationKind::float_panel;
+            mutation.panel = panel;
+            mutation.new_group = kFloatingTools;
+            mutation.new_group_node = {202};
+            mutation.new_floating_host = {400};
+            mutation.floating_placement = placement;
+            return mutation;
+        }
+        return std::nullopt;
+    }
+
+    void BeginMouseDock(mwtl::DockPanelId panel, POINT point) {
+        CancelMouseDock(mwtl::DockDragCancelReason::explicit_cancel);
+        mouse_drag_.Reset();
+        mouse_targets_ = KeyboardTargets();
+        if (panel != kOutputPanel)
+            std::erase_if(mouse_targets_, [](const auto& target) {
+                return target.kind == mwtl::DockTargetKind::floating;
+            });
+        if (!mouse_drag_.Begin(model_, panel)) {
+            SetStatus(L"Mouse docking could not start");
+            return;
+        }
+        if (!preview_.GetHwnd()) preview_.Create(GetHwnd());
+        UpdateMouseDock(point);
+    }
+
+    void UpdateMouseDock(POINT point) {
+        if (mouse_drag_.GetState() != mwtl::DockDragState::tracking &&
+            mouse_drag_.GetState() != mwtl::DockDragState::proposed) return;
+        const auto target = mouse_drag_.UpdateTarget(ScreenPointDip(point), mouse_targets_);
+        if (!target) {
+            preview_.Hide();
+            SetStatus(L"Drag over a highlighted docking destination");
+            return;
+        }
+        const auto mutation = MutationForTarget(mouse_drag_.GetPanel(), *target);
+        const auto proposal = mutation ? model_.Propose(*mutation) : std::nullopt;
+        if (!proposal || !mouse_drag_.SetProposal(*proposal)) {
+            preview_.Hide();
+            return;
+        }
+        preview_.Show(target->bounds, GetDpiContext().GetDpi());
+        SetStatus(L"Release to dock; Escape or capture loss cancels without changing layout");
+    }
+
+    bool EndMouseDock(POINT point) {
+        UpdateMouseDock(point);
+        preview_.Hide();
+        mouse_adoption_.reset();
+        const auto result = mouse_drag_.Commit(model_,
+            [this](const mwtl::DockLayoutSnapshot& proposed) {
+                mouse_adoption_ = native_.Prepare(proposed);
+                return mouse_adoption_ &&
+                       static_cast<bool>(native_.Adopt(*mouse_adoption_));
+            },
+            [this](const mwtl::DockLayoutSnapshot&) {
+                if (mouse_adoption_) native_.Rollback(*mouse_adoption_);
+            });
+        if (!result) {
+            mouse_adoption_.reset();
+            SetStatus(L"Mouse docking cancelled; original layout retained");
+            return false;
+        }
+        if (!mouse_adoption_ || !native_.Commit(*mouse_adoption_))
+            throw std::runtime_error("commit mouse docking adoption failed");
+        mouse_adoption_.reset();
+        Synchronize(L"Panel docked by mouse");
+        return true;
+    }
+
+    void CancelMouseDock(mwtl::DockDragCancelReason reason) noexcept {
+        if (mouse_drag_.GetState() == mwtl::DockDragState::tracking ||
+            mouse_drag_.GetState() == mwtl::DockDragState::proposed)
+            mouse_drag_.Cancel(reason);
+        preview_.Hide();
+        mouse_adoption_.reset();
+    }
+
     std::vector<mwtl::DockDropTarget> KeyboardTargets() const {
         std::vector<mwtl::DockDropTarget> result;
         const auto dpi = GetDpiContext();
@@ -632,6 +833,30 @@ private:
         if (!PinExplorer() || model_.FindPanelGroup(kSolutionExplorer) != kLeftTools)
             throw std::runtime_error("pin workflow failed");
         self_test_step_ = 6;
+        const auto targets = KeyboardTargets();
+        const auto left_target = std::find_if(targets.begin(), targets.end(),
+            [](const auto& target) { return target.id == 1; });
+        const auto bottom_target = std::find_if(targets.begin(), targets.end(),
+            [](const auto& target) { return target.id == 2; });
+        if (left_target == targets.end() || bottom_target == targets.end())
+            throw std::runtime_error("mouse docking targets missing");
+        const auto center = [this](const mwtl::DockDropTarget& target) {
+            const auto dpi = GetDpiContext();
+            return POINT{dpi.ToPixels(mwtl::Dip(static_cast<float>(target.bounds.x +
+                                      target.bounds.width / 2.0))),
+                         dpi.ToPixels(mwtl::Dip(static_cast<float>(target.bounds.y +
+                                      target.bounds.height / 2.0)))};
+        };
+        BeginMouseDock(kOutputPanel, center(*left_target));
+        if (!EndMouseDock(center(*left_target)) ||
+            model_.FindPanelGroup(kOutputPanel) != kLeftTools)
+            throw std::runtime_error("mouse docking commit failed");
+        BeginMouseDock(kOutputPanel, center(*bottom_target));
+        CancelMouseDock(mwtl::DockDragCancelReason::escape);
+        if (model_.FindPanelGroup(kOutputPanel) != kLeftTools)
+            throw std::runtime_error("mouse docking cancellation changed layout");
+        if (!RedockOutput()) throw std::runtime_error("mouse test redock failed");
+        self_test_step_ = 7;
         BeginKeyboardDock();
         if (!keyboard_.IsActive() || !keyboard_.Move(mwtl::DockKeyboardMove::left))
             throw std::runtime_error("keyboard docking navigation failed");
@@ -639,12 +864,12 @@ private:
         preview_.Hide();
         if (!accepted) throw std::runtime_error("keyboard docking accept failed");
         ApplyKeyboardTarget(accepted->target);
-        self_test_step_ = 7;
+        self_test_step_ = 8;
         if (!SaveLayout()) throw std::runtime_error("layout save failed");
         const auto loaded = mwtl::LoadDockingSession(SessionPath());
         if (!loaded || loaded.snapshot->panels.size() != 4)
             throw std::runtime_error("layout restore file failed");
-        self_test_step_ = 8;
+        self_test_step_ = 9;
         const std::array monitors{
             mwtl::DockMonitorWorkArea{L"primary", 0, 0, 1920, 1040, 96, true}};
         if (!mwtl::RecoverDockFloatingPlacement(
@@ -662,6 +887,9 @@ private:
     mwtl::DockFloatingWindow floating_;
     mwtl::DockPreviewWindow preview_;
     mwtl::DockKeyboardSession keyboard_;
+    mwtl::DockDragSession mouse_drag_;
+    std::vector<mwtl::DockDropTarget> mouse_targets_;
+    std::optional<mwtl::DockNativeAdoptionPlan> mouse_adoption_;
     std::vector<mwtl::DockDropTarget> keyboard_targets_;
     mwtl::CommandSet commands_;
     mwtl::AcceleratorTable accelerators_;
