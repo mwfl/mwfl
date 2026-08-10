@@ -283,6 +283,11 @@ target_compile_features(mwtl_header_docking_preview PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_docking_preview PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwtl_header_docking_preview PRIVATE mwtl::mwtl)
 
+add_library(mwtl_header_docking_native OBJECT header_docking_native.cpp)
+target_compile_features(mwtl_header_docking_native PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_docking_native PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_docking_native PRIVATE mwtl::mwtl)
+
 add_executable(mwtl_docking_workspace_test docking_workspace_test.cpp)
 target_compile_features(mwtl_docking_workspace_test PRIVATE cxx_std_20)
 target_compile_options(mwtl_docking_workspace_test PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -317,6 +322,13 @@ target_compile_options(mwtl_docking_preview_native_test PRIVATE /W4 /permissive-
 target_link_libraries(mwtl_docking_preview_native_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.docking_preview_native COMMAND mwtl_docking_preview_native_test)
 set_tests_properties(mwtl.docking_preview_native PROPERTIES TIMEOUT 20 LABELS "native;unit")
+
+add_executable(mwtl_docking_native_test docking_native_test.cpp)
+target_compile_features(mwtl_docking_native_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_docking_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_docking_native_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.docking_native COMMAND mwtl_docking_native_test)
+set_tests_properties(mwtl.docking_native PROPERTIES TIMEOUT 20 LABELS "native;unit")
 
 add_library(mwtl_header_document_workspace OBJECT header_document_workspace.cpp)
 target_compile_features(mwtl_header_document_workspace PRIVATE cxx_std_20)
