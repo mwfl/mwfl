@@ -55,6 +55,26 @@ target_link_libraries(mwtl_ribbon_model_test PRIVATE mwtl::ribbon)
 add_test(NAME mwtl.ribbon_model COMMAND mwtl_ribbon_model_test)
 set_tests_properties(mwtl.ribbon_model PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
+add_library(mwtl_header_mdi OBJECT header_mdi.cpp)
+target_compile_features(mwtl_header_mdi PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_mdi PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_mdi PRIVATE mwtl::mdi)
+
+add_executable(mwtl_mdi_model_test mdi_model_test.cpp)
+target_compile_features(mwtl_mdi_model_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_mdi_model_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_mdi_model_test PRIVATE mwtl::mdi)
+add_test(NAME mwtl.mdi_model COMMAND mwtl_mdi_model_test)
+set_tests_properties(mwtl.mdi_model PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+add_executable(mwtl_mdi_native_test mdi_native_test.cpp)
+target_compile_features(mwtl_mdi_native_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_mdi_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_mdi_native_test PRIVATE mwtl::mdi)
+add_test(NAME mwtl.mdi_native COMMAND mwtl_mdi_native_test)
+set_tests_properties(mwtl.mdi_native PROPERTIES
+    ENVIRONMENT "MWTL_TEST_NO_DIALOGS=1" TIMEOUT 30 LABELS "native;integration")
+
 find_program(MWTL_UICC_EXECUTABLE NAMES uicc.exe
     HINTS
         "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/x86"
