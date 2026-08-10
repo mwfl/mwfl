@@ -50,8 +50,8 @@ struct DockPanel {
 struct DockGroup {
     DockGroupId id{};
     DockGroupRole role = DockGroupRole::tool;
-    std::vector<DockPanelId> panels;
-    std::optional<DockPanelId> active;
+    std::vector<DockPanelId> panels{};
+    std::optional<DockPanelId> active = std::nullopt;
 };
 
 struct DockNode {
