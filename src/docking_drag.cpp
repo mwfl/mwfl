@@ -116,7 +116,8 @@ DockDragCommitResult DockDragSession::Commit(
                     DockLayoutStatus::invalid_argument, error};
         }
         Cancel(DockDragCancelReason::adoption_failed);
-        return {DockDragCommitStatus::adoption_failed};
+        return {DockDragCommitStatus::adoption_failed,
+                DockLayoutStatus::invalid_argument, nullptr};
     }
     const DockLayoutResult committed = model.Commit(*proposal_);
     if (!committed) {
@@ -132,7 +133,7 @@ DockDragCommitResult DockDragSession::Commit(
     proposal_.reset();
     target_.reset();
     state_ = DockDragState::committed;
-    return {DockDragCommitStatus::success, DockLayoutStatus::success};
+    return {DockDragCommitStatus::success, DockLayoutStatus::success, nullptr};
 }
 
 }  // namespace mwtl

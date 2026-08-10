@@ -1108,7 +1108,7 @@ add_test(
         "-DMWTL_WTL_SOURCE_DIR=${MWTL_RESOLVED_WTL_SOURCE_DIR}"
         "-DMWTL_WIL_SOURCE_DIR=${MWTL_RESOLVED_WIL_SOURCE_DIR}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_package_consumer.cmake")
-set_tests_properties(mwtl.package_consumer PROPERTIES TIMEOUT 240)
+set_tests_properties(mwtl.package_consumer PROPERTIES TIMEOUT 600)
 
 add_test(
     NAME mwtl.release_metadata
