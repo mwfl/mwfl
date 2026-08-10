@@ -81,9 +81,21 @@ if(TARGET mwtl_mdi_workspace)
             "-DMDI_EXE=$<TARGET_FILE:mwtl_mdi_workspace>"
             "-DRESULT_FILE=${CMAKE_CURRENT_BINARY_DIR}/mdi-workspace-$<CONFIG>.result"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/run_mdi_workspace_gui.cmake")
-    set_tests_properties(mwtl.mdi_workspace_gui PROPERTIES
+set_tests_properties(mwtl.mdi_workspace_gui PROPERTIES
         ENVIRONMENT "MWTL_TEST_NO_DIALOGS=1" TIMEOUT 30 LABELS "gui;integration")
 endif()
+
+add_library(mwtl_header_graphics OBJECT header_graphics.cpp)
+target_compile_features(mwtl_header_graphics PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_graphics PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_graphics PRIVATE mwtl::graphics)
+
+add_executable(mwtl_graphics_test graphics_test.cpp)
+target_compile_features(mwtl_graphics_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_graphics_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_graphics_test PRIVATE mwtl::graphics)
+add_test(NAME mwtl.graphics COMMAND mwtl_graphics_test)
+set_tests_properties(mwtl.graphics PROPERTIES TIMEOUT 30 LABELS "native;integration")
 
 find_program(MWTL_UICC_EXECUTABLE NAMES uicc.exe
     HINTS
