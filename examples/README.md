@@ -1,6 +1,6 @@
 # mwtl examples
 
-The repository includes 38 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, and Browser are complete reference applications with dedicated model/native/GUI evidence.
+The repository includes 39 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwtl::Application` and recommended `mwtl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence.
 
 | Directory | Target | Focus |
 |---|---|---|
@@ -43,6 +43,7 @@ The repository includes 38 focused executables. Each example is intentionally sm
 | `shell_integration` | `mwtl_shell_integration_demo` | Versioned settings, reversible association, Jump List, Recent, and taskbar recovery |
 | `code_editor` | `mwtl_code_editor_demo` | Optional pinned Scintilla editor with Unicode files, search/replace, notifications, and dirty state |
 | `browser` | `mwtl_browser_demo` | Optional pinned WebView2 browser with offline welcome, runtime diagnostics, navigation, and process recovery |
+| `docking_workspace` | `mwtl_docking_workspace_demo` | IDE-style document/tool workspace with docking, floating, auto-hide, keyboard navigation, and session restore |
 
 Configure with `MWTL_BUILD_EXAMPLES=ON`, then build one target or all targets:
 
@@ -90,6 +91,7 @@ The examples remain native: every component is a real child HWND and direct Win3
 | Image viewing | `image_viewer` | bounded WIC decode, CPU pixels, zoom/pan, D2D bitmap cache | reference app |
 | Source editing | `code_editor` | Scintilla runtime, UTF-8 byte positions, save points, notifications | reference app |
 | Web content | `browser` | WebView2 runtime, async controller, navigation, process recovery | reference app |
+| Docking workspace | `docking_workspace` | Stable panel identity, transactions, floating hosts, auto-hide, persistence | reference app |
 
 Coding agents should copy a complete example and modify it instead of merging
 unrelated fragments. See `docs/agent-usage.md` for lifetime and threading rules.
