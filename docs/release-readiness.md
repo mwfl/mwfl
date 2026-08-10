@@ -97,7 +97,7 @@ The remaining work is hardening rather than another feature milestone:
 - Merge the release candidate to `main`; require a clean worktree and matching
   `origin/main` commit.
 - Create the annotated `v0.1.0` tag from that commit and publish one GitHub
-  Release with x64/ARM64 packages and SHA-256 checksum files produced by the
+  Release with the VS2026/MSVC x64 package and SHA-256 checksum file produced by the
   release workflow.
 - Verify the release URL, archive downloads, FetchContent templates, installed
   package, GitHub Pages, changelog, and component catalog from outside the
@@ -136,6 +136,10 @@ MSVC 19.51.36252, Windows SDK 10.0.26100, C++20, and x64:
 - The two environment-sensitive native tests found during the audit each pass
   five consecutive runs after their focus and process-cache assumptions were
   corrected.
+
+The first binary release intentionally packages x64 only. ARM64 remains a
+source target but is outside the `0.1.0` release artifact gate until its remote
+packaging path is stabilized.
 
 This record proves the local automated candidate. The remaining stop-ship work
 is the final browser/visual smoke pass, clean-checkout reproduction, release

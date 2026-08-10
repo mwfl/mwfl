@@ -34,16 +34,11 @@ foreach(package_document IN ITEMS
             "Release package does not install ${package_document}")
     endif()
 endforeach()
-foreach(architecture IN ITEMS x64 ARM64)
-    if(NOT release_workflow_text MATCHES "architecture: ${architecture}")
-        message(FATAL_ERROR "Release workflow does not package ${architecture}")
-    endif()
-endforeach()
-foreach(generator IN ITEMS "Visual Studio 18 2026" "Visual Studio 17 2022")
-    if(NOT release_workflow_text MATCHES "${generator}")
-        message(FATAL_ERROR "Release workflow is missing generator: ${generator}")
-    endif()
-endforeach()
+if(NOT release_workflow_text MATCHES "Visual Studio 18 2026" OR
+   NOT release_workflow_text MATCHES "-A x64" OR
+   release_workflow_text MATCHES "architecture: ARM64|windows-11-arm")
+    message(FATAL_ERROR "First public release must package VS2026/MSVC x64 only")
+endif()
 foreach(versioned_file IN ITEMS
         site/building.html
         templates/basic-app/CMakeLists.txt templates/form-app/CMakeLists.txt)

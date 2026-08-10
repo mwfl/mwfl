@@ -16,17 +16,7 @@ permissions:
 
 jobs:
   package:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - architecture: x64
-            runner: windows-2025-vs2026
-            generator: Visual Studio 18 2026
-          - architecture: ARM64
-            runner: windows-11-arm
-            generator: Visual Studio 17 2022
-    runs-on: ${{ matrix.runner }}
+    runs-on: windows-2025-vs2026
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Verify tag and project version
@@ -36,7 +26,7 @@ jobs:
           $project = Select-String -Path CMakeLists.txt -Pattern 'project\(mwtl VERSION ([0-9.]+)' | ForEach-Object { $_.Matches[0].Groups[1].Value }
           if ("v$project" -ne "${{ github.ref_name }}") { throw "Tag does not match project version v$project" }
       - name: Configure
-        run: cmake -S . -B build/release -G "${{ matrix.generator }}" -A ${{ matrix.architecture }} -DMWTL_BUILD_EXAMPLES=ON -DMWTL_BUILD_TESTS=ON
+        run: cmake -S . -B build/release -G "Visual Studio 18 2026" -A x64 -DMWTL_BUILD_EXAMPLES=ON -DMWTL_BUILD_TESTS=ON
       - name: Build and test
         run: |
           cmake --build build/release --config Release --verbose
@@ -53,11 +43,11 @@ jobs:
           $packages | ForEach-Object {
             $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
             "$hash  $($_.Name)"
-          } | Set-Content "artifacts/SHA256SUMS-${{ matrix.architecture }}.txt"
+          } | Set-Content "artifacts/SHA256SUMS-x64.txt"
       - name: Upload package
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: mwtl-${{ github.sha }}-${{ matrix.architecture }}
+          name: mwtl-${{ github.sha }}-x64
           path: artifacts/*
           if-no-files-found: error
 
