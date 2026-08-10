@@ -27,7 +27,7 @@ enum class GraphicsStatus {
 struct GraphicsResult {
     GraphicsStatus status = GraphicsStatus::native_failure;
     DWORD error = ERROR_GEN_FAILURE;
-    std::exception_ptr exception;
+    std::exception_ptr exception{};
     explicit operator bool() const noexcept { return status == GraphicsStatus::success; }
 };
 

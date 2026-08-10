@@ -99,7 +99,7 @@ struct MdiHostResult {
     MdiChildId child{};
     HWND window = nullptr;
     DWORD error = ERROR_SUCCESS;
-    std::exception_ptr exception;
+    std::exception_ptr exception{};
     explicit operator bool() const noexcept { return status == MdiHostStatus::success; }
 };
 

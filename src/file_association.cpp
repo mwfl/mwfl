@@ -96,11 +96,6 @@ LSTATUS WriteString(HKEY root, std::wstring_view key_path,
                             static_cast<DWORD>((data.size() + 1) * sizeof(wchar_t)));
 }
 
-bool OwnedBy(HKEY root, std::wstring_view key, std::wstring_view owner) {
-    const auto marker = ReadString(root, key, kOwnerValue);
-    return marker.found && marker.value == owner;
-}
-
 bool KeyExists(HKEY root, std::wstring_view key_path) noexcept {
     wil::unique_hkey key;
     const std::wstring path(key_path);
