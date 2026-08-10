@@ -193,3 +193,32 @@ layout. Expose the same targets through DockKeyboardSession. Floating windows
 own auxiliary top-level HWNDs and borrow panel hosts; they do not post process
 quit. Save only bounded, versioned, pointer-free committed snapshots in DIPs,
 recover them against current monitors, and fall back to a deterministic layout.
+
+OPTIONAL RIBBON, LEGACY MDI, GRAPHICS, TASKBAR, AND HELP
+
+Ribbon: request COMPONENTS ribbon and link mwtl::ribbon. Generate UICC resources
+into the executable. RibbonCommandModel stores stable pointer-free IDs, modes,
+contexts, and copied recent metadata; RibbonFrameworkHost borrows the frame and
+CommandSet and owns COM callbacks on one STA UI thread. Treat GetFramework as
+borrowed, support unavailable fallback, and destroy before COM shutdown. Start
+at examples/ribbon_workspace and docs/tutorials/ribbon.md.
+
+Legacy MDI: request COMPONENTS mdi and link mwtl::mdi. Prefer the modern
+DocumentWorkspaceModel for new products. MdiWorkspaceModel owns metadata only;
+the application owns documents and views. Route stable MdiChildId values without
+a global current pointer, collect every dirty decision before any close, and
+destroy MdiHost on its creating UI thread. Start at examples/mdi_workspace and
+docs/tutorials/mdi.md.
+
+EMF/GDI+: request COMPONENTS graphics and link mwtl::graphics. EnhancedMetafile
+owns HENHMETAFILE and is move-only. Recording HDC and Gdiplus::Graphics values
+are callback-scoped. EMF frame units are 0.01 mm, playback rectangles are
+pixels, PNG dimensions/pixels are bounded, and export uses sibling replacement.
+Start at examples/graphics_interop and docs/tutorials/graphics-help.md.
+
+Taskbar/Help: request COMPONENTS shell and link mwtl::shell. Reapply progress,
+overlay, thumbnail buttons, and registered/active tabs after TaskbarCreated.
+Stable IDs are application values; icons and HWNDs are borrowed. HelpRequest
+accepts absolute local CHM/HTML or HTTPS only and never constructs a shell
+command. Use LaunchHelpWithBackend for offline tests. Start at
+examples/shell_integration and docs/tutorials/graphics-help.md.

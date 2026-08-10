@@ -65,10 +65,11 @@ surrounding native window, commands, layout, and thread handoff.
 
 ## Long-term parity scope
 
-Document applications, modern tabbed workspaces, docking, optional Ribbon
-integration, and legacy MDI are not part of the current public API. They are now
-long-term capability targets rather than permanently excluded features. Their
-dependency order and acceptance criteria are defined in the
+Document applications, modern tabbed workspaces, docking, optional Ribbon,
+legacy MDI, EMF/GDI+, expanded taskbar behavior, and safe contextual Help are
+current public capabilities. Ribbon, MDI, graphics, and shell integrations are
+independent components; none expands the minimum `mwtl::mwtl` surface. Their
+dependency order and evidence are defined in the
 [Win32++ capability parity roadmap](win32xx-parity-roadmap.md).
 
 Parity is measured by the desktop application scenarios mwtl can implement. It
@@ -77,7 +78,7 @@ Windows 10+, C++20, x64/ARM64, explicit-ownership design constraints.
 
 ## Candidate capabilities requiring an explicit project decision
 
-Property sheets, tray abstraction, WebView2 hosting helpers, Scintilla hosting,
-print helpers, and richer UI Automation support may be evaluated in future.
-Until accepted into the public API and stability policy, agents must use the
-composition paths above rather than invent mwtl symbols.
+Richer UI Automation providers, media playback, shell extensions, and
+application-specific Ribbon property types require an explicit future project
+decision. Agents must use the composition paths above rather than invent mwtl
+symbols.

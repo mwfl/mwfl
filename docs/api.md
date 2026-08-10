@@ -555,3 +555,72 @@ areas before native adoption and use a deterministic safe default on failure.
 See `examples/docking_workspace`,
 `docs/tutorials/docking-workspace.md`, and
 `docs/recipes/docking-workspace.md`.
+
+## Optional Windows Ribbon
+
+`<mwtl/ribbon.h>` is supplied by the `ribbon` package component and target
+`mwtl::ribbon`; it is not part of the umbrella header. `RibbonCommandModel`
+owns stable command bindings, application-mode masks, contextual visibility,
+and copied bounded recent-item metadata. It contains no HWND, COM interface, or
+application pointer. `Project` maps ordinary `CommandSet` presentation state,
+and `Execute` invokes the current command while containing exceptions.
+
+`RibbonFrameworkHost` borrows the owner frame, model, and `CommandSet`, owns
+`IUIFramework` and application callbacks, and remains on its creating STA UI
+thread. The executable owns its UICC-generated resource. `Load` consumes that
+resource; `SetModes` and invalidation update native state. `GetFramework` is a
+borrowed escape hatch. Framework absence is a structured supported fallback;
+broken markup/resource loading is a packaging failure. Destroy the host before
+the frame and COM apartment. See `examples/ribbon_workspace` and
+`docs/tutorials/ribbon.md`.
+
+## Optional legacy MDI
+
+`<mwtl/mdi.h>` is the optional `mdi` component. Prefer the modern document
+workspace for new products. `MdiWorkspaceModel` owns pointer-free stable child
+IDs, titles, order, active selection, dirty state, and close policy; application
+documents and views remain external. Move and destination-first transfer are
+bounded and revisioned. `RouteMdiActiveChild` snapshots a stable ID, contains
+exceptions, and reports reentrant activation.
+
+`MdiHost` owns one MDICLIENT and its native children while borrowing the frame,
+window menu, model, and message callbacks. It supports activate, close, cascade,
+horizontal/vertical tile, icon arrangement, accelerator translation, and frame
+default processing. HWNDs returned by `GetClient` and `GetChild` are borrowed.
+Collect every dirty save/discard/cancel decision before closing any child; a
+cancel or failed save must leave the native set intact. Stop callbacks and
+destroy on the creating UI thread. See `examples/mdi_workspace` and
+`docs/tutorials/mdi.md`.
+
+## Optional enhanced metafiles and GDI+
+
+`<mwtl/graphics.h>` is the optional `graphics` component. `EnhancedMetafile`
+exclusively owns one HENHMETAFILE and is move-only; `Release` transfers the
+`DeleteEnhMetaFile` obligation. `RecordEnhancedMetafile` lends its recording HDC
+only during the callback, always closes it, deletes partial output after an
+exception, and treats an explicit frame as 0.01 millimeter units. Playback
+destinations are device pixels. Load, save, play, and every invalid rectangle
+return structured status.
+
+`GdiPlusSession` explicitly pairs startup/shutdown on its creating thread.
+`ExportGdiPlusPng` bounds dimensions to 32768 and pixels to 67,108,864, lends a
+`Gdiplus::Graphics` only during the callback, contains exceptions, locates the
+PNG encoder, and replaces through a sibling temporary file. See
+`examples/graphics_interop` and `docs/tutorials/graphics-help.md`.
+
+## Taskbar commands and contextual Help
+
+The optional `shell` component extends `TaskbarWindowIntegration` with stable-ID
+thumbnail buttons and registered taskbar tabs in addition to progress and
+overlay state. Icons and HWNDs are borrowed for calls; COM objects and mutation
+remain on the creating STA UI thread. After `TaskbarCreated`, call `Recreate`
+and reapply all application-owned state. Clear reversible state before window
+teardown.
+
+`<mwtl/help.h>` accepts absolute existing local CHM/HTML or an HTTPS URI. It
+rejects UNC paths, traversal, embedded controls, quotes, credentials, whitespace,
+wrong extensions, and non-HTTPS network schemes. `LaunchHelp` calls HtmlHelpW or
+ShellExecuteExW without composing a command line. Missing, unavailable,
+cancelled, native, and callback failures are distinct. Use
+`LaunchHelpWithBackend` for deterministic offline tests. See
+`examples/shell_integration` and `docs/tutorials/graphics-help.md`.

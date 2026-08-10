@@ -31,13 +31,18 @@ is more important than compile-time isolation.
 | `mwtl/dpi.h` | DIP geometry and `DpiContext` |
 | `mwtl/error.h` | checked-operation `Error` and diagnostic context |
 | `mwtl/events.h` | typed message events and `EventResult` |
+| `mwtl/graphics.h` | move-only enhanced metafiles, explicit GDI+ startup, and bounded PNG export |
+| `mwtl/help.h` | validated CHM/local HTML/HTTPS Help requests and structured launch results |
 | `mwtl/input_controls.h` | date, calendar, hot-key, IP, up-down and link controls |
 | `mwtl/layout.h` | row/column/overlay retained layout |
 | `mwtl/message_pump.h` | default and wait-aware message pumps |
+| `mwtl/mdi.h` | optional stable-ID legacy MDI model and owned native MDICLIENT/children |
 | `mwtl/must.h` | `Must` and `MustInvoke` checked adapters |
 | `mwtl/navigation_controls.h` | tree, list, header, tab and extended combo controls |
 | `mwtl/property_sheet.h` | stable page state plus modal/modeless native property sheets |
 | `mwtl/recent_files.h` | bounded recent-file model and versioned registry persistence |
+| `mwtl/ribbon.h` | optional pointer-free Ribbon command model and STA Windows Ribbon host |
+| `mwtl/shell_integration.h` | Jump Lists, taskbar progress/overlays/thumbnail buttons/tabs, and Explorer recovery |
 | `mwtl/single_instance.h` | named-instance ownership and bounded activation forwarding |
 | `mwtl/tab_workspace.h` | stable-ID tab state, selection, ordering, and dirty metadata |
 | `mwtl/splitter.h` | native two-pane composition, keyboard/mouse movement, constraints, and pure geometry |

@@ -62,8 +62,10 @@ Status meanings:
 | Win32++ capability or sample family | mwtl direction | Status |
 |---|---|---|
 | `CDocker`, docking and RibbonDockFrame samples | Stable-ID transactional dock panels, split/tab groups, floating and auto-hide hosts, accessible pointer/keyboard previews, monitor recovery, and bounded layout persistence | supported; `examples/docking_workspace`, docking model/native/session/GUI tests |
-| `CRibbon` / RibbonFrame samples | Optional Windows Ribbon integration, never required by the core | planned for 0.8 |
-| Traditional `CMDIFrame`/`CMDIChild` | Optional adapter after the modern multi-document workspace is complete | planned for 0.8 |
+| `CRibbon` / RibbonFrame samples | Optional UICC-backed Ribbon command model/STA host with modes, context, recent items, settings, fallback, and deterministic GUI self-test | supported; `examples/ribbon_workspace`, Ribbon model/native/GUI tests |
+| Traditional `CMDIFrame`/`CMDIChild` | Optional stable-ID model and owned MDICLIENT/children with routing, arrangement, dirty-close policy, callback containment, and no global active document | supported; `examples/mdi_workspace`, MDI model/native/GUI tests |
+| Enhanced metafile and GDI+ samples | Move-only EMF record/load/save/playback and bounded atomic GDI+ PNG export with explicit startup and callback lifetimes | supported; `examples/graphics_interop`, graphics/native/stress tests |
+| Extended taskbar and HTML Help samples | Progress, overlays, thumbnail buttons, taskbar tabs, Explorer recovery, and validated CHM/local HTML/HTTPS Help | supported; `examples/shell_integration`, shell/help/GUI/stress tests |
 
 ## Intentional non-goals
 
