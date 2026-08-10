@@ -38,7 +38,7 @@ enum class DockingSessionStatus {
 
 struct DockingSessionResult {
     DockingSessionStatus status = DockingSessionStatus::malformed;
-    std::optional<DockLayoutSnapshot> snapshot;
+    std::optional<DockLayoutSnapshot> snapshot = std::nullopt;
     DWORD native_error = ERROR_SUCCESS;
     explicit operator bool() const noexcept {
         return status == DockingSessionStatus::success && snapshot.has_value();
