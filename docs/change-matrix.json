@@ -2,6 +2,9 @@
   "schema_version": 1,
   "default": ["fast"],
   "paths": [
+    {"pattern":"docs/capabilities.json","validation":["docs","metadata"]},
+    {"pattern":"scripts/generate-site-components.ps1","validation":["docs","fast"]},
+    {"pattern":"site/components/catalog.html","validation":["docs","metadata"]},
     {"pattern":"include/mwtl/docking_workspace.h","validation":["fast","unit","native","gui","lifecycle","package","full"]},
     {"pattern":"include/mwtl/docking_*.h","validation":["fast","unit","native","gui","lifecycle","package","full"]},
     {"pattern":"src/docking_*.cpp","validation":["fast","unit","native","gui","lifecycle","full"]},

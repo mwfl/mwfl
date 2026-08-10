@@ -1,3 +1,5 @@
+get_filename_component(PROJECT_ROOT "${SITE_ROOT}" DIRECTORY)
+
 foreach(required IN ITEMS
         index.html
         tutorial.html
@@ -6,6 +8,7 @@ foreach(required IN ITEMS
         optional-integrations.html
         notepad.html
         components/index.html
+        components/catalog.html
         components/application.html
         components/controls.html
         components/common-controls.html
@@ -21,6 +24,33 @@ foreach(required IN ITEMS
         message(FATAL_ERROR "required Pages file is missing: ${required}")
     endif()
 endforeach()
+
+file(READ "${SITE_ROOT}/components/catalog.html" component_catalog)
+file(READ "${PROJECT_ROOT}/docs/capabilities.json" capabilities_json)
+string(JSON capability_count LENGTH "${capabilities_json}" capabilities)
+math(EXPR last_capability "${capability_count} - 1")
+foreach(index RANGE 0 ${last_capability})
+    string(JSON capability_id GET "${capabilities_json}" capabilities ${index} id)
+    if(NOT component_catalog MATCHES "data-capability-id=\"${capability_id}\"")
+        message(FATAL_ERROR "Pages catalog is missing capability: ${capability_id}")
+    endif()
+endforeach()
+
+file(GLOB usage_docs RELATIVE "${PROJECT_ROOT}"
+    "${PROJECT_ROOT}/docs/recipes/*.md"
+    "${PROJECT_ROOT}/docs/tutorials/*.md")
+list(FILTER usage_docs EXCLUDE REGEX "docs/recipes/index\\.md$")
+foreach(usage_doc IN LISTS usage_docs)
+    if(NOT component_catalog MATCHES "data-usage-path=\"${usage_doc}\"")
+        message(FATAL_ERROR "Pages catalog is missing usage document: ${usage_doc}")
+    endif()
+endforeach()
+
+if(NOT component_catalog MATCHES "component-search" OR
+   NOT component_catalog MATCHES "data-catalog-filter" OR
+   NOT component_catalog MATCHES "modern-win32xx-coverage-plan.md")
+    message(FATAL_ERROR "Pages catalog is missing search, filters, or the next plan")
+endif()
 
 file(READ "${SITE_ROOT}/tutorial.html" tutorial)
 foreach(marker IN ITEMS
@@ -96,8 +126,8 @@ endif()
 file(GLOB_RECURSE html_files "${SITE_ROOT}/*.html")
 foreach(html_file IN LISTS html_files)
     file(READ "${html_file}" html)
-    if(NOT html MATCHES "styles\\.css\\?v=20260808k" OR
-       NOT html MATCHES "assets/site\\.js\\?v=20260808k")
+    if(NOT html MATCHES "styles\\.css\\?v=20260810a" OR
+       NOT html MATCHES "assets/site\\.js\\?v=20260810a")
         message(FATAL_ERROR "stale or inconsistent site asset version in ${html_file}")
     endif()
     string(REGEX MATCHALL "href=\"[^\"]+\"" hrefs "${html}")

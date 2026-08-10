@@ -66,6 +66,15 @@ creation and measurement, route notifications through typed events, instantiate
 it in the appropriate gallery, update accessibility coverage, and keep the
 component/site catalogs synchronized.
 
+## Publishing capability documentation
+
+`docs/capabilities.json` is the single source for the searchable GitHub Pages
+capability catalog. After adding or changing a capability, run
+`./scripts/generate-site-components.ps1` and commit the generated
+`site/components/catalog.html`. The generator also discovers every recipe and
+tutorial. `mwtl.site_links` fails if any capability or usage document is absent,
+so Agents should update metadata rather than hand-edit generated cards.
+
 ## Adding a typed event
 
 Define the public event contract in `events.h`, decode raw message data at the

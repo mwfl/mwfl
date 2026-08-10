@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Search every mwtl capability, public symbol, example, recipe, tutorial, contract, and test from one component catalog.">
+  <link rel="canonical" href="https://everettjf.github.io/mwtl/components/catalog.html">
+  <title>Complete component catalog â€” mwtl</title>
+  <meta name="theme-color" content="#f7f9ff">
+  <link rel="icon" type="image/svg+xml" href="../assets/mwtl-mark.svg">
+  <link rel="stylesheet" href="../styles.css?v=20260810a">
+  <script>try{const t=localStorage.getItem("mwtl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script defer src="../assets/site.js?v=20260810a"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header docs-topbar"><div class="nav">
+    <a class="brand" href="../index.html" aria-label="MWTL â€” Modern Windows Thin Layer"><img src="../assets/mwtl-mark.svg" alt=""><span>MWTL</span></a>
+    <nav class="nav-links" aria-label="Main navigation"><a class="active" href="index.html">Components</a><a href="../tutorial.html">Get started</a><a href="../changelog.html">Changelog</a><a href="https://github.com/everettjf/mwtl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
+  </div></header>
+  <main id="main" class="shell catalog-page">
+    <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all 41 public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
+      <div class="catalog-stats"><span><strong>41</strong> capabilities</span><span><strong>43</strong> examples</span><span><strong>34</strong> recipes</span><span><strong>12</strong> tutorials</span></div>
+    </header>
+    <section class="catalog-tools" aria-label="Filter components">
+      <label for="component-search">Find by task, symbol, or header</label><input id="component-search" type="search" placeholder="Try docking, PrintJob, mwtl/ribbon.hâ€¦" autocomplete="off">
+      <div class="catalog-filters" role="group" aria-label="Capability category"><button class="active" type="button" data-catalog-filter="all">All</button>
+        <button type="button" data-catalog-filter="Foundation and UI">Foundation and UI</button>
+        <button type="button" data-catalog-filter="Documents and data">Documents and data</button>
+        <button type="button" data-catalog-filter="Rendering and media">Rendering and media</button>
+        <button type="button" data-catalog-filter="Desktop workflows">Desktop workflows</button>
+        <button type="button" data-catalog-filter="Optional workspaces">Optional workspaces</button>
+      </div><p class="catalog-result" role="status" aria-live="polite">Showing all 41 capabilities.</p>
+    </section>
+    <div class="capability-groups">
+        <section class="capability-group" data-capability-group="Foundation and UI">
+          <h2>Foundation and UI</h2>
+          <div class="capability-grid">
+            <article class="capability-card" data-capability-id="application-window" data-category="Foundation and UI" data-search="application-window foundation and ui create a windows app open a native window mwtl::windowbase mwtl::runapplication mwtl/window.h mwtl/application.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Application and Window</h3>
+              <p>create a Windows app; open a native window.</p><div class="capability-symbols"><code>mwtl::WindowBase</code> <code>mwtl::RunApplication</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/window.h&gt;</code> <code>&lt;mwtl/application.h&gt;</code></div><nav aria-label="Application and Window resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/hello/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/create-window.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+            </article>
+            <article class="capability-card" data-capability-id="native-form" data-category="Foundation and UI" data-search="native-form foundation and ui build a form validate input bind controls mwtl::controlhost mwtl::valuebinding mwtl::validationresult mwtl/control_host.h mwtl/binding.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Native Form</h3>
+              <p>build a form; validate input; bind controls.</p><div class="capability-symbols"><code>mwtl::ControlHost</code> <code>mwtl::ValueBinding</code> <code>mwtl::ValidationResult</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/control_host.h&gt;</code> <code>&lt;mwtl/binding.h&gt;</code></div><nav aria-label="Native Form resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/form_binding/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> controls, model values, and bindings need compatible lifetimes.</p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="responsive-layout" data-category="Foundation and UI" data-search="responsive-layout foundation and ui responsive layout row column overlay mwtl::row mwtl::column mwtl::overlay mwtl::stretch mwtl/layout.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Responsive Layout</h3>
+              <p>responsive layout; row; column; overlay.</p><div class="capability-symbols"><code>mwtl::Row</code> <code>mwtl::Column</code> <code>mwtl::Overlay</code> <code>mwtl::Stretch</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/layout.h&gt;</code></div><nav aria-label="Responsive Layout resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/layout_gallery/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> layout uses DIPs and references already-created HWNDs.</p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="commands" data-category="Foundation and UI" data-search="commands foundation and ui menu toolbar keyboard shortcut shared action mwtl::command mwtl::commandset mwtl::toolbar mwtl::menu mwtl/command.h mwtl/command_controls.h mwtl/desktop.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Commands</h3>
+              <p>menu; toolbar; keyboard shortcut; shared action.</p><div class="capability-symbols"><code>mwtl::Command</code> <code>mwtl::CommandSet</code> <code>mwtl::Toolbar</code> <code>mwtl::Menu</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/command.h&gt;</code> <code>&lt;mwtl/command_controls.h&gt;</code> <code>&lt;mwtl/desktop.h&gt;</code></div><nav aria-label="Commands resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/notepad/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> Command is the source for text enabled checked visible image and shortcut state; a toolbar borrows its ImageList; rebuild a menu to show a command after removing it.</p>
+                <p><strong>Tests:</strong> <code>mwtl.command&lt;/code&gt;, &lt;code&gt;mwtl.modern_api&lt;/code&gt;, &lt;code&gt;mwtl.desktop</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="background-ui-update" data-category="Foundation and UI" data-search="background-ui-update foundation and ui background worker update ui from thread notify window mwtl::windowwakeup mwtl/wakeup.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Background UI Update</h3>
+              <p>background worker; update UI from thread; notify window.</p><div class="capability-symbols"><code>mwtl::WindowWakeup</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/wakeup.h&gt;</code></div><nav aria-label="Background UI Update resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/wakeup/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> workers never access UI wrappers; TryWake false is normal during shutdown.</p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="desktop-integration" data-category="Foundation and UI" data-search="desktop-integration foundation and ui open file save file choose folder clipboard file drop window placement mwtl::filedialogoptions mwtl::savedwindowplacement mwtl/desktop.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Desktop Integration</h3>
+              <p>open file; save file; choose folder; clipboard; file drop; window placement.</p><div class="capability-symbols"><code>mwtl::FileDialogOptions</code> <code>mwtl::SavedWindowPlacement</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/desktop.h&gt;</code></div><nav aria-label="Desktop Integration resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/desktop_integration/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+            </article>
+            <article class="capability-card" data-capability-id="custom-dialog" data-category="Foundation and UI" data-search="custom-dialog foundation and ui custom dialog modal form modeless window resizable dialog mwtl::dialog mwtl::dialogoptions mwtl::dialogcallbacks mwtl::dialogresult mwtl/dialog.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Custom Dialog</h3>
+              <p>custom dialog; modal form; modeless window; resizable dialog.</p><div class="capability-symbols"><code>mwtl::Dialog</code> <code>mwtl::DialogOptions</code> <code>mwtl::DialogCallbacks</code> <code>mwtl::DialogResult</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/dialog.h&gt;</code></div><nav aria-label="Custom Dialog resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/desktop_integration/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/custom-dialog.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> the owner HWND is borrowed; the wrapper owns a modeless HWND; callbacks and child controls stay on the creating UI thread.</p>
+                <p><strong>Tests:</strong> <code>mwtl.dialog_native</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="appearance-accessibility" data-category="Foundation and UI" data-search="appearance-accessibility foundation and ui dark mode mica high contrast accessible name dpi mwtl::appearanceoptions mwtl::applywindowappearance mwtl::setaccessiblename mwtl/appearance.h mwtl/dpi.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Appearance Accessibility</h3>
+              <p>dark mode; mica; high contrast; accessible name; DPI.</p><div class="capability-symbols"><code>mwtl::AppearanceOptions</code> <code>mwtl::ApplyWindowAppearance</code> <code>mwtl::SetAccessibleName</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/appearance.h&gt;</code> <code>&lt;mwtl/dpi.h&gt;</code></div><nav aria-label="Appearance Accessibility resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/appearance/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> appearance is best effort; High Contrast takes precedence.</p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="property-sheet-settings" data-category="Foundation and UI" data-search="property-sheet-settings foundation and ui property sheet settings pages apply ok cancel modeless settings mwtl::propertypage mwtl::propertysheetmodel mwtl::propertysheetdialog mwtl::propertysheetresult mwtl/property_sheet.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Property Sheet Settings</h3>
+              <p>property sheet; settings pages; Apply OK Cancel; modeless settings.</p><div class="capability-symbols"><code>mwtl::PropertyPage</code> <code>mwtl::PropertySheetModel</code> <code>mwtl::PropertySheetDialog</code> <code>mwtl::PropertySheetResult</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/property_sheet.h&gt;</code></div><nav aria-label="Property Sheet Settings resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/property_sheet/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/settings-application.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> page IDs are stable and nonzero; page HWNDs are borrowed and lazily created; modeless operations stay on the creating UI thread.</p>
+                <p><strong>Tests:</strong> <code>mwtl.property_sheet_model&lt;/code&gt;, &lt;code&gt;mwtl.property_sheet_native&lt;/code&gt;, &lt;code&gt;mwtl.settings_application_model&lt;/code&gt;, &lt;code&gt;mwtl.settings_application_gui</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="task-dialog" data-category="Foundation and UI" data-search="task-dialog foundation and ui task dialog confirmation dialog progress dialog radio choice verification checkbox mwtl::taskdialogoptions mwtl::taskdialogcontroller mwtl::taskdialogevent mwtl::taskdialogresult mwtl::showtaskdialog mwtl/control_resources.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Task Dialog</h3>
+              <p>task dialog; confirmation dialog; progress dialog; radio choice; verification checkbox.</p><div class="capability-symbols"><code>mwtl::TaskDialogOptions</code> <code>mwtl::TaskDialogController</code> <code>mwtl::TaskDialogEvent</code> <code>mwtl::TaskDialogResult</code> <code>mwtl::ShowTaskDialog</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/control_resources.h&gt;</code></div><nav aria-label="Task Dialog resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> the owner HWND is borrowed; the controller is callback-scoped and UI-thread-only; keep_open only changes button-close handling.</p>
+                <p><strong>Tests:</strong> <code>mwtl.task_dialog</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="control-resources" data-category="Foundation and UI" data-search="control-resources foundation and ui tooltip balloon tooltip image list context menu popup command mwtl::tooltip mwtl::tooltipoptions mwtl::imagelist mwtl::menu mwtl::popupmenuresult mwtl/control_resources.h mwtl/desktop.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Control Resources</h3>
+              <p>tooltip; balloon tooltip; image list; context menu; popup command.</p><div class="capability-symbols"><code>mwtl::Tooltip</code> <code>mwtl::TooltipOptions</code> <code>mwtl::ImageList</code> <code>mwtl::Menu</code> <code>mwtl::PopupMenuResult</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/control_resources.h&gt;</code> <code>&lt;mwtl/desktop.h&gt;</code></div><nav aria-label="Control Resources resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> ImageList owns its HIMAGELIST and toolbar borrowing requires it to outlive the toolbar; Tooltip owns text and its HWND but borrows owner and tools; tooltip text does not replace an accessible name.</p>
+                <p><strong>Tests:</strong> <code>mwtl.control_resources_native&lt;/code&gt;, &lt;code&gt;mwtl.modern_api&lt;/code&gt;, &lt;code&gt;mwtl.desktop</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="native-hwnd-host" data-category="Foundation and UI" data-search="native-hwnd-host foundation and ui host a third-party hwnd forward native notifications manage child focus and resize mwtl::nativehost mwtl::nativehoststatemodel mwtl/native_host.h">
+              <span class="capability-kind">Foundation and UI</span><h3>Native HWND Host</h3>
+              <p>host a third-party HWND; forward native notifications; manage child focus and resize.</p><div class="capability-symbols"><code>mwtl::NativeHost</code> <code>mwtl::NativeHostStateModel</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/native_host.h&gt;</code></div><nav aria-label="Native HWND Host resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/tests/native_host_native_test.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/native-host.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> the host owns its container and borrows one direct-child HWND; host and child must share a UI thread and process; Detach does not destroy or reparent.</p>
+                <p><strong>Tests:</strong> <code>mwtl.native_host_model&lt;/code&gt;, &lt;code&gt;mwtl.native_host_native</code></p>
+              </details>
+            </article>
+          </div>
+        </section>
+        <section class="capability-group" data-capability-group="Documents and data">
+          <h2>Documents and data</h2>
+          <div class="capability-grid">
+            <article class="capability-card" data-capability-id="document-state" data-category="Documents and data" data-search="document-state documents and data track an open document prompt for unsaved changes coordinate save before close mwtl::documentstate mwtl::documenttransition mwtl::unsavedchangeschoice mwtl/document.h">
+              <span class="capability-kind">Documents and data</span><h3>Document State</h3>
+              <p>track an open document; prompt for unsaved changes; coordinate save before close.</p><div class="capability-symbols"><code>mwtl::DocumentState</code> <code>mwtl::DocumentTransition</code> <code>mwtl::UnsavedChangesChoice</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/document.h&gt;</code></div><nav aria-label="Document State resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/document_state/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> applications own contents and perform file I/O; record opened or saved state only after I/O succeeds; the model belongs to the document coordination thread.</p>
+                <p><strong>Tests:</strong> <code>mwtl.document</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="multi-document-workspace-model" data-category="Documents and data" data-search="multi-document-workspace-model documents and data manage multiple documents move a document between windows recently closed documents active document state mwtl::documentworkspacemodel mwtl::documentid mwtl::workspaceid mwtl::documenttransferplan mwtl::transferdocument mwtl/document_workspace.h">
+              <span class="capability-kind">Documents and data</span><h3>Multi Document Workspace Model</h3>
+              <p>manage multiple documents; move a document between windows; recently closed documents; active document state.</p><div class="capability-symbols"><code>mwtl::DocumentWorkspaceModel</code> <code>mwtl::DocumentId</code> <code>mwtl::WorkspaceId</code> <code>mwtl::DocumentTransferPlan</code> <code>mwtl::TransferDocument</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/document_workspace.h&gt;</code></div><nav aria-label="Multi Document Workspace Model resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/document_workspace/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> UI-thread logical model owns metadata snapshots only; applications own contents undo buffers and page HWNDs keyed by stable DocumentId; Windows paths deduplicate case-insensitively after lexical normalization.</p>
+                <p><strong>Tests:</strong> <code>mwtl.document_workspace&lt;/code&gt;, &lt;code&gt;mwtl.document_workspace_gui&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="active-document-coordination" data-category="Documents and data" data-search="active-document-coordination documents and data route a command to the active document close all documents safely save dirty documents before shutdown mwtl::buildactivedocumentcommandprojection mwtl::applyactivedocumentcommandprojection mwtl::routeactivedocument mwtl::buildcoordinatedcloseplan mwtl::commitcoordinatedcloseaftersaves mwtl::executecoordinatedclose mwtl/document_coordination.h">
+              <span class="capability-kind">Documents and data</span><h3>Active Document Coordination</h3>
+              <p>route a command to the active document; close all documents safely; save dirty documents before shutdown.</p><div class="capability-symbols"><code>mwtl::BuildActiveDocumentCommandProjection</code> <code>mwtl::ApplyActiveDocumentCommandProjection</code> <code>mwtl::RouteActiveDocument</code> <code>mwtl::BuildCoordinatedClosePlan</code> <code>mwtl::CommitCoordinatedCloseAfterSaves</code> <code>mwtl::ExecuteCoordinatedClose</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/document_coordination.h&gt;</code></div><nav aria-label="Active Document Coordination resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> route stable IDs and never capture document pointers; handlers and save I/O remain application-owned; asynchronous applications finish every planned save before CommitCoordinatedCloseAfterSaves.</p>
+                <p><strong>Tests:</strong> <code>mwtl.document_coordination&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="document-session-persistence" data-category="Documents and data" data-search="document-session-persistence documents and data restore multiple documents persist workspace sessions validate changed session files recover recently closed documents mwtl::documentsession mwtl::workspacesession mwtl::savedocumentsessionatomic mwtl::loaddocumentsession mwtl::restoreworkspacesession mwtl/document_session.h">
+              <span class="capability-kind">Documents and data</span><h3>Document Session Persistence</h3>
+              <p>restore multiple documents; persist workspace sessions; validate changed session files; recover recently closed documents.</p><div class="capability-symbols"><code>mwtl::DocumentSession</code> <code>mwtl::WorkspaceSession</code> <code>mwtl::SaveDocumentSessionAtomic</code> <code>mwtl::LoadDocumentSession</code> <code>mwtl::RestoreWorkspaceSession</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/document_session.h&gt;</code></div><nav aria-label="Document Session Persistence resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> schema and input sizes are bounded; atomic replacement preserves the previous complete file; unknown extension records are tolerated.</p>
+                <p><strong>Tests:</strong> <code>mwtl.document_session&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="native-document-tabs" data-category="Documents and data" data-search="native-document-tabs documents and data show documents in native tabs move a document page between windows route native tab selection arrange document pages mwtl::documenttabworkspaceadapter mwtl::documentpagebinding mwtl::transferdocumentwithpage mwtl/document_tabs.h">
+              <span class="capability-kind">Documents and data</span><h3>Native Document Tabs</h3>
+              <p>show documents in native tabs; move a document page between windows; route native tab selection; arrange document pages.</p><div class="capability-symbols"><code>mwtl::DocumentTabWorkspaceAdapter</code> <code>mwtl::DocumentPageBinding</code> <code>mwtl::TransferDocumentWithPage</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/document_tabs.h&gt;</code></div><nav aria-label="Native Document Tabs resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/document_workspace/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> the adapter borrows all HWNDs; pages share the TabControl parent on the creating UI thread; native item data stores stable integer IDs and never pointers.</p>
+                <p><strong>Tests:</strong> <code>mwtl.document_tabs_native&lt;/code&gt;, &lt;code&gt;mwtl.document_workspace_gui&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="tab-workspace-state" data-category="Documents and data" data-search="tab-workspace-state documents and data track application tabs keep stable tab identity synchronize a native tab control mwtl::tabworkspacemodel mwtl::tabid mwtl::tabcontrol mwtl/tab_workspace.h mwtl/navigation_controls.h">
+              <span class="capability-kind">Documents and data</span><h3>Tab Workspace State</h3>
+              <p>track application tabs; keep stable tab identity; synchronize a native tab control.</p><div class="capability-symbols"><code>mwtl::TabWorkspaceModel</code> <code>mwtl::TabId</code> <code>mwtl::TabControl</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/tab_workspace.h&gt;</code> <code>&lt;mwtl/navigation_controls.h&gt;</code></div><nav aria-label="Tab Workspace State resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/common_controls/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> zero is not a valid TabId; the model does not own documents or page HWNDs; returned views expire on mutation.</p>
+                <p><strong>Tests:</strong> <code>mwtl.tab_workspace&lt;/code&gt;, &lt;code&gt;mwtl.modern_api</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="split-pane-composition" data-category="Documents and data" data-search="split-pane-composition documents and data compose two resizable panes enforce pane minimum sizes support keyboard splitter movement mwtl::splitter mwtl::splittermodel mwtl::splitternotification mwtl/splitter.h">
+              <span class="capability-kind">Documents and data</span><h3>Split Pane Composition</h3>
+              <p>compose two resizable panes; enforce pane minimum sizes; support keyboard splitter movement.</p><div class="capability-symbols"><code>mwtl::Splitter</code> <code>mwtl::SplitterModel</code> <code>mwtl::SplitterNotification</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/splitter.h&gt;</code></div><nav aria-label="Split Pane Composition resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/explorer/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> positions and constraints are DIPs; the splitter owns its container HWND and borrows direct-child pane HWNDs; attached pane notifications commands and context menus forward to the parent.</p>
+                <p><strong>Tests:</strong> <code>mwtl.splitter&lt;/code&gt;, &lt;code&gt;mwtl.splitter_native&lt;/code&gt;, &lt;code&gt;mwtl.explorer_gui</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="stable-navigation-data" data-category="Documents and data" data-search="stable-navigation-data documents and data tree with stable item identity multi-select report view virtual listview sort or label-edit native rows mwtl::treeitemid mwtl::treeview mwtl::listitemid mwtl::listview mwtl::virtuallistmodel mwtl/navigation_controls.h">
+              <span class="capability-kind">Documents and data</span><h3>Stable Navigation Data</h3>
+              <p>tree with stable item identity; multi-select report view; virtual ListView; sort or label-edit native rows.</p><div class="capability-symbols"><code>mwtl::TreeItemId</code> <code>mwtl::TreeView</code> <code>mwtl::ListItemId</code> <code>mwtl::ListView</code> <code>mwtl::VirtualListModel</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/navigation_controls.h&gt;</code></div><nav aria-label="Stable Navigation Data resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/explorer/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> IDs are unique stable and nonzero; ListView is multi-select unless LVS_SINGLESEL is requested; virtual models are shared and authoritative.</p>
+                <p><strong>Tests:</strong> <code>mwtl.navigation_model&lt;/code&gt;, &lt;code&gt;mwtl.navigation_native&lt;/code&gt;, &lt;code&gt;mwtl.explorer_model&lt;/code&gt;, &lt;code&gt;mwtl.explorer_gui</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="typed-selections" data-category="Documents and data" data-search="typed-selections documents and data associate typed values with native choices select by application value avoid unsafe native item pointers mwtl::selectionadapter mwtl::selectionentry mwtl/selection.h mwtl/controls.h mwtl/navigation_controls.h">
+              <span class="capability-kind">Documents and data</span><h3>Typed Selections</h3>
+              <p>associate typed values with native choices; select by application value; avoid unsafe native item pointers.</p><div class="capability-symbols"><code>mwtl::SelectionAdapter</code> <code>mwtl::SelectionEntry</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/selection.h&gt;</code> <code>&lt;mwtl/controls.h&gt;</code> <code>&lt;mwtl/navigation_controls.h&gt;</code></div><nav aria-label="Typed Selections resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/tests/modern_api_test.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> the adapter owns labels and values while the control owns only native labels; the adapter must be the exclusive item mutator; all adapter and control operations stay on the control UI thread.</p>
+                <p><strong>Tests:</strong> <code>mwtl.selection&lt;/code&gt;, &lt;code&gt;mwtl.modern_api&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="unicode-text-file" data-category="Documents and data" data-search="unicode-text-file documents and data open a text document save a text document safely detect an external file change mwtl::readtextfile mwtl::writetextfileatomic mwtl::textfile mwtl::filestamp mwtl/text_file.h">
+              <span class="capability-kind">Documents and data</span><h3>Unicode Text File</h3>
+              <p>open a text document; save a text document safely; detect an external file change.</p><div class="capability-symbols"><code>mwtl::ReadTextFile</code> <code>mwtl::WriteTextFileAtomic</code> <code>mwtl::TextFile</code> <code>mwtl::FileStamp</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/text_file.h&gt;</code></div><nav aria-label="Unicode Text File resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/notepad/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> malformed Unicode is rejected; save uses a flushed sibling temporary and atomic replacement; pass the read FileStamp to detect stale editor content.</p>
+                <p><strong>Tests:</strong> <code>mwtl.text_file</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="text-search" data-category="Documents and data" data-search="text-search documents and data find text replace text implement an editor find dialog mwtl::findtextmatch mwtl::textmatchesat mwtl::replacealltext mwtl/text_search.h">
+              <span class="capability-kind">Documents and data</span><h3>Text Search</h3>
+              <p>find text; replace text; implement an editor find dialog.</p><div class="capability-symbols"><code>mwtl::FindTextMatch</code> <code>mwtl::TextMatchesAt</code> <code>mwtl::ReplaceAllText</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/text_search.h&gt;</code></div><nav aria-label="Text Search resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/notepad/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> empty queries never match; whole-word treats letters, digits, and underscore as word characters; replace-all advances after inserted text.</p>
+                <p><strong>Tests:</strong> <code>mwtl.text_search</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="text-history" data-category="Documents and data" data-search="text-history documents and data undo text edits redo text edits track whether undo returned to the saved text mwtl::texthistory mwtl/text_history.h">
+              <span class="capability-kind">Documents and data</span><h3>Text History</h3>
+              <p>undo text edits; redo text edits; track whether undo returned to the saved text.</p><div class="capability-symbols"><code>mwtl::TextHistory</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/text_history.h&gt;</code></div><nav aria-label="Text History resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/notepad/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> history stores bounded snapshots; new edits truncate the redo branch; returned views expire on mutation.</p>
+                <p><strong>Tests:</strong> <code>mwtl.text_history</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="recent-files" data-category="Documents and data" data-search="recent-files documents and data show recent files persist recent files restore editor settings mwtl::recentfilelist mwtl::loadrecentfilesfromregistry mwtl::saverecentfilestoregistry mwtl/recent_files.h">
+              <span class="capability-kind">Documents and data</span><h3>Recent Files</h3>
+              <p>show recent files; persist recent files; restore editor settings.</p><div class="capability-symbols"><code>mwtl::RecentFileList</code> <code>mwtl::LoadRecentFilesFromRegistry</code> <code>mwtl::SaveRecentFilesToRegistry</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/recent_files.h&gt;</code></div><nav aria-label="Recent Files resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/notepad/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> root registry handles are borrowed; schema version is validated; paths are deduplicated with Windows case-insensitive comparison.</p>
+                <p><strong>Tests:</strong> <code>mwtl.recent_files</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="single-instance" data-category="Documents and data" data-search="single-instance documents and data allow only one application instance forward a file to the existing window activate an existing application mwtl::singleinstance mwtl::activationresult mwtl::activationstatus mwtl/single_instance.h">
+              <span class="capability-kind">Documents and data</span><h3>Single Instance</h3>
+              <p>allow only one application instance; forward a file to the existing window; activate an existing application.</p><div class="capability-symbols"><code>mwtl::SingleInstance</code> <code>mwtl::ActivationResult</code> <code>mwtl::ActivationStatus</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/single_instance.h&gt;</code></div><nav aria-label="Single Instance resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/notepad/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> register only the primary top-level window; activation payloads are bounded copied UTF-16; same-user UIPI access denial is reported.</p>
+                <p><strong>Tests:</strong> <code>mwtl.single_instance</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="sdi-notepad-reference" data-category="Documents and data" data-search="sdi-notepad-reference documents and data build a text editor build an sdi document application test a real native application package a native executable mwtl::documentstate mwtl::commandset mwtl::statusbar mwtl::readtextfile mwtl::singleinstance mwtl/document.h mwtl/command.h mwtl/command_controls.h mwtl/text_file.h mwtl/single_instance.h">
+              <span class="capability-kind">Documents and data</span><h3>SDI Notepad Reference</h3>
+              <p>build a text editor; build an SDI document application; test a real native application; package a native executable.</p><div class="capability-symbols"><code>mwtl::DocumentState</code> <code>mwtl::CommandSet</code> <code>mwtl::StatusBar</code> <code>mwtl::ReadTextFile</code> <code>mwtl::SingleInstance</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/document.h&gt;</code> <code>&lt;mwtl/command.h&gt;</code> <code>&lt;mwtl/command_controls.h&gt;</code> <code>&lt;mwtl/text_file.h&gt;</code> <code>&lt;mwtl/single_instance.h&gt;</code></div><nav aria-label="SDI Notepad Reference resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/notepad/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> start from templates/basic-app; mark document state only after successful I/O; optional preference failures never discard document content.</p>
+                <p><strong>Tests:</strong> <code>mwtl.notepad_gui&lt;/code&gt;, &lt;code&gt;mwtl.text_file&lt;/code&gt;, &lt;code&gt;mwtl.document&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+          </div>
+        </section>
+        <section class="capability-group" data-capability-group="Rendering and media">
+          <h2>Rendering and media</h2>
+          <div class="capability-grid">
+            <article class="capability-card" data-capability-id="direct2d-drawing" data-category="Rendering and media" data-search="direct2d-drawing rendering and media direct2d drawing dpi-aware canvas recover rendering resources export application drawing data mwtl::d2dhost mwtl::d2dhostoptions mwtl::d2drendercontext mwtl::d2drenderstatemodel mwtl/d2d_host.h">
+              <span class="capability-kind">Rendering and media</span><h3>Direct2D Drawing</h3>
+              <p>Direct2D drawing; DPI-aware canvas; recover rendering resources; export application drawing data.</p><div class="capability-symbols"><code>mwtl::D2DHost</code> <code>mwtl::D2DHostOptions</code> <code>mwtl::D2DRenderContext</code> <code>mwtl::D2DRenderStateModel</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/d2d_host.h&gt;</code></div><nav aria-label="Direct2D Drawing resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/drawing/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/direct2d-drawing.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> request the d2d package component and link mwtl::d2d; the core target does not link Direct2D; D2DHost owns BeginDraw and EndDraw.</p>
+                <p><strong>Tests:</strong> <code>mwtl.d2d_host_model&lt;/code&gt;, &lt;code&gt;mwtl.d2d_host_native&lt;/code&gt;, &lt;code&gt;mwtl.drawing_model&lt;/code&gt;, &lt;code&gt;mwtl.drawing_gui</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="direct3d-swap-chain" data-category="Rendering and media" data-search="direct3d-swap-chain rendering and media direct3d rendering swap chain on-demand gpu frame device-loss recovery warp fallback mwtl::d3dhost mwtl::d3dhostoptions mwtl::d3dframecontext mwtl::d3dframeresult mwtl::d3drenderstatemodel mwtl/d3d_host.h">
+              <span class="capability-kind">Rendering and media</span><h3>Direct3D Swap Chain</h3>
+              <p>Direct3D rendering; swap chain; on-demand GPU frame; device-loss recovery; WARP fallback.</p><div class="capability-symbols"><code>mwtl::D3DHost</code> <code>mwtl::D3DHostOptions</code> <code>mwtl::D3DFrameContext</code> <code>mwtl::D3DFrameResult</code> <code>mwtl::D3DRenderStateModel</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/d3d_host.h&gt;</code></div><nav aria-label="Direct3D Swap Chain resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/tests/d3d_host_native_test.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/direct3d-swap-chain.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> request the d3d package component and link mwtl::d3d; RenderFrame is on-demand; handle every structured frame status.</p>
+                <p><strong>Tests:</strong> <code>mwtl.d3d_host_model&lt;/code&gt;, &lt;code&gt;mwtl.d3d_host_native&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="image-viewer" data-category="Rendering and media" data-search="image-viewer rendering and media decode an image image viewer zoom and pan fit image reject huge images recover a gpu bitmap mwtl::decodedimage mwtl::imagedecodeoptions mwtl::decodeimagefile mwtl::imageviewportmodel mwtl::d2dhost mwtl/imaging.h mwtl/d2d_host.h">
+              <span class="capability-kind">Rendering and media</span><h3>Image Viewer</h3>
+              <p>decode an image; image viewer; zoom and pan; fit image; reject huge images; recover a GPU bitmap.</p><div class="capability-symbols"><code>mwtl::DecodedImage</code> <code>mwtl::ImageDecodeOptions</code> <code>mwtl::DecodeImageFile</code> <code>mwtl::ImageViewportModel</code> <code>mwtl::D2DHost</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/imaging.h&gt;</code> <code>&lt;mwtl/d2d_host.h&gt;</code></div><nav aria-label="Image Viewer resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/image_viewer/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/image-viewer.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> request imaging and d2d package components; COM must be initialized before WIC decode; default normalized pixel budget is 256 MiB.</p>
+                <p><strong>Tests:</strong> <code>mwtl.imaging_model&lt;/code&gt;, &lt;code&gt;mwtl.imaging_decode&lt;/code&gt;, &lt;code&gt;mwtl.image_viewer_gui&lt;/code&gt;, &lt;code&gt;mwtl.d2d_host_native</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="emf-gdiplus" data-category="Rendering and media" data-search="emf-gdiplus rendering and media record an enhanced metafile play an emf export png with gdi plus manage gdi plus startup mwtl::enhancedmetafile mwtl::recordenhancedmetafile mwtl::playenhancedmetafile mwtl::gdiplussession mwtl::exportgdipluspng mwtl/graphics.h">
+              <span class="capability-kind">Rendering and media</span><h3>EMF and GDI+</h3>
+              <p>record an enhanced metafile; play an EMF; export PNG with GDI plus; manage GDI plus startup.</p><div class="capability-symbols"><code>mwtl::EnhancedMetafile</code> <code>mwtl::RecordEnhancedMetafile</code> <code>mwtl::PlayEnhancedMetafile</code> <code>mwtl::GdiPlusSession</code> <code>mwtl::ExportGdiPlusPng</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/graphics.h&gt;</code></div><nav aria-label="EMF and GDI+ resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/graphics_interop/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/graphics-help.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> request the graphics component and link mwtl::graphics; EnhancedMetafile exclusively owns its handle; recording HDC and Graphics are callback scoped.</p>
+                <p><strong>Tests:</strong> <code>mwtl.graphics&lt;/code&gt;, &lt;code&gt;mwtl.graphics_interop_gui&lt;/code&gt;, &lt;code&gt;mwtl.integration_stress&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+          </div>
+        </section>
+        <section class="capability-group" data-capability-group="Desktop workflows">
+          <h2>Desktop workflows</h2>
+          <div class="capability-grid">
+            <article class="capability-card" data-capability-id="tray-application" data-category="Desktop workflows" data-search="tray-application desktop workflows tray icon notification area background utility balloon notification explorer restart mwtl::trayicon mwtl::trayiconoptions mwtl::trayiconevent mwtl::traynotification mwtl::trayiconstatemodel mwtl/tray_icon.h">
+              <span class="capability-kind">Desktop workflows</span><h3>Tray Application</h3>
+              <p>tray icon; notification area; background utility; balloon notification; Explorer restart.</p><div class="capability-symbols"><code>mwtl::TrayIcon</code> <code>mwtl::TrayIconOptions</code> <code>mwtl::TrayIconEvent</code> <code>mwtl::TrayNotification</code> <code>mwtl::TrayIconStateModel</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/tray_icon.h&gt;</code></div><nav aria-label="Tray Application resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/hot_corners/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/tray-icon.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> use a stable application GUID; the owner HWND and HICON are borrowed; mutations and destruction stay on the creating UI thread.</p>
+                <p><strong>Tests:</strong> <code>mwtl.tray_icon_state&lt;/code&gt;, &lt;code&gt;mwtl.tray_icon_native&lt;/code&gt;, &lt;code&gt;mwtl.hot_corners_self_test</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="printing-preview" data-category="Desktop workflows" data-search="printing-preview desktop workflows print a document build print preview enumerate printers cancel printing mwtl::printpage mwtl::printpreviewmodel mwtl::printersettings mwtl::printjob mwtl::printpages mwtl/printing.h mwtl/printing_native.h mwtl/printing_settings.h">
+              <span class="capability-kind">Desktop workflows</span><h3>Printing Preview</h3>
+              <p>print a document; build print preview; enumerate printers; cancel printing.</p><div class="capability-symbols"><code>mwtl::PrintPage</code> <code>mwtl::PrintPreviewModel</code> <code>mwtl::PrinterSettings</code> <code>mwtl::PrintJob</code> <code>mwtl::PrintPages</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/printing.h&gt;</code> <code>&lt;mwtl/printing_native.h&gt;</code> <code>&lt;mwtl/printing_settings.h&gt;</code></div><nav aria-label="Printing Preview resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/printing/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/printing-ole-shell.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> request the printing component and link mwtl::printing; document and pagination remain printer independent; printer HDCs are borrowed by render callbacks.</p>
+                <p><strong>Tests:</strong> <code>mwtl.printing_model&lt;/code&gt;, &lt;code&gt;mwtl.printing_job&lt;/code&gt;, &lt;code&gt;mwtl.printing_settings&lt;/code&gt;, &lt;code&gt;mwtl.printing_gui</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="ole-drag-drop" data-category="Desktop workflows" data-search="ole-drag-drop desktop workflows ole drag and drop transfer unicode text transfer file lists custom clipboard format mwtl::oledataobjectbuilder mwtl::createoledropsource mwtl::createoledroptarget mwtl::oledroptargetregistration mwtl::dooledragdrop mwtl/ole_data.h mwtl/ole_drag_drop.h">
+              <span class="capability-kind">Desktop workflows</span><h3>OLE Drag and Drop</h3>
+              <p>OLE drag and drop; transfer Unicode text; transfer file lists; custom clipboard format.</p><div class="capability-symbols"><code>mwtl::OleDataObjectBuilder</code> <code>mwtl::CreateOleDropSource</code> <code>mwtl::CreateOleDropTarget</code> <code>mwtl::OleDropTargetRegistration</code> <code>mwtl::DoOleDragDrop</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/ole_data.h&gt;</code> <code>&lt;mwtl/ole_drag_drop.h&gt;</code></div><nav aria-label="OLE Drag and Drop resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/ole_drag_drop/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/printing-ole-shell.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> request the ole component and link mwtl::ole; run with ComApartment::ole_sta; STGMEDIUM ownership follows COM transfer rules.</p>
+                <p><strong>Tests:</strong> <code>mwtl.ole_data&lt;/code&gt;, &lt;code&gt;mwtl.ole_drag_drop&lt;/code&gt;, &lt;code&gt;mwtl.ole_drag_drop_gui&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="shell-integration" data-category="Desktop workflows" data-search="shell-integration desktop workflows versioned settings file association jump list recent documents taskbar progress mwtl::versionedsettingsstore mwtl::registerperuserfileassociation mwtl::commitjumplist mwtl::taskbarwindowintegration mwtl/settings_store.h mwtl/file_association.h mwtl/shell_integration.h">
+              <span class="capability-kind">Desktop workflows</span><h3>Shell Integration</h3>
+              <p>versioned settings; file association; Jump List; recent documents; taskbar progress.</p><div class="capability-symbols"><code>mwtl::VersionedSettingsStore</code> <code>mwtl::RegisterPerUserFileAssociation</code> <code>mwtl::CommitJumpList</code> <code>mwtl::TaskbarWindowIntegration</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/settings_store.h&gt;</code> <code>&lt;mwtl/file_association.h&gt;</code> <code>&lt;mwtl/shell_integration.h&gt;</code></div><nav aria-label="Shell Integration resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/shell_integration/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/printing-ole-shell.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> request the shell component and link mwtl::shell; persistent mutations are explicit per-user and reversible; owner markers prevent removal of foreign registry state.</p>
+                <p><strong>Tests:</strong> <code>mwtl.settings_store&lt;/code&gt;, &lt;code&gt;mwtl.file_association&lt;/code&gt;, &lt;code&gt;mwtl.shell_integration&lt;/code&gt;, &lt;code&gt;mwtl.shell_integration_gui</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="taskbar-help" data-category="Desktop workflows" data-search="taskbar-help desktop workflows add taskbar thumbnail buttons register taskbar tabs recover after explorer restart launch contextual help safely mwtl::taskbarwindowintegration mwtl::taskbarthumbnailbutton mwtl::helprequest mwtl::validatehelprequest mwtl::launchhelp mwtl/shell_integration.h mwtl/help.h">
+              <span class="capability-kind">Desktop workflows</span><h3>Taskbar and Help</h3>
+              <p>add taskbar thumbnail buttons; register taskbar tabs; recover after Explorer restart; launch contextual Help safely.</p><div class="capability-symbols"><code>mwtl::TaskbarWindowIntegration</code> <code>mwtl::TaskbarThumbnailButton</code> <code>mwtl::HelpRequest</code> <code>mwtl::ValidateHelpRequest</code> <code>mwtl::LaunchHelp</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/shell_integration.h&gt;</code> <code>&lt;mwtl/help.h&gt;</code></div><nav aria-label="Taskbar and Help resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/shell_integration/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/graphics-help.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> request the shell component and link mwtl::shell; taskbar calls stay on the creating STA UI thread; reapply application-owned state after TaskbarCreated.</p>
+                <p><strong>Tests:</strong> <code>mwtl.shell_integration&lt;/code&gt;, &lt;code&gt;mwtl.help&lt;/code&gt;, &lt;code&gt;mwtl.shell_integration_gui&lt;/code&gt;, &lt;code&gt;mwtl.integration_stress</code></p>
+              </details>
+            </article>
+          </div>
+        </section>
+        <section class="capability-group" data-capability-group="Optional workspaces">
+          <h2>Optional workspaces</h2>
+          <div class="capability-grid">
+            <article class="capability-card" data-capability-id="webview2-browser" data-category="Optional workspaces" data-search="webview2-browser optional workspaces host web content build a browser detect missing webview2 runtime recover a webview2 process mwtl::webview2host mwtl::webview2runtimeinfo mwtl::webview2initializationresult mwtl::webview2hostcallbacks mwtl/webview2.h">
+              <span class="capability-kind">Optional workspaces</span><h3>WebView2 Browser</h3>
+              <p>host web content; build a browser; detect missing WebView2 Runtime; recover a WebView2 process.</p><div class="capability-symbols"><code>mwtl::WebView2Host</code> <code>mwtl::WebView2RuntimeInfo</code> <code>mwtl::WebView2InitializationResult</code> <code>mwtl::WebView2HostCallbacks</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/webview2.h&gt;</code></div><nav aria-label="WebView2 Browser resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/browser/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/browser.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> enable MWTL_BUILD_WEBVIEW2 and link mwtl::webview2; SDK 1.0.4129.50 is hash-pinned; operations and callbacks stay on the creating STA thread.</p>
+                <p><strong>Tests:</strong> <code>mwtl.webview2_model&lt;/code&gt;, &lt;code&gt;mwtl.webview2_native&lt;/code&gt;, &lt;code&gt;mwtl.browser_gui&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="scintilla-code-editor" data-category="Optional workspaces" data-search="scintilla-code-editor optional workspaces build a source editor host scintilla handle editor notifications search and replace code mwtl::scintillaruntime mwtl::scintillaeditor mwtl::scintillanotification mwtl::scintillatextrange mwtl/scintilla.h">
+              <span class="capability-kind">Optional workspaces</span><h3>Scintilla Code Editor</h3>
+              <p>build a source editor; host Scintilla; handle editor notifications; search and replace code.</p><div class="capability-symbols"><code>mwtl::ScintillaRuntime</code> <code>mwtl::ScintillaEditor</code> <code>mwtl::ScintillaNotification</code> <code>mwtl::ScintillaTextRange</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/scintilla.h&gt;</code></div><nav aria-label="Scintilla Code Editor resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/code_editor/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/code-editor.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> enable MWTL_BUILD_SCINTILLA link mwtl::scintilla and deploy Scintilla.dll; Scintilla 5.6.5 archives are hash-pinned; public strings convert strictly between UTF-16 and UTF-8.</p>
+                <p><strong>Tests:</strong> <code>mwtl.scintilla_text&lt;/code&gt;, &lt;code&gt;mwtl.scintilla_native&lt;/code&gt;, &lt;code&gt;mwtl.code_editor_gui&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="docking-workspace" data-category="Optional workspaces" data-search="docking-workspace optional workspaces build an ide workspace dock and float tool panels auto-hide panels save and restore a docking layout mwtl::docklayoutmodel mwtl::docknativeworkspaceadapter mwtl::dockdragsession mwtl::dockpreviewwindow mwtl::dockkeyboardsession mwtl::dockfloatingwindow mwtl::dockautohidecontroller mwtl::savedockingsessionatomic mwtl/docking_workspace.h mwtl/docking_native.h mwtl/docking_drag.h mwtl/docking_preview.h mwtl/docking_keyboard.h mwtl/docking_floating.h mwtl/docking_auto_hide.h mwtl/docking_session.h">
+              <span class="capability-kind">Optional workspaces</span><h3>Docking Workspace</h3>
+              <p>build an IDE workspace; dock and float tool panels; auto-hide panels; save and restore a docking layout.</p><div class="capability-symbols"><code>mwtl::DockLayoutModel</code> <code>mwtl::DockNativeWorkspaceAdapter</code> <code>mwtl::DockDragSession</code> <code>mwtl::DockPreviewWindow</code> <code>mwtl::DockKeyboardSession</code> <code>mwtl::DockFloatingWindow</code> <code>mwtl::DockAutoHideController</code> <code>mwtl::SaveDockingSessionAtomic</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/docking_workspace.h&gt;</code> <code>&lt;mwtl/docking_native.h&gt;</code> <code>&lt;mwtl/docking_drag.h&gt;</code> <code>&lt;mwtl/docking_preview.h&gt;</code> <code>&lt;mwtl/docking_keyboard.h&gt;</code> <code>&lt;mwtl/docking_floating.h&gt;</code> <code>&lt;mwtl/docking_auto_hide.h&gt;</code> <code>&lt;mwtl/docking_session.h&gt;</code></div><nav aria-label="Docking Workspace resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/docking_workspace/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/docking-workspace.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> Windows 10+ and C++20; stable IDs are nonzero and never derived from HWNDs or pointers; the model owns metadata while applications own panel content and HWNDs.</p>
+                <p><strong>Tests:</strong> <code>mwtl.docking_workspace&lt;/code&gt;, &lt;code&gt;mwtl.docking_session&lt;/code&gt;, &lt;code&gt;mwtl.docking_monitor&lt;/code&gt;, &lt;code&gt;mwtl.docking_drag</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="windows-ribbon" data-category="Optional workspaces" data-search="windows-ribbon optional workspaces build a windows ribbon application map ribbon commands use application modes show contextual ribbon state mwtl::ribboncommandmodel mwtl::ribbonframeworkhost mwtl::ribboncommandbinding mwtl::ribbonrecentitem mwtl/ribbon.h">
+              <span class="capability-kind">Optional workspaces</span><h3>Windows Ribbon</h3>
+              <p>build a Windows Ribbon application; map Ribbon commands; use application modes; show contextual Ribbon state.</p><div class="capability-symbols"><code>mwtl::RibbonCommandModel</code> <code>mwtl::RibbonFrameworkHost</code> <code>mwtl::RibbonCommandBinding</code> <code>mwtl::RibbonRecentItem</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/ribbon.h&gt;</code></div><nav aria-label="Windows Ribbon resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/ribbon_workspace/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/ribbon.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> request the ribbon component and link mwtl::ribbon; compile UICC resources into the executable; initialize STA on the creating UI thread.</p>
+                <p><strong>Tests:</strong> <code>mwtl.ribbon_model&lt;/code&gt;, &lt;code&gt;mwtl.ribbon_native&lt;/code&gt;, &lt;code&gt;mwtl.ribbon_workspace_gui&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="legacy-mdi" data-category="Optional workspaces" data-search="legacy-mdi optional workspaces build a traditional mdi application route an active mdi child arrange mdi children close dirty mdi documents mwtl::mdiworkspacemodel mwtl::mdihost mwtl::mdichildid mwtl::routemdiactivechild mwtl/mdi.h">
+              <span class="capability-kind">Optional workspaces</span><h3>Legacy MDI</h3>
+              <p>build a traditional MDI application; route an active MDI child; arrange MDI children; close dirty MDI documents.</p><div class="capability-symbols"><code>mwtl::MdiWorkspaceModel</code> <code>mwtl::MdiHost</code> <code>mwtl::MdiChildId</code> <code>mwtl::RouteMdiActiveChild</code></div>
+              <div class="capability-headers"><code>&lt;mwtl/mdi.h&gt;</code></div><nav aria-label="Legacy MDI resources">
+                <a href="https://github.com/everettjf/mwtl/blob/main/examples/mdi_workspace/main.cpp">Example</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/mdi.md">Guide</a>
+                <a href="https://github.com/everettjf/mwtl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> prefer DocumentWorkspaceModel for new products; request the mdi component and link mwtl::mdi; application documents and views remain application owned.</p>
+                <p><strong>Tests:</strong> <code>mwtl.mdi_model&lt;/code&gt;, &lt;code&gt;mwtl.mdi_native&lt;/code&gt;, &lt;code&gt;mwtl.mdi_workspace_gui&lt;/code&gt;, &lt;code&gt;mwtl.package_consumer</code></p>
+              </details>
+            </article>
+          </div>
+        </section>
+
+    </div>
+    <section id="cmake-components" class="catalog-reference"><div><div class="eyebrow">CMake composition</div><h2>Link only what the application uses.</h2><p>The core target stays small. Rendering, imaging, printing, OLE, Shell, Ribbon, MDI, graphics, WebView2, and Scintilla remain explicit components.</p></div><pre data-title="CMakeLists.txt"><code>find_package(mwtl CONFIG REQUIRED COMPONENTS printing ole shell)
+target_link_libraries(my_app PRIVATE
+  mwtl::mwtl
+  mwtl::printing
+  mwtl::ole
+  mwtl::shell)</code></pre></section>
+    <section id="usage-library" class="usage-library"><div class="eyebrow">All usage paths</div><h2>From first window to native integration.</h2><p>These lists are generated from every checked-in recipe and tutorial, so specialized workflows remain discoverable even when one capability card links a broader guide.</p><div class="usage-columns">
+          <section><h3>Recipes</h3><ul class="usage-list">
+            <li data-usage-path="docs/recipes/add-control-wrapper.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/add-control-wrapper.md">Add Control Wrapper</a></li>
+            <li data-usage-path="docs/recipes/background-work.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/background-work.md">Background Work</a></li>
+            <li data-usage-path="docs/recipes/commands-menu-toolbar.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/commands-menu-toolbar.md">Commands Menu Toolbar</a></li>
+            <li data-usage-path="docs/recipes/create-window.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/create-window.md">Create Window</a></li>
+            <li data-usage-path="docs/recipes/custom-dialog.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/custom-dialog.md">Custom Dialog</a></li>
+            <li data-usage-path="docs/recipes/direct2d-drawing.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/direct2d-drawing.md">Direct2D Drawing</a></li>
+            <li data-usage-path="docs/recipes/direct3d-swap-chain.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/direct3d-swap-chain.md">Direct3D Swap Chain</a></li>
+            <li data-usage-path="docs/recipes/docking-workspace.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/docking-workspace.md">Docking Workspace</a></li>
+            <li data-usage-path="docs/recipes/dpi-and-appearance.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/dpi-and-appearance.md">DPI and Appearance</a></li>
+            <li data-usage-path="docs/recipes/file-dialogs.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/file-dialogs.md">File Dialogs</a></li>
+            <li data-usage-path="docs/recipes/form-validation.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/form-validation.md">Form Validation</a></li>
+            <li data-usage-path="docs/recipes/graphics-help.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/graphics-help.md">Graphics Help</a></li>
+            <li data-usage-path="docs/recipes/jump-list-task.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/jump-list-task.md">Jump List Task</a></li>
+            <li data-usage-path="docs/recipes/mdi.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/mdi.md">MDI</a></li>
+            <li data-usage-path="docs/recipes/multi-document-workspace.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/multi-document-workspace.md">Multi Document Workspace</a></li>
+            <li data-usage-path="docs/recipes/native-host.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/native-host.md">Native Host</a></li>
+            <li data-usage-path="docs/recipes/native-message-interop.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/native-message-interop.md">Native Message Interop</a></li>
+            <li data-usage-path="docs/recipes/notepad-command-setting.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/notepad-command-setting.md">Notepad Command Setting</a></li>
+            <li data-usage-path="docs/recipes/ole-custom-format.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/ole-custom-format.md">OLE Custom Format</a></li>
+            <li data-usage-path="docs/recipes/ole-drop-target.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/ole-drop-target.md">OLE Drop Target</a></li>
+            <li data-usage-path="docs/recipes/printed-page.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/printed-page.md">Printed Page</a></li>
+            <li data-usage-path="docs/recipes/print-preview-pagination.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/print-preview-pagination.md">Print Preview Pagination</a></li>
+            <li data-usage-path="docs/recipes/property-page.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/property-page.md">Property Page</a></li>
+            <li data-usage-path="docs/recipes/public-api-change.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/public-api-change.md">Public API Change</a></li>
+            <li data-usage-path="docs/recipes/responsive-layout.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/responsive-layout.md">Responsive Layout</a></li>
+            <li data-usage-path="docs/recipes/reversible-file-association.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/reversible-file-association.md">Reversible File Association</a></li>
+            <li data-usage-path="docs/recipes/ribbon.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/ribbon.md">Ribbon</a></li>
+            <li data-usage-path="docs/recipes/scintilla-notification.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/scintilla-notification.md">Scintilla Notification</a></li>
+            <li data-usage-path="docs/recipes/split-pane.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/split-pane.md">Split Pane</a></li>
+            <li data-usage-path="docs/recipes/taskbar-progress.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/taskbar-progress.md">Taskbar Progress</a></li>
+            <li data-usage-path="docs/recipes/tray-icon.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/tray-icon.md">Tray Icon</a></li>
+            <li data-usage-path="docs/recipes/typed-setting.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/typed-setting.md">Typed Setting</a></li>
+            <li data-usage-path="docs/recipes/webview2-navigation.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/webview2-navigation.md">WebView2 Navigation</a></li>
+            <li data-usage-path="docs/recipes/window-placement.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/recipes/window-placement.md">Window Placement</a></li>
+          </ul></section>
+          <section><h3>Tutorials</h3><ul class="usage-list">
+            <li data-usage-path="docs/tutorials/browser.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/browser.md">Browser</a></li>
+            <li data-usage-path="docs/tutorials/code-editor.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/code-editor.md">Code Editor</a></li>
+            <li data-usage-path="docs/tutorials/docking-workspace.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/docking-workspace.md">Docking Workspace</a></li>
+            <li data-usage-path="docs/tutorials/document-workspace.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/document-workspace.md">Document Workspace</a></li>
+            <li data-usage-path="docs/tutorials/explorer-application.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/explorer-application.md">Explorer Application</a></li>
+            <li data-usage-path="docs/tutorials/graphics-help.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/graphics-help.md">Graphics Help</a></li>
+            <li data-usage-path="docs/tutorials/image-viewer.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/image-viewer.md">Image Viewer</a></li>
+            <li data-usage-path="docs/tutorials/mdi.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/mdi.md">MDI</a></li>
+            <li data-usage-path="docs/tutorials/notepad.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/notepad.md">Notepad</a></li>
+            <li data-usage-path="docs/tutorials/printing-ole-shell.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/printing-ole-shell.md">Printing OLE Shell</a></li>
+            <li data-usage-path="docs/tutorials/ribbon.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/ribbon.md">Ribbon</a></li>
+            <li data-usage-path="docs/tutorials/settings-application.md"><a href="https://github.com/everettjf/mwtl/blob/main/docs/tutorials/settings-application.md">Settings Application</a></li>
+          </ul></section>
+
+      </div></section>
+    <section class="catalog-next"><div><div class="eyebrow">Next coverage phase</div><h2>Finish the remaining Win32++ convenience surfaces with modern C++20 contracts.</h2></div><p><a class="button primary" href="https://github.com/everettjf/mwtl/blob/main/docs/modern-win32xx-coverage-plan.md">Read the implementation plan</a></p></section>
+  </main>
+  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Thin Layer Â· MIT licensed Â· Windows 10+ Â· x64</span><nav aria-label="Footer"><a href="../building.html">Build</a><a href="https://github.com/everettjf/mwtl">Source</a></nav></div></footer>
+</body>
+</html>

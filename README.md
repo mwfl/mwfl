@@ -181,6 +181,9 @@ or deploy either dependency.
 
 The [component reference](https://everettjf.github.io/mwtl/components/) shows
 every control with current code, a native screenshot, and its runnable example.
+The [complete capability catalog](https://everettjf.github.io/mwtl/components/catalog.html)
+maps every public workflow to exact symbols, headers, examples, guides,
+contracts, and tests.
 Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
@@ -293,6 +296,7 @@ For controlled environments, see the
 
 - [Win32++ capability parity roadmap](docs/win32xx-parity-roadmap.md)
 - [Audited Win32++ scenario comparison](docs/win32xx-comparison.md)
+- [Modern Win32++ coverage plan](docs/modern-win32xx-coverage-plan.md)
 - [IDE-style docking workspace tutorial](docs/tutorials/docking-workspace.md)
 
 - [Using mwtl with coding agents](docs/agent-usage.md)

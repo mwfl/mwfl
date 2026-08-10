@@ -127,6 +127,45 @@
     code.replaceChildren(fragment);
   });
 
+  /* ---------- Complete component catalog ---------- */
+  const catalogSearch = document.querySelector("#component-search");
+  if (catalogSearch) {
+    const cards = [...document.querySelectorAll(".capability-card")];
+    const groups = [...document.querySelectorAll(".capability-group")];
+    const filters = [...document.querySelectorAll("[data-catalog-filter]")];
+    const result = document.querySelector(".catalog-result");
+    let category = "all";
+
+    const applyCatalogFilter = () => {
+      const query = catalogSearch.value.trim().toLocaleLowerCase();
+      let visible = 0;
+      cards.forEach((card) => {
+        const categoryMatch = category === "all" || card.dataset.category === category;
+        const queryMatch = !query || card.dataset.search.includes(query);
+        card.hidden = !(categoryMatch && queryMatch);
+        if (!card.hidden) visible += 1;
+      });
+      groups.forEach((group) => {
+        group.hidden = !group.querySelector(".capability-card:not([hidden])");
+      });
+      result.textContent = `Showing ${visible} ${visible === 1 ? "capability" : "capabilities"}.`;
+    };
+
+    catalogSearch.addEventListener("input", applyCatalogFilter);
+    filters.forEach((button) => {
+      button.addEventListener("click", () => {
+        category = button.dataset.catalogFilter;
+        filters.forEach((candidate) => {
+          const selected = candidate === button;
+          candidate.classList.toggle("active", selected);
+          candidate.setAttribute("aria-pressed", String(selected));
+        });
+        applyCatalogFilter();
+      });
+      button.setAttribute("aria-pressed", String(button.classList.contains("active")));
+    });
+  }
+
   /* ---------- Example image viewer ---------- */
   const exampleCards = document.querySelectorAll(".example-card");
   if (exampleCards.length) {
