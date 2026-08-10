@@ -135,11 +135,21 @@ if(MWTL_UICC_EXECUTABLE)
     target_compile_options(mwtl_ribbon_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
     target_link_libraries(mwtl_ribbon_native_test PRIVATE mwtl::ribbon)
     add_test(NAME mwtl.ribbon_native COMMAND mwtl_ribbon_native_test)
-    set_tests_properties(mwtl.ribbon_native PROPERTIES
+set_tests_properties(mwtl.ribbon_native PROPERTIES
         ENVIRONMENT "MWTL_TEST_NO_DIALOGS=1"
         TIMEOUT 30 LABELS "native;integration")
 else()
     message(WARNING "uicc.exe not found; Ribbon native integration test is unavailable")
+endif()
+
+if(TARGET mwtl_ribbon_workspace)
+    add_test(NAME mwtl.ribbon_workspace_gui
+        COMMAND "${CMAKE_COMMAND}"
+            "-DRIBBON_EXE=$<TARGET_FILE:mwtl_ribbon_workspace>"
+            "-DRESULT_FILE=${CMAKE_CURRENT_BINARY_DIR}/ribbon-workspace-$<CONFIG>.result"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/run_ribbon_workspace_gui.cmake")
+    set_tests_properties(mwtl.ribbon_workspace_gui PROPERTIES
+        ENVIRONMENT "MWTL_TEST_NO_DIALOGS=1" TIMEOUT 30 LABELS "gui;integration")
 endif()
 
 add_library(mwtl_header_command OBJECT header_command.cpp)

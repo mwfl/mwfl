@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns="http://schemas.microsoft.com/windows/2009/Ribbon">
+  <Application.Commands>
+    <Command Name="cmdApplication" Id="1000" LabelTitle="File" />
+    <Command Name="cmdQuickAccess" Id="1003" LabelTitle="Quick Access" />
+    <Command Name="cmdTab" Id="1001" LabelTitle="Workspace" />
+    <Command Name="cmdGroup" Id="1002" LabelTitle="State" />
+    <Command Name="cmdMode" Id="1010" LabelTitle="Switch mode" Keytip="M" />
+    <Command Name="cmdContext" Id="1020" LabelTitle="Toggle context" Keytip="C" />
+    <Command Name="cmdRecent" Id="1030" LabelTitle="Add recent item" Keytip="R" />
+  </Application.Commands>
+  <Application.Views>
+    <Ribbon>
+      <Ribbon.QuickAccessToolbar>
+        <QuickAccessToolbar CommandName="cmdQuickAccess">
+          <QuickAccessToolbar.ApplicationDefaults>
+            <Button CommandName="cmdMode" />
+          </QuickAccessToolbar.ApplicationDefaults>
+        </QuickAccessToolbar>
+      </Ribbon.QuickAccessToolbar>
+      <Ribbon.ApplicationMenu>
+        <ApplicationMenu CommandName="cmdApplication">
+          <MenuGroup>
+            <Button CommandName="cmdRecent" />
+          </MenuGroup>
+        </ApplicationMenu>
+      </Ribbon.ApplicationMenu>
+      <Ribbon.Tabs>
+        <Tab CommandName="cmdTab">
+          <Group CommandName="cmdGroup" SizeDefinition="ThreeButtons" ApplicationModes="0,1">
+            <Button CommandName="cmdMode" />
+            <Button CommandName="cmdContext" />
+            <Button CommandName="cmdRecent" />
+          </Group>
+        </Tab>
+      </Ribbon.Tabs>
+    </Ribbon>
+  </Application.Views>
+</Application>
