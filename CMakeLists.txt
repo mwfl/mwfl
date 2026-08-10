@@ -77,6 +77,7 @@ add_library(mwtl STATIC
     src/dialog.cpp
     src/docking_auto_hide.cpp
     src/docking_drag.cpp
+    src/docking_keyboard.cpp
     src/docking_monitor.cpp
     src/docking_native.cpp
     src/docking_preview.cpp

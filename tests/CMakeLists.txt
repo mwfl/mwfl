@@ -283,6 +283,11 @@ target_compile_features(mwtl_header_docking_auto_hide PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_docking_auto_hide PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwtl_header_docking_auto_hide PRIVATE mwtl::mwtl)
 
+add_library(mwtl_header_docking_keyboard OBJECT header_docking_keyboard.cpp)
+target_compile_features(mwtl_header_docking_keyboard PRIVATE cxx_std_20)
+target_compile_options(mwtl_header_docking_keyboard PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_header_docking_keyboard PRIVATE mwtl::mwtl)
+
 add_library(mwtl_header_docking_preview OBJECT header_docking_preview.cpp)
 target_compile_features(mwtl_header_docking_preview PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_docking_preview PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -341,6 +346,13 @@ target_compile_options(mwtl_docking_auto_hide_test PRIVATE /W4 /permissive- /EHs
 target_link_libraries(mwtl_docking_auto_hide_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.docking_auto_hide COMMAND mwtl_docking_auto_hide_test)
 set_tests_properties(mwtl.docking_auto_hide PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+add_executable(mwtl_docking_keyboard_test docking_keyboard_test.cpp)
+target_compile_features(mwtl_docking_keyboard_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_docking_keyboard_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_docking_keyboard_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.docking_keyboard COMMAND mwtl_docking_keyboard_test)
+set_tests_properties(mwtl.docking_keyboard PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
 add_library(mwtl_header_document_workspace OBJECT header_document_workspace.cpp)
 target_compile_features(mwtl_header_document_workspace PRIVATE cxx_std_20)
