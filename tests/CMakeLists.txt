@@ -366,6 +366,13 @@ target_link_libraries(mwtl_docking_floating_native_test PRIVATE mwtl::mwtl)
 add_test(NAME mwtl.docking_floating_native COMMAND mwtl_docking_floating_native_test)
 set_tests_properties(mwtl.docking_floating_native PROPERTIES TIMEOUT 20 LABELS "native;unit")
 
+add_executable(mwtl_docking_stress_native_test docking_stress_native_test.cpp)
+target_compile_features(mwtl_docking_stress_native_test PRIVATE cxx_std_20)
+target_compile_options(mwtl_docking_stress_native_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwtl_docking_stress_native_test PRIVATE mwtl::mwtl)
+add_test(NAME mwtl.docking_stress_native COMMAND mwtl_docking_stress_native_test)
+set_tests_properties(mwtl.docking_stress_native PROPERTIES TIMEOUT 30 LABELS "native;lifecycle")
+
 add_library(mwtl_header_document_workspace OBJECT header_document_workspace.cpp)
 target_compile_features(mwtl_header_document_workspace PRIVATE cxx_std_20)
 target_compile_options(mwtl_header_document_workspace PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -1056,7 +1063,8 @@ endif()
 get_property(mwtl_all_tests DIRECTORY PROPERTY TESTS)
 foreach(test_name IN LISTS mwtl_all_tests)
     if(test_name MATCHES "^mwtl\\.(lifecycle|advanced\\.)" OR
-       test_name STREQUAL "mwtl.integration_stress")
+       test_name STREQUAL "mwtl.integration_stress" OR
+       test_name STREQUAL "mwtl.docking_stress_native")
         set(labels "lifecycle;fast")
     elseif(test_name STREQUAL "mwtl.webview2_native")
         set(labels "integration;native")

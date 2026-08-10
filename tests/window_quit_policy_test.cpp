@@ -29,13 +29,23 @@ public:
         auxiliary_->ConfigureWindowOptions(options);
         RECT bounds{50, 50, 250, 200};
         if (!auxiliary_->Create(nullptr, bounds, L"Auxiliary",
-                                WS_OVERLAPPEDWINDOW, 0))
-            throw std::runtime_error("create auxiliary window failed");
-        if (!::DestroyWindow(auxiliary_->GetHwnd()))
-            throw std::runtime_error("destroy auxiliary window failed");
+                                WS_OVERLAPPEDWINDOW, 0)) {
+            ::PostQuitMessage(11);
+            return mwtl::EventResult::Handled();
+        }
         MSG queued_message{};
-        if (::PeekMessageW(&queued_message, nullptr, WM_QUIT, WM_QUIT, PM_REMOVE))
-            throw std::runtime_error("auxiliary window posted WM_QUIT");
+        if (::PeekMessageW(&queued_message, nullptr, WM_QUIT, WM_QUIT, PM_REMOVE)) {
+            ::PostQuitMessage(14);
+            return mwtl::EventResult::Handled();
+        }
+        if (!::DestroyWindow(auxiliary_->GetHwnd())) {
+            ::PostQuitMessage(12);
+            return mwtl::EventResult::Handled();
+        }
+        if (::PeekMessageW(&queued_message, nullptr, WM_QUIT, WM_QUIT, PM_REMOVE)) {
+            ::PostQuitMessage(13);
+            return mwtl::EventResult::Handled();
+        }
         ::PostQuitMessage(0);
         return mwtl::EventResult::Handled();
     }

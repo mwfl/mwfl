@@ -8,7 +8,11 @@ file(SIZE "${LIBRARY}" library_bytes)
 # of independently measured object code. ARM64 Debug COFF archives are larger
 # than x64 archives even for the same source; enforce a measured ceiling for
 # each architecture instead of making the x64 budget absorb ABI padding.
-set(library_limit 18874368) # 18 MiB; session+restore measure 17.17 MiB on VS2026 x64.
+# 0.7 adds nine docking model/native/persistence units. Their independently
+# measured VS2026 x64 Debug COFF objects total 6,131,009 bytes; the complete
+# archive is 25,233,412 bytes (Release is 8,936,512 bytes). Keep less than 8%
+# Debug headroom instead of hiding this deliberate core capability increase.
+set(library_limit 27262976) # 26 MiB; 0.7 measures 24.06 MiB on VS2026 x64.
 if(MWTL_ARCHITECTURE STREQUAL "ARM64")
     set(library_limit 17825792) # 17 MiB; ARM64 is remeasured in the post-0.8 matrix pass.
 endif()
@@ -47,9 +51,11 @@ foreach(header IN LISTS public_headers)
         math(EXPR core_header_bytes "${core_header_bytes} + ${header_bytes}")
     endif()
 endforeach()
-if(core_header_bytes GREATER 172032)
+# The nine focused 0.7 docking headers total 23,136 bytes. Keep the aggregate
+# ceiling close to the measured 190,071-byte public core surface.
+if(core_header_bytes GREATER 204800)
     message(FATAL_ERROR
-        "core top-level public headers exceeded 168 KiB: ${core_header_bytes}")
+        "core top-level public headers exceeded 200 KiB: ${core_header_bytes}")
 endif()
 if(optional_header_bytes GREATER 65536)
     message(FATAL_ERROR

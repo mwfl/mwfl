@@ -167,6 +167,13 @@ public:
         LPARAM lparam,
         LRESULT& result,
         DWORD message_map_id = 0) override {
+        // CFrameWindowImpl's inherited WM_DESTROY handler unconditionally posts
+        // WM_QUIT for ordinary top-level windows. SafeWindowProc applies the
+        // explicit per-instance quit policy after base dispatch instead.
+        if (message_map_id == 0 && message == WM_DESTROY) {
+            result = 0;
+            return TRUE;
+        }
         if (message_map_id == 0 &&
             DispatchModernMessage(message, wparam, lparam, result)) {
             return TRUE;

@@ -338,7 +338,7 @@
       "headers": ["mwtl/docking_workspace.h", "mwtl/docking_native.h", "mwtl/docking_drag.h", "mwtl/docking_preview.h", "mwtl/docking_keyboard.h", "mwtl/docking_floating.h", "mwtl/docking_auto_hide.h", "mwtl/docking_session.h"],
       "example": "examples/docking_workspace/main.cpp",
       "recipe": "docs/tutorials/docking-workspace.md",
-      "tests": ["mwtl.docking_workspace", "mwtl.docking_session", "mwtl.docking_monitor", "mwtl.docking_drag", "mwtl.docking_preview_native", "mwtl.docking_native", "mwtl.docking_auto_hide", "mwtl.docking_keyboard", "mwtl.docking_floating_native", "mwtl.docking_workspace_gui", "mwtl.package_consumer"],
+      "tests": ["mwtl.docking_workspace", "mwtl.docking_session", "mwtl.docking_monitor", "mwtl.docking_drag", "mwtl.docking_preview_native", "mwtl.docking_native", "mwtl.docking_auto_hide", "mwtl.docking_keyboard", "mwtl.docking_floating_native", "mwtl.docking_stress_native", "mwtl.docking_workspace_gui", "mwtl.package_consumer"],
       "constraints": ["Windows 10+ and C++20", "stable IDs are nonzero and never derived from HWNDs or pointers", "the model owns metadata while applications own panel content and HWNDs", "all native operations use the creating UI thread", "propose before native adoption and commit only after adoption succeeds", "cancel drag on Escape capture loss destruction or failure", "persistence is versioned bounded pointer-free and atomically replaced", "recover floating DIPs against current monitor work areas", "detach native adapters before application HWND teardown"]
     }
   ]
