@@ -35,7 +35,7 @@ hiding native handles, messages, styles, or return values.
   <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/mwfl-showcase-40s.gif" alt="MWFL applications running with populated native controls"></a>
 </p>
 
-**v0.1.0 is the first public preview.** The repository contains **45 compiled
+**v0.1.0 is the first public preview.** The repository contains **47 compiled
 examples**. The downloadable release packages are VS2026/MSVC x64; source and
 CI cover x64 and ARM64. WebView2, Scintilla, graphics, imaging, printing, OLE,
 Shell, Ribbon, and MDI integrations remain separately requested optional
@@ -175,13 +175,13 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
 
-The repository contains 45 independently buildable programs. Each link opens
+The repository contains 47 independently buildable programs. Each link opens
 the complete source. Start with **Hello** for the smallest application,
 **Controls** for the basic widget set, or **Hot corners** for a complete
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 45 runnable examples</strong></summary>
+<summary><strong>Browse all 47 runnable examples</strong></summary>
 
 <br>
 
@@ -219,6 +219,8 @@ multi-monitor utility.
 | Layout gallery | [examples/layout_gallery/main.cpp](examples/layout_gallery/main.cpp) | Responsive nested row, column, overlay, and sizing recipes |
 | Settings | [examples/property_sheet/main.cpp](examples/property_sheet/main.cpp) | Persistent property pages with validation and Apply/OK/Cancel |
 | Explorer | [examples/explorer/main.cpp](examples/explorer/main.cpp) | Rebar, commands, stable navigation, virtual data, tabs, and splitter |
+| SQLite Viewer | [examples/sqlite_viewer/main.cpp](examples/sqlite_viewer/main.cpp) | Read-only schema browser, SQL workspace, bounded results, and CSV export using Windows SQLite |
+| Compare | [examples/compare_tool/main.cpp](examples/compare_tool/main.cpp) | Local file/folder comparison, exact validation, text diff, cancellation, and verified copy |
 | Drawing | [examples/drawing/main.cpp](examples/drawing/main.cpp) | Optional Direct2D host, DPI-aware input, device recovery, and SVG export |
 | Image Viewer | [examples/image_viewer/main.cpp](examples/image_viewer/main.cpp) | WIC decode, color metadata, Fit/zoom/pan, and recoverable D2D pixels |
 | Code Editor | [examples/code_editor/main.cpp](examples/code_editor/main.cpp) | Optional pinned Scintilla, Unicode files, search/replace, and notifications |

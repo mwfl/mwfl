@@ -1,6 +1,6 @@
 # mwfl examples
 
-The repository includes 45 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwfl::Application` and recommended `mwfl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, PDF Viewer, Markdown Editor, document/MDI/Ribbon workspaces, graphics interop, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence.
+The repository includes 47 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwfl::Application` and recommended `mwfl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, SQLite Viewer, Compare, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, PDF Viewer, Markdown Editor, document/MDI/Ribbon workspaces, graphics interop, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence.
 
 | Directory | Target | Focus |
 |---|---|---|
@@ -39,6 +39,8 @@ The repository includes 45 focused executables. Each example is intentionally sm
 | `layout_gallery` | `mwfl_layout_gallery_demo` | Responsive nested rows, columns, overlays, sizing, alignment, and dynamic content |
 | `property_sheet` | `mwfl_property_sheet_demo` | Persistent multi-page Settings with validation and Apply/OK/Cancel |
 | `explorer` | `mwfl_explorer_demo` | Stable TreeView and virtual ListView in a complete Explorer-style shell |
+| `sqlite_viewer` | `mwfl_sqlite_viewer` | Read-only WinSQLite schema browser, SQL query workspace, bounded tabular results, CSV export, and file drop |
+| `compare_tool` | `mwfl_compare_tool` | Responsive local file/folder comparison with exact validation, text diff, filters, cancellation, and verified copy |
 | `drawing` | `mwfl_drawing_demo` | DPI-aware Direct2D drawing, resource recovery, and SVG export |
 | `image_viewer` | `mwfl_image_viewer_demo` | WIC image decode, Fit/zoom/pan, color policy, and D2D recovery |
 | `printing` | `mwfl_printing_demo` | Shared pagination, preview zoom/navigation, printer settings, safe printing, and Esc cancellation |
@@ -92,6 +94,8 @@ The examples remain native: every component is a real child HWND and direct Win3
 | Native look and accessibility | `appearance` | appearance and accessibility helpers | composed |
 | Persistent application settings | `property_sheet` | property pages, task dialogs, versioned state | reference app |
 | Explorer-style desktop shell | `explorer` | stable navigation, virtual data, splitter, commands | reference app |
+| Inspect a SQLite database | `sqlite_viewer` | WinSQLite, TreeView, ListView, dialogs, read-only SQL | reference app |
+| Compare files or folders | `compare_tool` | virtual ListView, WindowWakeup, filesystem, verified copy | reference app |
 | Direct2D drawing | `drawing` | application-owned strokes, resource recovery, SVG export | reference app |
 | Image viewing | `image_viewer` | bounded WIC decode, CPU pixels, zoom/pan, D2D bitmap cache | reference app |
 | Source editing | `code_editor` | Scintilla runtime, UTF-8 byte positions, save points, notifications | reference app |

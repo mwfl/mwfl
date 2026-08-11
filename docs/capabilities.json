@@ -352,6 +352,26 @@
       "constraints": ["enable both MWFL_BUILD_SCINTILLA and MWFL_BUILD_WEBVIEW2", "deploy Scintilla.dll and Lexilla.dll beside the executable", "the Lexilla Markdown lexer and light/dark palettes stay application-owned", "md4c 0.5.2 is pinned to immutable commit 729e6b8b320caa96328968ab27d7db2235e4fb47 and its MIT license ships with the component", "initialize the application STA", "disable raw HTML and restrict rendered URL schemes", "keep the preview offline and preserve editing when WebView2 is unavailable", "reject stale saves instead of overwriting external changes", "all HWND access stays on the creating UI thread"]
     },
     {
+      "id": "sqlite-viewer",
+      "intent": ["inspect a SQLite database", "browse database schema", "run read-only SQL", "export query results to CSV"],
+      "symbols": ["mwfl::TreeView", "mwfl::ListView", "mwfl::TextBox", "mwfl::CommandSet", "mwfl::ShowOpenFileDialog", "mwfl::ShowSaveFileDialog"],
+      "headers": ["mwfl/navigation_controls.h", "mwfl/controls.h", "mwfl/command.h", "mwfl/desktop.h"],
+      "example": "examples/sqlite_viewer/main.cpp",
+      "recipe": "docs/tutorials/sqlite-viewer.md",
+      "tests": ["mwfl.sqlite_viewer", "mwfl.sqlite_viewer_gui"],
+      "constraints": ["WinSQLite remains an application dependency", "open user databases read-only", "permit one sqlite3_stmt_readonly statement at a time", "bound result rows", "represent BLOBs without decoding arbitrary bytes", "keep SQLite and HWND access on the UI thread"]
+    },
+    {
+      "id": "file-folder-compare",
+      "intent": ["compare files", "compare folders", "find changed files", "show a side-by-side text diff", "copy a verified difference"],
+      "symbols": ["mwfl::VirtualListModel", "mwfl::ListView", "mwfl::WindowWakeup", "mwfl::ShowFolderDialog", "mwfl::SetAccessibleName"],
+      "headers": ["mwfl/navigation_controls.h", "mwfl/async.h", "mwfl/desktop.h", "mwfl/appearance.h"],
+      "example": "examples/compare_tool/main.cpp",
+      "recipe": "docs/tutorials/compare-tool.md",
+      "tests": ["mwfl.compare_tool", "mwfl.compare_tool_gui"],
+      "constraints": ["perform recursive scans away from the UI thread", "handoff progress and results through WindowWakeup", "do not follow symbolic links implicitly", "bound text preview memory", "copy to a sibling temporary file and verify bytes before destination replacement"]
+    },
+    {
       "id": "docking-workspace",
       "intent": ["build an IDE workspace", "dock and float tool panels", "auto-hide panels", "save and restore a docking layout"],
       "symbols": ["mwfl::DockLayoutModel", "mwfl::DockNativeWorkspaceAdapter", "mwfl::DockDragSession", "mwfl::DockPreviewWindow", "mwfl::DockKeyboardSession", "mwfl::DockFloatingWindow", "mwfl::DockAutoHideController", "mwfl::SaveDockingSessionAtomic"],

@@ -4,7 +4,7 @@
 
 Publish one clean `v0.1.0` as mwfl's first supported public preview. The old
 release and tag were removed on 2026-08-10 because they had no known users. The
-replacement release is created only after the current source, all 45 examples,
+replacement release is created only after the current source, all 47 examples,
 optional integrations, packages, documentation, and website pass the gates
 below from the same commit.
 
@@ -137,7 +137,7 @@ MSVC 19.51.36252, Windows SDK 10.0.26100, C++20, and x64:
   installed package and reliability coverage.
 - Native source coverage: 82.74% (8,697/10,511 lines), above the 74% CI floor;
   all 159 tests included in the coverage run passed.
-- Capability metadata: 43 discoverable capabilities and 45 compiled examples.
+- Capability metadata: 45 discoverable capabilities and 47 compiled examples.
 - The two environment-sensitive native tests found during the audit each pass
   five consecutive runs after their focus and process-cache assumptions were
   corrected.

@@ -19,8 +19,8 @@
     <nav class="nav-links" aria-label="Main navigation"><a class="active" href="index.html">Components</a><a href="../tutorial.html">Get started</a><a href="../changelog.html">Changelog</a><a href="https://github.com/mwfl/mwfl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
   </div></header>
   <main id="main" class="shell catalog-page">
-    <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all 43 public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
-      <div class="catalog-stats"><span><strong>43</strong> capabilities</span><span><strong>44</strong> examples</span><span><strong>34</strong> recipes</span><span><strong>14</strong> tutorials</span></div>
+    <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all 45 public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
+      <div class="catalog-stats"><span><strong>45</strong> capabilities</span><span><strong>44</strong> examples</span><span><strong>34</strong> recipes</span><span><strong>16</strong> tutorials</span></div>
     </header>
     <section class="catalog-tools" aria-label="Filter components">
       <label for="component-search">Find by task, symbol, or header</label><input id="component-search" type="search" placeholder="Try docking, PrintJob, mwfl/ribbon.h..." autocomplete="off">
@@ -30,7 +30,7 @@
         <button type="button" data-catalog-filter="Rendering and media">Rendering and media</button>
         <button type="button" data-catalog-filter="Desktop workflows">Desktop workflows</button>
         <button type="button" data-catalog-filter="Optional workspaces">Optional workspaces</button>
-      </div><p class="catalog-result" role="status" aria-live="polite">Showing all 43 capabilities.</p>
+      </div><p class="catalog-result" role="status" aria-live="polite">Showing all 45 capabilities.</p>
     </section>
     <div class="capability-groups">
         <section class="capability-group" data-capability-group="Foundation and UI">
@@ -482,6 +482,32 @@
                 <p><strong>Tests:</strong> <code>mwfl.shell_integration&lt;/code&gt;, &lt;code&gt;mwfl.help&lt;/code&gt;, &lt;code&gt;mwfl.shell_integration_gui&lt;/code&gt;, &lt;code&gt;mwfl.integration_stress</code></p>
               </details>
             </article>
+            <article class="capability-card" data-capability-id="sqlite-viewer" data-category="Desktop workflows" data-search="sqlite-viewer desktop workflows inspect a sqlite database browse database schema run read-only sql export query results to csv mwfl::treeview mwfl::listview mwfl::textbox mwfl::commandset mwfl::showopenfiledialog mwfl::showsavefiledialog mwfl/navigation_controls.h mwfl/controls.h mwfl/command.h mwfl/desktop.h">
+              <span class="capability-kind">Desktop workflows</span><h3>Sqlite Viewer</h3>
+              <p>inspect a SQLite database; browse database schema; run read-only SQL; export query results to CSV.</p><div class="capability-symbols"><code>mwfl::TreeView</code> <code>mwfl::ListView</code> <code>mwfl::TextBox</code> <code>mwfl::CommandSet</code> <code>mwfl::ShowOpenFileDialog</code> <code>mwfl::ShowSaveFileDialog</code></div>
+              <div class="capability-headers"><code>&lt;mwfl/navigation_controls.h&gt;</code> <code>&lt;mwfl/controls.h&gt;</code> <code>&lt;mwfl/command.h&gt;</code> <code>&lt;mwfl/desktop.h&gt;</code></div><nav aria-label="Sqlite Viewer resources">
+                <a href="https://github.com/mwfl/mwfl/blob/main/examples/sqlite_viewer/main.cpp">Example</a>
+                <a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/sqlite-viewer.md">Guide</a>
+                <a href="https://github.com/mwfl/mwfl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> WinSQLite remains an application dependency; open user databases read-only; permit one sqlite3_stmt_readonly statement at a time.</p>
+                <p><strong>Tests:</strong> <code>mwfl.sqlite_viewer&lt;/code&gt;, &lt;code&gt;mwfl.sqlite_viewer_gui</code></p>
+              </details>
+            </article>
+            <article class="capability-card" data-capability-id="file-folder-compare" data-category="Desktop workflows" data-search="file-folder-compare desktop workflows compare files compare folders find changed files show a side-by-side text diff copy a verified difference mwfl::virtuallistmodel mwfl::listview mwfl::windowwakeup mwfl::showfolderdialog mwfl::setaccessiblename mwfl/navigation_controls.h mwfl/async.h mwfl/desktop.h mwfl/appearance.h">
+              <span class="capability-kind">Desktop workflows</span><h3>File Folder Compare</h3>
+              <p>compare files; compare folders; find changed files; show a side-by-side text diff; copy a verified difference.</p><div class="capability-symbols"><code>mwfl::VirtualListModel</code> <code>mwfl::ListView</code> <code>mwfl::WindowWakeup</code> <code>mwfl::ShowFolderDialog</code> <code>mwfl::SetAccessibleName</code></div>
+              <div class="capability-headers"><code>&lt;mwfl/navigation_controls.h&gt;</code> <code>&lt;mwfl/async.h&gt;</code> <code>&lt;mwfl/desktop.h&gt;</code> <code>&lt;mwfl/appearance.h&gt;</code></div><nav aria-label="File Folder Compare resources">
+                <a href="https://github.com/mwfl/mwfl/blob/main/examples/compare_tool/main.cpp">Example</a>
+                <a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/compare-tool.md">Guide</a>
+                <a href="https://github.com/mwfl/mwfl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> perform recursive scans away from the UI thread; handoff progress and results through WindowWakeup; do not follow symbolic links implicitly.</p>
+                <p><strong>Tests:</strong> <code>mwfl.compare_tool&lt;/code&gt;, &lt;code&gt;mwfl.compare_tool_gui</code></p>
+              </details>
+            </article>
           </div>
         </section>
         <section class="capability-group" data-capability-group="Optional workspaces">
@@ -628,6 +654,7 @@ target_link_libraries(my_app PRIVATE
           <section><h3>Tutorials</h3><ul class="usage-list">
             <li data-usage-path="docs/tutorials/browser.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/browser.md">Browser</a></li>
             <li data-usage-path="docs/tutorials/code-editor.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/code-editor.md">Code Editor</a></li>
+            <li data-usage-path="docs/tutorials/compare-tool.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/compare-tool.md">Compare Tool</a></li>
             <li data-usage-path="docs/tutorials/docking-workspace.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/docking-workspace.md">Docking Workspace</a></li>
             <li data-usage-path="docs/tutorials/document-workspace.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/document-workspace.md">Document Workspace</a></li>
             <li data-usage-path="docs/tutorials/explorer-application.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/explorer-application.md">Explorer Application</a></li>
@@ -640,6 +667,7 @@ target_link_libraries(my_app PRIVATE
             <li data-usage-path="docs/tutorials/printing-ole-shell.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/printing-ole-shell.md">Printing OLE Shell</a></li>
             <li data-usage-path="docs/tutorials/ribbon.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/ribbon.md">Ribbon</a></li>
             <li data-usage-path="docs/tutorials/settings-application.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/settings-application.md">Settings Application</a></li>
+            <li data-usage-path="docs/tutorials/sqlite-viewer.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/sqlite-viewer.md">Sqlite Viewer</a></li>
           </ul></section>
 
       </div></section>

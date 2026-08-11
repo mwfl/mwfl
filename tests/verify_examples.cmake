@@ -131,7 +131,7 @@ endforeach()
 
 foreach(marker IN ITEMS
         "docs/images/showcase/mwfl-showcase-40s.gif"
-        "45 compiled"
+        "47 compiled"
         "public preview")
     if(NOT root_readme MATCHES "${marker}")
         message(FATAL_ERROR "README showcase is missing marker: ${marker}")
@@ -140,7 +140,7 @@ endforeach()
 foreach(marker IN ITEMS
         "docs/images/showcase/capability-collage.svg"
         "docs/images/showcase/mwfl-showcase-40s.gif"
-        "45</strong><span>compiled examples"
+        "47</strong><span>compiled examples"
         "Public-preview scope")
     if(NOT site_home MATCHES "${marker}")
         message(FATAL_ERROR "Pages showcase is missing marker: ${marker}")

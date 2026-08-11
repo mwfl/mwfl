@@ -143,7 +143,7 @@ class MarkdownEditorWindow final : public mwfl::WindowBase {
             L"    .Margin(24_dip).Gap(12_dip)\n"
             L"    .Add(editor, mwfl::Stretch()));\n"
             L"```\n\n"
-            L"**45 compiled examples** cover controls, documents, docking, Shell "
+            L"**47 compiled examples** cover controls, documents, docking, Shell "
             L"integration, graphics, WebView2, and Scintilla.\n";
         documents_.push_back({.id = active_tab_, .text = welcome});
         mwfl::Must(editor_.SetText(welcome), "set Markdown welcome document");

@@ -78,6 +78,29 @@ environment limitation.
 - With two adjacent displays, confirm corners along their shared seam are disabled and do not
   activate; only corners on the exposed outside edges should be selectable.
 - With vertically offset displays, confirm the exposed step corners at the offset remain active.
+
+## SQLite Viewer
+
+- Open a representative `.db`, `.sqlite`, or `.sqlite3` database and confirm tables,
+  views, indexes, and triggers are discoverable in the schema tree.
+- Run a `SELECT`, a read-only CTE, a query returning `NULL` and BLOB values, and a query
+  exceeding 5,000 rows. Confirm the result/status information is explicit.
+- Attempt an `INSERT` or `DELETE` and confirm it is rejected without changing the file.
+- Export CSV containing commas, quotes, Unicode, and newlines and reopen it in another tool.
+- Drop a database onto the window and repeat at 150% DPI.
+
+## Compare Tool
+
+- Compare folders containing identical, changed, left-only, right-only, empty,
+  inaccessible, symlink, Unicode, long-path, and file/folder-conflict entries.
+- Confirm timestamps alone do not classify a changed file as identical and that default
+  exclusions omit `.git`, `.vs`, build directories, object files, and PDBs.
+- Cancel a large comparison, resize during scanning, and close during scanning; the UI must
+  remain responsive and no worker callback may touch a destroyed HWND.
+- Activate a changed text file and inspect insertions, removals, modifications, CRLF/LF,
+  final-newline differences, binary handling, and the 32 MiB preview boundary.
+- Copy in each direction. Confirm the warning identifies the relative path, copied bytes
+  verify before replacement, and a failed copy leaves no destination corruption.
 - Trigger each configured corner on every attached monitor. Confirm one action
   fires per deliberate entry, no repeated firing occurs while the pointer stays
   in the corner, and re-entry works after leaving the activation area.

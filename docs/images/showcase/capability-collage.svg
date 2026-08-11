@@ -47,8 +47,8 @@
   </g>
 
   <g font-family="Segoe UI, sans-serif" font-size="17" font-weight="600">
-    <g transform="translate(70 811)"><rect width="166" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="83" y="28" text-anchor="middle" fill="#dff6ff">45 compiled examples</text></g>
-    <g transform="translate(250 811)"><rect width="132" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="66" y="28" text-anchor="middle" fill="#dff6ff">43 capabilities</text></g>
+    <g transform="translate(70 811)"><rect width="166" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="83" y="28" text-anchor="middle" fill="#dff6ff">47 compiled examples</text></g>
+    <g transform="translate(250 811)"><rect width="132" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="66" y="28" text-anchor="middle" fill="#dff6ff">45 capabilities</text></g>
     <g transform="translate(396 811)"><rect width="128" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="64" y="28" text-anchor="middle" fill="#dff6ff">Per-Monitor V2</text></g>
     <g transform="translate(538 811)"><rect width="116" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="58" y="28" text-anchor="middle" fill="#dff6ff">x64 + ARM64</text></g>
     <g transform="translate(668 811)"><rect width="136" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="68" y="28" text-anchor="middle" fill="#dff6ff">MIT licensed</text></g>

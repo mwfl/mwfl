@@ -67,7 +67,7 @@ $categoryIds = [ordered]@{
     )
     'Desktop workflows' = @(
         'tray-application', 'printing-preview', 'ole-drag-drop',
-        'shell-integration', 'taskbar-help'
+        'shell-integration', 'taskbar-help', 'sqlite-viewer', 'file-folder-compare'
     )
     'Optional workspaces' = @(
         'webview2-browser', 'pdf-viewer', 'scintilla-code-editor', 'markdown-editor', 'docking-workspace',

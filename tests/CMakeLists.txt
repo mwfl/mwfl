@@ -992,6 +992,28 @@ target_include_directories(mwfl_hot_corner_model_test PRIVATE
 add_test(NAME mwfl.hot_corner_model COMMAND mwfl_hot_corner_model_test)
 set_tests_properties(mwfl.hot_corner_model PROPERTIES TIMEOUT 20)
 
+add_executable(mwfl_sqlite_viewer_test
+    sqlite_viewer_test.cpp
+    "${PROJECT_SOURCE_DIR}/examples/sqlite_viewer/sqlite_database.cpp")
+target_compile_features(mwfl_sqlite_viewer_test PRIVATE cxx_std_20)
+target_compile_options(mwfl_sqlite_viewer_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_include_directories(mwfl_sqlite_viewer_test PRIVATE
+    "${PROJECT_SOURCE_DIR}/examples/sqlite_viewer")
+target_link_libraries(mwfl_sqlite_viewer_test PRIVATE mwfl::mwfl winsqlite3)
+add_test(NAME mwfl.sqlite_viewer COMMAND mwfl_sqlite_viewer_test)
+set_tests_properties(mwfl.sqlite_viewer PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+add_executable(mwfl_compare_tool_test
+    compare_tool_test.cpp
+    "${PROJECT_SOURCE_DIR}/examples/compare_tool/compare_model.cpp")
+target_compile_features(mwfl_compare_tool_test PRIVATE cxx_std_20)
+target_compile_options(mwfl_compare_tool_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_include_directories(mwfl_compare_tool_test PRIVATE
+    "${PROJECT_SOURCE_DIR}/examples/compare_tool")
+target_link_libraries(mwfl_compare_tool_test PRIVATE mwfl::mwfl shlwapi)
+add_test(NAME mwfl.compare_tool COMMAND mwfl_compare_tool_test)
+set_tests_properties(mwfl.compare_tool PROPERTIES TIMEOUT 30 LABELS "fast;unit")
+
 if(TARGET mwfl_hello)
     set(mwfl_mt_tool "")
     if(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION)
@@ -1067,6 +1089,20 @@ if(TARGET mwfl_hello)
             -Executable $<TARGET_FILE:mwfl_hot_corners_demo>
             -RuntimePath "${mwfl_test_runtime_path}")
     set_tests_properties(mwfl.hot_corners_self_test PROPERTIES TIMEOUT 10)
+    add_test(NAME mwfl.sqlite_viewer_gui
+        COMMAND "${mwfl_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwfl_sqlite_viewer>
+            -RuntimePath "${mwfl_test_runtime_path}")
+    set_tests_properties(mwfl.sqlite_viewer_gui PROPERTIES TIMEOUT 20)
+    add_test(NAME mwfl.compare_tool_gui
+        COMMAND "${mwfl_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwfl_compare_tool>
+            -RuntimePath "${mwfl_test_runtime_path}")
+    set_tests_properties(mwfl.compare_tool_gui PROPERTIES TIMEOUT 30)
     add_test(NAME mwfl.settings_application_gui
         COMMAND "${mwfl_powershell}" -NoProfile -NonInteractive
             -ExecutionPolicy Bypass
@@ -1237,6 +1273,8 @@ foreach(test_name IN LISTS mwfl_all_tests)
     elseif(test_name MATCHES "^mwfl\\.manifest\\.")
         set(labels "metadata;fast")
     elseif(test_name STREQUAL "mwfl.hot_corners_self_test" OR
+           test_name STREQUAL "mwfl.sqlite_viewer_gui" OR
+           test_name STREQUAL "mwfl.compare_tool_gui" OR
            test_name STREQUAL "mwfl.settings_application_gui" OR
            test_name STREQUAL "mwfl.explorer_gui" OR
            test_name STREQUAL "mwfl.drawing_gui" OR
