@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A focused local PDF viewer built with MWFL, native Windows tabs, and WebView2.">
+  <link rel="canonical" href="https://mwfl.github.io/pdf-viewer.html">
+  <title>PDF Viewer &mdash; MWFL</title>
+  <meta name="theme-color" content="#f7f9ff">
+  <link rel="icon" type="image/svg+xml" href="assets/mwfl-mark.svg">
+  <link rel="stylesheet" href="styles.css?v=20260810a">
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script defer src="assets/site.js?v=20260810a"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><div class="shell nav">
+    <a class="brand" href="index.html" aria-label="MWFL &mdash; Modern Windows Foundation Layer"><img src="assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
+    <nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a class="active" href="tutorial.html">Get started</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/mwfl/mwfl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
+  </div></header>
+
+  <main id="main" class="shell prose guide">
+    <div class="hero">
+      <div class="eyebrow">Flagship example &middot; Local documents &middot; Native Windows</div>
+      <h1>Open PDFs in a calm native workspace.</h1>
+      <p class="lede">A focused tabbed PDF viewer that combines native HWND controls and file workflows with the PDF support already shipped by the WebView2 runtime.</p>
+      <div class="actions"><a class="button primary" href="https://github.com/mwfl/mwfl/tree/main/examples/pdf_viewer">Read the complete source</a><a class="button" href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/pdf-viewer.md">Build and package it</a></div>
+    </div>
+
+    <div class="requirements">
+      <div><strong>Workspace</strong><span>Native document tabs</span></div>
+      <div><strong>Rendering</strong><span>Evergreen WebView2</span></div>
+      <div><strong>Files</strong><span>Open, recent, and drag/drop</span></div>
+      <div><strong>Recovery</strong><span>Visible runtime and process failure states</span></div>
+    </div>
+
+    <section><div class="eyebrow">Why it matters</div><h2>Small application, complete lifecycle.</h2>
+      <p>The example opens multiple local PDFs, keeps one native tab per document, persists recent files and window placement, exposes keyboard shortcuts, and retains the browser navigation escape hatches that make the embedded renderer useful.</p>
+      <p>Its GUI self-test creates a real minimal PDF, opens it through the same local-file path as a user document, verifies tab switching and navigation, and exercises graceful WebView2 startup behavior.</p>
+    </section>
+
+    <section><div class="eyebrow">Build</div><h2>Compile, test, and stage the product.</h2>
+      <pre data-title="Developer PowerShell"><code>cmake --preset vs2026-x64-webview2
+cmake --build build/presets/vs2026-x64-webview2 --config Release --target mwfl_pdf_viewer
+ctest --test-dir build/presets/vs2026-x64-webview2 -C Release -R "mwfl\.pdf_viewer_gui"
+./scripts/package-pdf-viewer.ps1 -VisualStudio 2026 -Architecture x64</code></pre>
+      <p>The application uses Microsoft's Evergreen WebView2 Runtime and reports a clear empty or failure state when the runtime cannot initialize.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="shell footer"><span>Modern Windows Foundation Layer &middot; MIT licensed &middot; Windows 10 1809+</span><nav aria-label="Footer"><a href="tutorial.html">First app</a><a href="building.html">Build reference</a><a href="https://github.com/mwfl/mwfl">GitHub</a></nav></div></footer>
+</body>
+</html>

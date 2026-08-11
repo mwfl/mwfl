@@ -16,6 +16,7 @@ function Display-Name([string]$Id) {
         'direct2d-drawing' = 'Direct2D Drawing'
         'direct3d-swap-chain' = 'Direct3D Swap Chain'
         'webview2-browser' = 'WebView2 Browser'
+        'pdf-viewer' = 'PDF Viewer'
         'scintilla-code-editor' = 'Scintilla Code Editor'
         'markdown-editor' = 'Markdown Editor'
         'windows-ribbon' = 'Windows Ribbon'
@@ -69,7 +70,7 @@ $categoryIds = [ordered]@{
         'shell-integration', 'taskbar-help'
     )
     'Optional workspaces' = @(
-        'webview2-browser', 'scintilla-code-editor', 'markdown-editor', 'docking-workspace',
+        'webview2-browser', 'pdf-viewer', 'scintilla-code-editor', 'markdown-editor', 'docking-workspace',
         'windows-ribbon', 'legacy-mdi'
     )
 }

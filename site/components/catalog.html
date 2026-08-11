@@ -19,8 +19,8 @@
     <nav class="nav-links" aria-label="Main navigation"><a class="active" href="index.html">Components</a><a href="../tutorial.html">Get started</a><a href="../changelog.html">Changelog</a><a href="https://github.com/mwfl/mwfl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
   </div></header>
   <main id="main" class="shell catalog-page">
-    <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all 42 public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
-      <div class="catalog-stats"><span><strong>42</strong> capabilities</span><span><strong>44</strong> examples</span><span><strong>34</strong> recipes</span><span><strong>13</strong> tutorials</span></div>
+    <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all 43 public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
+      <div class="catalog-stats"><span><strong>43</strong> capabilities</span><span><strong>44</strong> examples</span><span><strong>34</strong> recipes</span><span><strong>14</strong> tutorials</span></div>
     </header>
     <section class="catalog-tools" aria-label="Filter components">
       <label for="component-search">Find by task, symbol, or header</label><input id="component-search" type="search" placeholder="Try docking, PrintJob, mwfl/ribbon.h..." autocomplete="off">
@@ -30,7 +30,7 @@
         <button type="button" data-catalog-filter="Rendering and media">Rendering and media</button>
         <button type="button" data-catalog-filter="Desktop workflows">Desktop workflows</button>
         <button type="button" data-catalog-filter="Optional workspaces">Optional workspaces</button>
-      </div><p class="catalog-result" role="status" aria-live="polite">Showing all 42 capabilities.</p>
+      </div><p class="catalog-result" role="status" aria-live="polite">Showing all 43 capabilities.</p>
     </section>
     <div class="capability-groups">
         <section class="capability-group" data-capability-group="Foundation and UI">
@@ -500,6 +500,19 @@
                 <p><strong>Tests:</strong> <code>mwfl.webview2_model&lt;/code&gt;, &lt;code&gt;mwfl.webview2_native&lt;/code&gt;, &lt;code&gt;mwfl.browser_gui&lt;/code&gt;, &lt;code&gt;mwfl.package_consumer</code></p>
               </details>
             </article>
+            <article class="capability-card" data-capability-id="pdf-viewer" data-category="Optional workspaces" data-search="pdf-viewer optional workspaces view local pdf documents build a tabbed pdf reader open dropped pdf files recover a pdf rendering process mwfl::webview2host mwfl::tabworkspacemodel mwfl::tabcontrol mwfl::showopenfiledialog mwfl::enablefiledrop mwfl/webview2.h mwfl/tab_workspace.h mwfl/navigation_controls.h mwfl/desktop.h">
+              <span class="capability-kind">Optional workspaces</span><h3>PDF Viewer</h3>
+              <p>view local PDF documents; build a tabbed PDF reader; open dropped PDF files; recover a PDF rendering process.</p><div class="capability-symbols"><code>mwfl::WebView2Host</code> <code>mwfl::TabWorkspaceModel</code> <code>mwfl::TabControl</code> <code>mwfl::ShowOpenFileDialog</code> <code>mwfl::EnableFileDrop</code></div>
+              <div class="capability-headers"><code>&lt;mwfl/webview2.h&gt;</code> <code>&lt;mwfl/tab_workspace.h&gt;</code> <code>&lt;mwfl/navigation_controls.h&gt;</code> <code>&lt;mwfl/desktop.h&gt;</code></div><nav aria-label="PDF Viewer resources">
+                <a href="https://github.com/mwfl/mwfl/blob/main/examples/pdf_viewer/main.cpp">Example</a>
+                <a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/pdf-viewer.md">Guide</a>
+                <a href="https://github.com/mwfl/mwfl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> enable MWFL_BUILD_WEBVIEW2 and initialize STA; PDF paths remain local and become file URIs only after explicit open or drop; the tab model is authoritative.</p>
+                <p><strong>Tests:</strong> <code>mwfl.pdf_viewer_gui&lt;/code&gt;, &lt;code&gt;mwfl.webview2_native</code></p>
+              </details>
+            </article>
             <article class="capability-card" data-capability-id="scintilla-code-editor" data-category="Optional workspaces" data-search="scintilla-code-editor optional workspaces build a source editor host scintilla handle editor notifications search and replace code mwfl::scintillaruntime mwfl::scintillaeditor mwfl::scintillanotification mwfl::scintillatextrange mwfl/scintilla.h">
               <span class="capability-kind">Optional workspaces</span><h3>Scintilla Code Editor</h3>
               <p>build a source editor; host Scintilla; handle editor notifications; search and replace code.</p><div class="capability-symbols"><code>mwfl::ScintillaRuntime</code> <code>mwfl::ScintillaEditor</code> <code>mwfl::ScintillaNotification</code> <code>mwfl::ScintillaTextRange</code></div>
@@ -513,10 +526,10 @@
                 <p><strong>Tests:</strong> <code>mwfl.scintilla_text&lt;/code&gt;, &lt;code&gt;mwfl.scintilla_native&lt;/code&gt;, &lt;code&gt;mwfl.code_editor_gui&lt;/code&gt;, &lt;code&gt;mwfl.package_consumer</code></p>
               </details>
             </article>
-            <article class="capability-card" data-capability-id="markdown-editor" data-category="Optional workspaces" data-search="markdown-editor optional workspaces edit markdown preview markdown syntax color markdown build a local-first document editor compose scintilla and webview2 mwfl::scintillaeditor mwfl::webview2host mwfl::splitter mwfl::documentstate mwfl::readtextfile mwfl::writetextfileatomic mwfl/scintilla.h mwfl/webview2.h mwfl/splitter.h mwfl/document.h mwfl/text_file.h">
+            <article class="capability-card" data-capability-id="markdown-editor" data-category="Optional workspaces" data-search="markdown-editor optional workspaces edit markdown preview markdown syntax color markdown build a local-first document editor compose scintilla and webview2 mwfl::scintillaeditor mwfl::webview2host mwfl::tabworkspacemodel mwfl::tabcontrol mwfl::documentstate mwfl::readtextfile mwfl::writetextfileatomic mwfl/scintilla.h mwfl/webview2.h mwfl/tab_workspace.h mwfl/navigation_controls.h mwfl/document.h mwfl/text_file.h">
               <span class="capability-kind">Optional workspaces</span><h3>Markdown Editor</h3>
-              <p>edit Markdown; preview Markdown; syntax color Markdown; build a local-first document editor; compose Scintilla and WebView2.</p><div class="capability-symbols"><code>mwfl::ScintillaEditor</code> <code>mwfl::WebView2Host</code> <code>mwfl::Splitter</code> <code>mwfl::DocumentState</code> <code>mwfl::ReadTextFile</code> <code>mwfl::WriteTextFileAtomic</code></div>
-              <div class="capability-headers"><code>&lt;mwfl/scintilla.h&gt;</code> <code>&lt;mwfl/webview2.h&gt;</code> <code>&lt;mwfl/splitter.h&gt;</code> <code>&lt;mwfl/document.h&gt;</code> <code>&lt;mwfl/text_file.h&gt;</code></div><nav aria-label="Markdown Editor resources">
+              <p>edit Markdown; preview Markdown; syntax color Markdown; build a local-first document editor; compose Scintilla and WebView2.</p><div class="capability-symbols"><code>mwfl::ScintillaEditor</code> <code>mwfl::WebView2Host</code> <code>mwfl::TabWorkspaceModel</code> <code>mwfl::TabControl</code> <code>mwfl::DocumentState</code> <code>mwfl::ReadTextFile</code> <code>mwfl::WriteTextFileAtomic</code></div>
+              <div class="capability-headers"><code>&lt;mwfl/scintilla.h&gt;</code> <code>&lt;mwfl/webview2.h&gt;</code> <code>&lt;mwfl/tab_workspace.h&gt;</code> <code>&lt;mwfl/navigation_controls.h&gt;</code> <code>&lt;mwfl/document.h&gt;</code> <code>&lt;mwfl/text_file.h&gt;</code></div><nav aria-label="Markdown Editor resources">
                 <a href="https://github.com/mwfl/mwfl/blob/main/examples/markdown_editor/main.cpp">Example</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/markdown-editor.md">Guide</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/api-index.json">API index</a>
@@ -623,6 +636,7 @@ target_link_libraries(my_app PRIVATE
             <li data-usage-path="docs/tutorials/markdown-editor.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/markdown-editor.md">Markdown Editor</a></li>
             <li data-usage-path="docs/tutorials/mdi.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/mdi.md">MDI</a></li>
             <li data-usage-path="docs/tutorials/notepad.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/notepad.md">Notepad</a></li>
+            <li data-usage-path="docs/tutorials/pdf-viewer.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/pdf-viewer.md">PDF Viewer</a></li>
             <li data-usage-path="docs/tutorials/printing-ole-shell.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/printing-ole-shell.md">Printing OLE Shell</a></li>
             <li data-usage-path="docs/tutorials/ribbon.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/ribbon.md">Ribbon</a></li>
             <li data-usage-path="docs/tutorials/settings-application.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/settings-application.md">Settings Application</a></li>

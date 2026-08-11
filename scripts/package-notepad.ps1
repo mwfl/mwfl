@@ -21,28 +21,21 @@ function Invoke-Checked {
 
 $toolchain = Resolve-MwflToolchain -VisualStudio $VisualStudio -Architecture x64
 $projectRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$buildRoot = Join-Path $projectRoot "build\markdown-editor\vs$($toolchain.Year)-x64"
+$buildRoot = Join-Path $projectRoot "build\notepad\vs$($toolchain.Year)-x64"
 $stageRoot = Join-Path $buildRoot 'stage'
 $resolvedOutput = [System.IO.Path]::GetFullPath($OutputDirectory)
-$packageName = "mwfl-markdown-editor-$Version-windows-x64"
+$packageName = "mwfl-notepad-$Version-windows-x64"
 $archive = Join-Path $resolvedOutput "$packageName.zip"
 $generator = "Visual Studio $($toolchain.Major) $($toolchain.Year)"
 
 Invoke-Checked $toolchain.CMake @(
-    '-S', $projectRoot,
-    '-B', $buildRoot,
-    '-G', $generator,
-    '-A', 'x64',
-    '-DMWFL_BUILD_EXAMPLES=ON',
-    '-DMWFL_BUILD_TESTS=ON',
-    '-DMWFL_BUILD_SCINTILLA=ON',
-    '-DMWFL_BUILD_WEBVIEW2=ON')
+    '-S', $projectRoot, '-B', $buildRoot, '-G', $generator, '-A', 'x64',
+    '-DMWFL_BUILD_EXAMPLES=ON', '-DMWFL_BUILD_TESTS=ON')
 Invoke-Checked $toolchain.CMake @(
-    '--build', $buildRoot, '--config', 'Release',
-    '--target', 'mwfl_markdown_editor', 'mwfl_markdown_renderer_test')
+    '--build', $buildRoot, '--config', 'Release', '--target', 'mwfl_notepad')
 Invoke-Checked $toolchain.CTest @(
     '--test-dir', $buildRoot, '-C', 'Release',
-    '-R', 'mwfl[.]markdown', '--output-on-failure')
+    '-R', 'mwfl[.]notepad_gui', '--output-on-failure')
 
 if (Test-Path -LiteralPath $stageRoot) {
     $resolvedStage = [System.IO.Path]::GetFullPath($stageRoot)
@@ -56,25 +49,21 @@ if (Test-Path -LiteralPath $stageRoot) {
 New-Item -ItemType Directory -Force -Path $stageRoot, $resolvedOutput | Out-Null
 Invoke-Checked $toolchain.CMake @(
     '--install', $buildRoot, '--config', 'Release',
-    '--component', 'markdown_editor', '--prefix', $stageRoot)
+    '--component', 'notepad', '--prefix', $stageRoot)
 
-$readme = Join-Path $stageRoot 'README.txt'
 @"
-MWFL Markdown Editor $Version
+MWFL Notepad $Version
 
-Run bin\mwfl_markdown_editor.exe. Use native tabs for multiple documents and
-press Ctrl+Shift+P to switch Edit and Preview in the same workspace.
+Run bin\mwfl_notepad.exe.
 
 Requirements:
 - Windows 10 1809 or newer, x64
-- Microsoft Edge WebView2 Evergreen Runtime for preview
 
-The editor, file operations, and recovery remain available if WebView2 is
-missing. Documents stay local; preview assets do not use a CDN.
-Markdown syntax coloring is provided locally by the bundled Lexilla runtime.
+The editor preserves UTF-8 and UTF-16 encodings, rejects malformed input,
+uses atomic saves with external-change detection, and keeps documents local.
 
 Source and build instructions: https://github.com/mwfl/mwfl
-"@ | Set-Content -LiteralPath $readme -Encoding utf8
+"@ | Set-Content -LiteralPath (Join-Path $stageRoot 'README.txt') -Encoding utf8
 
 if (Test-Path -LiteralPath $archive) { Remove-Item -LiteralPath $archive -Force }
 Compress-Archive -Path (Join-Path $stageRoot '*') -DestinationPath $archive -CompressionLevel Optimal

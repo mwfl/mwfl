@@ -160,13 +160,13 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
 
-The repository contains 44 independently buildable programs. Each link opens
+The repository contains 45 independently buildable programs. Each link opens
 the complete source. Start with **Hello** for the smallest application,
 **Controls** for the basic widget set, or **Hot corners** for a complete
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 44 runnable examples</strong></summary>
+<summary><strong>Browse all 45 runnable examples</strong></summary>
 
 <br>
 
@@ -208,6 +208,7 @@ multi-monitor utility.
 | Image Viewer | [examples/image_viewer/main.cpp](examples/image_viewer/main.cpp) | WIC decode, color metadata, Fit/zoom/pan, and recoverable D2D pixels |
 | Code Editor | [examples/code_editor/main.cpp](examples/code_editor/main.cpp) | Optional pinned Scintilla, Unicode files, search/replace, and notifications |
 | Browser | [examples/browser/main.cpp](examples/browser/main.cpp) | Optional pinned WebView2, offline startup, process recovery, and navigation |
+| PDF Viewer | [examples/pdf_viewer/main.cpp](examples/pdf_viewer/main.cpp) | Local PDF documents with native tabs, drag-and-drop, shortcuts, placement, and WebView2 recovery |
 | Markdown Editor | [examples/markdown_editor/main.cpp](examples/markdown_editor/main.cpp) | Product-style local Markdown editing with Scintilla, safe offline preview, atomic saves, and GUI self-test |
 | Docking Workspace | [examples/docking_workspace/main.cpp](examples/docking_workspace/main.cpp) | IDE-style documents and tools with docking, floating, auto-hide, keyboard operation, and layout restore |
 | Printing | [examples/printing/main.cpp](examples/printing/main.cpp) | Shared pagination, preview, printer settings, and balanced native print jobs |

@@ -320,6 +320,17 @@ Native child controls remember their creating thread. Debug builds assert when
 a control is used or destroyed from another thread. Use `WindowWakeup` for
 cross-thread notification.
 
+`TextBox` exposes the ordinary native editing operations without requiring an
+application to send edit-control messages: selection read/write,
+selection replacement, Cut, Copy, Paste, Undo, `CanUndo`, and caret scrolling.
+`SetCueBanner` supplies native placeholder guidance without becoming the
+control value or an accessible replacement for its explicit name.
+`TextSelection` uses zero-based UTF-16 code-unit offsets, matching the native
+EDIT contract. An invalid HWND or a range beyond native `LONG` limits makes
+`SetSelection` fail; clipboard commands remain best-effort native operations.
+The control owns its HWND, while clipboard contents and returned selection
+values are copied or process-global native state.
+
 Public APIs do not use `[[nodiscard]]`; ordinary concise code needs no casts to
 ignore native results.
 

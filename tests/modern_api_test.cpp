@@ -48,15 +48,23 @@ int scroll_failure = 0;
 int notify_failure = 0;
 
 class ModernApiWindow final : public mwfl::WindowBase {
-public:
+   public:
     void BuildUI() override {
         mwfl::ControlHost ui{*this};
         ui.Add(label_, L"Modern API test", mwfl::LabelOptions{});
         ui.Add(text_, L"native edit");
-        if (label_.GetId().value != 0x4000 ||
-            text_.GetId().value != 0x4001) {
+        if (label_.GetId().value != 0x4000 || text_.GetId().value != 0x4001) {
             throw std::runtime_error("automatic control IDs are not sequential");
         }
+        text_.SelectAll();
+        if (text_.GetSelection() != mwfl::TextSelection{0, 11} ||
+            !text_.ReplaceSelection(L"modern edit") || !text_.CanUndo() ||
+            !text_.SetSelection({7, 11}) || text_.GetSelection() != mwfl::TextSelection{7, 11}) {
+            throw std::runtime_error("TextBox editing API failed");
+        }
+        text_.Undo().ScrollCaretIntoView();
+        if (!text_.SetCueBanner(L"Type text"))
+            throw std::runtime_error("TextBox cue banner failed");
         ui.Add(button_, kButton, L"Verify");
         ui.Add(check_, kCheck, L"Checked");
         ui.Add(combo_, kCombo);
@@ -117,8 +125,7 @@ public:
         mwfl::Must(combo_items.Add(L"first", 10), "add typed ComboBox item");
         mwfl::Must(combo_items.Add(L"second", 20), "add typed ComboBox item");
         mwfl::Must(combo_items.SelectValue(20), "select typed ComboBox value");
-        if (!combo_items.GetSelectedValue() ||
-            combo_items.GetSelectedValue()->get() != 20 ||
+        if (!combo_items.GetSelectedValue() || combo_items.GetSelectedValue()->get() != 20 ||
             combo_.GetItemText(1) != L"second" || combo_.GetItemText(2)) {
             throw std::runtime_error("typed ComboBox state failed");
         }
@@ -128,8 +135,7 @@ public:
         mwfl::Must(list_items.Add(L"first", L"alpha"), "add typed ListBox item");
         mwfl::Must(list_items.Add(L"second", L"beta"), "add typed ListBox item");
         mwfl::Must(list_items.SelectValue(L"beta"), "select typed ListBox value");
-        if (!list_items.GetSelectedValue() ||
-            list_items.GetSelectedValue()->get() != L"beta" ||
+        if (!list_items.GetSelectedValue() || list_items.GetSelectedValue()->get() != L"beta" ||
             list_.GetItemText(0) != L"first") {
             throw std::runtime_error("typed ListBox state failed");
         }
@@ -138,12 +144,10 @@ public:
         static_cast<void>(tree_.AddItem({1002}, L"child", root));
         static_cast<void>(tree_.Expand(root));
         const std::array list_columns{mwfl::ColumnSpec{L"name", 80}};
-        mwfl::Must(mwfl::AddColumns(list_view_, list_columns),
-                   "populate ListView columns");
+        mwfl::Must(mwfl::AddColumns(list_view_, list_columns), "populate ListView columns");
         const int list_row = list_view_.AddItem({1101}, L"item");
         static_cast<void>(list_view_.SetSubItem(list_row, 0, L"updated"));
-        mwfl::Must(mwfl::AddColumns(header_, {{L"header", 80}}),
-                   "populate Header columns");
+        mwfl::Must(mwfl::AddColumns(header_, {{L"header", 80}}), "populate Header columns");
         mwfl::Must(tab_model_.Add({{901}, L"first", false, true}), "add first stable tab");
         mwfl::Must(tab_model_.Add({{902}, L"second", true, true}), "add second stable tab");
         mwfl::Must(tab_model_.Select({902}), "select stable tab");
@@ -160,8 +164,7 @@ public:
             tabs_.SetSelection(mwfl::TabId{999})) {
             throw std::runtime_error("stable native tab state failed");
         }
-        if (!tabs_.RemoveTab(mwfl::TabId{901}) ||
-            tabs_.GetSelectedTabId() != mwfl::TabId{902} ||
+        if (!tabs_.RemoveTab(mwfl::TabId{901}) || tabs_.GetSelectedTabId() != mwfl::TabId{902} ||
             !tabs_.Synchronize(tab_model_)) {
             throw std::runtime_error("unselected native tab removal failed");
         }
@@ -174,8 +177,7 @@ public:
         mwfl::SelectionAdapter<mwfl::ComboBoxEx, int> combo_ex_items{combo_ex_};
         mwfl::Must(combo_ex_items.Add(L"combo", 42), "add typed ComboBoxEx item");
         mwfl::Must(combo_ex_items.Select(0), "select typed ComboBoxEx item");
-        if (!combo_ex_items.GetSelectedValue() ||
-            combo_ex_items.GetSelectedValue()->get() != 42 ||
+        if (!combo_ex_items.GetSelectedValue() || combo_ex_items.GetSelectedValue()->get() != 42 ||
             combo_ex_.GetItemText(0) != L"combo") {
             throw std::runtime_error("typed ComboBoxEx state failed");
         }
@@ -183,8 +185,7 @@ public:
         ip_.SetValue(mwfl::IpAddressValue{{127, 0, 0, 1}});
         spin_.SetBuddy(spin_text_).SetRange(0, 100).SetValue(42);
         mwfl::Command toolbar_command({600}, L"Tool");
-        const int command_image = images_.AddIcon(
-            ::LoadIconW(nullptr, IDI_APPLICATION));
+        const int command_image = images_.AddIcon(::LoadIconW(nullptr, IDI_APPLICATION));
         if (command_image < 0 || !toolbar_.SetImageList(images_))
             throw std::runtime_error("configure toolbar images failed");
         toolbar_command.SetChecked(true).SetImageIndex(command_image);
@@ -194,8 +195,7 @@ public:
         if (toolbar_.UpdateCommand(toolbar_command))
             throw std::runtime_error("negative toolbar image index accepted");
         toolbar_command.SetImageIndex(command_image);
-        toolbar_command.SetChecked(false).SetEnabled(false).SetVisible(false)
-            .SetText(L"Disabled");
+        toolbar_command.SetChecked(false).SetEnabled(false).SetVisible(false).SetText(L"Disabled");
         if (!toolbar_.UpdateCommand(toolbar_command))
             throw std::runtime_error("update toolbar command failed");
         TBBUTTONINFOW toolbar_info{};
@@ -206,8 +206,7 @@ public:
         toolbar_info.cchText = 32;
         if (::SendMessageW(toolbar_.GetHwnd(), TB_GETBUTTONINFOW, 600,
                            reinterpret_cast<LPARAM>(&toolbar_info)) < 0 ||
-            toolbar_info.iImage != command_image ||
-            (toolbar_info.fsState & TBSTATE_ENABLED) != 0 ||
+            toolbar_info.iImage != command_image || (toolbar_info.fsState & TBSTATE_ENABLED) != 0 ||
             (toolbar_info.fsState & TBSTATE_HIDDEN) == 0 ||
             std::wstring_view{toolbar_text} != L"Disabled") {
             throw std::runtime_error("toolbar command state did not propagate");
@@ -223,23 +222,20 @@ public:
         const std::array status_parts{120, -1};
         static_cast<void>(status_bar_.SetParts(status_parts));
         const std::array status_texts{mwfl::StatusPartText{0, L"ready"}};
-        mwfl::Must(mwfl::SetPartTexts(status_bar_, status_texts),
-                   "populate status text");
+        mwfl::Must(mwfl::SetPartTexts(status_bar_, status_texts), "populate status text");
         static_cast<void>(tooltip_.AddTool(toolbar_.GetHwnd(), L"tooltip"));
-        if (!combo_.SetSelection(1) || combo_.GetSelection() != 1 ||
-            !check_.IsChecked() || progress_.GetValue() != 64 ||
-            !radio_.IsChecked() || !list_.SetSelection(1) ||
-            list_.GetSelectedIndex() != 1 || slider_.GetValue() != 73 ||
-            !hot_key_.GetHotKey() || !ip_.GetAddress()) {
+        if (!combo_.SetSelection(1) || combo_.GetSelection() != 1 || !check_.IsChecked() ||
+            progress_.GetValue() != 64 || !radio_.IsChecked() || !list_.SetSelection(1) ||
+            list_.GetSelectedIndex() != 1 || slider_.GetValue() != 73 || !hot_key_.GetHotKey() ||
+            !ip_.GetAddress()) {
             throw std::runtime_error("modern controls state verification failed");
         }
 
-        SetLayout(
-            mwfl::Row()
-                .Margin(8.0_dip)
-                .Gap(8.0_dip)
-                .Add(label_, mwfl::Stretch())
-                .Add(button_, mwfl::Fixed(100.0_dip)));
+        SetLayout(mwfl::Row()
+                      .Margin(8.0_dip)
+                      .Gap(8.0_dip)
+                      .Add(label_, mwfl::Stretch())
+                      .Add(button_, mwfl::Fixed(100.0_dip)));
 
         button_.Click();
         ::SendMessageW(GetHwnd(), WM_KEYDOWN, VK_SPACE, 1);
@@ -298,7 +294,7 @@ public:
         return mwfl::EventResult::Propagate();
     }
 
-private:
+   private:
     static constexpr UINT kCustomMessage = WM_APP + 76;
     static constexpr mwfl::ControlId kButton{202};
     static constexpr mwfl::ControlId kCheck{203};
@@ -320,22 +316,35 @@ private:
     mwfl::RadioButton radio_;
     mwfl::ListBox list_;
     mwfl::Slider slider_;
-    mwfl::TreeView tree_; mwfl::ListView list_view_; mwfl::Header header_;
-    mwfl::TabControl tabs_; mwfl::TabWorkspaceModel tab_model_;
-    mwfl::ComboBoxEx combo_ex_; mwfl::DateTimePicker date_;
-    mwfl::MonthCalendar calendar_; mwfl::HotKey hot_key_; mwfl::IpAddress ip_;
+    mwfl::TreeView tree_;
+    mwfl::ListView list_view_;
+    mwfl::Header header_;
+    mwfl::TabControl tabs_;
+    mwfl::TabWorkspaceModel tab_model_;
+    mwfl::ComboBoxEx combo_ex_;
+    mwfl::DateTimePicker date_;
+    mwfl::MonthCalendar calendar_;
+    mwfl::HotKey hot_key_;
+    mwfl::IpAddress ip_;
     mwfl::ImageList images_;
-    mwfl::TextBox spin_text_; mwfl::UpDown spin_; mwfl::SysLink link_; mwfl::Rebar rebar_; mwfl::Toolbar toolbar_;
-    mwfl::Pager pager_; mwfl::Label pager_label_; mwfl::Animation animation_;
-    mwfl::ScrollBar scroll_; mwfl::StatusBar status_bar_; mwfl::Tooltip tooltip_;
+    mwfl::TextBox spin_text_;
+    mwfl::UpDown spin_;
+    mwfl::SysLink link_;
+    mwfl::Rebar rebar_;
+    mwfl::Toolbar toolbar_;
+    mwfl::Pager pager_;
+    mwfl::Label pager_label_;
+    mwfl::Animation animation_;
+    mwfl::ScrollBar scroll_;
+    mwfl::StatusBar status_bar_;
+    mwfl::Tooltip tooltip_;
     mwfl::UiTimer timer_;
 };
 
 }  // namespace
 
 int main() {
-    const int result =
-        mwfl::Application(::GetModuleHandleW(nullptr)).Run<ModernApiWindow>(SW_HIDE);
+    const int result = mwfl::Application(::GetModuleHandleW(nullptr)).Run<ModernApiWindow>(SW_HIDE);
     if (result != 0) return 10;
     if (!command_seen) return 11;
     if (!key_seen) return 12;

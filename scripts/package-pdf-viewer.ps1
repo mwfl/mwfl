@@ -21,28 +21,22 @@ function Invoke-Checked {
 
 $toolchain = Resolve-MwflToolchain -VisualStudio $VisualStudio -Architecture x64
 $projectRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$buildRoot = Join-Path $projectRoot "build\markdown-editor\vs$($toolchain.Year)-x64"
+$buildRoot = Join-Path $projectRoot "build\pdf-viewer\vs$($toolchain.Year)-x64"
 $stageRoot = Join-Path $buildRoot 'stage'
 $resolvedOutput = [System.IO.Path]::GetFullPath($OutputDirectory)
-$packageName = "mwfl-markdown-editor-$Version-windows-x64"
+$packageName = "mwfl-pdf-viewer-$Version-windows-x64"
 $archive = Join-Path $resolvedOutput "$packageName.zip"
 $generator = "Visual Studio $($toolchain.Major) $($toolchain.Year)"
 
 Invoke-Checked $toolchain.CMake @(
-    '-S', $projectRoot,
-    '-B', $buildRoot,
-    '-G', $generator,
-    '-A', 'x64',
-    '-DMWFL_BUILD_EXAMPLES=ON',
-    '-DMWFL_BUILD_TESTS=ON',
-    '-DMWFL_BUILD_SCINTILLA=ON',
+    '-S', $projectRoot, '-B', $buildRoot, '-G', $generator, '-A', 'x64',
+    '-DMWFL_BUILD_EXAMPLES=ON', '-DMWFL_BUILD_TESTS=ON',
     '-DMWFL_BUILD_WEBVIEW2=ON')
 Invoke-Checked $toolchain.CMake @(
-    '--build', $buildRoot, '--config', 'Release',
-    '--target', 'mwfl_markdown_editor', 'mwfl_markdown_renderer_test')
+    '--build', $buildRoot, '--config', 'Release', '--target', 'mwfl_pdf_viewer')
 Invoke-Checked $toolchain.CTest @(
     '--test-dir', $buildRoot, '-C', 'Release',
-    '-R', 'mwfl[.]markdown', '--output-on-failure')
+    '-R', 'mwfl[.]pdf_viewer_gui', '--output-on-failure')
 
 if (Test-Path -LiteralPath $stageRoot) {
     $resolvedStage = [System.IO.Path]::GetFullPath($stageRoot)
@@ -56,22 +50,20 @@ if (Test-Path -LiteralPath $stageRoot) {
 New-Item -ItemType Directory -Force -Path $stageRoot, $resolvedOutput | Out-Null
 Invoke-Checked $toolchain.CMake @(
     '--install', $buildRoot, '--config', 'Release',
-    '--component', 'markdown_editor', '--prefix', $stageRoot)
+    '--component', 'pdf_viewer', '--prefix', $stageRoot)
 
 $readme = Join-Path $stageRoot 'README.txt'
 @"
-MWFL Markdown Editor $Version
+MWFL PDF Viewer $Version
 
-Run bin\mwfl_markdown_editor.exe. Use native tabs for multiple documents and
-press Ctrl+Shift+P to switch Edit and Preview in the same workspace.
+Run bin\mwfl_pdf_viewer.exe.
 
 Requirements:
 - Windows 10 1809 or newer, x64
-- Microsoft Edge WebView2 Evergreen Runtime for preview
+- Microsoft Edge WebView2 Evergreen Runtime
 
-The editor, file operations, and recovery remain available if WebView2 is
-missing. Documents stay local; preview assets do not use a CDN.
-Markdown syntax coloring is provided locally by the bundled Lexilla runtime.
+Documents stay local. Open PDF files with Ctrl+O or drag them into the window.
+The built-in PDF surface provides page navigation, zoom, search, and printing.
 
 Source and build instructions: https://github.com/mwfl/mwfl
 "@ | Set-Content -LiteralPath $readme -Encoding utf8

@@ -34,10 +34,13 @@ ZIP's SHA-256 digest.
 
 ## Composition
 
-`MarkdownEditorWindow` creates a vertical `mwfl::Splitter`. Its first child is
-an `mwfl::ScintillaEditor`; its second child is an `mwfl::WebView2Host`. Both
-are real child HWNDs owned by their wrappers and used only from the creating STA
-thread.
+`MarkdownEditorWindow` projects its application-owned documents through
+`mwfl::TabWorkspaceModel` and a native `mwfl::TabControl`. A single content
+workspace overlays an `mwfl::ScintillaEditor` and an `mwfl::WebView2Host`;
+**Ctrl+Shift+P** switches between editing and preview without a permanent split
+view. Both surfaces are real child HWNDs owned by their wrappers and used only
+from the creating STA thread. Each tab retains its path, text, selection,
+encoding, file stamp, and dirty state while the application switches views.
 
 The application-owned renderer uses statically linked md4c 0.5.2 at immutable
 commit `729e6b8b320caa96328968ab27d7db2235e4fb47`. Its GitHub dialect supports
@@ -48,9 +51,11 @@ resource is required. The distributable component includes md4c's MIT license.
 
 The application also offers native File/Edit/Format/View menus, standard
 accelerators, in-window find/replace, window placement persistence, stale-save
-protection, and a delayed atomic recovery copy for dirty documents. Recovery is
-off during deterministic self-tests and is removed after a successful save or
-intentional close.
+protection, and delayed atomic recovery for the complete tab session. Recovery
+stores a versioned session manifest plus one atomic UTF-8 recovery copy per
+document; tab order, active identity, paths, selections, file stamps, and dirty
+state are restored together. The GUI self-test covers a two-document recovery
+round trip. Recovery is removed after an intentional close.
 
 `mwfl::ReadTextFile` rejects malformed Unicode. `mwfl::WriteTextFileAtomic`
 writes through a flushed sibling and uses the last observed `FileStamp` to
