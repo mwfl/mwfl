@@ -100,6 +100,28 @@ foreach(example_name IN LISTS example_names)
     endif()
 endforeach()
 
+# Product-sized reference examples carry self-contained landing pages. Keep the
+# screenshot and code tour beside the source discoverable from each directory.
+foreach(example_name IN ITEMS sqlite_viewer compare_tool)
+    set(example_readme_path "${PROJECT_ROOT}/examples/${example_name}/README.md")
+    if(NOT EXISTS "${example_readme_path}")
+        message(FATAL_ERROR "reference example README is missing: ${example_name}")
+    endif()
+    file(READ "${example_readme_path}" example_readme)
+    string(REPLACE "_" "-" image_slug "${example_name}")
+    foreach(marker IN ITEMS
+            "../../docs/images/examples/${image_slug}.png"
+            "## Key code"
+            "```cpp"
+            "## Try it"
+            "main.cpp")
+        if(NOT example_readme MATCHES "${marker}")
+            message(FATAL_ERROR
+                "reference example README is missing '${marker}': ${example_name}")
+        endif()
+    endforeach()
+endforeach()
+
 set(all_control_types ${public_control_types}
     TreeView ListView Header TabControl ComboBoxEx DateTimePicker MonthCalendar
     HotKey IpAddress UpDown SysLink Toolbar StatusBar Rebar Pager Animation Splitter)
