@@ -10,7 +10,7 @@
   <meta property="og:title" content="mwfl — Modern Windows Foundation Layer">
   <meta property="og:description" content="Real HWND controls, typed events, checked setup, and DPI-aware responsive layout — without closing off Win32.">
   <meta property="og:url" content="https://mwfl.github.io/">
-  <meta property="og:image" content="https://mwfl.github.io/assets/mwfl-mark.svg">
+  <meta property="og:image" content="https://raw.githubusercontent.com/mwfl/mwfl/main/docs/images/showcase/capability-collage.svg">
   <meta name="theme-color" content="#f7f9ff">
   <link rel="icon" type="image/svg+xml" href="assets/mwfl-mark.svg">
   <link rel="stylesheet" href="styles.css?v=20260810a">
@@ -82,9 +82,9 @@ private:
     <section class="shell" aria-label="Latest release">
       <div class="cta-band">
         <div>
-          <div class="eyebrow">First public release</div>
-          <h2>mwfl 0.1.0 is available.</h2>
-          <p>Download the tested VS2026/MSVC x64 package, or review the public baseline.</p>
+          <div class="eyebrow">First public preview</div>
+          <h2>mwfl 0.1.0 is ready to explore.</h2>
+          <p>Download the tested VS2026/MSVC x64 binary preview, or build x64 and ARM64 from source.</p>
         </div>
         <div class="actions">
           <a class="button primary" href="https://github.com/mwfl/mwfl/releases/tag/v0.1.0">Download</a>
@@ -95,11 +95,25 @@ private:
 
     <section class="shell" aria-label="Project facts">
       <div class="stat-strip">
-        <div><strong>41</strong><span>documented capability slices</span></div>
-        <div><strong>43</strong><span>runnable example programs</span></div>
+        <div><strong>43</strong><span>documented capability slices</span></div>
+        <div><strong>45</strong><span>compiled examples</span></div>
         <div><strong>C++20</strong><span>concepts, RAII, ranges</span></div>
         <div><strong>MIT</strong><span>Windows 10 1809+ · x64 / ARM64</span></div>
       </div>
+    </section>
+
+    <section class="shell section showcase" aria-labelledby="showcase-title">
+      <div class="eyebrow">Three real native applications</div>
+      <h2 id="showcase-title">From focused editor to full desktop workspace.</h2>
+      <p class="lede">The same thin real-HWND foundation scales from a local-first Markdown editor to Explorer-style navigation and persistent IDE docking.</p>
+      <figure class="showcase-figure">
+        <img src="https://raw.githubusercontent.com/mwfl/mwfl/main/docs/images/showcase/capability-collage.svg" alt="MWFL capability collage showing the Markdown Editor, Explorer, and Docking Workspace" width="1440" height="900" loading="eager" decoding="async">
+        <figcaption>Captured on Windows in one light theme at 100% scale. Every window is a compiled example, not a mockup.</figcaption>
+      </figure>
+      <figure class="showcase-figure showcase-reel">
+        <img src="https://raw.githubusercontent.com/mwfl/mwfl/main/docs/images/showcase/mwfl-showcase-40s.gif" alt="40-second MWFL showcase covering responsive DPI-aware UI, Markdown editing and preview, Explorer workflows, docking, and file-drop integration" width="960" height="600" loading="lazy" decoding="async">
+        <figcaption>A 40-second tour of responsive/DPI behavior, edit and preview composition, native file workflows, docking, and desktop file-drop integration.</figcaption>
+      </figure>
     </section>
 
     <section class="shell section" id="layers" aria-labelledby="layers-title">
@@ -179,6 +193,16 @@ SetLayout(
         <a class="example-card" href="pdf-viewer.html"><strong>PDF Viewer</strong><span>Tabbed local documents with native file workflows and WebView2 rendering</span></a>
       </div>
       <p class="catalog-more"><a href="components/catalog.html">Search all 43 capabilities and 45 runnable examples <span aria-hidden="true">↗</span></a></p>
+    </section>
+
+    <section class="shell section" aria-labelledby="preview-scope-title">
+      <div class="eyebrow">Public-preview scope</div>
+      <h2 id="preview-scope-title">A tested baseline, with explicit boundaries.</h2>
+      <div class="grid">
+        <article class="card"><span class="tag">Binary release</span><h3>x64 package today</h3><p>The v0.1.0 downloadable binaries target VS2026/MSVC x64. Source builds and CI cover both x64 and ARM64; an ARM64 binary package is not yet published.</p></article>
+        <article class="card"><span class="tag">Core stays small</span><h3>Optional means optional</h3><p>WebView2, Scintilla, Direct2D/3D, WIC, Ribbon, MDI, printing, OLE, Shell, and graphics integrations are requested and linked separately.</p></article>
+        <article class="card"><span class="tag">0.1 contract</span><h3>Public preview, not an ABI promise</h3><p>The stable source surface is documented and tested. The project is collecting real usage before making broader compatibility or ecosystem claims.</p></article>
+      </div>
     </section>
 
     <section class="shell home-strip" aria-label="Principles">

@@ -18,15 +18,15 @@ std::wstring FormatSize(std::uint64_t bytes) {
 
 ExplorerModel::ExplorerModel()
     : folders_{{{1}, {}, L"This PC"},
-               {{10}, {1}, L"Documents"},
-               {{20}, {1}, L"Pictures"},
-               {{30}, {1}, L"Downloads"}},
-      files_{{{1001}, {10}, L"Design notes.txt", L"Text document", 18 * 1024, 1},
-             {{1002}, {10}, L"Roadmap.md", L"Markdown document", 42 * 1024, 1},
-             {{2001}, {20}, L"Architecture.png", L"PNG image", 3 * 1024 * 1024, 2},
-             {{2002}, {20}, L"Prototype.jpg", L"JPEG image", 5 * 1024 * 1024, 2},
-             {{3001}, {30}, L"mwfl-samples.zip", L"ZIP archive", 8 * 1024 * 1024, 3},
-             {{3002}, {30}, L"Release checklist.pdf", L"PDF document", 760 * 1024, 1}} {
+               {{10}, {1}, L"MWFL 0.1 Launch"},
+               {{20}, {1}, L"Showcase Media"},
+               {{30}, {1}, L"Release Packages"}},
+      files_{{{1001}, {10}, L"Announcement draft.md", L"Markdown document", 28 * 1024, 1},
+             {{1002}, {10}, L"API stability notes.txt", L"Text document", 16 * 1024, 1},
+             {{2001}, {20}, L"docking-workspace.png", L"PNG image", 3 * 1024 * 1024, 2},
+             {{2002}, {20}, L"markdown-editor-hero.png", L"PNG image", 2 * 1024 * 1024, 2},
+             {{3001}, {30}, L"mwfl-0.1.0-windows-x64.zip", L"ZIP archive", 11 * 1024 * 1024, 3},
+             {{3002}, {30}, L"SHA256SUMS.txt", L"Text document", 2 * 1024, 1}} {
     RebuildVisible();
 }
 

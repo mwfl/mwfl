@@ -162,6 +162,25 @@ h3 { margin-bottom: .35rem; font-weight: 650; }
 }
 .hero-demo figcaption, .demo-caption { margin-top: .6rem; color: var(--muted); font-size: .85rem; text-align: center; }
 
+.showcase-figure {
+  margin: 2rem 0 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 1.15rem;
+  background: #0b1730;
+  box-shadow: 0 24px 64px rgba(7, 18, 42, .18);
+}
+.showcase-figure img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; }
+.showcase-figure figcaption {
+  padding: .8rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: .86rem;
+  text-align: center;
+}
+.showcase-reel { max-width: 960px; margin-inline: auto; margin-top: 1.25rem; }
+
 .stat-strip {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
   margin: 0 auto 1rem; overflow: hidden;

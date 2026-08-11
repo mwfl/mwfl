@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">MWFL native Windows application showcase</title>
+  <desc id="desc">Markdown editing, Explorer-style navigation, and an IDE docking workspace composed from real HWND controls.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#091429"/>
+      <stop offset="0.55" stop-color="#10234a"/>
+      <stop offset="1" stop-color="#173d66"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#55c7ff" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#6c7cff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#020713" flood-opacity=".55"/>
+    </filter>
+    <clipPath id="heroClip"><rect x="70" y="240" width="795" height="497" rx="12"/></clipPath>
+    <clipPath id="explorerClip"><rect x="898" y="192" width="472" height="295" rx="10"/></clipPath>
+    <clipPath id="dockClip"><rect x="898" y="521" width="472" height="295" rx="10"/></clipPath>
+  </defs>
+
+  <rect width="1440" height="900" fill="url(#bg)"/>
+  <circle cx="170" cy="60" r="310" fill="url(#glow)"/>
+  <circle cx="1340" cy="850" r="380" fill="#55c7ff" opacity=".08"/>
+
+  <g font-family="Segoe UI, sans-serif" fill="#fff">
+    <text x="70" y="86" font-size="22" font-weight="700" letter-spacing="3" fill="#79d4ff">MWFL 0.1 · PUBLIC PREVIEW</text>
+    <text x="70" y="150" font-size="48" font-weight="700">Native Windows UI, composed in modern C++20.</text>
+    <text x="70" y="196" font-size="22" fill="#bfd4ee">Real HWNDs · typed events · responsive DIPs · direct Win32 interop</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="54" y="224" width="827" height="545" rx="20" fill="#f8fbff" stroke="#78d4ff" stroke-width="2"/>
+    <image href="markdown-editor-1440x900.png" x="70" y="240" width="795" height="497" preserveAspectRatio="xMidYMid slice" clip-path="url(#heroClip)"/>
+    <rect x="70" y="704" width="795" height="33" fill="#08152b" opacity=".82" clip-path="url(#heroClip)"/>
+    <text x="92" y="727" font-family="Segoe UI, sans-serif" font-size="17" font-weight="600" fill="#fff">Markdown Editor · Scintilla + offline WebView2 preview</text>
+
+    <rect x="882" y="176" width="504" height="327" rx="18" fill="#f8fbff" stroke="#96a9ff" stroke-width="2"/>
+    <image href="explorer-1440x900.png" x="898" y="192" width="472" height="295" preserveAspectRatio="xMidYMid slice" clip-path="url(#explorerClip)"/>
+    <rect x="898" y="454" width="472" height="33" fill="#08152b" opacity=".82" clip-path="url(#explorerClip)"/>
+    <text x="918" y="477" font-family="Segoe UI, sans-serif" font-size="16" font-weight="600" fill="#fff">Explorer · tree, virtual list, tabs, splitter</text>
+
+    <rect x="882" y="505" width="504" height="327" rx="18" fill="#f8fbff" stroke="#62d6c2" stroke-width="2"/>
+    <image href="docking-workspace-1440x900.png" x="898" y="521" width="472" height="295" preserveAspectRatio="xMidYMid slice" clip-path="url(#dockClip)"/>
+    <rect x="898" y="783" width="472" height="33" fill="#08152b" opacity=".82" clip-path="url(#dockClip)"/>
+    <text x="918" y="806" font-family="Segoe UI, sans-serif" font-size="16" font-weight="600" fill="#fff">Docking IDE · dock, float, auto-hide, persist</text>
+  </g>
+
+  <g font-family="Segoe UI, sans-serif" font-size="17" font-weight="600">
+    <g transform="translate(70 811)"><rect width="166" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="83" y="28" text-anchor="middle" fill="#dff6ff">45 compiled examples</text></g>
+    <g transform="translate(250 811)"><rect width="132" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="66" y="28" text-anchor="middle" fill="#dff6ff">43 capabilities</text></g>
+    <g transform="translate(396 811)"><rect width="128" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="64" y="28" text-anchor="middle" fill="#dff6ff">Per-Monitor V2</text></g>
+    <g transform="translate(538 811)"><rect width="116" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="58" y="28" text-anchor="middle" fill="#dff6ff">x64 + ARM64</text></g>
+    <g transform="translate(668 811)"><rect width="136" height="43" rx="21.5" fill="#173c60" stroke="#51caff"/><text x="68" y="28" text-anchor="middle" fill="#dff6ff">MIT licensed</text></g>
+  </g>
+</svg>

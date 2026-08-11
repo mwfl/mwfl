@@ -121,14 +121,29 @@ set(featured_images controls common_controls form_binding layout_gallery)
 foreach(example_name IN LISTS featured_images)
     string(REPLACE "_" "-" image_slug "${example_name}")
     set(image_path "docs/images/examples/${image_slug}.png")
-    if(NOT root_readme MATCHES "${image_path}")
-        message(FATAL_ERROR "README does not feature screenshot: ${image_path}")
-    endif()
     if(NOT site_home MATCHES "docs/images/examples/${image_slug}.png")
         message(FATAL_ERROR "Pages does not show featured screenshot: ${example_name}")
     endif()
     if(NOT site_home MATCHES "examples/${example_name}/main.cpp")
         message(FATAL_ERROR "Pages does not link featured source: ${example_name}")
+    endif()
+endforeach()
+
+foreach(marker IN ITEMS
+        "docs/images/showcase/capability-collage.svg"
+        "45 compiled"
+        "public preview")
+    if(NOT root_readme MATCHES "${marker}")
+        message(FATAL_ERROR "README showcase is missing marker: ${marker}")
+    endif()
+endforeach()
+foreach(marker IN ITEMS
+        "docs/images/showcase/capability-collage.svg"
+        "docs/images/showcase/mwfl-showcase-40s.gif"
+        "45</strong><span>compiled examples"
+        "Public-preview scope")
+    if(NOT site_home MATCHES "${marker}")
+        message(FATAL_ERROR "Pages showcase is missing marker: ${marker}")
     endif()
 endforeach()
 

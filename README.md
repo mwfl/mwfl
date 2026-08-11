@@ -32,9 +32,14 @@ ownership, typed events, checked setup helpers, and DPI-aware responsive layout.
 hiding native handles, messages, styles, or return values.
 
 <p align="center">
-  <a href="examples/controls/main.cpp"><img width="48%" src="docs/images/examples/controls.png" alt="Native controls gallery built with mwfl"></a>
-  <a href="examples/common_controls/main.cpp"><img width="48%" src="docs/images/examples/common-controls.png" alt="Windows Common Controls gallery built with mwfl"></a>
+  <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/capability-collage.svg" alt="MWFL Markdown Editor, Explorer, and Docking Workspace capability showcase"></a>
 </p>
+
+**v0.1.0 is the first public preview.** The repository contains **45 compiled
+examples**. The downloadable release packages are VS2026/MSVC x64; source and
+CI cover x64 and ARM64. WebView2, Scintilla, graphics, imaging, printing, OLE,
+Shell, Ribbon, and MDI integrations remain separately requested optional
+components.
 
 ## Why mwfl
 

@@ -122,20 +122,29 @@ class MarkdownEditorWindow final : public mwfl::WindowBase {
         BuildMenu();
         mwfl::Must(accelerators_.Create(commands_), "create Markdown accelerator table");
         SetAccelerators(accelerators_.GetHandle());
-        mwfl::ApplyWindowAppearance(GetHwnd(), {mwfl::ColorMode::system, mwfl::Backdrop::mica});
+        mwfl::ApplyWindowAppearance(GetHwnd(), {mwfl::ColorMode::light, mwfl::Backdrop::mica});
 
         SetSearchPanelVisible(false);
         ApplyLayout();
 
         const std::wstring welcome =
-            L"# Welcome to MWFL Markdown\n\n"
-            L"A small, native Windows Markdown editor built with **mwfl**, "
-            L"Scintilla, and WebView2.\n\n"
-            L"- Keep multiple documents in native tabs\n"
-            L"- Switch Edit and Preview in one calm workspace\n"
-            L"- [x] Keep every document local\n\n"
-            L"> Native Windows UI, without the Win32 ceremony.\n\n"
-            L"```cpp\n#include <mwfl/mwfl.h>\n```\n";
+            L"# Shipping a native Windows app\n\n"
+            L"MWFL keeps the parts developers value about Win32—real **HWNDs**, "
+            L"native accessibility, and direct interop—while making everyday UI "
+            L"composition feel like modern C++20.\n\n"
+            L"## Release checklist\n\n"
+            L"- [x] Responsive layout in device-independent pixels\n"
+            L"- [x] Typed commands, menus, and accelerators\n"
+            L"- [x] Atomic UTF-8 saves and crash recovery\n"
+            L"- [ ] Invite the first public-preview users\n\n"
+            L"> Build native Windows software without hiding Windows from you.\n\n"
+            L"```cpp\n"
+            L"SetLayout(mwfl::Column()\n"
+            L"    .Margin(24_dip).Gap(12_dip)\n"
+            L"    .Add(editor, mwfl::Stretch()));\n"
+            L"```\n\n"
+            L"**45 compiled examples** cover controls, documents, docking, Shell "
+            L"integration, graphics, WebView2, and Scintilla.\n";
         documents_.push_back({.id = active_tab_, .text = welcome});
         mwfl::Must(editor_.SetText(welcome), "set Markdown welcome document");
         editor_.SetSavePoint();
@@ -148,8 +157,9 @@ class MarkdownEditorWindow final : public mwfl::WindowBase {
         UpdatePresentation(L"Ready");
         editor_.Focus();
         mwfl::SavedWindowPlacement placement;
-        if (!IsSelfTest() && mwfl::LoadWindowPlacementFromRegistry(HKEY_CURRENT_USER, kSettingsKey,
-                                                                   L"WindowPlacement", placement))
+        if (!IsSelfTest() && !IsShowcase() &&
+            mwfl::LoadWindowPlacementFromRegistry(HKEY_CURRENT_USER, kSettingsKey,
+                                                  L"WindowPlacement", placement))
             mwfl::RestoreWindowPlacement(GetHwnd(), placement);
 
         if (IsSelfTest() && ::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0) == FALSE)
@@ -224,7 +234,7 @@ class MarkdownEditorWindow final : public mwfl::WindowBase {
         if (!IsSelfTest() && !ConfirmAllDocuments()) return mwfl::EventResult::Handled();
         recovery_timer_.Stop();
         RemoveRecovery();
-        if (!IsSelfTest()) {
+        if (!IsSelfTest() && !IsShowcase()) {
             mwfl::SavedWindowPlacement placement;
             if (mwfl::CaptureWindowPlacement(GetHwnd(), placement))
                 static_cast<void>(mwfl::SaveWindowPlacementToRegistry(
@@ -319,19 +329,19 @@ class MarkdownEditorWindow final : public mwfl::WindowBase {
     }
 
     void ApplyLayout() {
-        auto column = mwfl::Column().Gap(6.0_dip).Margin(8.0_dip).Add(
+        auto column = mwfl::Column().Gap(4.0_dip).Margin(6.0_dip).Add(
             mwfl::Row()
-                .Gap(6.0_dip)
-                .Add(new_, mwfl::Fixed(62.0_dip))
-                .Add(open_, mwfl::Fixed(78.0_dip))
-                .Add(save_, mwfl::Fixed(68.0_dip))
-                .Add(heading_, mwfl::Fixed(56.0_dip))
-                .Add(bold_, mwfl::Fixed(62.0_dip))
-                .Add(italic_, mwfl::Fixed(62.0_dip))
-                .Add(code_, mwfl::Fixed(62.0_dip))
-                .Add(preview_button_, mwfl::Fixed(78.0_dip))
-                .Add(theme_button_, mwfl::Fixed(72.0_dip)),
-            mwfl::Fixed(32.0_dip));
+                .Gap(4.0_dip)
+                .Add(new_, mwfl::Fixed(48.0_dip))
+                .Add(open_, mwfl::Fixed(62.0_dip))
+                .Add(save_, mwfl::Fixed(52.0_dip))
+                .Add(heading_, mwfl::Fixed(42.0_dip))
+                .Add(bold_, mwfl::Fixed(48.0_dip))
+                .Add(italic_, mwfl::Fixed(48.0_dip))
+                .Add(code_, mwfl::Fixed(48.0_dip))
+                .Add(preview_button_, mwfl::Fixed(62.0_dip))
+                .Add(theme_button_, mwfl::Fixed(52.0_dip)),
+            mwfl::Fixed(26.0_dip));
         if (search_panel_visible_) {
             column.Add(mwfl::Row()
                            .Gap(6.0_dip)
@@ -339,9 +349,9 @@ class MarkdownEditorWindow final : public mwfl::WindowBase {
                            .Add(find_next_, mwfl::Fixed(86.0_dip))
                            .Add(replacement_, mwfl::Stretch())
                            .Add(replace_next_, mwfl::Fixed(82.0_dip)),
-                       mwfl::Fixed(30.0_dip));
+                       mwfl::Fixed(28.0_dip));
         }
-        column.Add(tabs_, mwfl::Fixed(30.0_dip))
+        column.Add(tabs_, mwfl::Fixed(28.0_dip))
             .Add(mwfl::Overlay().Add(editor_).Add(preview_), mwfl::Stretch())
             .Add(status_, mwfl::Auto());
         SetLayout(std::move(column));
@@ -367,6 +377,11 @@ class MarkdownEditorWindow final : public mwfl::WindowBase {
 
     static bool IsSelfTest() noexcept {
         return std::wstring_view{::GetCommandLineW()}.find(L"--self-test") !=
+               std::wstring_view::npos;
+    }
+
+    static bool IsShowcase() noexcept {
+        return std::wstring_view{::GetCommandLineW()}.find(L"--showcase") !=
                std::wstring_view::npos;
     }
 
@@ -985,7 +1000,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show_command) {
     return mwfl::RunApplication<MarkdownEditorWindow>(
         instance, show_command,
         {.title = L"MWFL Markdown",
-         .initial_bounds = {{}, {1360.0_dip, 840.0_dip}},
+         .initial_bounds = {{24.0_dip, 24.0_dip}, {1437.0_dip, 868.5_dip}},
          .use_default_bounds = false,
          .icon = icon,
          .small_icon = icon},

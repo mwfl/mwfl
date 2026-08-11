@@ -48,11 +48,11 @@ public:
         BuildImagesAndCommands();
 
         mwfl::ControlHost ui{*this};
-        ui.Add(rebar_, {200}, {0.0_dip, 0.0_dip, 980.0_dip, 42.0_dip});
+        ui.Add(rebar_, {200}, {0.0_dip, 0.0_dip, 980.0_dip, 32.0_dip});
         mwfl::ControlHost rebar_ui{rebar_};
-        rebar_ui.Add(toolbar_, {201}, {0.0_dip, 0.0_dip, 520.0_dip, 34.0_dip});
-        ui.Add(tabs_, {202}, {0.0_dip, 42.0_dip, 980.0_dip, 34.0_dip});
-        ui.Add(splitter_, {203}, {0.0_dip, 76.0_dip, 980.0_dip, 540.0_dip},
+        rebar_ui.Add(toolbar_, {201}, {0.0_dip, 0.0_dip, 420.0_dip, 28.0_dip});
+        ui.Add(tabs_, {202}, {0.0_dip, 32.0_dip, 980.0_dip, 28.0_dip});
+        ui.Add(splitter_, {203}, {0.0_dip, 60.0_dip, 980.0_dip, 556.0_dip},
                mwfl::SplitterOptions{.constraints = {180.0_dip, 320.0_dip, 6.0_dip},
                                      .initial_position = 250.0_dip});
         mwfl::ControlHost panes{splitter_};
@@ -83,7 +83,8 @@ public:
         mwfl::Must(list_.SetVirtualModel(model_), "attach Explorer virtual model");
 
         mwfl::Must(tab_model_.Add({{1}, L"All files", false, false}), "add All files tab");
-        mwfl::Must(tab_model_.Add({{2}, L"Pictures", false, false}), "add Pictures tab");
+        mwfl::Must(tab_model_.Add({{2}, L"Showcase media", false, false}),
+                   "add Showcase media tab");
         mwfl::Must(tabs_.Synchronize(tab_model_), "synchronize Explorer tabs");
 
         mwfl::Must(mwfl::SetAccessibleName(toolbar_.GetHwnd(), L"Explorer commands"),
@@ -97,12 +98,14 @@ public:
 
         SetLayout(mwfl::Column()
                       .Add(rebar_, mwfl::Auto())
-                      .Add(tabs_, mwfl::Fixed(34.0_dip))
+                      .Add(tabs_, mwfl::Fixed(28.0_dip))
                       .Add(splitter_, mwfl::Stretch())
                       .Add(status_, mwfl::Auto()));
         UpdateStatusParts(980);
         UpdateStatus(L"Ready");
         tree_.SetSelection({1});
+        static_cast<void>(mwfl::ApplyWindowAppearance(
+            GetHwnd(), {mwfl::ColorMode::light, mwfl::Backdrop::mica}));
         if (g_self_test && ::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0) == FALSE)
             throw std::runtime_error("post Explorer self-test message failed");
     }
@@ -141,7 +144,7 @@ public:
             const auto selected = tabs_.GetSelectedTabId();
             tree_.SetSelection(selected == mwfl::TabId{2} ? mwfl::TreeItemId{20}
                                                           : mwfl::TreeItemId{1});
-            status_.SetPartText(2, selected == mwfl::TabId{2} ? L"Pictures filter"
+            status_.SetPartText(2, selected == mwfl::TabId{2} ? L"Showcase media filter"
                                                               : L"All files filter");
             return mwfl::EventResult::Handled();
         }
@@ -159,7 +162,8 @@ public:
 
     mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
         if (event.id == WM_THEMECHANGED || event.id == WM_SETTINGCHANGE) {
-            static_cast<void>(mwfl::ApplyWindowAppearance(GetHwnd()));
+            static_cast<void>(mwfl::ApplyWindowAppearance(
+                GetHwnd(), {mwfl::ColorMode::light, mwfl::Backdrop::mica}));
             ::RedrawWindow(GetHwnd(), nullptr, nullptr,
                            RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
             return mwfl::EventResult::Handled();
@@ -400,7 +404,7 @@ private:
 
         self_test_step_ = 63;
         if (tabs_.GetSelectedTabId() != mwfl::TabId{2})
-            throw std::runtime_error("Explorer tree did not synchronize Pictures tab");
+            throw std::runtime_error("Explorer tree did not synchronize Showcase media tab");
         mwfl::Must(tabs_.SetSelection(mwfl::TabId{1}), "select Explorer All files tab");
         NMHDR tab_change{tabs_.GetHwnd(), static_cast<UINT_PTR>(tabs_.GetId().value), TCN_SELCHANGE};
         ::SendMessageW(GetHwnd(), WM_NOTIFY, tab_change.idFrom,
@@ -450,6 +454,6 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     return mwfl::RunApplication<ExplorerWindow>(
         instance, show,
         {.title = L"mwfl Explorer",
-         .initial_bounds = {{0.0_dip, 0.0_dip}, {1000.0_dip, 680.0_dip}},
+         .initial_bounds = {{24.0_dip, 24.0_dip}, {1437.0_dip, 868.5_dip}},
          .use_default_bounds = false});
 }

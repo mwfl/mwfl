@@ -32,43 +32,51 @@ class DesktopIntegrationWindow final : public mwfl::WindowBase {
         ui.Add(activity_label_, L"Activity");
         mwfl::TextBoxOptions log_options;
         log_options.style |= ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL;
-        ui.Add(activity_, L"Ready. Your window position will be restored next time.", log_options);
+        ui.Add(activity_, IsShowcase()
+                              ? L"Ready for the public-preview tour.\r\n"
+                                L"Received 3 dropped file(s).\r\n"
+                                L"Release assets are available to native file workflows."
+                              : L"Ready. Your window position will be restored next time.",
+               log_options);
         activity_.SetReadOnly(true);
+        if (IsShowcase())
+            path_.SetText(L"C:\\MWFL Showcase\\mwfl-0.1.0-windows-x64.zip");
 
         mwfl::EnableFileDrop(GetHwnd());
-        mwfl::ApplyWindowAppearance(GetHwnd(), {mwfl::ColorMode::system, mwfl::Backdrop::mica});
+        mwfl::ApplyWindowAppearance(GetHwnd(), {mwfl::ColorMode::light, mwfl::Backdrop::mica});
         mwfl::SetDialogDefaultButton(GetHwnd(), static_cast<UINT>(open_.GetId().value));
         ApplyFont(GetDpiContext().GetDpi());
         SetLayout(mwfl::Column()
-                      .Margin(24.0_dip)
-                      .Gap(10.0_dip)
-                      .Add(title_, mwfl::Fixed(34.0_dip))
-                      .Add(subtitle_, mwfl::Fixed(24.0_dip))
-                      .Add(dialogs_, mwfl::Fixed(28.0_dip))
+                      .Margin(18.0_dip)
+                      .Gap(8.0_dip)
+                      .Add(title_, mwfl::Fixed(28.0_dip))
+                      .Add(subtitle_, mwfl::Fixed(22.0_dip))
+                      .Add(dialogs_, mwfl::Fixed(24.0_dip))
                       .Add(mwfl::Row()
-                               .Gap(8.0_dip)
-                               .Add(open_, mwfl::Fixed(240.0_dip))
-                               .Add(save_, mwfl::Fixed(240.0_dip))
-                               .Add(folder_, mwfl::Fixed(240.0_dip))
+                               .Gap(6.0_dip)
+                               .Add(open_, mwfl::Fixed(96.0_dip))
+                               .Add(save_, mwfl::Fixed(96.0_dip))
+                               .Add(folder_, mwfl::Fixed(108.0_dip))
                                .Add(mwfl::Column(), mwfl::Stretch()),
-                           mwfl::Fixed(44.0_dip))
-                      .Add(clipboard_, mwfl::Fixed(28.0_dip))
+                           mwfl::Fixed(30.0_dip))
+                      .Add(clipboard_, mwfl::Fixed(24.0_dip))
                       .Add(mwfl::Row()
-                               .Gap(8.0_dip)
-                               .Add(copy_, mwfl::Fixed(210.0_dip))
-                               .Add(paste_, mwfl::Fixed(210.0_dip))
-                               .Add(task_, mwfl::Fixed(210.0_dip))
-                               .Add(custom_, mwfl::Fixed(210.0_dip))
+                               .Gap(6.0_dip)
+                               .Add(copy_, mwfl::Fixed(108.0_dip))
+                               .Add(paste_, mwfl::Fixed(96.0_dip))
+                               .Add(task_, mwfl::Fixed(118.0_dip))
+                               .Add(custom_, mwfl::Fixed(126.0_dip))
                                .Add(mwfl::Column(), mwfl::Stretch()),
-                           mwfl::Fixed(44.0_dip))
-                      .Add(drop_zone_, mwfl::Fixed(76.0_dip))
+                           mwfl::Fixed(30.0_dip))
+                      .Add(drop_zone_, mwfl::Fixed(52.0_dip))
                       .Add(path_label_, mwfl::Auto())
                       .Add(path_, mwfl::Fixed(34.0_dip))
                       .Add(activity_label_, mwfl::Auto())
                       .Add(activity_, mwfl::Stretch()));
 
         mwfl::SavedWindowPlacement saved;
-        if (mwfl::LoadWindowPlacementFromRegistry(HKEY_CURRENT_USER, kRegistryKey, L"Window",
+        if (!IsShowcase() &&
+            mwfl::LoadWindowPlacementFromRegistry(HKEY_CURRENT_USER, kRegistryKey, L"Window",
                                                   saved))
             mwfl::RestoreWindowPlacement(GetHwnd(), saved);
     }
@@ -130,9 +138,12 @@ class DesktopIntegrationWindow final : public mwfl::WindowBase {
     }
 
     mwfl::EventResult OnClose() override {
-        mwfl::SavedWindowPlacement saved;
-        if (mwfl::CaptureWindowPlacement(GetHwnd(), saved))
-            mwfl::SaveWindowPlacementToRegistry(HKEY_CURRENT_USER, kRegistryKey, L"Window", saved);
+        if (!IsShowcase()) {
+            mwfl::SavedWindowPlacement saved;
+            if (mwfl::CaptureWindowPlacement(GetHwnd(), saved))
+                mwfl::SaveWindowPlacementToRegistry(HKEY_CURRENT_USER, kRegistryKey, L"Window",
+                                                     saved);
+        }
         return mwfl::EventResult::Propagate();
     }
     mwfl::EventResult OnDpiChanged(const mwfl::DpiChangedEvent& event) override {
@@ -141,6 +152,11 @@ class DesktopIntegrationWindow final : public mwfl::WindowBase {
     }
 
    private:
+    static bool IsShowcase() noexcept {
+        return std::wstring_view{::GetCommandLineW()}.find(L"--showcase") !=
+               std::wstring_view::npos;
+    }
+
     void ShowCustomDialog() {
         mwfl::Label prompt;
         mwfl::TextBox name;
@@ -225,6 +241,6 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     return mwfl::RunApplication<DesktopIntegrationWindow>(
         instance, show,
         {.title = L"Desktop integration",
-         .initial_bounds = {{}, {1120.0_dip, 720.0_dip}},
+         .initial_bounds = {{24.0_dip, 24.0_dip}, {1437.0_dip, 868.5_dip}},
          .use_default_bounds = false});
 }

@@ -43,6 +43,7 @@ constexpr mwfl::DockGroupId kBottomTools{30};
 constexpr mwfl::DockGroupId kFloatingTools{31};
 
 bool g_self_test = false;
+bool g_showcase = false;
 
 struct DockMouseEvent {
     mwfl::DockPanelId panel{};
@@ -101,7 +102,7 @@ public:
         if (!host_) return;
         RECT client{};
         ::GetClientRect(host_, &client);
-        const int tab_height = 29;
+        const int tab_height = 27;
         const int client_width = static_cast<int>(client.right);
         const int client_height = static_cast<int>(client.bottom);
         ::SetWindowPos(tabs_.GetHwnd(), nullptr, 0, 0, client_width,
@@ -250,10 +251,10 @@ public:
         mwfl::ControlHost controls{*this};
         controls.Add(toolbar_);
         controls.Add(status_);
-        for (const auto& command : commands_.GetCommands()) {
-            if (command.GetId() != kExit)
-                mwfl::Must(toolbar_.AddCommand(command), "add docking toolbar command");
-        }
+        for (const mwfl::ControlId id :
+             {kFloatOutput, kAutoHideExplorer, kKeyboardDock, kSaveLayout})
+            mwfl::Must(toolbar_.AddCommand(*commands_.Find(id)),
+                       "add primary docking toolbar command");
         toolbar_.AutoSize();
         BuildMenu();
         mwfl::Must(accelerators_.Create(commands_), "create docking accelerators");
@@ -292,10 +293,10 @@ public:
 
         CreatePanels();
         BindNativeState();
-        RestoreLayout();
+        if (!g_showcase) RestoreLayout();
         Synchronize(L"Ready — use toolbar, menu, shortcuts, or tab selection");
         mwfl::ApplyWindowAppearance(GetHwnd(),
-            {mwfl::ColorMode::system, mwfl::Backdrop::mica});
+            {mwfl::ColorMode::light, mwfl::Backdrop::mica});
         if (g_self_test && !::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0))
             throw std::runtime_error("post docking self-test failed");
     }
@@ -322,6 +323,11 @@ public:
     mwfl::EventResult OnResize(const mwfl::ResizeEvent&) override {
         LayoutChrome();
         return mwfl::EventResult::Handled();
+    }
+
+    mwfl::EventResult OnDpiChanged(const mwfl::DpiChangedEvent& event) override {
+        ApplyPanelFont(event.dpi_x);
+        return mwfl::EventResult::Propagate();
     }
 
     mwfl::EventResult OnKeyDown(const mwfl::KeyEvent& event) override {
@@ -404,17 +410,17 @@ private:
 
     void BuildCommands() {
         commands_
-            .Add(mwfl::Command(kFloatOutput, L"Float Output", [this] { FloatOutput(); })
+            .Add(mwfl::Command(kFloatOutput, L"Float", [this] { FloatOutput(); })
                 .SetShortcut({FVIRTKEY | FCONTROL | FSHIFT, 'F'}))
             .Add(mwfl::Command(kDockOutput, L"Dock Output", [this] { RedockOutput(); })
                 .SetShortcut({FVIRTKEY | FCONTROL | FSHIFT, 'D'}))
-            .Add(mwfl::Command(kAutoHideExplorer, L"Auto-hide Explorer",
+            .Add(mwfl::Command(kAutoHideExplorer, L"Auto-hide",
                 [this] { AutoHideExplorer(); }))
             .Add(mwfl::Command(kPinExplorer, L"Pin Explorer",
                 [this] { PinExplorer(); }))
-            .Add(mwfl::Command(kKeyboardDock, L"Keyboard Dock Output",
+            .Add(mwfl::Command(kKeyboardDock, L"Keyboard dock",
                 [this] { BeginKeyboardDock(); }).SetShortcut({FVIRTKEY | FCONTROL, 'K'}))
-            .Add(mwfl::Command(kSaveLayout, L"Save Layout",
+            .Add(mwfl::Command(kSaveLayout, L"Save layout",
                 [this] { SaveLayout(); }).SetShortcut({FVIRTKEY | FCONTROL, 'S'}))
             .Add(mwfl::Command(kResetLayout, L"Reset Layout",
                 [this] { ApplySnapshot(DefaultLayout(), L"Default layout restored"); }))
@@ -441,12 +447,26 @@ private:
 
     void CreatePanels() {
         main_editor_ = ::CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT",
-            L"// main.cpp\r\nint main() { return 0; }\r\n",
+            L"// examples/showcase/main.cpp\r\n"
+            L"#include <mwfl/mwfl.h>\r\n\r\n"
+            L"using mwfl::operator\"\"_dip;\r\n\r\n"
+            L"class ShowcaseWindow final : public mwfl::WindowBase {\r\n"
+            L"public:\r\n"
+            L"    void BuildUI() override {\r\n"
+            L"        SetTitle(L\"MWFL Showcase\");\r\n"
+            L"        SetLayout(mwfl::Column()\r\n"
+            L"            .Margin(24_dip).Gap(12_dip)\r\n"
+            L"            .Add(workspace_, mwfl::Stretch()));\r\n"
+            L"    }\r\n"
+            L"};\r\n",
             WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_MULTILINE | WS_VSCROLL,
             0, 0, 10, 10, documents_.GetHwnd(), reinterpret_cast<HMENU>(1101),
             ::GetModuleHandleW(nullptr), nullptr);
         readme_editor_ = ::CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT",
-            L"# Agent-friendly native IDE workspace\r\n\r\nUse Ctrl+K to dock by keyboard.",
+            L"MWFL 0.1 SHOWCASE\r\n\r\n"
+            L"A real-HWND IDE workspace with persistent docking, floating tools, "
+            L"auto-hide, mouse previews, and complete keyboard operation.\r\n\r\n"
+            L"Try Ctrl+K to dock the Output panel without a mouse.",
             WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_MULTILINE | WS_VSCROLL,
             0, 0, 10, 10, documents_.GetHwnd(), reinterpret_cast<HMENU>(1102),
             ::GetModuleHandleW(nullptr), nullptr);
@@ -455,13 +475,19 @@ private:
             0, 0, 10, 10, left_.GetHwnd(), reinterpret_cast<HMENU>(1103),
             ::GetModuleHandleW(nullptr), nullptr);
         output_ = ::CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT",
-            L"Build started...\r\nAll x64 checks passed.\r\n",
+            L"Build started: mwfl_showcase (Release | x64)\r\n"
+            L"Compiling native controls and docking workspace... done\r\n"
+            L"Running focused GUI verification... 12/12 passed\r\n"
+            L"Packaging public-preview assets... done\r\n"
+            L"Build succeeded in 4.8s — 0 warnings, 0 errors\r\n",
             WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_MULTILINE | ES_READONLY | WS_VSCROLL,
             0, 0, 10, 10, bottom_.GetHwnd(), reinterpret_cast<HMENU>(1104),
             ::GetModuleHandleW(nullptr), nullptr);
         mwfl::Must(main_editor_ && readme_editor_ && explorer_ && output_,
                    "create docking panels");
-        for (const wchar_t* item : {L"include", L"src", L"tests", L"examples"})
+        for (const wchar_t* item : {L"include", L"  mwfl", L"src", L"tests",
+                                    L"examples", L"  markdown_editor", L"  explorer",
+                                    L"  docking_workspace", L"docs", L"site"})
             ::SendMessageW(explorer_, LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item));
         for (auto [id, window] : PanelBindings()) {
             documents_.RegisterPanel(id, window);
@@ -469,6 +495,15 @@ private:
             bottom_.RegisterPanel(id, window);
             floating_group_.RegisterPanel(id, window);
             mwfl::SetAccessibleName(window, model_.FindPanel(id)->title.c_str());
+        }
+        ApplyPanelFont(GetDpiContext().GetDpi());
+    }
+
+    void ApplyPanelFont(UINT dpi) {
+        if (!panel_font_.CreateMessageFont(dpi)) return;
+        for (const auto [id, window] : PanelBindings()) {
+            static_cast<void>(id);
+            mwfl::SetControlFont(window, panel_font_.GetHandle());
         }
     }
 
@@ -780,8 +815,8 @@ private:
     void LayoutChrome() noexcept {
         RECT client{};
         if (!::GetClientRect(GetHwnd(), &client)) return;
-        constexpr int toolbar_height = 34;
-        constexpr int status_height = 24;
+        constexpr int toolbar_height = 38;
+        constexpr int status_height = 22;
         ::SetWindowPos(toolbar_.GetHwnd(), nullptr, 0, 0, client.right, toolbar_height,
                        SWP_NOZORDER | SWP_NOACTIVATE);
         ::SetWindowPos(status_.GetHwnd(), nullptr, 0, client.bottom - status_height,
@@ -940,6 +975,7 @@ private:
     HWND readme_editor_ = nullptr;
     HWND explorer_ = nullptr;
     HWND output_ = nullptr;
+    mwfl::UiFont panel_font_;
     int self_test_step_ = 1;
 };
 
@@ -947,8 +983,9 @@ private:
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     g_self_test = wcsstr(::GetCommandLineW(), L"--self-test") != nullptr;
+    g_showcase = wcsstr(::GetCommandLineW(), L"--showcase") != nullptr;
     return mwfl::RunApplication<DockingIdeWindow>(instance, show,
         {.title = L"mwfl Docking IDE Workspace",
-         .initial_bounds = {{40.0_dip, 40.0_dip}, {1180.0_dip, 760.0_dip}},
+         .initial_bounds = {{24.0_dip, 24.0_dip}, {1437.0_dip, 868.5_dip}},
          .use_default_bounds = false});
 }
