@@ -29,6 +29,7 @@ set(example_names
 
 file(READ "${PROJECT_ROOT}/README.md" root_readme)
 file(READ "${PROJECT_ROOT}/examples/README.md" examples_readme)
+file(READ "${PROJECT_ROOT}/docs/examples.json" examples_manifest)
 file(READ "${PROJECT_ROOT}/examples/CMakeLists.txt" examples_cmake)
 file(READ "${PROJECT_ROOT}/include/mwfl/controls.h" controls_header)
 file(READ "${PROJECT_ROOT}/include/mwfl/navigation_controls.h" navigation_controls_header)
@@ -100,9 +101,12 @@ foreach(example_name IN LISTS example_names)
     endif()
 endforeach()
 
-# Product-sized reference examples carry self-contained landing pages. Keep the
-# screenshot and code tour beside the source discoverable from each directory.
-foreach(example_name IN ITEMS sqlite_viewer compare_tool)
+# Every compiled example carries a self-contained landing page. Derive the set
+# from the public example manifest so new examples cannot silently skip it.
+string(JSON documented_example_count LENGTH "${examples_manifest}" examples)
+math(EXPR documented_example_last "${documented_example_count} - 1")
+foreach(example_index RANGE 0 ${documented_example_last})
+    string(JSON example_name GET "${examples_manifest}" examples ${example_index} directory)
     set(example_readme_path "${PROJECT_ROOT}/examples/${example_name}/README.md")
     if(NOT EXISTS "${example_readme_path}")
         message(FATAL_ERROR "reference example README is missing: ${example_name}")
@@ -113,13 +117,16 @@ foreach(example_name IN ITEMS sqlite_viewer compare_tool)
             "../../docs/images/examples/${image_slug}.png"
             "## Key code"
             "```cpp"
-            "## Try it"
             "main.cpp")
         if(NOT example_readme MATCHES "${marker}")
             message(FATAL_ERROR
                 "reference example README is missing '${marker}': ${example_name}")
         endif()
     endforeach()
+    if(NOT example_readme MATCHES "## (Try it|Build and run)")
+        message(FATAL_ERROR
+            "reference example README is missing build/run instructions: ${example_name}")
+    endif()
 endforeach()
 
 set(all_control_types ${public_control_types}
