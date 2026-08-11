@@ -80,7 +80,7 @@ SizeDip MeasureNativeControl(HWND window, DpiContext dpi) {
     }
 
     HDC dc = ::GetDC(window);
-    if (dc == nullptr) return {80.0_dip, 24.0_dip};
+    if (dc == nullptr) return {72.0_dip, 23.0_dip};
     const auto release_dc = wil::scope_exit([&] { ::ReleaseDC(window, dc); });
     const HFONT font = reinterpret_cast<HFONT>(::SendMessageW(window, WM_GETFONT, 0, 0));
     const HGDIOBJ old_font = font ? ::SelectObject(dc, font) : nullptr;
@@ -111,24 +111,27 @@ SizeDip MeasureNativeControl(HWND window, DpiContext dpi) {
         width += 2;
         height += 2;
     } else if (_wcsicmp(class_name, L"Edit") == 0) {
-        width = (std::max)(width + 12, dpi.ToPixels(120.0_dip));
-        height += 10;
+        width = (std::max)(width + 12, dpi.ToPixels(96.0_dip));
+        height += 8;
     } else if (_wcsicmp(class_name, L"ComboBox") == 0 ||
                _wcsicmp(class_name, WC_COMBOBOXEXW) == 0) {
-        width = (std::max)(width + 32, dpi.ToPixels(120.0_dip));
-        height += 10;
+        width = (std::max)(width + 28, dpi.ToPixels(96.0_dip));
+        height += 8;
     } else if (_wcsicmp(class_name, L"ListBox") == 0 || _wcsicmp(class_name, WC_LISTVIEWW) == 0 ||
                _wcsicmp(class_name, WC_TREEVIEWW) == 0) {
-        width = (std::max)(width + 24, dpi.ToPixels(160.0_dip));
-        height = dpi.ToPixels(96.0_dip);
+        width = (std::max)(width + 20, dpi.ToPixels(144.0_dip));
+        height = dpi.ToPixels(88.0_dip);
+    } else if (_wcsicmp(class_name, STATUSCLASSNAMEW) == 0) {
+        width = (std::max)(width + 14, dpi.ToPixels(22.0_dip));
+        height = (std::max)(height + 10, dpi.ToPixels(24.0_dip));
     } else if (_wcsicmp(class_name, PROGRESS_CLASSW) == 0 ||
                _wcsicmp(class_name, TRACKBAR_CLASSW) == 0 ||
                _wcsicmp(class_name, L"ScrollBar") == 0) {
-        width = dpi.ToPixels(120.0_dip);
-        height = dpi.ToPixels(24.0_dip);
+        width = dpi.ToPixels(96.0_dip);
+        height = dpi.ToPixels(22.0_dip);
     } else {
-        width = (std::max)(width + 16, dpi.ToPixels(24.0_dip));
-        height = (std::max)(height + 10, dpi.ToPixels(24.0_dip));
+        width = (std::max)(width + 14, dpi.ToPixels(22.0_dip));
+        height = (std::max)(height + 8, dpi.ToPixels(22.0_dip));
     }
     if ((style & WS_BORDER) != 0) {
         width += 2;

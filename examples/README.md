@@ -25,7 +25,7 @@ The repository includes 45 focused executables. Each example is intentionally sm
 | `common_controls` | `mwfl_common_controls_demo` | TreeView, ListView, Toolbar, DateTimePicker, and every specialized Common Controls family |
 | `self_drawn_host` | `mwfl_self_drawn_host_demo` | Worker-driven dirty frames, GDI paint, wake token, and wait-aware pump |
 | `system_lifecycle` | `mwfl_system_lifecycle_demo` | Power, display, settings, IME, end-session, and accessibility hand-off messages |
-| `hot_corners` | `mwfl_hot_corners_demo` | Multi-monitor hot corners using virtual-desktop coordinates and dwell detection |
+| `hot_corners` | `mwfl_hot_corners_demo` | Multi-monitor outer hot corners using virtual-desktop topology and dwell detection |
 | `form_binding` | `mwfl_form_binding_demo` | Live bindings, validation, model preview, and explicit `Push()`/`Pull()` flow |
 | `commands` | `mwfl_commands_demo` | Shared command state across menu, toolbar, and keyboard accelerators |
 | `desktop_integration` | `mwfl_desktop_integration_demo` | Modern dialogs, clipboard, file drops, task dialogs, and persistent placement |

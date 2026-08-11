@@ -332,16 +332,16 @@ class MarkdownEditorWindow final : public mwfl::WindowBase {
         auto column = mwfl::Column().Gap(4.0_dip).Margin(6.0_dip).Add(
             mwfl::Row()
                 .Gap(4.0_dip)
-                .Add(new_, mwfl::Fixed(48.0_dip))
-                .Add(open_, mwfl::Fixed(62.0_dip))
-                .Add(save_, mwfl::Fixed(52.0_dip))
-                .Add(heading_, mwfl::Fixed(42.0_dip))
-                .Add(bold_, mwfl::Fixed(48.0_dip))
-                .Add(italic_, mwfl::Fixed(48.0_dip))
-                .Add(code_, mwfl::Fixed(48.0_dip))
-                .Add(preview_button_, mwfl::Fixed(62.0_dip))
-                .Add(theme_button_, mwfl::Fixed(52.0_dip)),
-            mwfl::Fixed(26.0_dip));
+                .Add(new_, mwfl::Fixed(44.0_dip))
+                .Add(open_, mwfl::Fixed(58.0_dip))
+                .Add(save_, mwfl::Fixed(48.0_dip))
+                .Add(heading_, mwfl::Fixed(38.0_dip))
+                .Add(bold_, mwfl::Fixed(44.0_dip))
+                .Add(italic_, mwfl::Fixed(44.0_dip))
+                .Add(code_, mwfl::Fixed(44.0_dip))
+                .Add(preview_button_, mwfl::Fixed(58.0_dip))
+                .Add(theme_button_, mwfl::Fixed(48.0_dip)),
+            mwfl::Fixed(24.0_dip));
         if (search_panel_visible_) {
             column.Add(mwfl::Row()
                            .Gap(6.0_dip)
@@ -653,13 +653,18 @@ class MarkdownEditorWindow final : public mwfl::WindowBase {
         }
         document.stamp = saved.stamp;
         document.text = *text;
-        RemoveRecovery();
         editor_.SetSavePoint();
         restored_dirty_active_ = false;
         document.state.MarkSavedAs(path);
         static_cast<void>(tabs_model_.SetTitle(active_tab_, path.filename().wstring()));
         static_cast<void>(tabs_model_.SetDirty(active_tab_, false));
         static_cast<void>(tabs_.Synchronize(tabs_model_));
+        if (std::ranges::any_of(documents_, [](const MarkdownDocument& candidate) {
+                return candidate.state.IsDirty();
+            }))
+            WriteRecovery();
+        else
+            RemoveRecovery();
         UpdatePresentation(L"Saved");
         return true;
     }
@@ -834,7 +839,12 @@ class MarkdownEditorWindow final : public mwfl::WindowBase {
         markdown_syntax_.ApplyTheme(editor_, theme_button_is_dark_
                                                  ? markdown_editor::EditorTheme::dark
                                                  : markdown_editor::EditorTheme::light);
-        RefreshPreview();
+        if (!preview_ready_ && preview_.GetState() != mwfl::WebView2HostState::initializing) {
+            status_.SetText(L"Restarting preview...");
+            static_cast<void>(preview_.Restart());
+        } else {
+            RefreshPreview();
+        }
         UpdatePresentation(theme_button_is_dark_ ? L"Dark theme" : L"Light theme");
     }
 

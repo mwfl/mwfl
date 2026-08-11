@@ -1,6 +1,7 @@
 #include "explorer_model.h"
 
 #include <algorithm>
+#include <cwchar>
 #include <format>
 #include <utility>
 
@@ -80,8 +81,12 @@ void ExplorerModel::RebuildVisible() {
         const FileEntry& right = files_[right_index];
         int ordering = 0;
         switch (sort_column_) {
-            case FileColumn::name: ordering = left.name.compare(right.name); break;
-            case FileColumn::type: ordering = left.type.compare(right.type); break;
+            case FileColumn::name:
+                ordering = _wcsicmp(left.name.c_str(), right.name.c_str());
+                break;
+            case FileColumn::type:
+                ordering = _wcsicmp(left.type.c_str(), right.type.c_str());
+                break;
             case FileColumn::size:
                 ordering = left.size_bytes < right.size_bytes ? -1
                            : left.size_bytes > right.size_bytes ? 1 : 0;

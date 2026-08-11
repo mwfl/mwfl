@@ -33,6 +33,8 @@ struct Hit {
     constexpr bool operator==(const Hit&) const noexcept = default;
 };
 
+std::array<bool, 4> ExposedCorners(
+    std::span<const RECT> monitors, std::size_t monitor) noexcept;
 std::optional<Hit> Detect(
     POINT cursor, std::span<const RECT> monitors, LONG tolerance) noexcept;
 Action ResolveAction(const Settings& settings, Hit hit) noexcept;

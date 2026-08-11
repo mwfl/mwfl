@@ -9,8 +9,8 @@ int main() {
 
     ExplorerModel model;
     if (model.GetFolders().size() != 4 || model.GetSelectedFolder() != TreeItemId{1} ||
-        model.GetRowCount() != 6 || model.GetRowId(0) != ListItemId{2001} ||
-        model.FindRow({3001}) != 5)
+        model.GetRowCount() != 6 || model.GetRowId(0) != ListItemId{1001} ||
+        model.FindRow({3001}) != 4)
         return 1;
     if (!model.SelectFolder({20}) || model.GetRowCount() != 2 ||
         model.GetRowId(0) != ListItemId{2001} || model.GetCellText(0, 1) != L"PNG image" ||
@@ -19,8 +19,8 @@ int main() {
         return 2;
 
     model.Sort(FileColumn::size, false);
-    if (model.GetRowId(0) != ListItemId{2002} || model.GetRowId(1) != ListItemId{2001} ||
-        model.FindRow({2001}) != 1)
+    if (model.GetRowId(0) != ListItemId{2001} || model.GetRowId(1) != ListItemId{2002} ||
+        model.FindRow({2001}) != 0)
         return 3;
     model.Sort(FileColumn::name, true);
     if (model.GetRowId(0) != ListItemId{2001} || model.GetRowId(1) != ListItemId{2002})

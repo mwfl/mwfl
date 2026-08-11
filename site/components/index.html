@@ -117,7 +117,7 @@ const auto result = form.ShowModal();</code></pre></div>
       </section>
 
       <section id="hot-corners" class="doc-section">
-        <div class="doc-heading"><div><span class="tag">Reference utility</span><h2>Multi-monitor Hot Corners</h2></div><p>A complete notification-area utility with stable-GUID tray lifetime, typed context commands, notifications, Explorer restart recovery, and every monitor's absolute virtual-desktop rectangle.</p></div>
+        <div class="doc-heading"><div><span class="tag">Reference utility</span><h2>Multi-monitor Hot Corners</h2></div><p>A complete notification-area utility with stable-GUID tray lifetime, typed context commands, notifications, Explorer restart recovery, and topology-aware outer corners across the virtual desktop.</p></div>
         <div class="example-grid">
           <pre data-title="Per-monitor detection"><code>EnumDisplayMonitors(nullptr, nullptr, CollectMonitor, data);
 GetCursorPos(&cursor);
@@ -128,7 +128,7 @@ if (fired) Activate(*fired);
 
 if (tray_.IsTaskbarCreated(message)) tray_.Recreate();
 else if (auto event = tray_.Decode(message)) RouteTray(*event);</code></pre>
-          <figure class="preview-panel"><img src="https://raw.githubusercontent.com/mwfl/mwfl/main/docs/images/examples/hot-corners.png" alt="mwfl multi-monitor Hot Corners utility" width="655" height="287" loading="lazy" decoding="async"><figcaption>Four actions on every attached monitor, with display-change refresh and one-shot dwell behavior.</figcaption></figure>
+          <figure class="preview-panel"><img src="https://raw.githubusercontent.com/mwfl/mwfl/main/docs/images/examples/hot-corners.png" alt="mwfl multi-monitor Hot Corners utility" width="655" height="287" loading="lazy" decoding="async"><figcaption>Only exposed outer corners activate; internal display seams are disabled while true step corners remain available.</figcaption></figure>
         </div>
       </section>
 

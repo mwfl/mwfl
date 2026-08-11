@@ -116,6 +116,16 @@ class ModernApiWindow final : public mwfl::WindowBase {
               has_intrinsic_size(animation_))) {
             throw std::runtime_error("missing intrinsic control size");
         }
+        const auto text_size = text_.GetPreferredSize(GetDpiContext());
+        const auto combo_size = combo_.GetPreferredSize(GetDpiContext());
+        const auto list_size = list_.GetPreferredSize(GetDpiContext());
+        const auto slider_size = slider_.GetPreferredSize(GetDpiContext());
+        if (text_size.width.value > 100.0f || combo_size.width.value > 100.0f ||
+            list_size.width.value > 148.0f || slider_size.width.value > 98.0f ||
+            text_size.height.value > 26.0f || combo_size.height.value > 26.0f ||
+            slider_size.height.value > 24.0f) {
+            throw std::runtime_error("intrinsic control defaults are not compact");
+        }
         mwfl::Must(tooltip_.Create(rebar_.GetHwnd()), "create tooltip");
         mwfl::Must(images_.Create(16, 16), "create image list");
         mwfl::Must(timer_.Start(*this, kTimer, 1ms), "start timer");

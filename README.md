@@ -32,7 +32,7 @@ ownership, typed events, checked setup helpers, and DPI-aware responsive layout.
 hiding native handles, messages, styles, or return values.
 
 <p align="center">
-  <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/capability-collage.svg" alt="MWFL Markdown Editor, Explorer, and Docking Workspace capability showcase"></a>
+  <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/mwfl-showcase-40s.gif" alt="MWFL applications running with populated native controls"></a>
 </p>
 
 **v0.1.0 is the first public preview.** The repository contains **45 compiled
@@ -208,7 +208,7 @@ multi-monitor utility.
 | Common Controls | [examples/common_controls/main.cpp](examples/common_controls/main.cpp) | Complete specialized-control gallery |
 | Self-drawn host | [examples/self_drawn_host/main.cpp](examples/self_drawn_host/main.cpp) | Worker-driven native drawing |
 | System lifecycle | [examples/system_lifecycle/main.cpp](examples/system_lifecycle/main.cpp) | Power, display, IME, and session messages |
-| Hot corners | [examples/hot_corners/main.cpp](examples/hot_corners/main.cpp) | Complete multi-monitor utility |
+| Hot corners | [examples/hot_corners/main.cpp](examples/hot_corners/main.cpp) | Complete multi-monitor utility with topology-aware outer corners |
 | Form binding | [examples/form_binding/main.cpp](examples/form_binding/main.cpp) | Live model binding, validation, and explicit push/pull flow |
 | Commands | [examples/commands/main.cpp](examples/commands/main.cpp) | One command model shared by menu, toolbar, and accelerators |
 | Desktop integration | [examples/desktop_integration/main.cpp](examples/desktop_integration/main.cpp) | Modern dialogs, clipboard, drag-drop, and window placement |

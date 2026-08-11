@@ -315,6 +315,10 @@ All built-in controls expose dynamic intrinsic measurement. `Auto()` remeasures
 whenever layout is measured, so text, content, font, theme, and DPI changes are
 reflected without rebuilding the layout. Operations that may allocate can throw
 instead of terminating through an invalid `noexcept` contract.
+Default intrinsic sizes use compact Windows desktop metrics: text and combo
+inputs have a 96-DIP minimum width, collection controls 144 DIPs, and compact
+single-line controls target a 22-DIP height. Applications can always override
+these defaults with `Fixed`, minimum/maximum constraints, or `preferred_size`.
 
 Native child controls remember their creating thread. Debug builds assert when
 a control is used or destroyed from another thread. Use `WindowWakeup` for

@@ -75,6 +75,9 @@ environment limitation.
 ## Hot Corners
 
 - Launch the Hot Corners example and confirm its tray icon and MWFL naming.
+- With two adjacent displays, confirm corners along their shared seam are disabled and do not
+  activate; only corners on the exposed outside edges should be selectable.
+- With vertically offset displays, confirm the exposed step corners at the offset remain active.
 - Trigger each configured corner on every attached monitor. Confirm one action
   fires per deliberate entry, no repeated firing occurs while the pointer stays
   in the corner, and re-entry works after leaving the activation area.

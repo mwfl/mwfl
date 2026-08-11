@@ -130,7 +130,7 @@ foreach(example_name IN LISTS featured_images)
 endforeach()
 
 foreach(marker IN ITEMS
-        "docs/images/showcase/capability-collage.svg"
+        "docs/images/showcase/mwfl-showcase-40s.gif"
         "45 compiled"
         "public preview")
     if(NOT root_readme MATCHES "${marker}")

@@ -376,6 +376,9 @@ class HotCornersWindow final : public WindowBase {
         monitors_.clear();
         ::EnumDisplayMonitors(nullptr, nullptr, CollectMonitor,
                               reinterpret_cast<LPARAM>(&monitors_));
+        std::ranges::sort(monitors_, {}, [](const RECT& area) {
+            return std::array{area.left, area.top, area.right, area.bottom};
+        });
         settings_.monitors.resize(monitors_.size());
         shown_monitor_ =
             (std::min)(shown_monitor_, monitors_.empty() ? std::size_t{0} : monitors_.size() - 1);
@@ -402,16 +405,29 @@ class HotCornersWindow final : public WindowBase {
 
     void PopulateMonitorList() {
         ::SendMessageW(monitor_.GetHwnd(), CB_RESETCONTENT, 0, 0);
-        for (std::size_t i = 0; i < monitors_.size(); ++i)
-            monitor_.AddItem(L"Monitor " + std::to_wstring(i + 1));
+        for (std::size_t i = 0; i < monitors_.size(); ++i) {
+            const RECT& area = monitors_[i];
+            monitor_.AddItem(L"Monitor " + std::to_wstring(i + 1) + L"  ·  " +
+                             std::to_wstring(area.right - area.left) + L"×" +
+                             std::to_wstring(area.bottom - area.top) + L" @ " +
+                             std::to_wstring(area.left) + L"," +
+                             std::to_wstring(area.top));
+        }
         if (!monitors_.empty()) monitor_.SetSelection(static_cast<int>(shown_monitor_));
     }
 
     void LoadVisibleMonitor() {
         if (shown_monitor_ >= settings_.monitors.size()) return;
-        for (std::size_t i = 0; i < 4; ++i)
+        constexpr std::array<const wchar_t*, 4> names{L"Top left", L"Top right",
+                                                      L"Bottom left", L"Bottom right"};
+        const auto exposed = hot_corners::ExposedCorners(monitors_, shown_monitor_);
+        for (std::size_t i = 0; i < 4; ++i) {
             actions_[i].SetSelection(
                 static_cast<int>(settings_.monitors[shown_monitor_].corners[i]));
+            actions_[i].SetEnabled(exposed[i]);
+            corner_labels_[i].SetText(std::wstring(names[i]) +
+                                      (exposed[i] ? L"" : L" (internal)"));
+        }
     }
 
     void StoreVisibleMonitor() {
@@ -486,8 +502,13 @@ class HotCornersWindow final : public WindowBase {
                              : last_fullscreen_paused_ ? L"Paused for fullscreen app"
                                                        : L"Watching";
         if (g_test_mode) state += L" (test mode: input suppressed)";
+        std::size_t exposed_count = 0;
+        for (std::size_t index = 0; index < monitors_.size(); ++index)
+            exposed_count += static_cast<std::size_t>(std::ranges::count(
+                hot_corners::ExposedCorners(monitors_, index), true));
         status_.SetText(state + L"; " + std::to_wstring(monitors_.size()) + L" monitor(s), " +
-                        std::to_wstring(settings_.dwell_ms) + L" ms / " +
+                         std::to_wstring(exposed_count) + L" outer corners, " +
+                         std::to_wstring(settings_.dwell_ms) + L" ms / " +
                         std::to_wstring(settings_.tolerance) + L" px");
     }
 
