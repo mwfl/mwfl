@@ -16,7 +16,7 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-17a589.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/C%2B%2B-20-146c94.svg" alt="C++20">
-  <img src="https://img.shields.io/badge/platform-Windows%2010%2B%20x64-ff9f43.svg" alt="Windows 10 or newer on x64">
+  <img src="https://img.shields.io/badge/platform-Windows%2010%2B%20x64%20%7C%20ARM64-ff9f43.svg" alt="Windows 10 or newer on x64 and ARM64">
 </p>
 
 <p align="center">
@@ -105,7 +105,7 @@ project(my_app LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwfl
   GIT_REPOSITORY https://github.com/mwfl/mwfl.git
-  GIT_TAG main
+  GIT_TAG v0.1.0
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwfl)
 
@@ -113,7 +113,8 @@ add_executable(my_app WIN32 main.cpp)
 target_link_libraries(my_app PRIVATE mwfl::mwfl)
 ```
 
-Pin a release tag or immutable commit for reproducible application builds.
+The example pins the first public-preview release. Use an immutable commit only
+when deliberately testing unreleased changes.
 
 ```powershell
 cmake -S . -B build -G "Visual Studio 18 2026" -A x64
@@ -157,6 +158,15 @@ The [complete capability catalog](https://mwfl.github.io/components/catalog.html
 maps every public workflow to exact symbols, headers, examples, guides,
 contracts, and tests.
 Detailed API notes live in [docs/api.md](docs/api.md).
+
+## Choose your layer
+
+| Layer | Start here when you need | Entry point |
+|---|---|---|
+| Core | windows, controls, events, layout, DPI, timers, worker handoff | [Core guide](docs/README.md#core) |
+| Application | commands, forms, documents, dialogs, settings, persistence | [Application guide](docs/README.md#application) |
+| Advanced | docking, printing, OLE, Shell, Ribbon, MDI, graphics | [Advanced guide](docs/README.md#advanced) |
+| Optional | Direct2D/3D, WIC, WebView2, Scintilla | [Optional guide](docs/README.md#optional) |
 
 ## Examples
 
@@ -235,7 +245,7 @@ content-rich examples with screenshots and source links.
 
 ## Build this repository
 
-The authoritative 0.8 development and acceptance environment is Windows 10
+The authoritative 0.1 public-preview development and acceptance environment is Windows 10
 1809 or newer, x64, Visual Studio 2026 with MSVC, a Windows SDK and C++ ATL,
 CMake 3.21 or newer, and C++20.
 
@@ -256,11 +266,13 @@ For repository development, `./scripts/doctor.ps1` discovers the supported
 toolchains and `./scripts/verify.ps1 -Mode Fast` runs the standard edit loop.
 
 The project rejects non-Windows, non-MSVC, and 32-bit
-configurations. The completed 0.8 gate passes all 162 tests in both VS2026 x64
-Debug and Release, including public-header independence, package consumption,
+configurations. The 0.1 release-candidate matrix contains 164 core tests and
+175 tests with all optional integrations enabled. Both VS2026 x64 Debug and
+Release optional matrices pass, including public-header independence, package
+consumption,
 manifests, examples, GUI self-tests, resource lifetime, API surface, and
 deterministic property cases. VS2022, ARM64, sanitizers, coverage,
-static analysis, Pipeline, and GitHub Actions are a separate post-0.8
+static analysis, Pipeline, and GitHub Actions are additional 0.1
 compatibility pass and are not claimed by this README yet.
 
 ## Dependencies

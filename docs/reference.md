@@ -58,4 +58,6 @@ is more important than compile-time isolation.
 
 Detailed semantics and examples are in [api.md](api.md). Ownership, error,
 threading, and evolution rules are in [design.md](design.md) and
-[stability.md](stability.md).
+[stability.md](stability.md). The release-freeze classification and consolidated
+failure/ownership/threading review are in
+[public-api-contract-audit.md](public-api-contract-audit.md).

@@ -2,8 +2,9 @@
 
 This tutorial builds and explains the complete `docking_workspace` reference
 application. It targets Windows 10 or newer, C++20, Visual Studio 2026, MSVC,
-and x64. The 0.7 local gate intentionally validates only x64 Debug and Release;
-the wider compiler, architecture, and CI matrix is deferred until after 0.8.
+and x64. The focused commands below are the local edit loop; the 0.1 release
+gate additionally covers VS2022 compatibility, ARM64, sanitizers, coverage,
+and hosted CI.
 
 ## 1. Configure, build, and run
 
@@ -196,7 +197,7 @@ startup failure to `mwfl::Must` only where the application truly cannot proceed.
 
 ## Verification gate
 
-For the approved 0.7 local scope, run both configurations:
+For the local x64 scope, run both configurations:
 
 ```powershell
 cmake --build build/presets/vs2026-x64 --config Debug
@@ -205,5 +206,5 @@ cmake --build build/presets/vs2026-x64 --config Release
 ctest --test-dir build/presets/vs2026-x64 -C Release --output-on-failure
 ```
 
-Do not infer ARM64, other Visual Studio versions, sanitizer, coverage,
-Pipeline, or GitHub Actions status from this gate; those are audited after 0.8.
+These local commands do not replace the broader release matrix recorded in
+`docs/release-readiness.md`.

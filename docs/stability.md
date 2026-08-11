@@ -1,12 +1,9 @@
 # API stability policy
 
-mwfl has not yet published its supported public baseline. Until the replacement
-`v0.1.0` release is cut, every API is reviewable and may be renamed, simplified,
-or removed without a compatibility shim. This one-time pre-public window exists
-to make the first supported surface smaller and more coherent.
+The `v0.1.0` public-preview release establishes the supported public baseline.
+The audited baseline is recorded in [public-api-contract-audit.md](public-api-contract-audit.md).
 
-The replacement `v0.1.0` tag starts the compatibility policy below. From that
-release onward, documented stable APIs preserve source compatibility within the
+From `v0.1.0` onward, documented stable APIs preserve source compatibility within the
 current minor line. ABI compatibility is not promised: applications should
 rebuild mwfl and their code with the same MSVC toolset and runtime configuration.
 

@@ -9,8 +9,10 @@ set(required_files
     docs/change-matrix.json
     docs/scope-map.md
     docs/api-index.json
+    docs/public-api-contract-audit.md
     scripts/developer-tools.ps1
     scripts/doctor.ps1
+    scripts/new-mwfl-app.ps1
     scripts/verify.ps1
     scripts/verify-change.ps1)
 foreach(path IN LISTS required_files)
@@ -72,6 +74,11 @@ file(READ "${PROJECT_ROOT}/.github/workflows/ci.yml" ci_workflow)
 foreach(term IN ITEMS windows-2022 windows-2025-vs2026 vs2022-x64-release vs2026-x64-debug)
     if(NOT ci_workflow MATCHES "${term}")
         message(FATAL_ERROR "CI does not cover required toolchain marker: ${term}")
+    endif()
+endforeach()
+foreach(term IN ITEMS vs2026-x64-optional-debug vs2026-x64-optional-release session_parser_fuzz)
+    if(NOT ci_workflow MATCHES "${term}")
+        message(FATAL_ERROR "CI does not cover optional/reliability marker: ${term}")
     endif()
 endforeach()
 foreach(term IN ITEMS windows-11-arm "Visual Studio 17 2022" ARM64)

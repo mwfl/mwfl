@@ -59,6 +59,44 @@ jobs:
       - name: Test
         run: ctest --preset vs2022-x64-release
 
+  optional-components:
+    name: VS 2026 x64 optional components ${{ matrix.configuration }}
+    runs-on: windows-2025-vs2026
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - configuration: Debug
+            preset: vs2026-x64-optional-debug
+          - configuration: Release
+            preset: vs2026-x64-optional-release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Configure all optional components
+        run: cmake --preset vs2026-x64-optional
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }} --parallel
+      - name: Test
+        run: ctest --preset ${{ matrix.preset }}
+
+  reliability-repeat:
+    name: Parser fuzz and lifecycle repeat
+    runs-on: windows-2025-vs2026
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Configure
+        run: cmake --preset vs2026-x64
+      - name: Build reliability targets
+        run: >-
+          cmake --build --preset vs2026-x64-debug --parallel
+          --target mwfl_session_parser_fuzz_test mwfl_resource_leak_test
+          mwfl_lifecycle_test mwfl_advanced_lifecycle_test
+      - name: Repeat reliability tests
+        run: >-
+          ctest --preset vs2026-x64-debug
+          -R "mwfl\.(session_parser_fuzz|resource_leak|lifecycle\.|advanced\.)"
+          --repeat until-fail:5
+
   static-analysis:
     name: VS 2026 MSVC static analysis
     runs-on: windows-2025-vs2026

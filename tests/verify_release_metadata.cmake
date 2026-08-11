@@ -51,8 +51,9 @@ foreach(versioned_file IN ITEMS
     endif()
 endforeach()
 file(READ "${PROJECT_ROOT}/README.md" readme_text)
-if(readme_text MATCHES "v[0-9]+\\.[0-9]+\\.[0-9]+")
-    message(FATAL_ERROR "README must remain version-neutral")
+if(NOT readme_text MATCHES "GIT_TAG v0\\.1\\.0" OR
+   readme_text MATCHES "GIT_TAG main|completed 0\\.8|post-0\\.8")
+    message(FATAL_ERROR "README does not describe the 0.1 public-preview release consistently")
 endif()
 if(NOT release_workflow_text MATCHES [[gh release create]] OR
    NOT release_workflow_text MATCHES [[artifacts/\*\.zip]] OR

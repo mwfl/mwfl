@@ -79,6 +79,6 @@ cmake --build --preset vs2026-x64-release
 ctest --preset vs2026-x64-release
 ```
 
-During 0.4 through 0.8 this local VS2026/MSVC x64 Debug/Release matrix is the
-approved feature gate. Other architectures, compilers, and remote workflows are
-revalidated together after 0.8.
+This local VS2026/MSVC x64 Debug/Release matrix is the focused edit gate. The
+0.1 release matrix additionally revalidates supported architectures, toolchains,
+sanitizers, coverage, and remote workflows.

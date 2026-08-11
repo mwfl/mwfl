@@ -385,6 +385,7 @@ install(FILES
     docs/stability.md
     docs/accessibility.md
     docs/reference.md
+    docs/public-api-contract-audit.md
     docs/system-message-recipes.md
     docs/agent-usage.md
     docs/agent-reference.md

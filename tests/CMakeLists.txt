@@ -208,6 +208,12 @@ target_compile_features(mwfl_agent_api_probe PRIVATE cxx_std_20)
 target_compile_options(mwfl_agent_api_probe PRIVATE /W4 /permissive- /EHsc /utf-8)
 target_link_libraries(mwfl_agent_api_probe PRIVATE mwfl::mwfl)
 
+add_test(NAME mwfl.new_app_script
+    COMMAND powershell -NoProfile -ExecutionPolicy Bypass
+        -File "${CMAKE_CURRENT_SOURCE_DIR}/new_app_script_test.ps1"
+        -ProjectRoot "${PROJECT_SOURCE_DIR}")
+set_tests_properties(mwfl.new_app_script PROPERTIES TIMEOUT 20 LABELS "fast;docs")
+
 add_library(mwfl_direct_create_test OBJECT direct_create_test.cpp)
 target_compile_features(mwfl_direct_create_test PRIVATE cxx_std_20)
 target_compile_options(mwfl_direct_create_test PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -552,6 +558,13 @@ target_compile_options(mwfl_document_session_test PRIVATE /W4 /permissive- /EHsc
 target_link_libraries(mwfl_document_session_test PRIVATE mwfl::mwfl)
 add_test(NAME mwfl.document_session COMMAND mwfl_document_session_test)
 set_tests_properties(mwfl.document_session PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+add_executable(mwfl_session_parser_fuzz_test session_parser_fuzz_test.cpp)
+target_compile_features(mwfl_session_parser_fuzz_test PRIVATE cxx_std_20)
+target_compile_options(mwfl_session_parser_fuzz_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwfl_session_parser_fuzz_test PRIVATE mwfl::mwfl)
+add_test(NAME mwfl.session_parser_fuzz COMMAND mwfl_session_parser_fuzz_test)
+set_tests_properties(mwfl.session_parser_fuzz PROPERTIES TIMEOUT 30 LABELS "fast;unit;fuzz")
 
 add_executable(mwfl_document_workspace_stress_test document_workspace_stress_test.cpp)
 target_compile_features(mwfl_document_workspace_stress_test PRIVATE cxx_std_20)

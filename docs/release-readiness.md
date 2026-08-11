@@ -131,11 +131,10 @@ MSVC 19.51.36252, Windows SDK 10.0.26100, C++20, and x64:
 
 - Core Debug: 162/162 tests passed.
 - Core Release: 162/162 tests passed.
-- All optional integrations Debug: 172 non-package tests passed; the package
-  consumer passed on its isolated rerun after md4c install rules were removed
-  from the MWFL package graph.
-- All optional integrations Release: the same 172 non-package tests passed;
-  the Release package consumer passed on its isolated rerun.
+- All optional integrations Debug: 175/175 tests passed, including the installed
+  package consumer, parser mutation fuzz, and application-generator test.
+- All optional integrations Release: 175/175 tests passed, including the same
+  installed package and reliability coverage.
 - Native source coverage: 82.74% (8,697/10,511 lines), above the 74% CI floor;
   all 159 tests included in the coverage run passed.
 - Capability metadata: 43 discoverable capabilities and 45 compiled examples.

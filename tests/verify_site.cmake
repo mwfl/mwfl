@@ -1,5 +1,12 @@
 get_filename_component(PROJECT_ROOT "${SITE_ROOT}" DIRECTORY)
 
+file(READ "${SITE_ROOT}/index.html" home_page)
+foreach(layer IN ITEMS Core Application Advanced Optional)
+    if(NOT home_page MATCHES ">${layer}<")
+        message(FATAL_ERROR "home page is missing the ${layer} documentation entry")
+    endif()
+endforeach()
+
 foreach(required IN ITEMS
         index.html
         tutorial.html
