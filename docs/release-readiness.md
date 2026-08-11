@@ -4,7 +4,7 @@
 
 Publish one clean `v0.1.0` as mwfl's first supported public preview. The old
 release and tag were removed on 2026-08-10 because they had no known users. The
-replacement release is created only after the current source, all 43 examples,
+replacement release is created only after the current source, all 45 examples,
 optional integrations, packages, documentation, and website pass the gates
 below from the same commit.
 
@@ -58,8 +58,9 @@ The remaining work is hardening rather than another feature milestone:
 
 ### Gate B - every example is real
 
-- Configure and build all 41 core examples plus the optional WebView2 and
-  Scintilla examples in VS2026, MSVC C++20, x64 Debug and Release.
+- Configure and build all 41 core examples plus the optional WebView2,
+  Scintilla, Markdown Editor, and PDF Viewer applications in VS2026, MSVC
+  C++20, x64 Debug and Release.
 - Run every registered unit, lifecycle, native integration, GUI self-test,
   stress/resource, metadata, documentation, and package-consumer test.
 - Verify each `docs/examples.json` entry names an existing `main.cpp`, is added
@@ -130,9 +131,14 @@ MSVC 19.51.36252, Windows SDK 10.0.26100, C++20, and x64:
 
 - Core Debug: 162/162 tests passed.
 - Core Release: 162/162 tests passed.
-- WebView2 + Scintilla Debug: 170/170 tests passed.
-- WebView2 + Scintilla Release: 170/170 tests passed.
-- Documentation and metadata: 46/46 tests passed independently.
+- All optional integrations Debug: 172 non-package tests passed; the package
+  consumer passed on its isolated rerun after md4c install rules were removed
+  from the MWFL package graph.
+- All optional integrations Release: the same 172 non-package tests passed;
+  the Release package consumer passed on its isolated rerun.
+- Native source coverage: 82.74% (8,697/10,511 lines), above the 74% CI floor;
+  all 159 tests included in the coverage run passed.
+- Capability metadata: 43 discoverable capabilities and 45 compiled examples.
 - The two environment-sensitive native tests found during the audit each pass
   five consecutive runs after their focus and process-cache assumptions were
   corrected.
@@ -140,6 +146,12 @@ MSVC 19.51.36252, Windows SDK 10.0.26100, C++20, and x64:
 The first binary release intentionally packages x64 only. ARM64 remains a
 source target but is outside the `0.1.0` release artifact gate until its remote
 packaging path is stabilized.
+
+The final human product pass follows
+[`release-manual-test.md`](release-manual-test.md). It covers package integrity,
+Markdown multi-document editing and recovery, Notepad text/file behavior, PDF
+tabs and embedded viewer workflows, Hot Corners across monitor topologies, DPI,
+keyboard, accessibility, and an extended stability run.
 
 This record proves the local automated candidate. The remaining stop-ship work
 is the final browser/visual smoke pass, clean-checkout reproduction, release

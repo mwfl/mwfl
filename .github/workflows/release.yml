@@ -33,12 +33,19 @@ jobs:
           ctest --test-dir build/release -C Release --output-on-failure
       - name: Package
         run: cpack --config build/release/CPackConfig.cmake -C Release -B artifacts
+      - name: Package flagship applications
+        shell: pwsh
+        run: |
+          $version = Select-String -Path CMakeLists.txt -Pattern 'project\(mwfl VERSION ([0-9.]+)' | ForEach-Object { $_.Matches[0].Groups[1].Value }
+          ./scripts/package-notepad.ps1 -VisualStudio 2026 -Version $version -OutputDirectory artifacts
+          ./scripts/package-markdown-editor.ps1 -VisualStudio 2026 -Version $version -OutputDirectory artifacts
+          ./scripts/package-pdf-viewer.ps1 -VisualStudio 2026 -Version $version -OutputDirectory artifacts
       - name: Create checksums
         shell: pwsh
         run: |
           $packages = @(Get-ChildItem artifacts -Filter *.zip -File)
-          if ($packages.Count -ne 1) {
-            throw "Expected exactly one ZIP package, found $($packages.Count)"
+          if ($packages.Count -ne 4) {
+            throw "Expected core, Notepad, Markdown Editor, and PDF Viewer ZIP packages; found $($packages.Count)"
           }
           $packages | ForEach-Object {
             $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()

@@ -322,6 +322,16 @@
       "constraints": ["enable MWFL_BUILD_WEBVIEW2 and link mwfl::webview2", "SDK 1.0.4129.50 is hash-pinned", "operations and callbacks stay on the creating STA thread", "controller environment and escape-hatch interfaces are borrowed", "Close invalidates pending callbacks", "post before Restart from a process callback", "use NavigateToString for deterministic offline tests"]
     },
     {
+      "id": "pdf-viewer",
+      "intent": ["view local PDF documents", "build a tabbed PDF reader", "open dropped PDF files", "recover a PDF rendering process"],
+      "symbols": ["mwfl::WebView2Host", "mwfl::TabWorkspaceModel", "mwfl::TabControl", "mwfl::ShowOpenFileDialog", "mwfl::EnableFileDrop"],
+      "headers": ["mwfl/webview2.h", "mwfl/tab_workspace.h", "mwfl/navigation_controls.h", "mwfl/desktop.h"],
+      "example": "examples/pdf_viewer/main.cpp",
+      "recipe": "docs/tutorials/pdf-viewer.md",
+      "tests": ["mwfl.pdf_viewer_gui", "mwfl.webview2_native"],
+      "constraints": ["enable MWFL_BUILD_WEBVIEW2 and initialize STA", "PDF paths remain local and become file URIs only after explicit open or drop", "the tab model is authoritative", "WebView2 controller access stays on the creating UI thread", "post before process restart", "show a normal failure when the Evergreen Runtime is unavailable"]
+    },
+    {
       "id": "scintilla-code-editor",
       "intent": ["build a source editor", "host Scintilla", "handle editor notifications", "search and replace code"],
       "symbols": ["mwfl::ScintillaRuntime", "mwfl::ScintillaEditor", "mwfl::ScintillaNotification", "mwfl::ScintillaTextRange"],
@@ -334,8 +344,8 @@
     {
       "id": "markdown-editor",
       "intent": ["edit Markdown", "preview Markdown", "syntax color Markdown", "build a local-first document editor", "compose Scintilla and WebView2"],
-      "symbols": ["mwfl::ScintillaEditor", "mwfl::WebView2Host", "mwfl::Splitter", "mwfl::DocumentState", "mwfl::ReadTextFile", "mwfl::WriteTextFileAtomic"],
-      "headers": ["mwfl/scintilla.h", "mwfl/webview2.h", "mwfl/splitter.h", "mwfl/document.h", "mwfl/text_file.h"],
+      "symbols": ["mwfl::ScintillaEditor", "mwfl::WebView2Host", "mwfl::TabWorkspaceModel", "mwfl::TabControl", "mwfl::DocumentState", "mwfl::ReadTextFile", "mwfl::WriteTextFileAtomic"],
+      "headers": ["mwfl/scintilla.h", "mwfl/webview2.h", "mwfl/tab_workspace.h", "mwfl/navigation_controls.h", "mwfl/document.h", "mwfl/text_file.h"],
       "example": "examples/markdown_editor/main.cpp",
       "recipe": "docs/tutorials/markdown-editor.md",
       "tests": ["mwfl.markdown_renderer", "mwfl.markdown_editor_gui"],

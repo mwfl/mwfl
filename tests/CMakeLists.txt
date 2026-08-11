@@ -850,6 +850,13 @@ if(MWFL_BUILD_WEBVIEW2)
             -Executable $<TARGET_FILE:mwfl_browser_demo>
             -RuntimePath "$<TARGET_FILE_DIR:mwfl_browser_demo>")
     set_tests_properties(mwfl.browser_gui PROPERTIES TIMEOUT 45 LABELS "gui;integration")
+    add_test(NAME mwfl.pdf_viewer_gui
+        COMMAND "${mwfl_webview2_test_powershell}" -NoProfile -NonInteractive
+            -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
+            -Executable $<TARGET_FILE:mwfl_pdf_viewer>
+            -RuntimePath "$<TARGET_FILE_DIR:mwfl_pdf_viewer>")
+    set_tests_properties(mwfl.pdf_viewer_gui PROPERTIES TIMEOUT 45 LABELS "gui;integration")
 endif()
 
 if(TARGET mwfl_markdown_editor)
@@ -1227,6 +1234,7 @@ foreach(test_name IN LISTS mwfl_all_tests)
            test_name STREQUAL "mwfl.docking_workspace_gui" OR
            test_name STREQUAL "mwfl.code_editor_gui" OR
            test_name STREQUAL "mwfl.browser_gui" OR
+           test_name STREQUAL "mwfl.pdf_viewer_gui" OR
            test_name STREQUAL "mwfl.notepad_gui" OR
            test_name STREQUAL "mwfl.document_workspace_gui")
         set(labels "gui;integration")

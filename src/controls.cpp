@@ -1,10 +1,10 @@
 #include <mwfl/controls.h>
 #include <wil/resource.h>
 
-#include <utility>
 #include <array>
 #include <cassert>
 #include <cwchar>
+#include <utility>
 
 namespace mwfl {
 namespace {
@@ -15,10 +15,9 @@ RECT ResolveControlBounds(HWND parent, RectDip bounds) noexcept {
 
 void ApplyDefaultFont(HWND window, HWND parent) noexcept {
     HFONT font = parent != nullptr
-        ? reinterpret_cast<HFONT>(::SendMessageW(parent, WM_GETFONT, 0, 0))
-        : nullptr;
-    if (font == nullptr)
-        font = static_cast<HFONT>(::GetStockObject(DEFAULT_GUI_FONT));
+                     ? reinterpret_cast<HFONT>(::SendMessageW(parent, WM_GETFONT, 0, 0))
+                     : nullptr;
+    if (font == nullptr) font = static_cast<HFONT>(::GetStockObject(DEFAULT_GUI_FONT));
     ::SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
 }
 
@@ -48,13 +47,12 @@ NativeControl& NativeControl::operator=(NativeControl&& other) noexcept {
 bool NativeControl::IsWindow() const noexcept {
     assert(IsOwnerThread());
     return window_ != nullptr && parent_ != nullptr && id_.value > 0 &&
-        ::IsWindow(window_) != FALSE && ::IsWindow(parent_) != FALSE &&
-        ::GetParent(window_) == parent_ && ::GetDlgCtrlID(window_) == id_.value;
+           ::IsWindow(window_) != FALSE && ::IsWindow(parent_) != FALSE &&
+           ::GetParent(window_) == parent_ && ::GetDlgCtrlID(window_) == id_.value;
 }
 
 bool NativeControl::IsOwnerThread() const noexcept {
-    return owner_thread_id_ == 0 ||
-        owner_thread_id_ == ::GetCurrentThreadId();
+    return owner_thread_id_ == 0 || owner_thread_id_ == ::GetCurrentThreadId();
 }
 
 SizeDip MeasureNativeControl(HWND window, DpiContext dpi) {
@@ -64,21 +62,19 @@ SizeDip MeasureNativeControl(HWND window, DpiContext dpi) {
     wchar_t class_name[64]{};
     ::GetClassNameW(window, class_name, static_cast<int>(std::size(class_name)));
     if (_wcsicmp(class_name, L"Button") == 0 &&
-        ::SendMessageW(window, BCM_GETIDEALSIZE, 0,
-                       reinterpret_cast<LPARAM>(&ideal)) != FALSE &&
+        ::SendMessageW(window, BCM_GETIDEALSIZE, 0, reinterpret_cast<LPARAM>(&ideal)) != FALSE &&
         ideal.cx > 0 && ideal.cy > 0) {
         return {dpi.FromPixels(ideal.cx), dpi.FromPixels(ideal.cy)};
     }
     if (_wcsicmp(class_name, TOOLBARCLASSNAMEW) == 0 &&
-        ::SendMessageW(window, TB_GETMAXSIZE, 0,
-                       reinterpret_cast<LPARAM>(&ideal)) != FALSE &&
+        ::SendMessageW(window, TB_GETMAXSIZE, 0, reinterpret_cast<LPARAM>(&ideal)) != FALSE &&
         ideal.cx > 0 && ideal.cy > 0) {
         return {dpi.FromPixels(ideal.cx), dpi.FromPixels(ideal.cy)};
     }
     RECT ideal_rect{};
     if (_wcsicmp(class_name, MONTHCAL_CLASSW) == 0 &&
-        ::SendMessageW(window, MCM_GETMINREQRECT, 0,
-                       reinterpret_cast<LPARAM>(&ideal_rect)) != FALSE) {
+        ::SendMessageW(window, MCM_GETMINREQRECT, 0, reinterpret_cast<LPARAM>(&ideal_rect)) !=
+            FALSE) {
         return {dpi.FromPixels(ideal_rect.right - ideal_rect.left),
                 dpi.FromPixels(ideal_rect.bottom - ideal_rect.top)};
     }
@@ -86,15 +82,13 @@ SizeDip MeasureNativeControl(HWND window, DpiContext dpi) {
     HDC dc = ::GetDC(window);
     if (dc == nullptr) return {80.0_dip, 24.0_dip};
     const auto release_dc = wil::scope_exit([&] { ::ReleaseDC(window, dc); });
-    const HFONT font = reinterpret_cast<HFONT>(
-        ::SendMessageW(window, WM_GETFONT, 0, 0));
+    const HFONT font = reinterpret_cast<HFONT>(::SendMessageW(window, WM_GETFONT, 0, 0));
     const HGDIOBJ old_font = font ? ::SelectObject(dc, font) : nullptr;
     const auto restore_font = wil::scope_exit([&] {
         if (old_font) ::SelectObject(dc, old_font);
     });
     const int text_length = ::GetWindowTextLengthW(window);
-    std::wstring text(
-        static_cast<std::size_t>((std::max)(text_length, 0)) + 1, L'\0');
+    std::wstring text(static_cast<std::size_t>((std::max)(text_length, 0)) + 1, L'\0');
     if (text_length > 0) {
         const int copied = ::GetWindowTextW(window, text.data(), text_length + 1);
         text.resize(static_cast<std::size_t>((std::max)(copied, 0)));
@@ -103,8 +97,8 @@ SizeDip MeasureNativeControl(HWND window, DpiContext dpi) {
     }
     RECT text_bounds{0, 0, 0, 0};
     if (!text.empty()) {
-        ::DrawTextW(dc, text.c_str(), static_cast<int>(text.size()),
-                    &text_bounds, DT_CALCRECT | DT_SINGLELINE | DT_NOPREFIX);
+        ::DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &text_bounds,
+                    DT_CALCRECT | DT_SINGLELINE | DT_NOPREFIX);
     }
     TEXTMETRICW metrics{};
     ::GetTextMetricsW(dc, &metrics);
@@ -114,7 +108,8 @@ SizeDip MeasureNativeControl(HWND window, DpiContext dpi) {
 
     const DWORD style = static_cast<DWORD>(::GetWindowLongPtrW(window, GWL_STYLE));
     if (_wcsicmp(class_name, L"Static") == 0) {
-        width += 2; height += 2;
+        width += 2;
+        height += 2;
     } else if (_wcsicmp(class_name, L"Edit") == 0) {
         width = (std::max)(width + 12, dpi.ToPixels(120.0_dip));
         height += 10;
@@ -122,8 +117,7 @@ SizeDip MeasureNativeControl(HWND window, DpiContext dpi) {
                _wcsicmp(class_name, WC_COMBOBOXEXW) == 0) {
         width = (std::max)(width + 32, dpi.ToPixels(120.0_dip));
         height += 10;
-    } else if (_wcsicmp(class_name, L"ListBox") == 0 ||
-               _wcsicmp(class_name, WC_LISTVIEWW) == 0 ||
+    } else if (_wcsicmp(class_name, L"ListBox") == 0 || _wcsicmp(class_name, WC_LISTVIEWW) == 0 ||
                _wcsicmp(class_name, WC_TREEVIEWW) == 0) {
         width = (std::max)(width + 24, dpi.ToPixels(160.0_dip));
         height = dpi.ToPixels(96.0_dip);
@@ -136,7 +130,10 @@ SizeDip MeasureNativeControl(HWND window, DpiContext dpi) {
         width = (std::max)(width + 16, dpi.ToPixels(24.0_dip));
         height = (std::max)(height + 10, dpi.ToPixels(24.0_dip));
     }
-    if ((style & WS_BORDER) != 0) { width += 2; height += 2; }
+    if ((style & WS_BORDER) != 0) {
+        width += 2;
+        height += 2;
+    }
     return {dpi.FromPixels(width), dpi.FromPixels(height)};
 }
 
@@ -163,8 +160,7 @@ std::wstring NativeControl::GetText() const {
         return {};
     }
     std::wstring text(static_cast<std::size_t>(length) + 1, L'\0');
-    const int copied = ::GetWindowTextW(
-        window_, text.data(), static_cast<int>(text.size()));
+    const int copied = ::GetWindowTextW(window_, text.data(), static_cast<int>(text.size()));
     text.resize(copied > 0 ? static_cast<std::size_t>(copied) : 0);
     return text;
 }
@@ -176,10 +172,8 @@ bool NativeControl::SetBounds(RectDip bounds) noexcept {
     }
     const HWND parent = ::GetParent(window_);
     const RECT pixels = ResolveControlBounds(parent, bounds);
-    return ::SetWindowPos(
-               window_, nullptr, pixels.left, pixels.top,
-               pixels.right - pixels.left, pixels.bottom - pixels.top,
-               SWP_NOZORDER | SWP_NOACTIVATE) != FALSE;
+    return ::SetWindowPos(window_, nullptr, pixels.left, pixels.top, pixels.right - pixels.left,
+                          pixels.bottom - pixels.top, SWP_NOZORDER | SWP_NOACTIVATE) != FALSE;
 }
 
 NativeControl& NativeControl::SetEnabled(bool enabled) noexcept {
@@ -213,14 +207,9 @@ void NativeControl::Destroy() noexcept {
     owner_thread_id_ = 0;
 }
 
-bool NativeControl::CreateNative(
-    const wchar_t* class_name,
-    HWND parent,
-    ControlId id,
-    std::wstring_view text,
-    RectDip bounds,
-    DWORD style,
-    DWORD extended_style) {
+bool NativeControl::CreateNative(const wchar_t* class_name, HWND parent, ControlId id,
+                                 std::wstring_view text, RectDip bounds, DWORD style,
+                                 DWORD extended_style) {
     Destroy();
     if (parent == nullptr || id.value <= 0) {
         ::SetLastError(ERROR_INVALID_PARAMETER);
@@ -230,18 +219,10 @@ bool NativeControl::CreateNative(
     const RECT pixels = ResolveControlBounds(parent, bounds);
     const std::wstring terminated{text};
     window_ = ::CreateWindowExW(
-        extended_style,
-        class_name,
-        terminated.c_str(),
-        style,
-        pixels.left,
-        pixels.top,
-        pixels.right - pixels.left,
-        pixels.bottom - pixels.top,
-        parent,
+        extended_style, class_name, terminated.c_str(), style, pixels.left, pixels.top,
+        pixels.right - pixels.left, pixels.bottom - pixels.top, parent,
         reinterpret_cast<HMENU>(static_cast<INT_PTR>(id.value)),
-        reinterpret_cast<HINSTANCE>(::GetWindowLongPtrW(parent, GWLP_HINSTANCE)),
-        nullptr);
+        reinterpret_cast<HINSTANCE>(::GetWindowLongPtrW(parent, GWLP_HINSTANCE)), nullptr);
     if (window_ == nullptr) {
         return false;
     }
@@ -252,26 +233,14 @@ bool NativeControl::CreateNative(
     return true;
 }
 
-bool Label::Create(
-    HWND parent,
-    ControlId id,
-    std::wstring_view text,
-    RectDip bounds,
-    LabelOptions options) {
-    return CreateNative(
-        L"STATIC", parent, id, text, bounds, options.style,
-        options.extended_style);
+bool Label::Create(HWND parent, ControlId id, std::wstring_view text, RectDip bounds,
+                   LabelOptions options) {
+    return CreateNative(L"STATIC", parent, id, text, bounds, options.style, options.extended_style);
 }
 
-bool Button::Create(
-    HWND parent,
-    ControlId id,
-    std::wstring_view text,
-    RectDip bounds,
-    ButtonOptions options) {
-    return CreateNative(
-        L"BUTTON", parent, id, text, bounds, options.style,
-        options.extended_style);
+bool Button::Create(HWND parent, ControlId id, std::wstring_view text, RectDip bounds,
+                    ButtonOptions options) {
+    return CreateNative(L"BUTTON", parent, id, text, bounds, options.style, options.extended_style);
 }
 
 Button& Button::Click() noexcept {
@@ -281,15 +250,9 @@ Button& Button::Click() noexcept {
     return *this;
 }
 
-bool TextBox::Create(
-    HWND parent,
-    ControlId id,
-    std::wstring_view text,
-    RectDip bounds,
-    TextBoxOptions options) {
-    return CreateNative(
-        L"EDIT", parent, id, text, bounds, options.style,
-        options.extended_style);
+bool TextBox::Create(HWND parent, ControlId id, std::wstring_view text, RectDip bounds,
+                     TextBoxOptions options) {
+    return CreateNative(L"EDIT", parent, id, text, bounds, options.style, options.extended_style);
 }
 
 TextBox& TextBox::SelectAll() noexcept {
@@ -299,6 +262,76 @@ TextBox& TextBox::SelectAll() noexcept {
     return *this;
 }
 
+TextSelection TextBox::GetSelection() const noexcept {
+    if (!IsWindow()) return {};
+    DWORD start = 0;
+    DWORD end = 0;
+    ::SendMessageW(GetHwnd(), EM_GETSEL, reinterpret_cast<WPARAM>(&start),
+                   reinterpret_cast<LPARAM>(&end));
+    return {static_cast<std::size_t>(start), static_cast<std::size_t>(end)};
+}
+
+bool TextBox::SetSelection(TextSelection selection) noexcept {
+    if (!IsWindow() || selection.start > static_cast<std::size_t>(LONG_MAX) ||
+        selection.end > static_cast<std::size_t>(LONG_MAX)) {
+        ::SetLastError(ERROR_INVALID_PARAMETER);
+        return false;
+    }
+    ::SendMessageW(GetHwnd(), EM_SETSEL, static_cast<WPARAM>(selection.start),
+                   static_cast<LPARAM>(selection.end));
+    return true;
+}
+
+bool TextBox::ReplaceSelection(std::wstring_view text, bool can_undo) {
+    if (!IsWindow()) {
+        ::SetLastError(ERROR_INVALID_WINDOW_HANDLE);
+        return false;
+    }
+    const std::wstring terminated{text};
+    ::SendMessageW(GetHwnd(), EM_REPLACESEL, can_undo ? TRUE : FALSE,
+                   reinterpret_cast<LPARAM>(terminated.c_str()));
+    return true;
+}
+
+TextBox& TextBox::Cut() noexcept {
+    if (IsWindow()) ::SendMessageW(GetHwnd(), WM_CUT, 0, 0);
+    return *this;
+}
+
+TextBox& TextBox::Copy() noexcept {
+    if (IsWindow()) ::SendMessageW(GetHwnd(), WM_COPY, 0, 0);
+    return *this;
+}
+
+TextBox& TextBox::Paste() noexcept {
+    if (IsWindow()) ::SendMessageW(GetHwnd(), WM_PASTE, 0, 0);
+    return *this;
+}
+
+TextBox& TextBox::Undo() noexcept {
+    if (IsWindow()) ::SendMessageW(GetHwnd(), WM_UNDO, 0, 0);
+    return *this;
+}
+
+bool TextBox::CanUndo() const noexcept {
+    return IsWindow() && ::SendMessageW(GetHwnd(), EM_CANUNDO, 0, 0) != FALSE;
+}
+
+TextBox& TextBox::ScrollCaretIntoView() noexcept {
+    if (IsWindow()) ::SendMessageW(GetHwnd(), EM_SCROLLCARET, 0, 0);
+    return *this;
+}
+
+bool TextBox::SetCueBanner(std::wstring_view text, bool show_when_focused) {
+    if (!IsWindow()) {
+        ::SetLastError(ERROR_INVALID_WINDOW_HANDLE);
+        return false;
+    }
+    const std::wstring terminated{text};
+    return ::SendMessageW(GetHwnd(), EM_SETCUEBANNER, show_when_focused ? TRUE : FALSE,
+                          reinterpret_cast<LPARAM>(terminated.c_str())) != FALSE;
+}
+
 TextBox& TextBox::SetReadOnly(bool read_only) noexcept {
     if (IsWindow()) {
         ::SendMessageW(GetHwnd(), EM_SETREADONLY, read_only ? TRUE : FALSE, 0);
@@ -306,31 +339,24 @@ TextBox& TextBox::SetReadOnly(bool read_only) noexcept {
     return *this;
 }
 
-bool CheckBox::Create(
-    HWND parent,
-    ControlId id,
-    std::wstring_view text,
-    RectDip bounds,
-    CheckBoxOptions options) {
-    return CreateNative(
-        L"BUTTON", parent, id, text, bounds, options.style,
-        options.extended_style);
+bool CheckBox::Create(HWND parent, ControlId id, std::wstring_view text, RectDip bounds,
+                      CheckBoxOptions options) {
+    return CreateNative(L"BUTTON", parent, id, text, bounds, options.style, options.extended_style);
 }
 
 bool CheckBox::IsChecked() const noexcept {
-    return IsWindow() &&
-        ::SendMessageW(GetHwnd(), BM_GETCHECK, 0, 0) == BST_CHECKED;
+    return IsWindow() && ::SendMessageW(GetHwnd(), BM_GETCHECK, 0, 0) == BST_CHECKED;
 }
 
 CheckBox& CheckBox::SetChecked(bool checked) noexcept {
     if (IsWindow()) {
-        ::SendMessageW(
-            GetHwnd(), BM_SETCHECK, checked ? BST_CHECKED : BST_UNCHECKED, 0);
+        ::SendMessageW(GetHwnd(), BM_SETCHECK, checked ? BST_CHECKED : BST_UNCHECKED, 0);
     }
     return *this;
 }
 
-bool RadioButton::Create(HWND parent, ControlId id, std::wstring_view text, RectDip bounds, RadioButtonOptions options) {
+bool RadioButton::Create(HWND parent, ControlId id, std::wstring_view text, RectDip bounds,
+                         RadioButtonOptions options) {
     return CreateNative(L"BUTTON", parent, id, text, bounds, options.style, options.extended_style);
 }
 
@@ -345,7 +371,8 @@ RadioButton& RadioButton::SetChecked(bool checked) noexcept {
     return *this;
 }
 
-bool GroupBox::Create(HWND parent, ControlId id, std::wstring_view text, RectDip bounds, GroupBoxOptions options) {
+bool GroupBox::Create(HWND parent, ControlId id, std::wstring_view text, RectDip bounds,
+                      GroupBoxOptions options) {
     return CreateNative(L"BUTTON", parent, id, text, bounds, options.style, options.extended_style);
 }
 
@@ -358,7 +385,8 @@ int ListBox::AddItem(std::wstring_view text) {
         return LB_ERR;
     }
     const std::wstring terminated{text};
-    return static_cast<int>(::SendMessageW(GetHwnd(), LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(terminated.c_str())));
+    return static_cast<int>(
+        ::SendMessageW(GetHwnd(), LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(terminated.c_str())));
 }
 
 int ListBox::GetItemCount() const noexcept {
@@ -378,8 +406,8 @@ std::optional<std::wstring> ListBox::GetItemText(int index) const {
     const LRESULT length = ::SendMessageW(GetHwnd(), LB_GETTEXTLEN, index, 0);
     if (length == LB_ERR) return std::nullopt;
     std::wstring value(static_cast<std::size_t>(length) + 1, L'\0');
-    const LRESULT copied = ::SendMessageW(GetHwnd(), LB_GETTEXT, index,
-                                           reinterpret_cast<LPARAM>(value.data()));
+    const LRESULT copied =
+        ::SendMessageW(GetHwnd(), LB_GETTEXT, index, reinterpret_cast<LPARAM>(value.data()));
     if (copied == LB_ERR) return std::nullopt;
     value.resize(static_cast<std::size_t>(copied));
     return value;
@@ -415,14 +443,9 @@ bool ListBox::SetSelection(int index) noexcept {
     return IsWindow() && ::SendMessageW(GetHwnd(), LB_SETCURSEL, index, 0) != LB_ERR;
 }
 
-bool ComboBox::Create(
-    HWND parent,
-    ControlId id,
-    RectDip bounds,
-    ComboBoxOptions options) {
-    return CreateNative(
-        L"COMBOBOX", parent, id, L"", bounds, options.style,
-        options.extended_style);
+bool ComboBox::Create(HWND parent, ControlId id, RectDip bounds, ComboBoxOptions options) {
+    return CreateNative(L"COMBOBOX", parent, id, L"", bounds, options.style,
+                        options.extended_style);
 }
 
 int ComboBox::AddItem(std::wstring_view text) {
@@ -430,9 +453,8 @@ int ComboBox::AddItem(std::wstring_view text) {
         return CB_ERR;
     }
     const std::wstring terminated{text};
-    return static_cast<int>(::SendMessageW(
-        GetHwnd(), CB_ADDSTRING, 0,
-        reinterpret_cast<LPARAM>(terminated.c_str())));
+    return static_cast<int>(
+        ::SendMessageW(GetHwnd(), CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(terminated.c_str())));
 }
 
 int ComboBox::GetItemCount() const noexcept {
@@ -452,8 +474,8 @@ std::optional<std::wstring> ComboBox::GetItemText(int index) const {
     const LRESULT length = ::SendMessageW(GetHwnd(), CB_GETLBTEXTLEN, index, 0);
     if (length == CB_ERR) return std::nullopt;
     std::wstring value(static_cast<std::size_t>(length) + 1, L'\0');
-    const LRESULT copied = ::SendMessageW(GetHwnd(), CB_GETLBTEXT, index,
-                                           reinterpret_cast<LPARAM>(value.data()));
+    const LRESULT copied =
+        ::SendMessageW(GetHwnd(), CB_GETLBTEXT, index, reinterpret_cast<LPARAM>(value.data()));
     if (copied == CB_ERR) return std::nullopt;
     value.resize(static_cast<std::size_t>(copied));
     return value;
@@ -482,29 +504,20 @@ bool ComboBox::ClearItems() noexcept {
 }
 
 int ComboBox::GetSelection() const noexcept {
-    return IsWindow()
-        ? static_cast<int>(::SendMessageW(GetHwnd(), CB_GETCURSEL, 0, 0))
-        : CB_ERR;
+    return IsWindow() ? static_cast<int>(::SendMessageW(GetHwnd(), CB_GETCURSEL, 0, 0)) : CB_ERR;
 }
 
 bool ComboBox::SetSelection(int index) noexcept {
-    return IsWindow() &&
-        ::SendMessageW(GetHwnd(), CB_SETCURSEL, index, 0) != CB_ERR;
+    return IsWindow() && ::SendMessageW(GetHwnd(), CB_SETCURSEL, index, 0) != CB_ERR;
 }
 
-bool ProgressBar::Create(
-    HWND parent,
-    ControlId id,
-    RectDip bounds,
-    ProgressBarOptions options) {
-    INITCOMMONCONTROLSEX controls{
-        sizeof(controls), ICC_PROGRESS_CLASS};
+bool ProgressBar::Create(HWND parent, ControlId id, RectDip bounds, ProgressBarOptions options) {
+    INITCOMMONCONTROLSEX controls{sizeof(controls), ICC_PROGRESS_CLASS};
     if (::InitCommonControlsEx(&controls) == FALSE) {
         return false;
     }
-    return CreateNative(
-        PROGRESS_CLASSW, parent, id, L"", bounds, options.style,
-        options.extended_style);
+    return CreateNative(PROGRESS_CLASSW, parent, id, L"", bounds, options.style,
+                        options.extended_style);
 }
 
 ProgressBar& ProgressBar::SetRange(int minimum, int maximum) noexcept {
@@ -522,9 +535,7 @@ ProgressBar& ProgressBar::SetValue(int value) noexcept {
 }
 
 int ProgressBar::GetValue() const noexcept {
-    return IsWindow()
-        ? static_cast<int>(::SendMessageW(GetHwnd(), PBM_GETPOS, 0, 0))
-        : 0;
+    return IsWindow() ? static_cast<int>(::SendMessageW(GetHwnd(), PBM_GETPOS, 0, 0)) : 0;
 }
 
 bool Slider::Create(HWND parent, ControlId id, RectDip bounds, SliderOptions options) {
@@ -532,7 +543,8 @@ bool Slider::Create(HWND parent, ControlId id, RectDip bounds, SliderOptions opt
     if (::InitCommonControlsEx(&controls) == FALSE) {
         return false;
     }
-    return CreateNative(TRACKBAR_CLASSW, parent, id, L"", bounds, options.style, options.extended_style);
+    return CreateNative(TRACKBAR_CLASSW, parent, id, L"", bounds, options.style,
+                        options.extended_style);
 }
 
 Slider& Slider::SetRange(int minimum, int maximum) noexcept {
@@ -555,10 +567,19 @@ int Slider::GetValue() const noexcept {
 }
 
 bool ScrollBar::Create(HWND parent, ControlId id, RectDip bounds, ScrollBarOptions options) {
-    return CreateNative(L"SCROLLBAR", parent, id, L"", bounds, options.style, options.extended_style);
+    return CreateNative(L"SCROLLBAR", parent, id, L"", bounds, options.style,
+                        options.extended_style);
 }
-ScrollBar& ScrollBar::SetRange(int minimum, int maximum) noexcept { if (IsWindow()) ::SetScrollRange(GetHwnd(), SB_CTL, minimum, maximum, TRUE); return *this; }
-ScrollBar& ScrollBar::SetValue(int value) noexcept { if (IsWindow()) ::SetScrollPos(GetHwnd(), SB_CTL, value, TRUE); return *this; }
-int ScrollBar::GetValue() const noexcept { return IsWindow() ? ::GetScrollPos(GetHwnd(), SB_CTL) : 0; }
+ScrollBar& ScrollBar::SetRange(int minimum, int maximum) noexcept {
+    if (IsWindow()) ::SetScrollRange(GetHwnd(), SB_CTL, minimum, maximum, TRUE);
+    return *this;
+}
+ScrollBar& ScrollBar::SetValue(int value) noexcept {
+    if (IsWindow()) ::SetScrollPos(GetHwnd(), SB_CTL, value, TRUE);
+    return *this;
+}
+int ScrollBar::GetValue() const noexcept {
+    return IsWindow() ? ::GetScrollPos(GetHwnd(), SB_CTL) : 0;
+}
 
 }  // namespace mwfl

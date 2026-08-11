@@ -4,7 +4,20 @@ set(MD4C_BUILD_MD2HTML_EXECUTABLE OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(mwfl_markdown_md4c
     GIT_REPOSITORY https://github.com/mity/md4c.git
     GIT_TAG 729e6b8b320caa96328968ab27d7db2235e4fb47)
-FetchContent_MakeAvailable(mwfl_markdown_md4c)
+# md4c is an implementation detail of this example. Add it as an excluded
+# source tree so its project-wide install rules do not leak into MWFL packages;
+# the application component below stages only the runtime and required licenses.
+cmake_policy(PUSH)
+if(POLICY CMP0169)
+    cmake_policy(SET CMP0169 OLD)
+endif()
+FetchContent_GetProperties(mwfl_markdown_md4c)
+if(NOT mwfl_markdown_md4c_POPULATED)
+    FetchContent_Populate(mwfl_markdown_md4c)
+    add_subdirectory("${mwfl_markdown_md4c_SOURCE_DIR}"
+        "${mwfl_markdown_md4c_BINARY_DIR}" EXCLUDE_FROM_ALL)
+endif()
+cmake_policy(POP)
 
 mwfl_add_example(mwfl_markdown_editor
     main.cpp
