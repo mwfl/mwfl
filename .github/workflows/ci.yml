@@ -76,8 +76,10 @@ jobs:
       - name: Restore pinned Scintilla downloads
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: build/presets/vs2026-x64-optional/_deps/*-populate-prefix/src/*.zip
-          key: scintilla-5.6.5-${{ runner.os }}-${{ runner.arch }}
+          path: |
+            build/presets/vs2026-x64-optional/_deps/mwfl_scintilla_source-*
+            build/presets/vs2026-x64-optional/_deps/mwfl_scintilla_binary-*
+          key: scintilla-5.6.5-${{ runner.os }}-${{ runner.arch }}-${{ matrix.configuration }}
       - name: Configure all optional components
         run: cmake --preset vs2026-x64-optional
       - name: Build
