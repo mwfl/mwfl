@@ -35,7 +35,7 @@ hiding native handles, messages, styles, or return values.
   <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/mwfl-showcase-40s.gif" alt="MWFL applications running with populated native controls"></a>
 </p>
 
-**v0.1.0 is the first public preview.** The repository contains **43 compiled
+**v0.1.1 is the current public preview.** The repository contains **43 compiled
 examples** plus four standalone applications in the mwfl organization. The downloadable release packages are VS2026/MSVC x64; source and
 CI cover x64 and ARM64. WebView2, Scintilla, graphics, imaging, printing, OLE,
 Shell, Ribbon, and MDI integrations remain separately requested optional
@@ -110,7 +110,7 @@ project(my_app LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwfl
   GIT_REPOSITORY https://github.com/mwfl/mwfl.git
-  GIT_TAG v0.1.0
+  GIT_TAG v0.1.1
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwfl)
 
@@ -118,7 +118,7 @@ add_executable(my_app WIN32 main.cpp)
 target_link_libraries(my_app PRIVATE mwfl::mwfl)
 ```
 
-The example pins the first public-preview release. Use an immutable commit only
+The example pins the latest public-preview release. Use an immutable commit only
 when deliberately testing unreleased changes.
 
 ```powershell
@@ -181,7 +181,7 @@ the complete source. Start with **Hello** for the smallest application,
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 47 runnable examples</strong></summary>
+<summary><strong>Browse all 43 runnable examples</strong></summary>
 
 <br>
 

@@ -38,14 +38,12 @@ jobs:
         run: |
           $version = Select-String -Path CMakeLists.txt -Pattern 'project\(mwfl VERSION ([0-9.]+)' | ForEach-Object { $_.Matches[0].Groups[1].Value }
           ./scripts/package-notepad.ps1 -VisualStudio 2026 -Version $version -OutputDirectory artifacts
-          ./scripts/package-markdown-editor.ps1 -VisualStudio 2026 -Version $version -OutputDirectory artifacts
-          ./scripts/package-pdf-viewer.ps1 -VisualStudio 2026 -Version $version -OutputDirectory artifacts
       - name: Create checksums
         shell: pwsh
         run: |
           $packages = @(Get-ChildItem artifacts -Filter *.zip -File)
-          if ($packages.Count -ne 4) {
-            throw "Expected core, Notepad, Markdown Editor, and PDF Viewer ZIP packages; found $($packages.Count)"
+          if ($packages.Count -ne 2) {
+            throw "Expected core and Notepad ZIP packages; found $($packages.Count)"
           }
           $packages | ForEach-Object {
             $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -63,6 +61,8 @@ jobs:
     needs: package
     runs-on: ubuntu-24.04
     steps:
+      - name: Checkout release notes
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Download packages
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
@@ -77,4 +77,5 @@ jobs:
           test -n "$(find artifacts -maxdepth 1 -name '*.zip' -type f -print -quit)"
           gh release create "${{ github.ref_name }}" \
             artifacts/*.zip artifacts/SHA256SUMS-*.txt \
-            --generate-notes --verify-tag --repo "${{ github.repository }}"
+            --notes-file docs/releases/v0.1.1.md \
+            --verify-tag --repo "${{ github.repository }}"
