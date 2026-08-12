@@ -112,6 +112,9 @@ foreach ($category in $categoryIds.Keys) {
         if ($capability.example) {
             [void]$cards.AppendLine("                <a href=`"https://github.com/mwfl/mwfl/blob/main/$($capability.example)`">Example</a>")
         }
+        if ($capability.external_example) {
+            [void]$cards.AppendLine("                <a href=`"$(Encode-Html $capability.external_example)`">Application</a>")
+        }
         if ($capability.recipe) {
             [void]$cards.AppendLine("                <a href=`"https://github.com/mwfl/mwfl/blob/main/$($capability.recipe)`">Guide</a>")
         }

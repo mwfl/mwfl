@@ -1,3 +1,0 @@
-#include "resource.h"
-
-IDI_MWFL_MARKDOWN ICON "mwfl-mark.ico"

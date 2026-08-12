@@ -24,7 +24,7 @@
       <div class="eyebrow">Flagship example &middot; Local first &middot; Native Windows</div>
       <h1>Write Markdown. Keep it local.</h1>
       <p class="lede">A focused Markdown editor that combines real HWND UI, Scintilla editing, an offline WebView2 preview, GitHub-flavored Markdown, safe atomic saves, and crash recovery.</p>
-      <div class="actions"><a class="button primary" href="https://github.com/mwfl/mwfl/tree/main/examples/markdown_editor">Read the complete source</a><a class="button" href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/markdown-editor.md">Build and package it</a></div>
+      <div class="actions"><a class="button primary" href="https://github.com/mwfl/markdown-editor">Open the application repository</a><a class="button" href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/markdown-editor.md">Read the integration guide</a></div>
     </div>
 
     <figure><img src="https://raw.githubusercontent.com/mwfl/mwfl/main/docs/images/examples/markdown-editor.png" alt="MWFL Markdown Editor with native document tabs" width="1365" height="879"><figcaption>The flagship application uses native document tabs and switches Edit and offline Preview in one focused workspace.</figcaption></figure>
@@ -42,11 +42,11 @@
     </section>
 
     <section><div class="eyebrow">Build</div><h2>Compile, test, and stage the product.</h2>
-      <pre data-title="Developer PowerShell"><code>cmake --preset vs2026-x64-optional
-cmake --build --preset vs2026-x64-optional-release --target mwfl_markdown_editor
-ctest --test-dir build/presets/vs2026-x64-optional -C Release -R "mwfl\.markdown"
-cmake --install build/presets/vs2026-x64-optional -C Release \
-  --component markdown_editor --prefix build/markdown-editor</code></pre>
+      <pre data-title="Developer PowerShell"><code>git clone https://github.com/mwfl/markdown-editor.git
+cd markdown-editor
+cmake --preset vs2026-x64
+cmake --build --preset vs2026-x64-release
+ctest --preset vs2026-x64-release</code></pre>
       <p>The staged component contains the executable, pinned Scintilla and Lexilla runtimes with their license, and the md4c MIT license. WebView2 uses Microsoft's Evergreen Runtime and fails gracefully when unavailable.</p>
     </section>
   </main>

@@ -1,6 +1,6 @@
 # Build the Markdown Editor
 
-The Markdown Editor is a product-style example that combines two optional mwfl
+The standalone [Markdown Editor](https://github.com/mwfl/markdown-editor) combines two optional mwfl
 components without turning either dependency into part of the core library.
 Scintilla owns source editing, WebView2 displays an offline HTML preview, and
 mwfl owns the native application lifecycle, layout, document state, dialogs,
@@ -9,9 +9,11 @@ Unicode file I/O, and failure boundaries.
 ## Configure and run
 
 ```powershell
-cmake --preset vs2026-x64-optional
-cmake --build --preset vs2026-x64-optional-debug --target mwfl_markdown_editor
-./build/presets/vs2026-x64-optional/examples/markdown_editor/Debug/mwfl_markdown_editor.exe
+git clone https://github.com/mwfl/markdown-editor.git
+cd markdown-editor
+cmake --preset vs2026-x64
+cmake --build --preset vs2026-x64-release
+ctest --preset vs2026-x64-release
 ```
 
 The build deploys pinned `Scintilla.dll` and `Lexilla.dll` beside the executable.
@@ -21,16 +23,7 @@ uses the Evergreen Runtime. If that runtime is missing, the source editor and
 safe file operations remain available and the status line explains why preview
 is unavailable.
 
-Create the tested x64 Release ZIP with one command:
-
-```powershell
-./scripts/package-markdown-editor.ps1 -VisualStudio 2026 -Version 0.1.0
-```
-
-The script configures both optional components, builds Release, runs the
-Markdown unit and GUI tests, stages only the `markdown_editor` install
-component, includes dependency licensing and a runtime README, then prints the
-ZIP's SHA-256 digest.
+Every push in the application repository builds and tests Visual Studio 2022 x64 and uploads a portable ZIP artifact with dependency licenses.
 
 ## Composition
 
@@ -65,15 +58,12 @@ changes only after successful I/O.
 ## Validation
 
 ```powershell
-ctest --test-dir build/presets/vs2026-x64-optional -C Debug \
-  -R "mwfl\\.markdown" --output-on-failure
+ctest --preset vs2026-x64-release
 ```
 
-`mwfl.markdown_renderer` verifies representative formatting, dark styling,
-HTML escaping, and rejection of active URL schemes. `mwfl.markdown_editor_gui`
-starts the real executable, asserts representative lexer token styles, exercises
-file round-tripping and an offline WebView2 navigation, then exits with a
-machine-readable result.
+`markdown-editor.renderer` verifies representative formatting, dark styling,
+HTML escaping, and rejection of active URL schemes. Application integration
+tests and releases now belong to the standalone repository.
 
 The renderer remains application code. General Markdown parsing is not a
 Windows UI concern and should not be added to the stable mwfl public surface.

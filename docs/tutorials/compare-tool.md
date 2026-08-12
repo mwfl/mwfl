@@ -1,6 +1,6 @@
 # Build the Compare Tool
 
-The Compare Tool in `examples/compare_tool` is a native Windows interpretation
+The standalone [Folder Compare](https://github.com/mwfl/folder-compare) is a native Windows interpretation
 of the focused, local-only workflow demonstrated by
 [GrapeCompare](https://github.com/everettjf/grapecompare). It does not share
 source code with that project; it applies the same product principles to real
@@ -36,8 +36,7 @@ merge, Git integration, plan files, or durable undo history.
 
 ## Validation
 
-`mwfl.compare_tool` covers exact folder states, exclusions, final newlines,
+`folder-compare.model` covers exact folder states, exclusions, final newlines,
 verified copy, cancellation, and 100 deterministic randomized text-diff
-reconstruction cases. `mwfl.compare_tool_gui` executes a real asynchronous
-comparison and validates the native virtual-list handoff.
-
+reconstruction cases. Application builds, tests, and portable artifacts now
+belong to the standalone repository.

@@ -24,7 +24,7 @@
       <div class="eyebrow">Flagship example &middot; Local documents &middot; Native Windows</div>
       <h1>Open PDFs in a calm native workspace.</h1>
       <p class="lede">A focused tabbed PDF viewer that combines native HWND controls and file workflows with the PDF support already shipped by the WebView2 runtime.</p>
-      <div class="actions"><a class="button primary" href="https://github.com/mwfl/mwfl/tree/main/examples/pdf_viewer">Read the complete source</a><a class="button" href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/pdf-viewer.md">Build and package it</a></div>
+      <div class="actions"><a class="button primary" href="https://github.com/mwfl/pdf-reader">Open the application repository</a><a class="button" href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/pdf-viewer.md">Read the integration guide</a></div>
     </div>
 
     <div class="requirements">
@@ -40,10 +40,11 @@
     </section>
 
     <section><div class="eyebrow">Build</div><h2>Compile, test, and stage the product.</h2>
-      <pre data-title="Developer PowerShell"><code>cmake --preset vs2026-x64-webview2
-cmake --build build/presets/vs2026-x64-webview2 --config Release --target mwfl_pdf_viewer
-ctest --test-dir build/presets/vs2026-x64-webview2 -C Release -R "mwfl\.pdf_viewer_gui"
-./scripts/package-pdf-viewer.ps1 -VisualStudio 2026 -Architecture x64</code></pre>
+      <pre data-title="Developer PowerShell"><code>git clone https://github.com/mwfl/pdf-reader.git
+cd pdf-reader
+cmake --preset vs2026-x64
+cmake --build --preset vs2026-x64-release
+ctest --preset vs2026-x64-release</code></pre>
       <p>The application uses Microsoft's Evergreen WebView2 Runtime and reports a clear empty or failure state when the runtime cannot initialize.</p>
     </section>
   </main>

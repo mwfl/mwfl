@@ -16,9 +16,11 @@ environment limitation.
   license files. Confirm the Notepad and PDF packages need no adjacent private
   DLLs.
 
-## MWFL Markdown Editor
+## Standalone MWFL Markdown Editor
 
-- Launch `bin\mwfl_markdown_editor.exe`. Confirm the initial workspace has one
+This acceptance pass now belongs to https://github.com/mwfl/markdown-editor and its portable artifact.
+
+- Launch `markdown-editor.exe`. Confirm the initial workspace has one
   document tab, one editing surface, no permanent split preview, no line-number
   gutter, and no always-visible search panel.
 - Enter headings, bold, italic, links, lists, task lists, block quotes, inline
@@ -54,9 +56,11 @@ environment limitation.
 - Exercise New, Open, Save, Save As, recent files, Always on Top, word wrap,
   unsaved-close choices, and restored window placement.
 
-## MWFL PDF Viewer
+## Standalone MWFL PDF Reader
 
-- Launch `bin\mwfl_pdf_viewer.exe`. Confirm the Welcome tab and empty state are
+This acceptance pass now belongs to https://github.com/mwfl/pdf-reader and its portable artifact.
+
+- Launch `pdf-reader.exe`. Confirm the Welcome tab and empty state are
   readable and explain Open, `Ctrl+O`, and drag/drop.
 - Open at least three PDFs: a small text document, an image-heavy document, and
   a long document. Include one path with spaces and non-ASCII characters.
@@ -81,6 +85,8 @@ environment limitation.
 
 ## SQLite Viewer
 
+This acceptance pass now belongs to https://github.com/mwfl/sqlite-viewer.
+
 - Open a representative `.db`, `.sqlite`, or `.sqlite3` database and confirm tables,
   views, indexes, and triggers are discoverable in the schema tree.
 - Run a `SELECT`, a read-only CTE, a query returning `NULL` and BLOB values, and a query
@@ -90,6 +96,8 @@ environment limitation.
 - Drop a database onto the window and repeat at 150% DPI.
 
 ## Compare Tool
+
+This acceptance pass now belongs to https://github.com/mwfl/folder-compare.
 
 - Compare folders containing identical, changed, left-only, right-only, empty,
   inaccessible, symlink, Unicode, long-path, and file/folder-conflict entries.

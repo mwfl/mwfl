@@ -326,9 +326,9 @@
       "intent": ["view local PDF documents", "build a tabbed PDF reader", "open dropped PDF files", "recover a PDF rendering process"],
       "symbols": ["mwfl::WebView2Host", "mwfl::TabWorkspaceModel", "mwfl::TabControl", "mwfl::ShowOpenFileDialog", "mwfl::EnableFileDrop"],
       "headers": ["mwfl/webview2.h", "mwfl/tab_workspace.h", "mwfl/navigation_controls.h", "mwfl/desktop.h"],
-      "example": "examples/pdf_viewer/main.cpp",
+      "external_example": "https://github.com/mwfl/pdf-reader",
       "recipe": "docs/tutorials/pdf-viewer.md",
-      "tests": ["mwfl.pdf_viewer_gui", "mwfl.webview2_native"],
+      "tests": ["pdf-reader.gui (external repository)", "mwfl.webview2_native"],
       "constraints": ["enable MWFL_BUILD_WEBVIEW2 and initialize STA", "PDF paths remain local and become file URIs only after explicit open or drop", "the tab model is authoritative", "WebView2 controller access stays on the creating UI thread", "post before process restart", "show a normal failure when the Evergreen Runtime is unavailable"]
     },
     {
@@ -346,9 +346,9 @@
       "intent": ["edit Markdown", "preview Markdown", "syntax color Markdown", "build a local-first document editor", "compose Scintilla and WebView2"],
       "symbols": ["mwfl::ScintillaEditor", "mwfl::WebView2Host", "mwfl::TabWorkspaceModel", "mwfl::TabControl", "mwfl::DocumentState", "mwfl::ReadTextFile", "mwfl::WriteTextFileAtomic"],
       "headers": ["mwfl/scintilla.h", "mwfl/webview2.h", "mwfl/tab_workspace.h", "mwfl/navigation_controls.h", "mwfl/document.h", "mwfl/text_file.h"],
-      "example": "examples/markdown_editor/main.cpp",
+      "external_example": "https://github.com/mwfl/markdown-editor",
       "recipe": "docs/tutorials/markdown-editor.md",
-      "tests": ["mwfl.markdown_renderer", "mwfl.markdown_editor_gui"],
+      "tests": ["markdown-editor.renderer (external repository)"],
       "constraints": ["enable both MWFL_BUILD_SCINTILLA and MWFL_BUILD_WEBVIEW2", "deploy Scintilla.dll and Lexilla.dll beside the executable", "the Lexilla Markdown lexer and light/dark palettes stay application-owned", "md4c 0.5.2 is pinned to immutable commit 729e6b8b320caa96328968ab27d7db2235e4fb47 and its MIT license ships with the component", "initialize the application STA", "disable raw HTML and restrict rendered URL schemes", "keep the preview offline and preserve editing when WebView2 is unavailable", "reject stale saves instead of overwriting external changes", "all HWND access stays on the creating UI thread"]
     },
     {
@@ -356,9 +356,9 @@
       "intent": ["inspect a SQLite database", "browse database schema", "run read-only SQL", "export query results to CSV"],
       "symbols": ["mwfl::TreeView", "mwfl::ListView", "mwfl::TextBox", "mwfl::CommandSet", "mwfl::ShowOpenFileDialog", "mwfl::ShowSaveFileDialog"],
       "headers": ["mwfl/navigation_controls.h", "mwfl/controls.h", "mwfl/command.h", "mwfl/desktop.h"],
-      "example": "examples/sqlite_viewer/main.cpp",
+      "external_example": "https://github.com/mwfl/sqlite-viewer",
       "recipe": "docs/tutorials/sqlite-viewer.md",
-      "tests": ["mwfl.sqlite_viewer", "mwfl.sqlite_viewer_gui"],
+      "tests": ["sqlite-viewer.model (external repository)", "sqlite-viewer.gui (external repository)"],
       "constraints": ["WinSQLite remains an application dependency", "open user databases read-only", "permit one sqlite3_stmt_readonly statement at a time", "bound result rows", "represent BLOBs without decoding arbitrary bytes", "keep SQLite and HWND access on the UI thread"]
     },
     {
@@ -366,9 +366,9 @@
       "intent": ["compare files", "compare folders", "find changed files", "show a side-by-side text diff", "copy a verified difference"],
       "symbols": ["mwfl::VirtualListModel", "mwfl::ListView", "mwfl::WindowWakeup", "mwfl::ShowFolderDialog", "mwfl::SetAccessibleName"],
       "headers": ["mwfl/navigation_controls.h", "mwfl/async.h", "mwfl/desktop.h", "mwfl/appearance.h"],
-      "example": "examples/compare_tool/main.cpp",
+      "external_example": "https://github.com/mwfl/folder-compare",
       "recipe": "docs/tutorials/compare-tool.md",
-      "tests": ["mwfl.compare_tool", "mwfl.compare_tool_gui"],
+      "tests": ["folder-compare.model (external repository)"],
       "constraints": ["perform recursive scans away from the UI thread", "handoff progress and results through WindowWakeup", "do not follow symbolic links implicitly", "bound text preview memory", "copy to a sibling temporary file and verify bytes before destination replacement"]
     },
     {

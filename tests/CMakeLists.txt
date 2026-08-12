@@ -25,24 +25,6 @@ foreach(mode IN ITEMS
         TIMEOUT 20)
 endforeach()
 
-if(TARGET md4c-html)
-    add_executable(mwfl_markdown_renderer_test
-        markdown_renderer_test.cpp
-        "${PROJECT_SOURCE_DIR}/examples/markdown_editor/markdown_renderer.cpp")
-    target_include_directories(mwfl_markdown_renderer_test PRIVATE
-        "${PROJECT_SOURCE_DIR}/examples/markdown_editor")
-    target_compile_features(mwfl_markdown_renderer_test PRIVATE cxx_std_20)
-    target_compile_options(mwfl_markdown_renderer_test PRIVATE
-        /W4 /permissive- /EHsc /utf-8)
-    target_link_libraries(mwfl_markdown_renderer_test PRIVATE md4c-html)
-    get_target_property(mwfl_markdown_md4c_source_dir md4c SOURCE_DIR)
-    target_include_directories(mwfl_markdown_renderer_test PRIVATE
-        "${mwfl_markdown_md4c_source_dir}")
-    add_test(NAME mwfl.markdown_renderer COMMAND mwfl_markdown_renderer_test)
-    set_tests_properties(mwfl.markdown_renderer PROPERTIES
-        TIMEOUT 20 LABELS "fast;unit")
-endif()
-
 foreach(header IN ITEMS application async command_controls concepts control_batch control_host control_resources controls desktop dialog document dpi events input_controls layout message_pump must native_host navigation_controls property_sheet recent_files selection single_instance splitter tab_workspace text_file text_history text_search timer tray_icon window window_options wakeup umbrella)
     # Every public header must remain independently includable.
     add_library(mwfl_header_${header} OBJECT header_${header}.cpp)
@@ -863,25 +845,6 @@ if(MWFL_BUILD_WEBVIEW2)
             -Executable $<TARGET_FILE:mwfl_browser_demo>
             -RuntimePath "$<TARGET_FILE_DIR:mwfl_browser_demo>")
     set_tests_properties(mwfl.browser_gui PROPERTIES TIMEOUT 45 LABELS "gui;integration")
-    add_test(NAME mwfl.pdf_viewer_gui
-        COMMAND "${mwfl_webview2_test_powershell}" -NoProfile -NonInteractive
-            -ExecutionPolicy Bypass
-            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
-            -Executable $<TARGET_FILE:mwfl_pdf_viewer>
-            -RuntimePath "$<TARGET_FILE_DIR:mwfl_pdf_viewer>")
-    set_tests_properties(mwfl.pdf_viewer_gui PROPERTIES TIMEOUT 45 LABELS "gui;integration")
-endif()
-
-if(TARGET mwfl_markdown_editor)
-    find_program(mwfl_markdown_editor_test_powershell NAMES pwsh powershell REQUIRED)
-    add_test(NAME mwfl.markdown_editor_gui
-        COMMAND "${mwfl_markdown_editor_test_powershell}" -NoProfile -NonInteractive
-            -ExecutionPolicy Bypass
-            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
-            -Executable $<TARGET_FILE:mwfl_markdown_editor>
-            -RuntimePath "$<TARGET_FILE_DIR:mwfl_markdown_editor>")
-    set_tests_properties(mwfl.markdown_editor_gui PROPERTIES
-        TIMEOUT 45 LABELS "gui;integration")
 endif()
 
 add_executable(mwfl_property_sheet_model_test property_sheet_model_test.cpp)
@@ -992,28 +955,6 @@ target_include_directories(mwfl_hot_corner_model_test PRIVATE
 add_test(NAME mwfl.hot_corner_model COMMAND mwfl_hot_corner_model_test)
 set_tests_properties(mwfl.hot_corner_model PROPERTIES TIMEOUT 20)
 
-add_executable(mwfl_sqlite_viewer_test
-    sqlite_viewer_test.cpp
-    "${PROJECT_SOURCE_DIR}/examples/sqlite_viewer/sqlite_database.cpp")
-target_compile_features(mwfl_sqlite_viewer_test PRIVATE cxx_std_20)
-target_compile_options(mwfl_sqlite_viewer_test PRIVATE /W4 /permissive- /EHsc /utf-8)
-target_include_directories(mwfl_sqlite_viewer_test PRIVATE
-    "${PROJECT_SOURCE_DIR}/examples/sqlite_viewer")
-target_link_libraries(mwfl_sqlite_viewer_test PRIVATE mwfl::mwfl winsqlite3)
-add_test(NAME mwfl.sqlite_viewer COMMAND mwfl_sqlite_viewer_test)
-set_tests_properties(mwfl.sqlite_viewer PROPERTIES TIMEOUT 20 LABELS "fast;unit")
-
-add_executable(mwfl_compare_tool_test
-    compare_tool_test.cpp
-    "${PROJECT_SOURCE_DIR}/examples/compare_tool/compare_model.cpp")
-target_compile_features(mwfl_compare_tool_test PRIVATE cxx_std_20)
-target_compile_options(mwfl_compare_tool_test PRIVATE /W4 /permissive- /EHsc /utf-8)
-target_include_directories(mwfl_compare_tool_test PRIVATE
-    "${PROJECT_SOURCE_DIR}/examples/compare_tool")
-target_link_libraries(mwfl_compare_tool_test PRIVATE mwfl::mwfl shlwapi)
-add_test(NAME mwfl.compare_tool COMMAND mwfl_compare_tool_test)
-set_tests_properties(mwfl.compare_tool PROPERTIES TIMEOUT 30 LABELS "fast;unit")
-
 if(TARGET mwfl_hello)
     set(mwfl_mt_tool "")
     if(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION)
@@ -1089,20 +1030,6 @@ if(TARGET mwfl_hello)
             -Executable $<TARGET_FILE:mwfl_hot_corners_demo>
             -RuntimePath "${mwfl_test_runtime_path}")
     set_tests_properties(mwfl.hot_corners_self_test PROPERTIES TIMEOUT 10)
-    add_test(NAME mwfl.sqlite_viewer_gui
-        COMMAND "${mwfl_powershell}" -NoProfile -NonInteractive
-            -ExecutionPolicy Bypass
-            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
-            -Executable $<TARGET_FILE:mwfl_sqlite_viewer>
-            -RuntimePath "${mwfl_test_runtime_path}")
-    set_tests_properties(mwfl.sqlite_viewer_gui PROPERTIES TIMEOUT 20)
-    add_test(NAME mwfl.compare_tool_gui
-        COMMAND "${mwfl_powershell}" -NoProfile -NonInteractive
-            -ExecutionPolicy Bypass
-            -File "${CMAKE_CURRENT_SOURCE_DIR}/run_gui_self_test.ps1"
-            -Executable $<TARGET_FILE:mwfl_compare_tool>
-            -RuntimePath "${mwfl_test_runtime_path}")
-    set_tests_properties(mwfl.compare_tool_gui PROPERTIES TIMEOUT 30)
     add_test(NAME mwfl.settings_application_gui
         COMMAND "${mwfl_powershell}" -NoProfile -NonInteractive
             -ExecutionPolicy Bypass
@@ -1273,8 +1200,6 @@ foreach(test_name IN LISTS mwfl_all_tests)
     elseif(test_name MATCHES "^mwfl\\.manifest\\.")
         set(labels "metadata;fast")
     elseif(test_name STREQUAL "mwfl.hot_corners_self_test" OR
-           test_name STREQUAL "mwfl.sqlite_viewer_gui" OR
-           test_name STREQUAL "mwfl.compare_tool_gui" OR
            test_name STREQUAL "mwfl.settings_application_gui" OR
            test_name STREQUAL "mwfl.explorer_gui" OR
            test_name STREQUAL "mwfl.drawing_gui" OR
@@ -1285,7 +1210,6 @@ foreach(test_name IN LISTS mwfl_all_tests)
            test_name STREQUAL "mwfl.docking_workspace_gui" OR
            test_name STREQUAL "mwfl.code_editor_gui" OR
            test_name STREQUAL "mwfl.browser_gui" OR
-           test_name STREQUAL "mwfl.pdf_viewer_gui" OR
            test_name STREQUAL "mwfl.notepad_gui" OR
            test_name STREQUAL "mwfl.document_workspace_gui")
         set(labels "gui;integration")

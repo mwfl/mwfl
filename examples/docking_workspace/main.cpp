@@ -486,7 +486,7 @@ private:
         mwfl::Must(main_editor_ && readme_editor_ && explorer_ && output_,
                    "create docking panels");
         for (const wchar_t* item : {L"include", L"  mwfl", L"src", L"tests",
-                                    L"examples", L"  markdown_editor", L"  explorer",
+                                    L"examples", L"  code_editor", L"  explorer",
                                     L"  docking_workspace", L"docs", L"site"})
             ::SendMessageW(explorer_, LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item));
         for (auto [id, window] : PanelBindings()) {

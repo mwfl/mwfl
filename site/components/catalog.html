@@ -486,26 +486,26 @@
               <span class="capability-kind">Desktop workflows</span><h3>Sqlite Viewer</h3>
               <p>inspect a SQLite database; browse database schema; run read-only SQL; export query results to CSV.</p><div class="capability-symbols"><code>mwfl::TreeView</code> <code>mwfl::ListView</code> <code>mwfl::TextBox</code> <code>mwfl::CommandSet</code> <code>mwfl::ShowOpenFileDialog</code> <code>mwfl::ShowSaveFileDialog</code></div>
               <div class="capability-headers"><code>&lt;mwfl/navigation_controls.h&gt;</code> <code>&lt;mwfl/controls.h&gt;</code> <code>&lt;mwfl/command.h&gt;</code> <code>&lt;mwfl/desktop.h&gt;</code></div><nav aria-label="Sqlite Viewer resources">
-                <a href="https://github.com/mwfl/mwfl/blob/main/examples/sqlite_viewer/main.cpp">Example</a>
+                <a href="https://github.com/mwfl/sqlite-viewer">Application</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/sqlite-viewer.md">Guide</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/api-index.json">API index</a>
               </nav>
               <details><summary>Contracts and evidence</summary>
                 <p><strong>Rules:</strong> WinSQLite remains an application dependency; open user databases read-only; permit one sqlite3_stmt_readonly statement at a time.</p>
-                <p><strong>Tests:</strong> <code>mwfl.sqlite_viewer&lt;/code&gt;, &lt;code&gt;mwfl.sqlite_viewer_gui</code></p>
+                <p><strong>Tests:</strong> <code>sqlite-viewer.model (external repository)&lt;/code&gt;, &lt;code&gt;sqlite-viewer.gui (external repository)</code></p>
               </details>
             </article>
             <article class="capability-card" data-capability-id="file-folder-compare" data-category="Desktop workflows" data-search="file-folder-compare desktop workflows compare files compare folders find changed files show a side-by-side text diff copy a verified difference mwfl::virtuallistmodel mwfl::listview mwfl::windowwakeup mwfl::showfolderdialog mwfl::setaccessiblename mwfl/navigation_controls.h mwfl/async.h mwfl/desktop.h mwfl/appearance.h">
               <span class="capability-kind">Desktop workflows</span><h3>File Folder Compare</h3>
               <p>compare files; compare folders; find changed files; show a side-by-side text diff; copy a verified difference.</p><div class="capability-symbols"><code>mwfl::VirtualListModel</code> <code>mwfl::ListView</code> <code>mwfl::WindowWakeup</code> <code>mwfl::ShowFolderDialog</code> <code>mwfl::SetAccessibleName</code></div>
               <div class="capability-headers"><code>&lt;mwfl/navigation_controls.h&gt;</code> <code>&lt;mwfl/async.h&gt;</code> <code>&lt;mwfl/desktop.h&gt;</code> <code>&lt;mwfl/appearance.h&gt;</code></div><nav aria-label="File Folder Compare resources">
-                <a href="https://github.com/mwfl/mwfl/blob/main/examples/compare_tool/main.cpp">Example</a>
+                <a href="https://github.com/mwfl/folder-compare">Application</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/compare-tool.md">Guide</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/api-index.json">API index</a>
               </nav>
               <details><summary>Contracts and evidence</summary>
                 <p><strong>Rules:</strong> perform recursive scans away from the UI thread; handoff progress and results through WindowWakeup; do not follow symbolic links implicitly.</p>
-                <p><strong>Tests:</strong> <code>mwfl.compare_tool&lt;/code&gt;, &lt;code&gt;mwfl.compare_tool_gui</code></p>
+                <p><strong>Tests:</strong> <code>folder-compare.model (external repository)</code></p>
               </details>
             </article>
           </div>
@@ -530,13 +530,13 @@
               <span class="capability-kind">Optional workspaces</span><h3>PDF Viewer</h3>
               <p>view local PDF documents; build a tabbed PDF reader; open dropped PDF files; recover a PDF rendering process.</p><div class="capability-symbols"><code>mwfl::WebView2Host</code> <code>mwfl::TabWorkspaceModel</code> <code>mwfl::TabControl</code> <code>mwfl::ShowOpenFileDialog</code> <code>mwfl::EnableFileDrop</code></div>
               <div class="capability-headers"><code>&lt;mwfl/webview2.h&gt;</code> <code>&lt;mwfl/tab_workspace.h&gt;</code> <code>&lt;mwfl/navigation_controls.h&gt;</code> <code>&lt;mwfl/desktop.h&gt;</code></div><nav aria-label="PDF Viewer resources">
-                <a href="https://github.com/mwfl/mwfl/blob/main/examples/pdf_viewer/main.cpp">Example</a>
+                <a href="https://github.com/mwfl/pdf-reader">Application</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/pdf-viewer.md">Guide</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/api-index.json">API index</a>
               </nav>
               <details><summary>Contracts and evidence</summary>
                 <p><strong>Rules:</strong> enable MWFL_BUILD_WEBVIEW2 and initialize STA; PDF paths remain local and become file URIs only after explicit open or drop; the tab model is authoritative.</p>
-                <p><strong>Tests:</strong> <code>mwfl.pdf_viewer_gui&lt;/code&gt;, &lt;code&gt;mwfl.webview2_native</code></p>
+                <p><strong>Tests:</strong> <code>pdf-reader.gui (external repository)&lt;/code&gt;, &lt;code&gt;mwfl.webview2_native</code></p>
               </details>
             </article>
             <article class="capability-card" data-capability-id="scintilla-code-editor" data-category="Optional workspaces" data-search="scintilla-code-editor optional workspaces build a source editor host scintilla handle editor notifications search and replace code mwfl::scintillaruntime mwfl::scintillaeditor mwfl::scintillanotification mwfl::scintillatextrange mwfl/scintilla.h">
@@ -556,13 +556,13 @@
               <span class="capability-kind">Optional workspaces</span><h3>Markdown Editor</h3>
               <p>edit Markdown; preview Markdown; syntax color Markdown; build a local-first document editor; compose Scintilla and WebView2.</p><div class="capability-symbols"><code>mwfl::ScintillaEditor</code> <code>mwfl::WebView2Host</code> <code>mwfl::TabWorkspaceModel</code> <code>mwfl::TabControl</code> <code>mwfl::DocumentState</code> <code>mwfl::ReadTextFile</code> <code>mwfl::WriteTextFileAtomic</code></div>
               <div class="capability-headers"><code>&lt;mwfl/scintilla.h&gt;</code> <code>&lt;mwfl/webview2.h&gt;</code> <code>&lt;mwfl/tab_workspace.h&gt;</code> <code>&lt;mwfl/navigation_controls.h&gt;</code> <code>&lt;mwfl/document.h&gt;</code> <code>&lt;mwfl/text_file.h&gt;</code></div><nav aria-label="Markdown Editor resources">
-                <a href="https://github.com/mwfl/mwfl/blob/main/examples/markdown_editor/main.cpp">Example</a>
+                <a href="https://github.com/mwfl/markdown-editor">Application</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/markdown-editor.md">Guide</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/api-index.json">API index</a>
               </nav>
               <details><summary>Contracts and evidence</summary>
                 <p><strong>Rules:</strong> enable both MWFL_BUILD_SCINTILLA and MWFL_BUILD_WEBVIEW2; deploy Scintilla.dll and Lexilla.dll beside the executable; the Lexilla Markdown lexer and light/dark palettes stay application-owned.</p>
-                <p><strong>Tests:</strong> <code>mwfl.markdown_renderer&lt;/code&gt;, &lt;code&gt;mwfl.markdown_editor_gui</code></p>
+                <p><strong>Tests:</strong> <code>markdown-editor.renderer (external repository)</code></p>
               </details>
             </article>
             <article class="capability-card" data-capability-id="docking-workspace" data-category="Optional workspaces" data-search="docking-workspace optional workspaces build an ide workspace dock and float tool panels auto-hide panels save and restore a docking layout mwfl::docklayoutmodel mwfl::docknativeworkspaceadapter mwfl::dockdragsession mwfl::dockpreviewwindow mwfl::dockkeyboardsession mwfl::dockfloatingwindow mwfl::dockautohidecontroller mwfl::savedockingsessionatomic mwfl/docking_workspace.h mwfl/docking_native.h mwfl/docking_drag.h mwfl/docking_preview.h mwfl/docking_keyboard.h mwfl/docking_floating.h mwfl/docking_auto_hide.h mwfl/docking_session.h">

@@ -1,7 +1,6 @@
 # Build the SQLite Viewer
 
-The SQLite Viewer is a complete, local-only database inspection application in
-`examples/sqlite_viewer`. It composes mwfl controls with the WinSQLite API that
+The standalone [SQLite Viewer](https://github.com/mwfl/sqlite-viewer) is a complete, local-only database inspection application. It composes mwfl controls with the WinSQLite API that
 ships in the Windows SDK; SQLite is deliberately an application dependency, not
 part of the mwfl core library.
 
@@ -33,8 +32,7 @@ appearance remain ordinary mwfl features. The application keeps the borrowed
 
 ## Validation
 
-`mwfl.sqlite_viewer` creates a real temporary database and checks schema reads,
+`sqlite-viewer.model` creates a real temporary database and checks schema reads,
 Unicode results, rejected writes, rejected multiple statements, row limits, CSV
-output, and identifier quoting. `mwfl.sqlite_viewer_gui` opens a generated
+output, and identifier quoting. `sqlite-viewer.gui` opens a generated
 database and exercises the populated native schema/query/results workspace.
-
