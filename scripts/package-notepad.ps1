@@ -3,7 +3,7 @@ param(
     [ValidateSet('Auto', '2022', '2026')]
     [string]$VisualStudio = 'Auto',
     [ValidatePattern('^[0-9]+[.][0-9]+[.][0-9]+$')]
-    [string]$Version = '0.1.1',
+    [string]$Version = '0.1.2',
     [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\build\packages')
 )
 

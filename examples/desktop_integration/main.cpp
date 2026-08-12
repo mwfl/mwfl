@@ -40,7 +40,7 @@ class DesktopIntegrationWindow final : public mwfl::WindowBase {
                log_options);
         activity_.SetReadOnly(true);
         if (IsShowcase())
-            path_.SetText(L"C:\\MWFL Showcase\\mwfl-0.1.1-windows-x64.zip");
+            path_.SetText(L"C:\\MWFL Showcase\\mwfl-0.1.2-windows-x64.zip");
 
         mwfl::EnableFileDrop(GetHwnd());
         SetAppearance({mwfl::ColorMode::light, mwfl::Backdrop::mica});

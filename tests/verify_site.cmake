@@ -107,7 +107,7 @@ foreach(marker IN ITEMS "templates/basic-app" "DocumentState" "WriteTextFileAtom
 endforeach()
 
 file(READ "${SITE_ROOT}/changelog.html" changelog)
-foreach(marker IN ITEMS "0.1.1" "releases/tag/v0.1.1" "0.1.0" "releases/tag/v0.1.0" "x64" "ARM64")
+foreach(marker IN ITEMS "0.1.2" "releases/tag/v0.1.2" "0.1.1" "releases/tag/v0.1.1" "0.1.0" "releases/tag/v0.1.0" "x64" "ARM64")
     if(NOT changelog MATCHES "${marker}")
         message(FATAL_ERROR "changelog is missing release marker: ${marker}")
     endif()

@@ -11,8 +11,8 @@ if(NOT EXISTS "${PROJECT_ROOT}/cmake/mwflConfig.cmake.in" OR
    NOT EXISTS "${PROJECT_ROOT}/.github/workflows/release.yml")
     message(FATAL_ERROR "Release package metadata is incomplete")
 endif()
-if(NOT project_version STREQUAL "0.1.1")
-    message(FATAL_ERROR "Current public release must use project version 0.1.1")
+if(NOT project_version STREQUAL "0.1.2")
+    message(FATAL_ERROR "Current public release must use project version 0.1.2")
 endif()
 if(NOT EXISTS "${PROJECT_ROOT}/docs/release-readiness.md")
     message(FATAL_ERROR "First-public-preview readiness plan is missing")
@@ -43,15 +43,15 @@ foreach(versioned_file IN ITEMS
         site/building.html
         templates/basic-app/CMakeLists.txt templates/form-app/CMakeLists.txt)
     file(READ "${PROJECT_ROOT}/${versioned_file}" versioned_text)
-    if(NOT versioned_text MATCHES "v0\\.1\\.1")
-        message(FATAL_ERROR "${versioned_file} does not pin the v0.1.1 release")
+    if(NOT versioned_text MATCHES "v0\\.1\\.2")
+        message(FATAL_ERROR "${versioned_file} does not pin the v0.1.2 release")
     endif()
     if(versioned_text MATCHES "v0\\.[356]\\.0|e0c162b")
         message(FATAL_ERROR "${versioned_file} contains a stale pre-public version")
     endif()
 endforeach()
 file(READ "${PROJECT_ROOT}/README.md" readme_text)
-if(NOT readme_text MATCHES "GIT_TAG v0\\.1\\.1" OR
+if(NOT readme_text MATCHES "GIT_TAG v0\\.1\\.2" OR
    readme_text MATCHES "GIT_TAG main|completed 0\\.8|post-0\\.8")
     message(FATAL_ERROR "README does not describe the 0.1 public-preview release consistently")
 endif()
@@ -63,6 +63,6 @@ endif()
 if(NOT release_workflow_text MATCHES [[gh release create]] OR
    NOT release_workflow_text MATCHES [[artifacts/\*\.zip]] OR
    NOT release_workflow_text MATCHES [[artifacts/SHA256SUMS-\*\.txt]] OR
-   NOT release_workflow_text MATCHES [[docs/releases/v0.1.1.md]])
+   NOT release_workflow_text MATCHES [[docs/releases/\$\{\{ github\.ref_name \}\}\.md]])
     message(FATAL_ERROR "Release workflow does not publish only ZIP packages and checksums")
 endif()
