@@ -122,8 +122,15 @@ endif()
 
 file(READ "${SITE_ROOT}/assets/site.js" site_script)
 if(NOT site_script MATCHES "aria-pressed" OR
-   NOT site_script MATCHES "Switch to.*theme")
+   NOT site_script MATCHES "Following system" OR
+   NOT site_script MATCHES "return to system theme" OR
+   NOT site_script MATCHES "prefers-color-scheme: dark" OR
+   NOT site_script MATCHES "systemTheme.addEventListener")
     message(FATAL_ERROR "theme toggle state is not accessible")
+endif()
+if(NOT site_css MATCHES "prefers-color-scheme: dark" OR
+   NOT site_css MATCHES "root:not")
+    message(FATAL_ERROR "automatic system theme CSS is missing")
 endif()
 if(NOT site_script MATCHES "showModal" OR
    NOT site_script MATCHES "target=\\\"_blank\\\"")
@@ -144,8 +151,8 @@ foreach(html_file IN LISTS html_files)
             message(FATAL_ERROR "UTF-8 mojibake in ${html_file}: ${mojibake_hex}")
         endif()
     endforeach()
-    if(NOT html MATCHES "styles\\.css\\?v=20260810a" OR
-       NOT html MATCHES "assets/site\\.js\\?v=20260810a")
+    if(NOT html MATCHES "styles\\.css\\?v=20260812b" OR
+       NOT html MATCHES "assets/site\\.js\\?v=20260812b")
         message(FATAL_ERROR "stale or inconsistent site asset version in ${html_file}")
     endif()
     string(REGEX MATCHALL "href=\"[^\"]+\"" hrefs "${html}")

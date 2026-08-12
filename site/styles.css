@@ -53,6 +53,33 @@
   --code-muted: #a1a1a1;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --bg: #000000;
+    --glow-a: transparent;
+    --glow-b: transparent;
+    --surface: #0a0a0a;
+    --surface-2: #151515;
+    --text: #f5f5f5;
+    --muted: #a3a3a3;
+    --line: #272727;
+    --line-strong: #454545;
+    --accent: #8be0ff;
+    --accent-soft: rgba(255, 255, 255, .07);
+    --chip-line: #3f3f3f;
+    --chip-bg: #151515;
+    --card-shadow: 0 1px 2px rgba(0, 0, 0, .7), 0 14px 38px rgba(0, 0, 0, .55);
+    --card-shadow-hover: 0 3px 7px rgba(0, 0, 0, .75), 0 22px 52px rgba(0, 0, 0, .7);
+    --header-bg: rgba(0, 0, 0, .86);
+    --code-bg: #080808;
+    --code-bg-2: #121212;
+    --code-line: #303030;
+    --code-text: #f1f1f1;
+    --code-muted: #a1a1a1;
+  }
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
@@ -116,6 +143,9 @@ a:hover { text-decoration-thickness: 2px; }
 .theme-toggle:hover { border-color: var(--line-strong); background: var(--surface-2); }
 .theme-toggle::before { content: "☾"; }
 :root[data-theme="dark"] .theme-toggle::before { content: "☀"; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-toggle::before { content: "☀"; }
+}
 
 /* ---------- Type ---------- */
 .eyebrow {
@@ -265,6 +295,15 @@ code:not(pre code) {
 :root[data-theme="dark"] .syntax-number { color: #8be0ff; }
 :root[data-theme="dark"] .syntax-comment { color: #8797c2; }
 :root[data-theme="dark"] .syntax-preprocessor { color: #77ddff; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .copy-btn.copied { color: #86efac; border-color: #4ade80; }
+  :root:not([data-theme]) .syntax-keyword { color: #c7a7ff; }
+  :root:not([data-theme]) .syntax-type { color: #71d9ff; }
+  :root:not([data-theme]) .syntax-string { color: #a6c7ff; }
+  :root:not([data-theme]) .syntax-number { color: #8be0ff; }
+  :root:not([data-theme]) .syntax-comment { color: #8797c2; }
+  :root:not([data-theme]) .syntax-preprocessor { color: #77ddff; }
+}
 
 /* ---------- Content blocks ---------- */
 .prose { max-width: 850px; padding: 3rem 0 5rem; }
@@ -348,6 +387,9 @@ code:not(pre code) {
 .example-viewer-actions > span { color: var(--muted); font-size: .82rem; }
 .example-viewer-actions .button { min-height: 2.7rem; padding: .65rem 1rem; }
 :root[data-theme="dark"] .example-viewer-canvas { background: #050505; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .example-viewer-canvas { background: #050505; }
+}
 
 /* ---------- Guide (building.html) ---------- */
 .guide { max-width: 960px; }

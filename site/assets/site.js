@@ -2,28 +2,57 @@
   "use strict";
 
   /* ---------- Theme toggle ----------
-     The site is light by default, independent of the system preference.
-     An inline head script applies a persisted dark choice before
-     first paint; this wires the header button and keeps the choice in
-     localStorage. */
+     With no saved override, CSS and this script follow the operating-system
+     preference. The button switches to the opposite theme; pressing it again
+     returns to automatic mode. */
   const root = document.documentElement;
-  const currentTheme = () => root.dataset.theme === "dark" ? "dark" : "light";
+  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+  let themeMode = root.dataset.theme === "dark" || root.dataset.theme === "light"
+    ? root.dataset.theme
+    : "system";
+  const currentTheme = () => themeMode === "system"
+    ? (systemTheme.matches ? "dark" : "light")
+    : themeMode;
 
   const syncThemeButton = (button) => {
     const dark = currentTheme() === "dark";
-    button.setAttribute("aria-pressed", String(dark));
-    button.setAttribute("aria-label", `Switch to ${dark ? "light" : "dark"} theme`);
+    const automatic = themeMode === "system";
+    button.setAttribute("aria-pressed", automatic ? "false" : "true");
+    button.setAttribute(
+      "aria-label",
+      automatic
+        ? `Following system ${dark ? "dark" : "light"} theme; switch to ${dark ? "light" : "dark"}`
+        : `Using ${dark ? "dark" : "light"} theme; return to system theme`
+    );
+    button.title = automatic ? "Theme: system" : `Theme: ${dark ? "dark" : "light"} (click for system)`;
+  };
+
+  const applyTheme = () => {
+    if (themeMode === "system") delete root.dataset.theme;
+    else root.dataset.theme = themeMode;
+    const dark = currentTheme() === "dark";
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+      meta.content = dark ? "#000000" : "#f7f9ff";
+    });
+    document.querySelectorAll(".theme-toggle").forEach(syncThemeButton);
   };
 
   document.querySelectorAll(".theme-toggle").forEach((button) => {
-    syncThemeButton(button);
     button.addEventListener("click", () => {
-      const next = currentTheme() === "dark" ? "light" : "dark";
-      root.dataset.theme = next;
-      try { localStorage.setItem("mwfl-theme", next); } catch { /* private mode */ }
-      syncThemeButton(button);
+      themeMode = themeMode === "system"
+        ? (currentTheme() === "dark" ? "light" : "dark")
+        : "system";
+      try {
+        if (themeMode === "system") localStorage.removeItem("mwfl-theme");
+        else localStorage.setItem("mwfl-theme", themeMode);
+      } catch { /* private mode */ }
+      applyTheme();
     });
   });
+  systemTheme.addEventListener("change", () => {
+    if (themeMode === "system") applyTheme();
+  });
+  applyTheme();
 
   /* ---------- Window chrome + copy button ----------
      Every standalone code block becomes a small "native window": caption bar
