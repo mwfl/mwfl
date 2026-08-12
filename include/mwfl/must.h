@@ -27,6 +27,8 @@ concept DetailedCheckResult = requires(const Result& result) {
 
 }  // namespace detail
 
+// Use MustInvoke for a Win32 operation whose GetLastError value is diagnostic;
+// a bool that has already been evaluated no longer carries that error context.
 inline void Must(
     bool succeeded,
     std::string_view operation = {},

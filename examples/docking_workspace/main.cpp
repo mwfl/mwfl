@@ -295,8 +295,7 @@ public:
         BindNativeState();
         if (!g_showcase) RestoreLayout();
         Synchronize(L"Ready — use toolbar, menu, shortcuts, or tab selection");
-        mwfl::ApplyWindowAppearance(GetHwnd(),
-            {mwfl::ColorMode::light, mwfl::Backdrop::mica});
+        SetAppearance({mwfl::ColorMode::light, mwfl::Backdrop::mica});
         if (g_self_test && !::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0))
             throw std::runtime_error("post docking self-test failed");
     }

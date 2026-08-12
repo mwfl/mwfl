@@ -70,7 +70,7 @@ public:
                    "name OLE source list");
         mwfl::Must(mwfl::SetAccessibleName(destination_.GetHwnd(), L"Drop destination items"),
                    "name OLE destination list");
-        mwfl::ApplyWindowAppearance(GetHwnd());
+        SetAppearance({});
 
         target_ = mwfl::CreateOleDropTarget({
             .enter = [this](IDataObject& data, DWORD, POINTL, DWORD allowed) {
@@ -157,7 +157,6 @@ public:
         if (event.id == kRunSelfTest) { RunSelfTest(); return mwfl::EventResult::Handled(); }
         if (event.id == WM_THEMECHANGED || event.id == WM_SYSCOLORCHANGE ||
             event.id == WM_SETTINGCHANGE) {
-            mwfl::ApplyWindowAppearance(GetHwnd());
             ::InvalidateRect(GetHwnd(), nullptr, TRUE);
             return mwfl::EventResult::Handled();
         }

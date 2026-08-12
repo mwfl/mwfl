@@ -141,7 +141,7 @@ bool ApplyNativeControlAppearance(HWND window, const AppearanceState& state) noe
     return true;
 }
 
-bool ApplyWindowAppearance(HWND window, AppearanceOptions options) noexcept {
+bool ApplyWindowAppearanceBestEffort(HWND window, AppearanceOptions options) noexcept {
     if (window == nullptr || ::IsWindow(window) == FALSE) return false;
     if (::GetPropW(window, kAppearanceApplyingProperty) != nullptr) return true;
     if (::SetPropW(window, kAppearanceApplyingProperty,

@@ -221,7 +221,9 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 ## Checked operations
 
 - Headers: `<mwfl/must.h>`, `<mwfl/error.h>`.
-- `Must(value, context)` converts failed setup results into rich diagnostics.
+- `Must(value, context)` converts a failed checked value into a setup diagnostic.
+- Prefer `MustInvoke(operation, context)` when a Win32 call's `GetLastError`
+  value should be preserved; an already-evaluated `bool` cannot retain it.
 - Use it for operations that must succeed before the window can function.
 - Do not let resulting exceptions escape a Win32 callback.
 

@@ -34,7 +34,7 @@ public:
         SetAccelerators(accelerators_.GetHandle());
 
         ApplyFont(GetDpiContext().GetDpi());
-        mwfl::ApplyWindowAppearance(GetHwnd(), {mwfl::ColorMode::system, mwfl::Backdrop::mica});
+        SetAppearance({mwfl::ColorMode::system, mwfl::Backdrop::mica});
         SetLayout(mwfl::Column().Margin(24.0_dip).Gap(10.0_dip)
             .Add(title_, mwfl::Fixed(34.0_dip))
             .Add(subtitle_, mwfl::Fixed(24.0_dip))

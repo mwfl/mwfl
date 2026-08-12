@@ -4,9 +4,11 @@ Express layout in DIPs and use `GetDpiContext()` for native measurements. Apply
 DPI-dependent fonts during setup and refresh them from `OnDpiChanged()`, then
 return `Propagate()` so the window completes normal DPI processing.
 
-Use `ApplyWindowAppearance` as a best-effort request. High Contrast and older
-Windows versions can override or reject composition choices. Provide accessible
-names for controls whose visible label is insufficient.
+Use `ApplyWindowAppearanceBestEffort` only for a borrowed raw HWND. Its `true`
+result means the request was accepted, not that every DWM attribute took effect;
+High Contrast and older Windows versions can override or reject composition
+choices. Provide accessible names for controls whose visible label is
+insufficient.
 
 For a `WindowBase`, prefer `WindowOptions::appearance` at startup and
 `SetAppearance` for an in-app choice. MWFL retains this policy and reapplies it

@@ -97,7 +97,7 @@ public:
                    "name Shell integration window");
         mwfl::Must(mwfl::SetAccessibleName(log_.GetHwnd(), L"Shell operation log"),
                    "name Shell operation log");
-        mwfl::ApplyWindowAppearance(GetHwnd());
+        SetAppearance({});
 
         Log(L"Process identity: " + Describe(mwfl::SetProcessAppUserModelId(kAppId)));
         Log(L"Window identity: " + Describe(mwfl::SetWindowAppUserModelId(GetHwnd(), kAppId)));
@@ -161,7 +161,6 @@ public:
         }
         if (event.id == WM_THEMECHANGED || event.id == WM_SYSCOLORCHANGE ||
             event.id == WM_SETTINGCHANGE) {
-            mwfl::ApplyWindowAppearance(GetHwnd());
             return mwfl::EventResult::Handled();
         }
         return mwfl::EventResult::Propagate();

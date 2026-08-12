@@ -100,7 +100,7 @@ public:
                       .Add(status_, mwfl::Auto()));
         mwfl::Must(mwfl::SetAccessibleName(GetHwnd(), L"Document print preview"),
                    "name print preview window");
-        mwfl::ApplyWindowAppearance(GetHwnd());
+        SetAppearance({});
         const auto printers = mwfl::EnumerateLocalPrinters();
         const std::wstring discovery = printers
             ? L" | " + std::to_wstring(printers.printers.size()) + L" printer(s) discovered"
@@ -157,7 +157,6 @@ public:
     mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
         if (event.id == WM_THEMECHANGED || event.id == WM_SYSCOLORCHANGE ||
             event.id == WM_SETTINGCHANGE) {
-            mwfl::ApplyWindowAppearance(GetHwnd());
             ::InvalidateRect(GetHwnd(), nullptr, TRUE);
             return mwfl::EventResult::Handled();
         }

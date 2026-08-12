@@ -21,7 +21,8 @@ bool WindowAppearance::Reapply(HWND window) noexcept {
     ResetBrushes();
     window_brush_ = ::CreateSolidBrush(state_.palette.window_background);
     control_brush_ = ::CreateSolidBrush(state_.palette.control_background);
-    const bool applied = window != nullptr && ApplyWindowAppearance(window, options_);
+    const bool applied =
+        window != nullptr && ApplyWindowAppearanceBestEffort(window, options_);
     applying_ = false;
     return applied;
 }

@@ -38,7 +38,7 @@ public:
         team_.SetSelection(2);
         comfortable_.SetChecked(true);
         mwfl::SetDialogDefaultButton(GetHwnd(), static_cast<UINT>(save_.GetId().value));
-        mwfl::ApplyWindowAppearance(GetHwnd(), {mwfl::ColorMode::system, mwfl::Backdrop::mica});
+        SetAppearance({mwfl::ColorMode::system, mwfl::Backdrop::mica});
         ApplyFont(GetDpiContext().GetDpi());
         RebuildLayout();
     }

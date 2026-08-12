@@ -46,7 +46,13 @@ bool IsHighContrastEnabled() noexcept;
 bool IsSystemDarkModePreferred() noexcept;
 AppearanceState ResolveAppearance(AppearanceOptions options = {}) noexcept;
 AppearanceState GetWindowAppearance(HWND window) noexcept;
-bool ApplyWindowAppearance(HWND window, AppearanceOptions options = {}) noexcept;
+// Requests the supported native appearance for a borrowed HWND. A true result
+// means that the request was accepted; individual DWM attributes remain
+// best-effort and may be unavailable or rejected by the current Windows build.
+// WindowBase applications should use WindowBase::SetAppearance so the policy is
+// retained and reapplied when Windows broadcasts a theme change.
+bool ApplyWindowAppearanceBestEffort(
+    HWND window, AppearanceOptions options = {}) noexcept;
 // Applies Explorer-compatible visual styles to an existing control tree and
 // redraws the attached menu. HWNDs remain borrowed and on their UI thread.
 bool ApplyNativeControlAppearance(HWND window, const AppearanceState& state) noexcept;

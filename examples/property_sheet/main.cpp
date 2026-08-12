@@ -72,7 +72,6 @@ public:
 
     mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
         if (event.id == WM_THEMECHANGED || event.id == WM_SETTINGCHANGE) {
-            static_cast<void>(mwfl::ApplyWindowAppearance(GetHwnd()));
             ::RedrawWindow(GetHwnd(), nullptr, nullptr,
                            RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
             return mwfl::EventResult::Handled();

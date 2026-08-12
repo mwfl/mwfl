@@ -262,6 +262,10 @@ Direct2D paint callbacks. `SetAppearance` changes the retained preference and
 applies it immediately. These calls belong to the creating UI thread. Native
 theme APIs remain best-effort: Windows and third-party controls may paint portions
 themselves, and High Contrast always replaces requested light/dark colors.
+`ApplyWindowAppearanceBestEffort` is the lower-level alternative for a borrowed
+raw HWND; its boolean result reports that MWFL accepted the request, not that
+every requested DWM attribute took effect. It does not retain a policy for later
+theme notifications.
 `SetAccessibleName` names a native control without visible text, while
 `SetDialogDefaultButton` establishes keyboard default-button behavior.
 

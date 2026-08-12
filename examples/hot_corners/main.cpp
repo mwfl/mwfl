@@ -233,8 +233,6 @@ class HotCornersWindow final : public WindowBase {
 
     EventResult OnMessage(const WindowMessage& event) override {
         if (event.id == WM_SETTINGCHANGE || event.id == WM_THEMECHANGED) {
-            static_cast<void>(
-                ApplyWindowAppearance(GetHwnd(), {ColorMode::system, Backdrop::mica}));
             ::RedrawWindow(GetHwnd(), nullptr, nullptr,
                            RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
         }

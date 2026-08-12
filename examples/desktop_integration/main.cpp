@@ -43,7 +43,7 @@ class DesktopIntegrationWindow final : public mwfl::WindowBase {
             path_.SetText(L"C:\\MWFL Showcase\\mwfl-0.1.1-windows-x64.zip");
 
         mwfl::EnableFileDrop(GetHwnd());
-        mwfl::ApplyWindowAppearance(GetHwnd(), {mwfl::ColorMode::light, mwfl::Backdrop::mica});
+        SetAppearance({mwfl::ColorMode::light, mwfl::Backdrop::mica});
         mwfl::SetDialogDefaultButton(GetHwnd(), static_cast<UINT>(open_.GetId().value));
         ApplyFont(GetDpiContext().GetDpi());
         SetLayout(mwfl::Column()

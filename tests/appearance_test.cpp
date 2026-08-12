@@ -6,7 +6,7 @@
 #include <string>
 
 int main() {
-    if (mwfl::ApplyWindowAppearance(nullptr)) return EXIT_FAILURE;
+    if (mwfl::ApplyWindowAppearanceBestEffort(nullptr)) return EXIT_FAILURE;
     static_cast<void>(mwfl::IsHighContrastEnabled());
     static_cast<void>(mwfl::IsSystemDarkModePreferred());
 
@@ -45,7 +45,7 @@ int main() {
     const auto dark = mwfl::ResolveAppearance(options);
     if (!mwfl::IsHighContrastEnabled() && (!dark.IsDark() || dark.palette.text == dark.palette.window_background))
         return EXIT_FAILURE;
-    if (!mwfl::ApplyWindowAppearance(parent, options)) return EXIT_FAILURE;
+    if (!mwfl::ApplyWindowAppearanceBestEffort(parent, options)) return EXIT_FAILURE;
     const auto applied = mwfl::GetWindowAppearance(child);
     if (!applied.high_contrast && !applied.IsDark()) return EXIT_FAILURE;
     return EXIT_SUCCESS;

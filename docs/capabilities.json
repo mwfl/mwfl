@@ -208,7 +208,7 @@
     {
       "id": "appearance-accessibility",
       "intent": ["dark mode", "automatic system theme switching", "native control themes", "menu themes", "custom drawing palette", "mica", "high contrast", "accessible name", "DPI"],
-      "symbols": ["mwfl::AppearanceOptions", "mwfl::AppearanceState", "mwfl::AppearancePalette", "mwfl::ResolveAppearance", "mwfl::GetWindowAppearance", "mwfl::ApplyWindowAppearance", "mwfl::ApplyNativeControlAppearance", "mwfl::SetAccessibleName"],
+      "symbols": ["mwfl::AppearanceOptions", "mwfl::AppearanceState", "mwfl::AppearancePalette", "mwfl::ResolveAppearance", "mwfl::GetWindowAppearance", "mwfl::ApplyWindowAppearanceBestEffort", "mwfl::ApplyNativeControlAppearance", "mwfl::SetAccessibleName"],
       "headers": ["mwfl/appearance.h", "mwfl/dpi.h"],
       "example": "examples/appearance/main.cpp",
       "tests": ["mwfl.appearance", "mwfl.appearance_lifecycle"],

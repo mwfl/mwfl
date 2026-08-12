@@ -104,8 +104,8 @@ public:
         UpdateStatusParts(980);
         UpdateStatus(L"Ready");
         tree_.SetSelection({1});
-        static_cast<void>(mwfl::ApplyWindowAppearance(
-            GetHwnd(), {mwfl::ColorMode::light, mwfl::Backdrop::mica}));
+        static_cast<void>(
+            SetAppearance({mwfl::ColorMode::light, mwfl::Backdrop::mica}));
         if (g_self_test && ::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0) == FALSE)
             throw std::runtime_error("post Explorer self-test message failed");
     }
@@ -162,8 +162,6 @@ public:
 
     mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
         if (event.id == WM_THEMECHANGED || event.id == WM_SETTINGCHANGE) {
-            static_cast<void>(mwfl::ApplyWindowAppearance(
-                GetHwnd(), {mwfl::ColorMode::light, mwfl::Backdrop::mica}));
             ::RedrawWindow(GetHwnd(), nullptr, nullptr,
                            RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
             return mwfl::EventResult::Handled();

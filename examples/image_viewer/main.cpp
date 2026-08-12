@@ -122,7 +122,7 @@ public:
                            mwfl::Auto())
                       .Add(canvas_, mwfl::Stretch())
                       .Add(status_, mwfl::Auto()));
-        mwfl::ApplyWindowAppearance(GetHwnd());
+        SetAppearance({});
         if (g_self_test && !::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0))
             throw std::runtime_error("post image-viewer self-test failed");
     }
@@ -158,7 +158,6 @@ public:
     mwfl::EventResult OnMessage(const mwfl::WindowMessage& event) override {
         if (event.id == WM_THEMECHANGED || event.id == WM_SYSCOLORCHANGE ||
             event.id == WM_SETTINGCHANGE) {
-            mwfl::ApplyWindowAppearance(GetHwnd());
             canvas_.DiscardDeviceResources();
             canvas_.Invalidate();
             return mwfl::EventResult::Handled();
