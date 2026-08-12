@@ -232,11 +232,15 @@ target_link_libraries(mwfl_graphics PUBLIC mwfl PRIVATE gdiplus gdi32)
 
 if(MWFL_BUILD_SCINTILLA)
     FetchContent_Declare(mwfl_scintilla_source
-        URL https://www.scintilla.org/scintilla565.zip
+        URL
+            https://github.com/mwfl/vendor-assets/releases/download/scintilla-5.6.5/scintilla565.zip
+            https://www.scintilla.org/scintilla565.zip
         URL_HASH SHA256=345140A60BF4CEEA3340942E8205E6A8FBDA8DB13EB48F827126B9BE15BD3DA1
         DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
     FetchContent_Declare(mwfl_scintilla_binary
-        URL https://www.scintilla.org/wscite565.zip
+        URL
+            https://github.com/mwfl/vendor-assets/releases/download/scintilla-5.6.5/wscite565.zip
+            https://www.scintilla.org/wscite565.zip
         URL_HASH SHA256=9B5A7AF4BEB2D61BA6A5F62FA678FF68C96D175D19664FC1A801F444B357303B
         DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
     FetchContent_MakeAvailable(mwfl_scintilla_source mwfl_scintilla_binary)
