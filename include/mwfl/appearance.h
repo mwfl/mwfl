@@ -5,6 +5,7 @@
 namespace mwfl {
 
 enum class ColorMode {
+    // Follow Windows and re-resolve when WindowBase receives a theme change.
     system,
     light,
     dark,
@@ -19,6 +20,8 @@ struct AppearancePalette {
 };
 
 struct AppearanceState {
+    // requested_mode is policy; effective_mode is the palette safe to paint.
+    // High contrast always takes precedence over an application preference.
     ColorMode requested_mode = ColorMode::system;
     ColorMode effective_mode = ColorMode::light;
     bool high_contrast = false;
@@ -44,7 +47,9 @@ struct AppearanceOptions {
 
 bool IsHighContrastEnabled() noexcept;
 bool IsSystemDarkModePreferred() noexcept;
+// Resolves policy without mutating a window, useful to custom-drawn controls.
 AppearanceState ResolveAppearance(AppearanceOptions options = {}) noexcept;
+// Inherits mwfl state through parents, or falls back to the current system state.
 AppearanceState GetWindowAppearance(HWND window) noexcept;
 // Requests the supported native appearance for a borrowed HWND. A true result
 // means that the request was accepted; individual DWM attributes remain

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SQLite Viewer is a bounded read-only native Windows database browser built with MWFL.">
+  <link rel="canonical" href="https://mwfl.github.io/sqlite-viewer.html"><title>SQLite Viewer &mdash; MWFL</title>
+  <meta name="theme-color" content="#f7f9ff"><link rel="icon" type="image/svg+xml" href="assets/mwfl-mark.svg"><link rel="stylesheet" href="styles.css?v=20260810a">
+  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script><script defer src="assets/site.js?v=20260810a"></script>
+</head>
+<body><a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><div class="shell nav"><a class="brand" href="index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="assets/mwfl-mark.svg" alt=""><span>MWFL</span></a><nav class="nav-links" aria-label="Main navigation"><a href="components/index.html">Components</a><a class="active" href="index.html#applications">Applications</a><a href="building.html">Build reference</a><a href="changelog.html">Changelog</a><a href="https://github.com/mwfl/mwfl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav></div></header>
+  <main id="main" class="shell prose guide">
+    <div class="hero"><div class="eyebrow">Standalone application &middot; Read only &middot; Local database</div><h1>Inspect SQLite data without changing it.</h1><p class="lede">SQLite Viewer combines a native schema tree, SQL workspace, virtual results, and CSV export with the WinSQLite runtime already included in Windows.</p><div class="actions"><a class="button primary" href="https://github.com/mwfl/sqlite-viewer">Open the repository</a><a class="button" href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/sqlite-viewer.md">Read the design guide</a></div></div>
+    <figure><img src="https://raw.githubusercontent.com/mwfl/sqlite-viewer/main/docs/sqlite-viewer.png" alt="SQLite Viewer showing schema and bounded query results" width="1183" height="791"><figcaption>The schema tree, SQL editor, and bounded result table are composed from standard native controls.</figcaption></figure>
+    <div class="requirements"><div><strong>Database</strong><span>Windows WinSQLite</span></div><div><strong>Policy</strong><span>Prepared read-only statements</span></div><div><strong>Bound</strong><span>5,000 visible rows</span></div><div><strong>Export</strong><span>Quoted UTF-8 CSV</span></div></div>
+    <section><div class="eyebrow">What it demonstrates</div><h2>Read-only is enforced by SQLite, not string matching.</h2><p>The database is opened read-only and exactly one prepared statement is accepted. SQLite statement metadata rejects writes, while a 5,000-row bound keeps result memory and UI work predictable. NULL and BLOB values remain explicit.</p><p>Selecting a schema object generates a safely quoted query. CSV export includes only the visible bounded result, uses UTF-8 with BOM, and quotes every field for predictable spreadsheet import.</p></section>
+    <section><div class="eyebrow">Build and try</div><h2>Launch a populated temporary database.</h2><pre data-title="Developer PowerShell"><code>git clone https://github.com/mwfl/sqlite-viewer.git
+cd sqlite-viewer
+cmake --preset vs2026-x64
+cmake --build --preset vs2026-x64-release
+ctest --preset vs2026-x64-release
+./build/vs2026-x64/Release/sqlite-viewer.exe --showcase</code></pre></section>
+  </main><footer class="site-footer"><div class="shell footer"><span>Modern Windows Foundation Layer &middot; MIT licensed &middot; Windows 10 1809+</span><nav aria-label="Footer"><a href="index.html#applications">Applications</a><a href="https://github.com/mwfl/sqlite-viewer">Source</a></nav></div></footer>
+</body></html>
