@@ -248,6 +248,20 @@ protocol.
 `WindowOptions::appearance` applies system/light/dark color preference, optional
 Mica/Acrylic/Tabbed backdrops, and corner policy after HWND creation. Unsupported
 DWM attributes are best-effort, and high-contrast mode always takes priority.
+`WindowBase` retains that option and automatically reapplies it on
+`WM_SETTINGCHANGE`, `WM_THEMECHANGED`, and `WM_SYSCOLORCHANGE`. Reapplication
+updates the DWM frame, attached menu, client-area colors, and Explorer-compatible
+visual styles throughout the native child HWND tree. Controls created later by
+MWFL inherit the effective state from their parent.
+
+`GetAppearanceState()` exposes the window's current `AppearanceState`.
+`OnAppearanceChanged(const AppearanceState&)` runs after automatic reapplication;
+custom GDI drawing should rebuild borrowed/owned brushes there from the supplied
+palette. `D2DRenderContext::appearance` supplies the same effective palette to
+Direct2D paint callbacks. `SetAppearance` changes the retained preference and
+applies it immediately. These calls belong to the creating UI thread. Native
+theme APIs remain best-effort: Windows and third-party controls may paint portions
+themselves, and High Contrast always replaces requested light/dark colors.
 `SetAccessibleName` names a native control without visible text, while
 `SetDialogDefaultButton` establishes keyboard default-button behavior.
 

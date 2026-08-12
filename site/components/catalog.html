@@ -111,15 +111,16 @@
                 <p><strong>Tests:</strong> <code>mwfl.dialog_native</code></p>
               </details>
             </article>
-            <article class="capability-card" data-capability-id="appearance-accessibility" data-category="Foundation and UI" data-search="appearance-accessibility foundation and ui dark mode mica high contrast accessible name dpi mwfl::appearanceoptions mwfl::applywindowappearance mwfl::setaccessiblename mwfl/appearance.h mwfl/dpi.h">
+            <article class="capability-card" data-capability-id="appearance-accessibility" data-category="Foundation and UI" data-search="appearance-accessibility foundation and ui dark mode automatic system theme switching native control themes menu themes custom drawing palette mica high contrast accessible name dpi mwfl::appearanceoptions mwfl::appearancestate mwfl::appearancepalette mwfl::resolveappearance mwfl::getwindowappearance mwfl::applywindowappearance mwfl::applynativecontrolappearance mwfl::setaccessiblename mwfl/appearance.h mwfl/dpi.h">
               <span class="capability-kind">Foundation and UI</span><h3>Appearance Accessibility</h3>
-              <p>dark mode; mica; high contrast; accessible name; DPI.</p><div class="capability-symbols"><code>mwfl::AppearanceOptions</code> <code>mwfl::ApplyWindowAppearance</code> <code>mwfl::SetAccessibleName</code></div>
+              <p>dark mode; automatic system theme switching; native control themes; menu themes; custom drawing palette; mica; high contrast; accessible name; DPI.</p><div class="capability-symbols"><code>mwfl::AppearanceOptions</code> <code>mwfl::AppearanceState</code> <code>mwfl::AppearancePalette</code> <code>mwfl::ResolveAppearance</code> <code>mwfl::GetWindowAppearance</code> <code>mwfl::ApplyWindowAppearance</code> <code>mwfl::ApplyNativeControlAppearance</code> <code>mwfl::SetAccessibleName</code></div>
               <div class="capability-headers"><code>&lt;mwfl/appearance.h&gt;</code> <code>&lt;mwfl/dpi.h&gt;</code></div><nav aria-label="Appearance Accessibility resources">
                 <a href="https://github.com/mwfl/mwfl/blob/main/examples/appearance/main.cpp">Example</a>
                 <a href="https://github.com/mwfl/mwfl/blob/main/docs/api-index.json">API index</a>
               </nav>
               <details><summary>Contracts and evidence</summary>
-                <p><strong>Rules:</strong> appearance is best effort; High Contrast takes precedence.</p>
+                <p><strong>Rules:</strong> WindowBase automatically reapplies its retained appearance after system theme messages; native and third-party visual styles remain best effort; High Contrast takes precedence.</p>
+                <p><strong>Tests:</strong> <code>mwfl.appearance&lt;/code&gt;, &lt;code&gt;mwfl.appearance_lifecycle</code></p>
               </details>
             </article>
             <article class="capability-card" data-capability-id="property-sheet-settings" data-category="Foundation and UI" data-search="property-sheet-settings foundation and ui property sheet settings pages apply ok cancel modeless settings mwfl::propertypage mwfl::propertysheetmodel mwfl::propertysheetdialog mwfl::propertysheetresult mwfl/property_sheet.h">

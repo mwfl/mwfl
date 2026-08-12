@@ -7,7 +7,7 @@ is more important than compile-time isolation.
 | Header | Primary API |
 |---|---|
 | `mwfl/application.h` | `Application`, `ApplicationOptions`, `RunApplication` |
-| `mwfl/appearance.h` | `AppearanceOptions`, `ApplyWindowAppearance`, accessibility helpers |
+| `mwfl/appearance.h` | `AppearanceOptions`, resolved `AppearanceState`/palette, native theme propagation, accessibility helpers |
 | `mwfl/binding.h` | `ValueBinding`, `ValidationResult`, `ChangeGate` |
 | `mwfl/command.h` | `Command`, `CommandShortcut`, `CommandSet` |
 | `mwfl/command_controls.h` | `Toolbar`, `StatusBar`, `Rebar`, `Pager`, `Animation` |

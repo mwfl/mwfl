@@ -207,11 +207,12 @@
     },
     {
       "id": "appearance-accessibility",
-      "intent": ["dark mode", "mica", "high contrast", "accessible name", "DPI"],
-      "symbols": ["mwfl::AppearanceOptions", "mwfl::ApplyWindowAppearance", "mwfl::SetAccessibleName"],
+      "intent": ["dark mode", "automatic system theme switching", "native control themes", "menu themes", "custom drawing palette", "mica", "high contrast", "accessible name", "DPI"],
+      "symbols": ["mwfl::AppearanceOptions", "mwfl::AppearanceState", "mwfl::AppearancePalette", "mwfl::ResolveAppearance", "mwfl::GetWindowAppearance", "mwfl::ApplyWindowAppearance", "mwfl::ApplyNativeControlAppearance", "mwfl::SetAccessibleName"],
       "headers": ["mwfl/appearance.h", "mwfl/dpi.h"],
       "example": "examples/appearance/main.cpp",
-      "constraints": ["appearance is best effort", "High Contrast takes precedence"]
+      "tests": ["mwfl.appearance", "mwfl.appearance_lifecycle"],
+      "constraints": ["WindowBase automatically reapplies its retained appearance after system theme messages", "native and third-party visual styles remain best effort", "High Contrast takes precedence", "custom drawing resources remain application-owned"]
     },
     {
       "id": "property-sheet-settings",

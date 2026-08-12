@@ -42,6 +42,11 @@ int main() {
     mwfl::AppearanceOptions options;
     options.color_mode = mwfl::ColorMode::dark;
     options.backdrop = mwfl::Backdrop::mica;
-    return mwfl::ApplyWindowAppearance(parent, options)
-        ? EXIT_SUCCESS : EXIT_FAILURE;
+    const auto dark = mwfl::ResolveAppearance(options);
+    if (!mwfl::IsHighContrastEnabled() && (!dark.IsDark() || dark.palette.text == dark.palette.window_background))
+        return EXIT_FAILURE;
+    if (!mwfl::ApplyWindowAppearance(parent, options)) return EXIT_FAILURE;
+    const auto applied = mwfl::GetWindowAppearance(child);
+    if (!applied.high_contrast && !applied.IsDark()) return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }

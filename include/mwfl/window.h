@@ -24,6 +24,7 @@
 #include <mwfl/wakeup.h>
 #include <mwfl/window_options.h>
 #include <mwfl/detail/message_decode.h>
+#include <mwfl/detail/window_appearance.h>
 #include <mwfl/detail/window_support.h>
 
 extern WTL::CAppModule _Module;
@@ -101,6 +102,14 @@ public:
 
     WindowWakeup GetWakeup() const noexcept { return WindowWakeup(wake_state_); }
 
+    const AppearanceState& GetAppearanceState() const noexcept {
+        return appearance_.GetState();
+    }
+
+    bool SetAppearance(AppearanceOptions options) noexcept {
+        return appearance_.Set(GetHwnd(), options);
+    }
+
     void SetAccelerators(HACCEL accelerators) noexcept {
         this->m_hAccel = accelerators;  // Non-owning; the table must outlive the window.
         WTL::CMessageLoop* loop = _Module.GetMessageLoop();
@@ -133,6 +142,7 @@ public:
     void ConfigureWindowOptions(const WindowOptions& options) noexcept {
         apply_suggested_dpi_rect_ = options.apply_suggested_dpi_rect;
         quit_on_destroy_ = options.quit_on_destroy;
+        appearance_.Configure(options.appearance);
     }
 
     void ApplyNativeResources(const WindowOptions& options) noexcept {
@@ -157,7 +167,7 @@ public:
                 window, GCLP_HBRBACKGROUND,
                 reinterpret_cast<LONG_PTR>(options.background));
         }
-        static_cast<void>(ApplyWindowAppearance(window, options.appearance));
+        static_cast<void>(appearance_.Reapply(window));
     }
 
     BOOL ProcessWindowMessage(
@@ -210,6 +220,23 @@ private:
         LPARAM lparam,
         LRESULT& result) {
         T& target = *static_cast<T*>(this);
+
+        if (message == WM_THEMECHANGED || message == WM_SETTINGCHANGE ||
+            message == WM_SYSCOLORCHANGE) {
+            if (appearance_.IsApplying()) return false;
+            static_cast<void>(appearance_.Reapply(GetHwnd()));
+            if constexpr (requires(T& value, const AppearanceState& state) {
+                              value.OnAppearanceChanged(state);
+                          }) {
+                if (InvokeModernHandler(
+                        [&target, this] {
+                            return target.OnAppearanceChanged(appearance_.GetState());
+                        }, result)) {
+                    return true;
+                }
+            }
+        }
+        if (appearance_.HandleColorMessage(GetHwnd(), message, wparam, result)) return true;
 
         if (message == WM_CLOSE) {
             if constexpr (requires(T& value) { value.OnClose(); }) {
@@ -480,6 +507,7 @@ private:
     bool recovery_requested_ = false;
     bool apply_suggested_dpi_rect_ = true;
     bool quit_on_destroy_ = true;
+    detail::WindowAppearance appearance_;
     std::optional<LayoutHost> owned_layout_;
     LayoutHost* layout_ = nullptr;  // Non-owning.
     int exit_code_ = EXIT_SUCCESS;
@@ -502,6 +530,12 @@ public:
     virtual EventResult OnResize(const ResizeEvent&) { return EventResult::Propagate(); }
     virtual EventResult OnTimer(TimerId) { return EventResult::Propagate(); }
     virtual EventResult OnDpiChanged(const DpiChangedEvent&) { return EventResult::Propagate(); }
+    // Called after MWFL has reapplied the requested appearance to the window,
+    // native descendants, and attached menu following a system theme change.
+    // Use the palette for application-owned drawing resources.
+    virtual EventResult OnAppearanceChanged(const AppearanceState&) {
+        return EventResult::Propagate();
+    }
     virtual EventResult OnCommand(const CommandEvent&) { return EventResult::Propagate(); }
     virtual EventResult OnNotify(const NotifyEvent&) { return EventResult::Propagate(); }
     virtual EventResult OnMinMaxInfo(MinMaxInfoEvent) { return EventResult::Propagate(); }

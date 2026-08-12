@@ -9,6 +9,9 @@ messages, and ownership rules.
 ## What it demonstrates
 
 - `AppearanceOptions`
+- automatic system-theme reapplication through `WindowBase`
+- `AppearanceState` and its custom-drawing palette
+- native child-control and attached-menu propagation
 - `SetAccessibleName`
 
 The window remains a real HWND and the example preserves mwfl's native escape

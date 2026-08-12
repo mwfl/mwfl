@@ -18,7 +18,7 @@ remain authoritative.
 | Timers, wait-aware pumping and worker wakeup | timer/pump/wakeup | `timer`, `wait_aware`, `wakeup` |
 | File/folder dialogs, clipboard and file drops | desktop helpers | `desktop_integration` |
 | Window placement and shell integration | desktop helpers | `desktop_integration`, `hot_corners` |
-| DWM appearance and accessibility helpers | appearance helpers | `appearance` |
+| System-following DWM, native-control, menu, and custom-drawing appearance | appearance helpers and `WindowBase` | `appearance` |
 | Raw HWND and native message interoperability | `GetHwnd`, `WindowMessage` | `native_message` |
 | Printing, preview, settings, and native jobs | `PrintPreviewModel`, `PrinterSettings`, `PrintJob` | `printing` |
 | OLE data objects and drag/drop | `OleDataObjectBuilder`, OLE source/target helpers | `ole_drag_drop` |
@@ -30,6 +30,7 @@ remain authoritative.
 These are compatible with mwfl but intentionally remain ordinary platform APIs:
 
 - owner-drawn and custom-drawn controls beyond the provided paint hooks;
+- third-party control-specific dark palettes beyond the propagated `AppearanceState`;
 - registry schemas beyond the focused placement helpers;
 - custom window classes and uncommon control messages;
 - OLE formats and behaviors beyond the focused data/source/target helpers;
@@ -60,7 +61,7 @@ surrounding native window, commands, layout, and thread handoff.
 
 - cross-platform abstraction;
 - virtual DOM or declarative XAML-like runtime;
-- custom widget renderer or theme engine;
+- custom widget renderer or application-wide skinning engine;
 - reflection, code generation, or message-map macros;
 - automatic global data context;
 - general-purpose task scheduler;

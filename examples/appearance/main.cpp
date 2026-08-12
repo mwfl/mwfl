@@ -61,6 +61,12 @@ public:
         return mwfl::EventResult::Propagate();
     }
     mwfl::EventResult OnDpiChanged(const mwfl::DpiChangedEvent& event) override { ApplyFont(event.dpi_x); return mwfl::EventResult::Propagate(); }
+    mwfl::EventResult OnAppearanceChanged(const mwfl::AppearanceState& state) override {
+        UpdateSystemSummary();
+        status_.SetText(std::wstring(L"System theme reapplied: ") +
+                        (state.IsDark() ? L"dark" : L"light"));
+        return mwfl::EventResult::Propagate();
+    }
 
 private:
     void ApplySelection() {
@@ -69,7 +75,7 @@ private:
         const int mode = (std::max)(0, mode_.GetSelection());
         const int backdrop = (std::max)(0, backdrop_.GetSelection());
         const mwfl::AppearanceOptions options{modes[static_cast<size_t>(mode)], backdrops[static_cast<size_t>(backdrop)], rounded_.IsChecked()};
-        const bool applied = mwfl::ApplyWindowAppearance(GetHwnd(), options);
+        const bool applied = SetAppearance(options);
         static constexpr const wchar_t* mode_names[]{L"System", L"Light", L"Dark"};
         static constexpr const wchar_t* backdrop_names[]{L"None", L"Mica", L"Acrylic", L"Tabbed"};
         status_.SetText(std::wstring(applied ? L"Applied: " : L"Requested: ") + mode_names[mode] + L" + " + backdrop_names[backdrop]);

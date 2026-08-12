@@ -1,4 +1,5 @@
 #include <mwfl/controls.h>
+#include <mwfl/appearance.h>
 #include <wil/resource.h>
 
 #include <array>
@@ -233,6 +234,7 @@ bool NativeControl::CreateNative(const wchar_t* class_name, HWND parent, Control
     id_ = id;
     owner_thread_id_ = ::GetCurrentThreadId();
     ApplyDefaultFont(window_, parent_);
+    static_cast<void>(ApplyNativeControlAppearance(window_, GetWindowAppearance(parent_)));
     return true;
 }
 

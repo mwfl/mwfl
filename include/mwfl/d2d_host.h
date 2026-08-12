@@ -9,6 +9,7 @@
 #include <utility>
 
 #include <mwfl/controls.h>
+#include <mwfl/appearance.h>
 
 namespace mwfl {
 
@@ -48,6 +49,7 @@ struct D2DRenderContext {
     D2D1_SIZE_F size_dip{};
     UINT dpi = 96;
     bool high_contrast = false;
+    AppearanceState appearance{};
 };
 
 struct D2DInputEvent {

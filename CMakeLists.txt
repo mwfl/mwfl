@@ -90,6 +90,7 @@ add_library(mwfl STATIC
     src/document_tabs.cpp
     src/document_workspace.cpp
     src/detail/diagnostics.cpp
+    src/detail/window_appearance.cpp
     src/message_pump.cpp
     src/native_host.cpp
     src/recent_files.cpp
@@ -356,7 +357,7 @@ target_link_libraries(mwfl
         dwmapi
         shell32
         ole32)
-target_link_libraries(mwfl PRIVATE oleacc uuid)
+target_link_libraries(mwfl PRIVATE oleacc uuid uxtheme)
 
 install(TARGETS mwfl mwfl_d2d mwfl_d3d mwfl_imaging mwfl_printing mwfl_ole mwfl_shell mwfl_ribbon mwfl_mdi mwfl_graphics
     EXPORT mwflTargets

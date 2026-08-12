@@ -278,6 +278,13 @@ target_link_libraries(mwfl_appearance_test PRIVATE mwfl::mwfl)
 add_test(NAME mwfl.appearance COMMAND mwfl_appearance_test)
 set_tests_properties(mwfl.appearance PROPERTIES TIMEOUT 20)
 
+add_executable(mwfl_appearance_lifecycle_test WIN32 appearance_lifecycle_test.cpp)
+target_compile_features(mwfl_appearance_lifecycle_test PRIVATE cxx_std_20)
+target_compile_options(mwfl_appearance_lifecycle_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwfl_appearance_lifecycle_test PRIVATE mwfl::mwfl)
+add_test(NAME mwfl.appearance_lifecycle COMMAND mwfl_appearance_lifecycle_test)
+set_tests_properties(mwfl.appearance_lifecycle PROPERTIES TIMEOUT 20 LABELS "native;unit;lifecycle")
+
 add_executable(mwfl_layout_quality_test layout_quality_test.cpp)
 target_compile_features(mwfl_layout_quality_test PRIVATE cxx_std_20)
 target_compile_options(mwfl_layout_quality_test PRIVATE /W4 /permissive- /EHsc /utf-8)

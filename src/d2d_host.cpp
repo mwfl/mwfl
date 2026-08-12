@@ -109,7 +109,7 @@ bool D2DHost::Render() noexcept {
             const D2D1_SIZE_F size = render_target_->GetSize();
             D2DRenderContext context{*render_target_.Get(), size,
                                      DpiContext::FromWindow(GetHwnd()).GetDpi(),
-                                     IsHighContrast()};
+                                     IsHighContrast(), GetWindowAppearance(GetHwnd())};
             options_.callbacks.paint(context);
         } catch (...) {
             RecordCallbackException();

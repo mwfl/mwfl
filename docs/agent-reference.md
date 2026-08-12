@@ -209,6 +209,10 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 - Headers: `<mwfl/appearance.h>`, `<mwfl/dpi.h>`.
 - `AppearanceOptions` requests system/light/dark mode, backdrop, and corners on
   a best-effort basis.
+- `WindowBase` retains the option and automatically reapplies its frame, native
+  descendants, attached menu, and palette after Windows theme/settings changes.
+- Use `GetAppearanceState()` or `OnAppearanceChanged` for GDI/custom resources;
+  Direct2D paint callbacks receive the same state as `D2DRenderContext::appearance`.
 - High Contrast takes precedence over decorative choices.
 - Layout uses DIPs. Raw Win32 APIs use pixels unless documented otherwise.
 - Accessibility helpers set native names and dialog behavior; they supplement,
