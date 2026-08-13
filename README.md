@@ -180,13 +180,13 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
 
-The repository contains 47 independently buildable programs. Each link opens
+The repository contains 45 independently buildable examples. Each link opens
 the complete source. Start with **Hello** for the smallest application,
 **Controls** for the basic widget set, or **Hot corners** for a complete
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 43 runnable examples</strong></summary>
+<summary><strong>Browse all 45 runnable examples and six standalone applications</strong></summary>
 
 <br>
 
@@ -226,6 +226,7 @@ multi-monitor utility.
 | Layout gallery | [examples/layout_gallery/main.cpp](examples/layout_gallery/main.cpp) | Responsive nested row, column, overlay, and sizing recipes |
 | Settings | [examples/property_sheet/main.cpp](examples/property_sheet/main.cpp) | Persistent property pages with validation and Apply/OK/Cancel |
 | Explorer | [examples/explorer/main.cpp](examples/explorer/main.cpp) | Rebar, commands, stable navigation, virtual data, tabs, and splitter |
+| Folder Explorer | [mwfl/folder-explorer](https://github.com/mwfl/folder-explorer) | Standalone bounded folder inventory, PE inspection, signature metadata, and optional AI analysis |
 | SQLite Viewer | [mwfl/sqlite-viewer](https://github.com/mwfl/sqlite-viewer) | Standalone read-only schema browser, SQL workspace, bounded results, and CSV export using Windows SQLite |
 | Hex Editor | [mwfl/hex-editor](https://github.com/mwfl/hex-editor) | Standalone read-only-first binary inspector with overwrite editing, theme-aware coloring, search, and backed-up atomic saves |
 | Folder Compare | [mwfl/folder-compare](https://github.com/mwfl/folder-compare) | Standalone local file/folder comparison, exact validation, text diff, cancellation, and verified copy |
@@ -281,14 +282,14 @@ For repository development, `./scripts/doctor.ps1` discovers the supported
 toolchains and `./scripts/verify.ps1 -Mode Fast` runs the standard edit loop.
 
 The project rejects non-Windows, non-MSVC, and 32-bit
-configurations. The 0.1 release-candidate matrix contains 164 core tests and
-175 tests with all optional integrations enabled. Both VS2026 x64 Debug and
+configurations. The v0.1.3 validation matrix contains 165 core tests and
+173 tests with all optional integrations enabled. Both VS2026 x64 Debug and
 Release optional matrices pass, including public-header independence, package
 consumption,
 manifests, examples, GUI self-tests, resource lifetime, API surface, and
 deterministic property cases. VS2022, ARM64, sanitizers, coverage,
-static analysis, Pipeline, and GitHub Actions are additional 0.1
-compatibility pass and are not claimed by this README yet.
+static analysis, and GitHub Actions provide additional compatibility and
+quality coverage.
 
 ## Dependencies
 
