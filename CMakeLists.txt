@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(mwfl VERSION 0.1.2 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
+project(mwfl VERSION 0.1.3 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -105,11 +105,9 @@ add_library(mwfl STATIC
     src/text_history.cpp
     src/text_search.cpp
     src/window_options.cpp)
-# `mwfl::ui` is the canonical target for the native Windows UI layer. Keep the
-# old build-tree alias for source compatibility with 0.1 consumers.
+# `mwfl::ui` is the public target for the native Windows UI layer.
 set_target_properties(mwfl PROPERTIES EXPORT_NAME ui)
 add_library(mwfl::ui ALIAS mwfl)
-add_library(mwfl::mwfl ALIAS mwfl)
 
 add_library(mwfl_d2d STATIC src/d2d_host.cpp)
 add_library(mwfl::d2d ALIAS mwfl_d2d)

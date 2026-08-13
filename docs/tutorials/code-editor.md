@@ -2,7 +2,7 @@
 
 This tutorial targets Windows 10 or later, Visual Studio 2026, MSVC C++20,
 and x64. Scintilla is an optional pinned component and is not fetched by core
-`mwfl::mwfl` consumers.
+`mwfl::ui` consumers.
 
 ## 1. Build and run
 

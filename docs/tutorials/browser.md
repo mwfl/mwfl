@@ -1,7 +1,7 @@
 # Build and extend the WebView2 Browser
 
 This tutorial targets Windows 10 or later, Visual Studio 2026, MSVC C++20,
-and x64. WebView2 is optional: a normal `mwfl::mwfl` build does not download
+and x64. WebView2 is optional: a normal `mwfl::ui` build does not download
 its SDK or require the Evergreen Runtime.
 
 ## 1. Build the reference application
@@ -32,7 +32,7 @@ target_link_libraries(my_browser PRIVATE mwfl::webview2)
 
 For `FetchContent` or `add_subdirectory`, set `MWFL_BUILD_WEBVIEW2=ON` before
 making mwfl available, then link the same target. Projects that only link
-`mwfl::mwfl` do not fetch or link WebView2.
+`mwfl::ui` do not fetch or link WebView2.
 
 ## 3. Create and initialize the host
 

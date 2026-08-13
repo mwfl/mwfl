@@ -160,7 +160,7 @@ endforeach()
 
 foreach(marker IN ITEMS
         "docs/images/showcase/mwfl-showcase-40s.gif"
-        "43 compiled"
+        "45 compiled"
         "public preview")
     if(NOT root_readme MATCHES "${marker}")
         message(FATAL_ERROR "README showcase is missing marker: ${marker}")

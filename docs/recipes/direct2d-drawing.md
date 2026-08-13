@@ -12,7 +12,7 @@ target_link_libraries(my_app PRIVATE mwfl::d2d)
 ```
 
 For `add_subdirectory`/`FetchContent`, link the same `mwfl::d2d` target. Do not
-add `d2d1` to `mwfl::mwfl`; projects that do not request drawing should not
+add `d2d1` to `mwfl::ui`; projects that do not request drawing should not
 inherit the dependency.
 
 ## 2. Store the host and resources

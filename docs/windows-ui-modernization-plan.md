@@ -26,7 +26,7 @@ machine-readable evidence for a coding Agent to choose the correct API.
 4. Prefer values, RAII, `std::span`, `std::ranges`, `std::chrono`, concepts,
    `std::filesystem`, and explicit result types over framework-specific utility
    types.
-5. Keep optional native ecosystems out of `mwfl::mwfl`.
+5. Keep optional native ecosystems out of `mwfl::ui`.
 6. Ship every public feature as API, example, recipe/tutorial, package evidence,
    Agent metadata, Pages component entry, and automated tests.
 

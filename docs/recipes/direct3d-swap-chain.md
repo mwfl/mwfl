@@ -9,7 +9,7 @@ find_package(mwfl CONFIG REQUIRED COMPONENTS d3d)
 target_link_libraries(my_app PRIVATE mwfl::d3d)
 ```
 
-The core `mwfl::mwfl` target deliberately exposes neither `d3d11` nor `dxgi`.
+The core `mwfl::ui` target deliberately exposes neither `d3d11` nor `dxgi`.
 
 ## 2. Configure rendering
 

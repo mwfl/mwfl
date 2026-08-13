@@ -187,7 +187,7 @@ $cards
     </div>
     <section id="cmake-components" class="catalog-reference"><div><div class="eyebrow">CMake composition</div><h2>Link only what the application uses.</h2><p>The core target stays small. Rendering, imaging, printing, OLE, Shell, Ribbon, MDI, graphics, WebView2, and Scintilla remain explicit components.</p></div><pre data-title="CMakeLists.txt"><code>find_package(mwfl CONFIG REQUIRED COMPONENTS printing ole shell)
 target_link_libraries(my_app PRIVATE
-  mwfl::mwfl
+  mwfl::ui
   mwfl::printing
   mwfl::ole
   mwfl::shell)</code></pre></section>

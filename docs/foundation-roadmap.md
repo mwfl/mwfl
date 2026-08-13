@@ -40,12 +40,11 @@ process supervision, IPC, diagnostic sinks, credentials, or deployment policy.
 
 - Make `mwfl::ui` canonical in build-tree, installed, FetchContent, template,
   example, documentation, metadata, and package-consumer paths.
-- Keep `mwfl::mwfl` as a compatibility target for the 0.1 line.
+- Remove the former generic target so `mwfl::ui` is the single public UI name.
 - Record GUI, Service, and CLI host contracts and component boundaries.
 
-Exit gate: new and compatibility targets both configure from an installed
-package; all first-party examples link the canonical target; no dependency or
-startup behavior changes.
+Exit gate: `mwfl::ui` configures from an installed package; all first-party
+examples link the canonical target; no dependency or startup behavior changes.
 
 ### F1 — shared foundation core
 

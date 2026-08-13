@@ -7,8 +7,7 @@ remain authoritative.
 ## Product layers
 
 The product supports GUI, Windows Service, and CLI hosts. `mwfl::ui` is the
-canonical native UI target; `mwfl::mwfl` remains a compatibility target for
-0.1 consumers. UI consumers do not acquire future non-UI components
+only native UI target. UI consumers do not acquire future non-UI components
 implicitly.
 
 The minimum foundation core is limited to dependency-light primitives shared

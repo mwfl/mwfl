@@ -2,7 +2,7 @@
 
 Windows Ribbon is an optional interoperability component. Prefer ordinary
 `CommandSet`, menus, toolbars, and the modern docking workspace unless an
-Office-style Ribbon is a product requirement. Linking `mwfl::mwfl` alone never
+Office-style Ribbon is a product requirement. Linking `mwfl::ui` alone never
 starts COM or links the Ribbon Framework.
 
 ## 1. Prerequisites

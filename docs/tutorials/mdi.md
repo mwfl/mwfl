@@ -3,7 +3,7 @@
 Use `DocumentWorkspaceModel` and native tabs for new multi-document products.
 Use the optional MDI component only when compatibility with the traditional
 Windows MDI interaction model is itself a requirement. MDI is not included by
-`mwfl::mwfl` and never becomes global application architecture.
+`mwfl::ui` and never becomes global application architecture.
 
 ## 1. Build the reference
 

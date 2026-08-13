@@ -2,7 +2,7 @@
 
 This tutorial uses Visual Studio 2026, MSVC C++20, and x64 on Windows 10 1809
 or later. The three components are independent: link only the capability your
-application needs. None is pulled into `mwfl::mwfl` automatically.
+application needs. None is pulled into `mwfl::ui` automatically.
 
 ## 1. Configure and build the reference applications
 

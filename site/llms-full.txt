@@ -89,7 +89,7 @@ positions are UTF-8 byte offsets. Notifications and HWND calls stay on the UI
 thread. Reference: examples/code_editor and docs/tutorials/code-editor.md.
 
 Direct2D uses mwfl::d2d, Direct3D uses mwfl::d3d, and WIC imaging uses
-mwfl::imaging. These optional targets never belong on core mwfl::mwfl.
+mwfl::imaging. These optional targets never belong on core mwfl::ui.
 
 PRINTING, OLE, AND SHELL
 

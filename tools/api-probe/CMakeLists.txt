@@ -9,5 +9,5 @@ add_executable(mwfl_api_probe WIN32 main.cpp ../../examples/example.manifest)
 set_property(SOURCE ../../examples/example.manifest PROPERTY VS_TOOL_OVERRIDE "Manifest")
 target_compile_features(mwfl_api_probe PRIVATE cxx_std_20)
 target_compile_options(mwfl_api_probe PRIVATE /W4 /permissive- /EHsc /utf-8)
-target_link_libraries(mwfl_api_probe PRIVATE mwfl::mwfl)
+target_link_libraries(mwfl_api_probe PRIVATE mwfl::ui)
 

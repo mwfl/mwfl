@@ -79,7 +79,7 @@ struct D2DHostOptions {
     D2DHostCallbacks callbacks;
 };
 
-// Optional Direct2D HWND render host. Link mwfl::d2d; the core mwfl::mwfl
+// Optional Direct2D HWND render host. Link mwfl::d2d; the core mwfl::ui
 // target does not link Direct2D. The host and callbacks belong to the creating
 // UI thread. Geometry exposed to paint is in DIPs. The render target and callback
 // context are borrowed escape hatches valid only until resources are discarded.

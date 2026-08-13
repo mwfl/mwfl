@@ -6,15 +6,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/mwflTargets.cmake")
 set_property(TARGET mwfl::ui APPEND PROPERTY
     INTERFACE_LINK_LIBRARIES WTL::WTL WIL::WIL)
 
-# Compatibility target for applications written against mwfl 0.1. New code
-# should link mwfl::ui so the UI layer remains distinct from foundation
-# components such as service, process, IPC, and diagnostics.
-if(NOT TARGET mwfl::mwfl)
-    add_library(mwfl::mwfl INTERFACE IMPORTED)
-    set_property(TARGET mwfl::mwfl PROPERTY
-        INTERFACE_LINK_LIBRARIES mwfl::ui)
-endif()
-
 if(TARGET mwfl::d2d)
     set(mwfl_d2d_FOUND TRUE)
 endif()

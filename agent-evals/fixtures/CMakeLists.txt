@@ -2,7 +2,7 @@ function(mwfl_add_agent_eval name)
     add_library(mwfl_agent_eval_${name} OBJECT "${name}.cpp")
     target_compile_features(mwfl_agent_eval_${name} PRIVATE cxx_std_20)
     target_compile_options(mwfl_agent_eval_${name} PRIVATE /W4 /permissive- /EHsc /utf-8)
-    target_link_libraries(mwfl_agent_eval_${name} PRIVATE mwfl::mwfl)
+    target_link_libraries(mwfl_agent_eval_${name} PRIVATE mwfl::ui)
     set_property(GLOBAL APPEND PROPERTY MWFL_AGENT_EVAL_TARGETS mwfl_agent_eval_${name})
 endfunction()
 

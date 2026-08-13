@@ -33,8 +33,17 @@
       <h1>Changelog</h1>
       <p class="lede">Public releases of mwfl and the capabilities introduced by each one.</p>
     </div>
-    <section id="v0-1-1">
-      <div class="eyebrow">Reliability update · August 12, 2026</div>
+    <section id="v0-1-3">
+      <div class="eyebrow">Foundation update · August 13, 2026</div>
+      <h2>0.1.3</h2>
+      <p>mwfl 0.1.3 makes <code>mwfl::ui</code> the sole UI target and adds compiled CLI examples plus the Windows application foundation roadmap.</p>
+      <ul>
+        <li>Removes the former generic CMake target so the UI component has one unambiguous public name.</li>
+        <li>Adds Unicode CLI command and cooperative worker examples.</li>
+        <li>Defines GUI, Windows Service, and CLI host boundaries and the opt-in foundation roadmap.</li>
+      </ul>
+      <p><a href="https://github.com/mwfl/mwfl/releases/tag/v0.1.3">Release notes and the VS2026/MSVC x64 download</a>.</p>
+
       <h2>0.1.2</h2>
       <p>mwfl 0.1.2 adds automatic system dark-mode propagation, improves native GroupBox rendering, and clarifies retained versus raw HWND appearance APIs.</p>
       <ul>
@@ -49,7 +58,7 @@
       <h3>Highlights</h3>
       <ul>
         <li>Moves Markdown Editor, PDF Reader, Folder Compare, and SQLite Viewer into focused standalone repositories.</li>
-        <li>Keeps 43 compiled canonical examples in the core repository and links the standalone applications from the documentation.</li>
+        <li>Includes 45 compiled canonical examples and links six standalone applications from the documentation.</li>
         <li>Mirrors pinned Scintilla 5.6.5 assets with SHA-256 verification and CI caching.</li>
         <li>Adds bounded, verbose optional-component tests so stalled jobs fail with actionable diagnostics.</li>
       </ul>

@@ -137,7 +137,7 @@ MSVC 19.51.36252, Windows SDK 10.0.26100, C++20, and x64:
   installed package and reliability coverage.
 - Native source coverage: 82.74% (8,697/10,511 lines), above the 74% CI floor;
   all 159 tests included in the coverage run passed.
-- Capability metadata: 45 discoverable capabilities, 43 compiled examples, and four independently published applications.
+- Capability metadata: 45 discoverable capabilities, 45 compiled examples, and six independently published applications.
 - The two environment-sensitive native tests found during the audit each pass
   five consecutive runs after their focus and process-cache assumptions were
   corrected.

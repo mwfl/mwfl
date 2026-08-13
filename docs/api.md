@@ -284,7 +284,7 @@ compatibility.
 ## Optional Direct2D host
 
 `<mwfl/d2d_host.h>` is supplied by the optional `mwfl::d2d` target. The core
-`mwfl::mwfl` target does not link Direct2D. Installed consumers use
+`mwfl::ui` target does not link Direct2D. Installed consumers use
 `find_package(mwfl CONFIG REQUIRED COMPONENTS d2d)` and link `mwfl::d2d`.
 
 `D2DHost` owns its child HWND, factory, HWND render target, and every
@@ -459,7 +459,7 @@ Use a specialized host when the integration does not create an attachable HWND.
 
 `<mwfl/webview2.h>` is supplied by `mwfl::webview2`, enabled with
 `MWFL_BUILD_WEBVIEW2`. The optional component pins official SDK
-`1.0.4129.50`; core `mwfl::mwfl` does not fetch or link it. Installed consumers
+`1.0.4129.50`; core `mwfl::ui` does not fetch or link it. Installed consumers
 request `COMPONENTS webview2`.
 
 `QueryWebView2Runtime` reports `available`, `missing`, or `failed` and never
@@ -500,7 +500,7 @@ on the creating UI thread.
 
 `<mwfl/document_workspace.h>`, `<mwfl/document_coordination.h>`,
 `<mwfl/document_tabs.h>`, and `<mwfl/document_session.h>` are core
-`mwfl::mwfl` surfaces for Windows 10+ C++20 applications. Installed,
+`mwfl::ui` surfaces for Windows 10+ C++20 applications. Installed,
 `add_subdirectory`, and `FetchContent` consumers acquire no rendering, OLE,
 Shell, or mandatory Document/View dependency.
 
@@ -553,7 +553,7 @@ application-owned panel and group HWNDs with prepare/adopt/rollback/commit.
 feedback, and acceptance. `<mwfl/docking_floating.h>`,
 `<mwfl/docking_auto_hide.h>`, and `<mwfl/docking_monitor.h>` define auxiliary
 host and monitor policy. `<mwfl/docking_session.h>` owns versioned persistence.
-All are core `mwfl::mwfl` surfaces for Windows 10+ C++20 applications.
+All are core `mwfl::ui` surfaces for Windows 10+ C++20 applications.
 
 `DockLayoutModel` owns metadata copies only. `DockPanelId`, `DockGroupId`,
 `DockNodeId`, and `DockFloatingHostId` are stable nonzero application IDs;
