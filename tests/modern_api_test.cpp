@@ -195,6 +195,10 @@ class ModernApiWindow final : public mwfl::WindowBase {
         ip_.SetValue(mwfl::IpAddressValue{{127, 0, 0, 1}});
         spin_.SetBuddy(spin_text_).SetRange(0, 100).SetValue(42);
         mwfl::Command toolbar_command({600}, L"Tool");
+        if ((static_cast<DWORD>(::GetWindowLongPtrW(toolbar_.GetHwnd(), GWL_STYLE)) &
+             TBSTYLE_LIST) == 0) {
+            throw std::runtime_error("toolbar text is not using centered list layout");
+        }
         const int command_image = images_.AddIcon(::LoadIconW(nullptr, IDI_APPLICATION));
         if (command_image < 0 || !toolbar_.SetImageList(images_))
             throw std::runtime_error("configure toolbar images failed");

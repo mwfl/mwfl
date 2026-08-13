@@ -64,6 +64,10 @@ command without an image uses `ClearImageIndex`; it does not own or destroy an
 icon. Visibility affects presentation, not dispatch, so a deliberately hidden
 command may remain reachable through its accelerator while enabled.
 
+Toolbars use the native list layout by default, keeping text beside an optional
+image and vertically centering text-only buttons. Override `ToolbarOptions::style`
+only when an application deliberately wants the legacy image-above-text layout.
+
 `ImageList` exclusively owns the `HIMAGELIST` returned by `Create`; its
 `GetHandle` result is borrowed and becomes invalid after move, `Reset`, or
 destruction. Icons passed to add/replace are borrowed for the call because the

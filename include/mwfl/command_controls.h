@@ -16,7 +16,15 @@
 
 namespace mwfl {
 
-struct ToolbarOptions { DWORD style = WS_CHILD | WS_VISIBLE | TBSTYLE_FLAT | TBSTYLE_TOOLTIPS | CCS_NODIVIDER | CCS_NORESIZE | CCS_NOPARENTALIGN; DWORD extended_style = 0; };
+struct ToolbarOptions {
+    // TBSTYLE_LIST keeps text beside an optional image. In particular, a
+    // text-only button is vertically centered instead of reserving an empty
+    // image row above its label.
+    DWORD style = WS_CHILD | WS_VISIBLE | TBSTYLE_FLAT | TBSTYLE_LIST |
+                  TBSTYLE_TOOLTIPS | CCS_NODIVIDER | CCS_NORESIZE |
+                  CCS_NOPARENTALIGN;
+    DWORD extended_style = 0;
+};
 class Toolbar final : public NativeControl {
 public:
     bool Create(HWND parent, ControlId id, RectDip bounds, ToolbarOptions options = {});
