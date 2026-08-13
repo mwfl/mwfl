@@ -127,14 +127,22 @@ a:hover { text-decoration-thickness: 2px; }
 .brand img { width: 30px; height: 30px; border-radius: 8px; box-shadow: 0 5px 18px rgba(56, 140, 233, .38); }
 .nav-links { display: flex; align-items: center; gap: .25rem; }
 .nav-menu-toggle {
-  display: none; align-items: center; justify-content: center;
-  min-width: 2.5rem; height: 2.5rem; padding: 0 .7rem;
+  display: none; position: relative; align-items: center; justify-content: center;
+  width: 2.5rem; height: 2.5rem; padding: 0;
   border: 1px solid var(--line); border-radius: .55rem;
   background: var(--surface); color: var(--text);
-  font: 600 .9rem/1 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
   cursor: pointer;
 }
 .nav-menu-toggle:hover { border-color: var(--line-strong); background: var(--surface-2); }
+.nav-menu-toggle span {
+  position: absolute; width: 1rem; height: 1.5px; border-radius: 1px;
+  background: currentColor; transition: transform .16s ease, opacity .16s ease;
+}
+.nav-menu-toggle span:nth-child(1) { transform: translateY(-5px); }
+.nav-menu-toggle span:nth-child(3) { transform: translateY(5px); }
+.nav-menu-toggle[aria-expanded="true"] span:nth-child(1) { transform: rotate(45deg); }
+.nav-menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: rotate(-45deg); }
 .nav-links a {
   padding: .42rem .8rem; border-radius: .5rem;
   color: var(--muted); text-decoration: none; font-size: .95rem;
@@ -545,14 +553,16 @@ code:not(pre code) {
   .nav { position: relative; flex-wrap: wrap; gap: .5rem; padding: .4rem 0; }
   .brand { font-size: .95rem; }
   .brand img { width: 26px; height: 26px; }
-  .nav-menu-toggle { display: inline-flex; margin-left: auto; }
+  .nav-menu-toggle { display: inline-flex; }
   .nav-links {
-    display: none; flex: 1 0 100%; align-items: stretch; gap: .2rem;
-    padding: .45rem 0 .2rem; border-top: 1px solid var(--line);
+    display: none; position: absolute; top: calc(100% + .45rem); right: 0;
+    width: min(25rem, 100%); align-items: stretch; gap: .2rem;
+    padding: .55rem; border: 1px solid var(--line); border-radius: .8rem;
+    background: var(--surface); box-shadow: var(--card-shadow-hover);
   }
   .nav-links.nav-links-open { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .nav-links a { min-width: 0; padding: .6rem .7rem; font-size: .92rem; }
-  .theme-toggle { width: 2.5rem; height: 2.5rem; margin-left: 0; }
+  .theme-toggle { width: 2.5rem; height: 2.5rem; margin-left: auto; }
   .hero { padding-top: 3rem; }
   .hero-demo pre {
     overflow-x: auto;

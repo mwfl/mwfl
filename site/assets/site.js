@@ -65,14 +65,15 @@
     toggle.className = "nav-menu-toggle";
     toggle.setAttribute("aria-controls", links.id);
     toggle.setAttribute("aria-expanded", "false");
-    toggle.textContent = "Menu";
+    toggle.setAttribute("aria-label", "Open navigation");
+    toggle.innerHTML = '<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>';
     nav.insertBefore(toggle, links);
 
     const themeToggle = links.querySelector(".theme-toggle");
     const mobileNavigation = window.matchMedia("(max-width: 640px)");
     const placeThemeToggle = () => {
       if (!themeToggle) return;
-      if (mobileNavigation.matches) nav.insertBefore(themeToggle, links);
+      if (mobileNavigation.matches) nav.insertBefore(themeToggle, toggle);
       else links.append(themeToggle);
     };
     placeThemeToggle();
@@ -80,10 +81,12 @@
     const closeMenu = () => {
       links.classList.remove("nav-links-open");
       toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-label", "Open navigation");
     };
     toggle.addEventListener("click", () => {
       const open = links.classList.toggle("nav-links-open");
       toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
     });
     links.addEventListener("click", (event) => {
       if (event.target.closest("a")) closeMenu();
@@ -93,6 +96,9 @@
         closeMenu();
         toggle.focus();
       }
+    });
+    document.addEventListener("click", (event) => {
+      if (!nav.contains(event.target)) closeMenu();
     });
     mobileNavigation.addEventListener("change", (event) => {
       placeThemeToggle();
