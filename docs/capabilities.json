@@ -363,6 +363,16 @@
       "constraints": ["WinSQLite remains an application dependency", "open user databases read-only", "permit one sqlite3_stmt_readonly statement at a time", "bound result rows", "represent BLOBs without decoding arbitrary bytes", "keep SQLite and HWND access on the UI thread"]
     },
     {
+      "id": "hex-editor",
+      "intent": ["inspect binary files", "edit bytes safely", "search hexadecimal patterns", "interpret selected bytes", "save with a backup"],
+      "symbols": ["mwfl::NativeControl", "mwfl::WindowBase", "mwfl::ShowOpenFileDialog", "mwfl::ShowSaveFileDialog", "mwfl::AppearanceState", "mwfl::EnableFileDrop"],
+      "headers": ["mwfl/controls.h", "mwfl/window.h", "mwfl/desktop.h", "mwfl/appearance.h"],
+      "external_example": "https://github.com/mwfl/hex-editor",
+      "recipe": "docs/tutorials/hex-editor.md",
+      "tests": ["hex-editor.model (external repository)", "hex-editor.gui (external repository)"],
+      "constraints": ["open files read-only by default", "enable overwrite editing only after explicit confirmation", "bound whole-file memory to 256 MiB", "keep file length and offsets stable", "reject original-file save after an external change", "write a complete sibling temporary and retain a .bak when replacing the original", "paint only visible rows", "keep HWND access on the UI thread"]
+    },
+    {
       "id": "file-folder-compare",
       "intent": ["compare files", "compare folders", "find changed files", "show a side-by-side text diff", "copy a verified difference"],
       "symbols": ["mwfl::VirtualListModel", "mwfl::ListView", "mwfl::WindowWakeup", "mwfl::ShowFolderDialog", "mwfl::SetAccessibleName"],

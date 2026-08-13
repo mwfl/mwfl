@@ -220,6 +220,7 @@ multi-monitor utility.
 | Settings | [examples/property_sheet/main.cpp](examples/property_sheet/main.cpp) | Persistent property pages with validation and Apply/OK/Cancel |
 | Explorer | [examples/explorer/main.cpp](examples/explorer/main.cpp) | Rebar, commands, stable navigation, virtual data, tabs, and splitter |
 | SQLite Viewer | [mwfl/sqlite-viewer](https://github.com/mwfl/sqlite-viewer) | Standalone read-only schema browser, SQL workspace, bounded results, and CSV export using Windows SQLite |
+| Hex Editor | [mwfl/hex-editor](https://github.com/mwfl/hex-editor) | Standalone read-only-first binary inspector with overwrite editing, theme-aware coloring, search, and backed-up atomic saves |
 | Folder Compare | [mwfl/folder-compare](https://github.com/mwfl/folder-compare) | Standalone local file/folder comparison, exact validation, text diff, cancellation, and verified copy |
 | Drawing | [examples/drawing/main.cpp](examples/drawing/main.cpp) | Optional Direct2D host, DPI-aware input, device recovery, and SVG export |
 | Image Viewer | [examples/image_viewer/main.cpp](examples/image_viewer/main.cpp) | WIC decode, color metadata, Fit/zoom/pan, and recoverable D2D pixels |

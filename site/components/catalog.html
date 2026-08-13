@@ -19,8 +19,8 @@
     <nav class="nav-links" aria-label="Main navigation"><a class="active" href="index.html">Components</a><a href="../tutorial.html">Get started</a><a href="../changelog.html">Changelog</a><a href="https://github.com/mwfl/mwfl">GitHub</a><button class="theme-toggle" type="button" aria-label="Toggle color theme"></button></nav>
   </div></header>
   <main id="main" class="shell catalog-page">
-    <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all 45 public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
-      <div class="catalog-stats"><span><strong>45</strong> capabilities</span><span><strong>44</strong> examples</span><span><strong>34</strong> recipes</span><span><strong>16</strong> tutorials</span></div>
+    <header class="catalog-hero"><div class="eyebrow">Complete component catalog</div><h1>Every capability.<br>One searchable map.</h1><p>Browse all 46 public capability slices. Each card connects intent to exact C++20 symbols, headers, runnable code, usage guidance, contracts, and automated evidence.</p>
+      <div class="catalog-stats"><span><strong>46</strong> capabilities</span><span><strong>44</strong> examples</span><span><strong>34</strong> recipes</span><span><strong>17</strong> tutorials</span></div>
     </header>
     <section class="catalog-tools" aria-label="Filter components">
       <label for="component-search">Find by task, symbol, or header</label><input id="component-search" type="search" placeholder="Try docking, PrintJob, mwfl/ribbon.h..." autocomplete="off">
@@ -30,7 +30,7 @@
         <button type="button" data-catalog-filter="Rendering and media">Rendering and media</button>
         <button type="button" data-catalog-filter="Desktop workflows">Desktop workflows</button>
         <button type="button" data-catalog-filter="Optional workspaces">Optional workspaces</button>
-      </div><p class="catalog-result" role="status" aria-live="polite">Showing all 45 capabilities.</p>
+      </div><p class="catalog-result" role="status" aria-live="polite">Showing all 46 capabilities.</p>
     </section>
     <div class="capability-groups">
         <section class="capability-group" data-capability-group="Foundation and UI">
@@ -496,6 +496,19 @@
                 <p><strong>Tests:</strong> <code>sqlite-viewer.model (external repository)&lt;/code&gt;, &lt;code&gt;sqlite-viewer.gui (external repository)</code></p>
               </details>
             </article>
+            <article class="capability-card" data-capability-id="hex-editor" data-category="Desktop workflows" data-search="hex-editor desktop workflows inspect binary files edit bytes safely search hexadecimal patterns interpret selected bytes save with a backup mwfl::nativecontrol mwfl::windowbase mwfl::showopenfiledialog mwfl::showsavefiledialog mwfl::appearancestate mwfl::enablefiledrop mwfl/controls.h mwfl/window.h mwfl/desktop.h mwfl/appearance.h">
+              <span class="capability-kind">Desktop workflows</span><h3>Hex Editor</h3>
+              <p>inspect binary files; edit bytes safely; search hexadecimal patterns; interpret selected bytes; save with a backup.</p><div class="capability-symbols"><code>mwfl::NativeControl</code> <code>mwfl::WindowBase</code> <code>mwfl::ShowOpenFileDialog</code> <code>mwfl::ShowSaveFileDialog</code> <code>mwfl::AppearanceState</code> <code>mwfl::EnableFileDrop</code></div>
+              <div class="capability-headers"><code>&lt;mwfl/controls.h&gt;</code> <code>&lt;mwfl/window.h&gt;</code> <code>&lt;mwfl/desktop.h&gt;</code> <code>&lt;mwfl/appearance.h&gt;</code></div><nav aria-label="Hex Editor resources">
+                <a href="https://github.com/mwfl/hex-editor">Application</a>
+                <a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/hex-editor.md">Guide</a>
+                <a href="https://github.com/mwfl/mwfl/blob/main/docs/api-index.json">API index</a>
+              </nav>
+              <details><summary>Contracts and evidence</summary>
+                <p><strong>Rules:</strong> open files read-only by default; enable overwrite editing only after explicit confirmation; bound whole-file memory to 256 MiB.</p>
+                <p><strong>Tests:</strong> <code>hex-editor.model (external repository)&lt;/code&gt;, &lt;code&gt;hex-editor.gui (external repository)</code></p>
+              </details>
+            </article>
             <article class="capability-card" data-capability-id="file-folder-compare" data-category="Desktop workflows" data-search="file-folder-compare desktop workflows compare files compare folders find changed files show a side-by-side text diff copy a verified difference mwfl::virtuallistmodel mwfl::listview mwfl::windowwakeup mwfl::showfolderdialog mwfl::setaccessiblename mwfl/navigation_controls.h mwfl/async.h mwfl/desktop.h mwfl/appearance.h">
               <span class="capability-kind">Desktop workflows</span><h3>File Folder Compare</h3>
               <p>compare files; compare folders; find changed files; show a side-by-side text diff; copy a verified difference.</p><div class="capability-symbols"><code>mwfl::VirtualListModel</code> <code>mwfl::ListView</code> <code>mwfl::WindowWakeup</code> <code>mwfl::ShowFolderDialog</code> <code>mwfl::SetAccessibleName</code></div>
@@ -660,6 +673,7 @@ target_link_libraries(my_app PRIVATE
             <li data-usage-path="docs/tutorials/document-workspace.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/document-workspace.md">Document Workspace</a></li>
             <li data-usage-path="docs/tutorials/explorer-application.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/explorer-application.md">Explorer Application</a></li>
             <li data-usage-path="docs/tutorials/graphics-help.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/graphics-help.md">Graphics Help</a></li>
+            <li data-usage-path="docs/tutorials/hex-editor.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/hex-editor.md">Hex Editor</a></li>
             <li data-usage-path="docs/tutorials/image-viewer.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/image-viewer.md">Image Viewer</a></li>
             <li data-usage-path="docs/tutorials/markdown-editor.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/markdown-editor.md">Markdown Editor</a></li>
             <li data-usage-path="docs/tutorials/mdi.md"><a href="https://github.com/mwfl/mwfl/blob/main/docs/tutorials/mdi.md">MDI</a></li>

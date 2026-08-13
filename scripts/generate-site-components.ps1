@@ -67,7 +67,8 @@ $categoryIds = [ordered]@{
     )
     'Desktop workflows' = @(
         'tray-application', 'printing-preview', 'ole-drag-drop',
-        'shell-integration', 'taskbar-help', 'sqlite-viewer', 'file-folder-compare'
+        'shell-integration', 'taskbar-help', 'sqlite-viewer', 'hex-editor',
+        'file-folder-compare'
     )
     'Optional workspaces' = @(
         'webview2-browser', 'pdf-viewer', 'scintilla-code-editor', 'markdown-editor', 'docking-workspace',
@@ -161,9 +162,9 @@ $html = @"
   <title>Complete component catalog &mdash; mwfl</title>
   <meta name="theme-color" content="#f7f9ff">
   <link rel="icon" type="image/svg+xml" href="../assets/mwfl-mark.svg">
-  <link rel="stylesheet" href="../styles.css?v=20260810a">
+  <link rel="stylesheet" href="../styles.css?v=20260812b">
   <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
-  <script defer src="../assets/site.js?v=20260810a"></script>
+  <script defer src="../assets/site.js?v=20260812b"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
