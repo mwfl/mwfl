@@ -54,6 +54,42 @@
   });
   applyTheme();
 
+  /* ---------- Mobile navigation ---------- */
+  document.querySelectorAll(".nav").forEach((nav) => {
+    const links = nav.querySelector(".nav-links");
+    if (!links) return;
+
+    if (!links.id) links.id = "main-navigation";
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "nav-menu-toggle";
+    toggle.setAttribute("aria-controls", links.id);
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.textContent = "Menu";
+    nav.insertBefore(toggle, links);
+
+    const closeMenu = () => {
+      links.classList.remove("nav-links-open");
+      toggle.setAttribute("aria-expanded", "false");
+    };
+    toggle.addEventListener("click", () => {
+      const open = links.classList.toggle("nav-links-open");
+      toggle.setAttribute("aria-expanded", String(open));
+    });
+    links.addEventListener("click", (event) => {
+      if (event.target.closest("a")) closeMenu();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeMenu();
+        toggle.focus();
+      }
+    });
+    window.matchMedia("(min-width: 641px)").addEventListener("change", (event) => {
+      if (event.matches) closeMenu();
+    });
+  });
+
   /* ---------- Window chrome + copy button ----------
      Every standalone code block becomes a small "native window": caption bar
      with a title, a copy button, and Windows caption glyphs. Blocks inside
