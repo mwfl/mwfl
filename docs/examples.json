@@ -18,6 +18,8 @@
     {"directory":"wait_aware","intent":"kernel handles and idle callbacks","symbols":["MessagePump"],"complexity":"advanced"},
     {"directory":"wakeup","intent":"worker-to-UI notification","symbols":["WindowWakeup"],"complexity":"focused"},
     {"directory":"com_sta","intent":"COM STA lifecycle","symbols":["ApplicationOptions","ComApartment"],"complexity":"focused"},
+    {"directory":"cli_basic","intent":"Unicode CLI command routing and stable exit codes","symbols":["wmain"],"tests":["mwfl.cli_basic.help","mwfl.cli_basic_echo"],"complexity":"starter"},
+    {"directory":"cli_worker","intent":"cooperative CLI background work and shutdown","symbols":["std::jthread","std::stop_token"],"tests":["mwfl.cli_worker.self_test"],"complexity":"focused"},
     {"directory":"controls","intent":"core native control gallery","symbols":["ControlHost","NativeControl"],"complexity":"catalog"},
     {"directory":"common_controls","intent":"specialized common controls","symbols":["TreeView","ListView","Toolbar"],"complexity":"catalog"},
     {"directory":"self_drawn_host","intent":"worker-driven native drawing","symbols":["WindowWakeup","MessagePump"],"complexity":"advanced"},

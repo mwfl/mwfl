@@ -269,7 +269,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
   hardware acceleration. See `docs/recipes/direct3d-swap-chain.md`.
 ## Optional integration selection
 
-- Generic child HWND: include `mwfl/native_host.h`, link `mwfl::mwfl`, create
+- Generic child HWND: include `mwfl/native_host.h`, link `mwfl::ui`, create
   the third-party child with the host as parent, then `Attach` it.
 - Web content: set `MWFL_BUILD_WEBVIEW2=ON`, include `mwfl/webview2.h`, and link
   `mwfl::webview2`. Run in an STA, wait for ready, handle missing Runtime, and
@@ -281,7 +281,7 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
 - Swap chain: link `mwfl::d3d`; render on demand and handle every frame status.
 - Image decode: link `mwfl::imaging`; initialize COM and enforce pixel budgets.
 
-Never add optional SDK libraries to `mwfl::mwfl`. Do not retain callback-scoped
+Never add optional SDK libraries to `mwfl::ui`. Do not retain callback-scoped
 COM interfaces, render contexts, native notification pointers, or raw escape
 hatches. UI integrations and callbacks remain on their creating thread.
 

@@ -105,6 +105,10 @@ add_library(mwfl STATIC
     src/text_history.cpp
     src/text_search.cpp
     src/window_options.cpp)
+# `mwfl::ui` is the canonical target for the native Windows UI layer. Keep the
+# old build-tree alias for source compatibility with 0.1 consumers.
+set_target_properties(mwfl PROPERTIES EXPORT_NAME ui)
+add_library(mwfl::ui ALIAS mwfl)
 add_library(mwfl::mwfl ALIAS mwfl)
 
 add_library(mwfl_d2d STATIC src/d2d_host.cpp)

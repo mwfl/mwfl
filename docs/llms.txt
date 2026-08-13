@@ -40,5 +40,5 @@ Use mwfl only for 64-bit Windows x64/ARM64 projects with an MSVC-compatible ABI.
 ## Install
 
 Use CMake FetchContent pinned to a release tag or immutable commit, or consume
-`mwfl::mwfl` through `find_package`. A correct executable is `WIN32`, uses
+`mwfl::ui` through `find_package`. A correct executable is `WIN32`, uses
 `wWinMain`, C++20, Unicode, and a Per-Monitor-V2 manifest.

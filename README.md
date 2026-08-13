@@ -27,9 +27,13 @@
   <a href="https://mwfl.github.io/">Documentation</a>
 </p>
 
-mwfl, the Modern Windows Foundation Layer, wraps real HWND controls with clear
-ownership, typed events, checked setup helpers, and DPI-aware responsive layout. It reduces Win32 ceremony without
-hiding native handles, messages, styles, or return values.
+mwfl, the Modern Windows Foundation Layer, is growing from its mature native UI
+layer into a foundation shared by GUI, Windows Service, and CLI applications.
+The canonical `mwfl::ui` component wraps real HWND controls with clear
+ownership, typed events, checked setup helpers, and DPI-aware responsive
+layout. It reduces Win32 ceremony without hiding native handles, messages,
+styles, or return values. Non-UI foundation components remain independently
+requested so UI applications acquire no hidden service or background runtime.
 
 <p align="center">
   <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/mwfl-showcase-40s.gif" alt="MWFL applications running with populated native controls"></a>
@@ -115,7 +119,7 @@ FetchContent_Declare(mwfl
 FetchContent_MakeAvailable(mwfl)
 
 add_executable(my_app WIN32 main.cpp)
-target_link_libraries(my_app PRIVATE mwfl::mwfl)
+target_link_libraries(my_app PRIVATE mwfl::ui)
 ```
 
 The example pins the latest public-preview release. Use an immutable commit only
@@ -151,7 +155,8 @@ offline WTL/WIL sources, and building this repository.
 - optional, isolated Direct2D, Direct3D, WIC imaging, pinned Scintilla, and
   pinned WebView2 components with reference applications and offline self-tests.
 
-Optional components are requested explicitly. For example, configure with
+The native UI layer is linked explicitly as `mwfl::ui`. Optional components are
+requested explicitly. For example, configure with
 `MWFL_BUILD_WEBVIEW2=ON` and link `mwfl::webview2`, or configure with
 `MWFL_BUILD_SCINTILLA=ON`, link `mwfl::scintilla`, and call
 `mwfl_deploy_scintilla(your_target)`. Core-only consumers do not fetch, link,
@@ -168,7 +173,7 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 | Layer | Start here when you need | Entry point |
 |---|---|---|
-| Core | windows, controls, events, layout, DPI, timers, worker handoff | [Core guide](docs/README.md#core) |
+| UI | windows, controls, events, layout, DPI, timers, worker handoff | `mwfl::ui`; [UI guide](docs/README.md#core) |
 | Application | commands, forms, documents, dialogs, settings, persistence | [Application guide](docs/README.md#application) |
 | Advanced | docking, printing, OLE, Shell, Ribbon, MDI, graphics | [Advanced guide](docs/README.md#advanced) |
 | Optional | Direct2D/3D, WIC, WebView2, Scintilla | [Optional guide](docs/README.md#optional) |
@@ -204,6 +209,8 @@ multi-monitor utility.
 | Wait-aware pump | [examples/wait_aware/main.cpp](examples/wait_aware/main.cpp) | Handles and efficient idle work |
 | Wakeup | [examples/wakeup/main.cpp](examples/wakeup/main.cpp) | Safe worker-to-window notification |
 | COM STA | [examples/com_sta/main.cpp](examples/com_sta/main.cpp) | COM apartment lifecycle |
+| CLI basic | [examples/cli_basic/main.cpp](examples/cli_basic/main.cpp) | Unicode command routing and stable exit codes |
+| CLI worker | [examples/cli_worker/main.cpp](examples/cli_worker/main.cpp) | Cooperative `std::jthread`/`stop_token` shutdown |
 | Controls | [examples/controls/main.cpp](examples/controls/main.cpp) | Complete form-control gallery |
 | Common Controls | [examples/common_controls/main.cpp](examples/common_controls/main.cpp) | Complete specialized-control gallery |
 | Self-drawn host | [examples/self_drawn_host/main.cpp](examples/self_drawn_host/main.cpp) | Worker-driven native drawing |
@@ -293,6 +300,7 @@ For controlled environments, see the
 ## Documentation
 
 - [Windows desktop capability roadmap](docs/win32xx-parity-roadmap.md)
+- [Windows application foundation roadmap](docs/foundation-roadmap.md)
 - [First public preview readiness plan](docs/release-readiness.md)
 - [Modern Windows UI API coverage plan](docs/windows-ui-modernization-plan.md)
 - [IDE-style docking workspace tutorial](docs/tutorials/docking-workspace.md)

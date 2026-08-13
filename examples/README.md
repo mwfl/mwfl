@@ -1,6 +1,6 @@
 # mwfl examples
 
-The repository includes 43 focused executables. Each example is intentionally small enough to read as a complete recipe while still using the real `mwfl::Application` and recommended `mwfl::WindowBase` path. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, document/MDI/Ribbon workspaces, graphics interop, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence. Product applications extracted from this catalog live in separate repositories: [Markdown Editor](https://github.com/mwfl/markdown-editor), [PDF Reader](https://github.com/mwfl/pdf-reader), [Folder Compare](https://github.com/mwfl/folder-compare), and [SQLite Viewer](https://github.com/mwfl/sqlite-viewer).
+The repository includes 45 focused executables. GUI examples use the real `mwfl::Application` and recommended `mwfl::WindowBase` path; CLI examples use a Unicode console boundary without acquiring the UI component. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, document/MDI/Ribbon workspaces, graphics interop, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence. Product applications extracted from this catalog live in separate repositories: [Markdown Editor](https://github.com/mwfl/markdown-editor), [PDF Reader](https://github.com/mwfl/pdf-reader), [Folder Compare](https://github.com/mwfl/folder-compare), and [SQLite Viewer](https://github.com/mwfl/sqlite-viewer).
 
 | Directory | Target | Focus |
 |---|---|---|
@@ -21,6 +21,8 @@ The repository includes 43 focused executables. Each example is intentionally sm
 | `wait_aware` | `mwfl_wait_aware_demo` | A non-busy wait-aware pump with idle callbacks |
 | `wakeup` | `mwfl_wakeup_demo` | A lifetime-safe worker-to-window wake token |
 | `com_sta` | `mwfl_com_sta_demo` | Application-owned COM STA initialization and cleanup |
+| `cli_basic` | `mwfl_cli_basic` | Unicode command routing, stdout/stderr, and stable exit codes |
+| `cli_worker` | `mwfl_cli_worker` | Cooperative `std::jthread` and `std::stop_token` shutdown |
 | `controls` | `mwfl_controls_demo` | All ten supported wrappers: text, buttons, grouping, choices, list, progress, slider, commands, and timer |
 | `common_controls` | `mwfl_common_controls_demo` | TreeView, ListView, Toolbar, DateTimePicker, and every specialized Common Controls family |
 | `self_drawn_host` | `mwfl_self_drawn_host_demo` | Worker-driven dirty frames, GDI paint, wake token, and wait-aware pump |

@@ -4,6 +4,19 @@ This map prevents humans and coding agents from guessing that an API exists
 because it is present in MFC, WTL, Win32++, wxWidgets, or WinUI. Public headers
 remain authoritative.
 
+## Product layers
+
+The product supports GUI, Windows Service, and CLI hosts. `mwfl::ui` is the
+canonical native UI target; `mwfl::mwfl` remains a compatibility target for
+0.1 consumers. UI consumers do not acquire future non-UI components
+implicitly.
+
+The minimum foundation core is limited to dependency-light primitives shared
+by all three hosts: native error values, explicit handle ownership, waiting,
+cancellation, Unicode boundaries, and diagnostic event values. Service,
+process/job, IPC, diagnostics sinks, security, deployment, rendering, and
+third-party integrations are independently requested components.
+
 ## Supported directly
 
 | Capability | Primary mwfl surface | Canonical example |
@@ -34,7 +47,7 @@ These are compatible with mwfl but intentionally remain ordinary platform APIs:
 - registry schemas beyond the focused placement helpers;
 - custom window classes and uncommon control messages;
 - OLE formats and behaviors beyond the focused data/source/target helpers;
-- shell extensions, hooks, services, and system-wide hotkeys;
+- shell extensions, hooks, and system-wide hotkeys;
 - advanced accessibility providers and UI Automation peers.
 
 Keep raw handles non-owning unless the Win32 API explicitly transfers
@@ -72,13 +85,21 @@ surrounding native window, commands, layout, and thread handoff.
 Document applications, modern tabbed workspaces, docking, optional Ribbon,
 legacy MDI, EMF/GDI+, expanded taskbar behavior, and safe contextual Help are
 current public capabilities. Ribbon, MDI, graphics, and shell integrations are
-independent components; none expands the minimum `mwfl::mwfl` surface. Their
+independent components; none expands the minimum `mwfl::ui` surface. Their
 dependency order and evidence are defined in the
 [Windows desktop capability roadmap](win32xx-parity-roadmap.md).
 
 Coverage is measured by the desktop application scenarios mwfl can implement.
 It does not imply compatibility with another framework's API, and it does not
 relax the Windows 10+, C++20, x64/ARM64, explicit-ownership design constraints.
+
+## Approved foundation expansion
+
+The approved dependency order is documented in
+[`foundation-roadmap.md`](foundation-roadmap.md). Windows Service hosting is an
+opt-in component, preceded by shared handle/wait/error primitives and followed
+by process/job supervision, named-pipe IPC, diagnostics, and focused security
+and deployment helpers.
 
 ## Candidate capabilities requiring an explicit project decision
 

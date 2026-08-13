@@ -1,9 +1,18 @@
 # Design and scope
 
-mwfl (Modern Windows Foundation Layer) is a small C++20 foundation for native Windows applications. It removes
-repeated setup and lifetime code while preserving HWNDs, messages, styles,
-return values, and direct Win32 interoperation. It is not a cross-platform UI
-toolkit, retained renderer, or MVVM framework.
+mwfl (Modern Windows Foundation Layer) is a C++20 foundation for native Windows
+applications. It supports three application hosts: windowed GUI applications,
+Windows Services, and command-line applications. The `mwfl::ui` component
+removes repeated HWND setup and lifetime code while preserving messages,
+styles, return values, and direct Win32 interoperation. Foundation components
+apply the same explicit ownership, structured failure, cancellation, and native
+escape-hatch rules outside the UI layer.
+
+mwfl is not a cross-platform framework, retained renderer, MVVM framework,
+general networking or database library, task scheduler, or replacement for the
+C++ standard library. Components are added only when they materially improve a
+Windows-specific ownership, lifetime, callback, security, deployment, or
+diagnostic boundary.
 
 Raw operations preserve native success values and do not throw for ordinary
 Win32 failure. Checked adapters throw `mwfl::Error`, recording the operation,
