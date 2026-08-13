@@ -68,6 +68,15 @@
     toggle.textContent = "Menu";
     nav.insertBefore(toggle, links);
 
+    const themeToggle = links.querySelector(".theme-toggle");
+    const mobileNavigation = window.matchMedia("(max-width: 640px)");
+    const placeThemeToggle = () => {
+      if (!themeToggle) return;
+      if (mobileNavigation.matches) nav.insertBefore(themeToggle, links);
+      else links.append(themeToggle);
+    };
+    placeThemeToggle();
+
     const closeMenu = () => {
       links.classList.remove("nav-links-open");
       toggle.setAttribute("aria-expanded", "false");
@@ -85,8 +94,9 @@
         toggle.focus();
       }
     });
-    window.matchMedia("(min-width: 641px)").addEventListener("change", (event) => {
-      if (event.matches) closeMenu();
+    mobileNavigation.addEventListener("change", (event) => {
+      placeThemeToggle();
+      if (!event.matches) closeMenu();
     });
   });
 
