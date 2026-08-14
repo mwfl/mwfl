@@ -13,7 +13,9 @@ public:
         mwfl::ControlHost ui{*this};
         ui.Add(title_, L"Responsive layout gallery");
         ui.Add(subtitle_, L"Resize the window and switch density to see nested Row, Column, Overlay, Auto, Fixed, and Stretch behavior.");
-        ui.Add(compact_, L"Compact");
+        ui.Add(compact_, L"Compact", mwfl::RadioButtonOptions{
+            .style = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_GROUP |
+                     BS_AUTORADIOBUTTON});
         ui.Add(comfortable_, L"Comfortable");
         ui.Add(long_text_, L"Toggle long content");
         ui.Add(profile_, L"Profile card - Overlay");
@@ -39,19 +41,22 @@ public:
         comfortable_.SetChecked(true);
         mwfl::SetDialogDefaultButton(GetHwnd(), static_cast<UINT>(save_.GetId().value));
         SetAppearance({mwfl::ColorMode::system, mwfl::Backdrop::mica});
-        ApplyFont(GetDpiContext().GetDpi());
         RebuildLayout();
     }
 
     mwfl::EventResult OnCommand(const mwfl::CommandEvent& event) override {
         if (event.IsClicked(compact_)) {
-            compact_.SetChecked(true); comfortable_.SetChecked(false); compact_mode_ = true;
+            ::PostMessageW(compact_.GetHwnd(), BM_SETCHECK, BST_CHECKED, 0);
+            ::PostMessageW(comfortable_.GetHwnd(), BM_SETCHECK, BST_UNCHECKED, 0);
+            compact_mode_ = true;
             status_.SetText(L"Compact density | gaps and card padding reduced");
             RebuildLayout();
             return mwfl::EventResult::Handled();
         }
         if (event.IsClicked(comfortable_)) {
-            compact_.SetChecked(false); comfortable_.SetChecked(true); compact_mode_ = false;
+            ::PostMessageW(compact_.GetHwnd(), BM_SETCHECK, BST_UNCHECKED, 0);
+            ::PostMessageW(comfortable_.GetHwnd(), BM_SETCHECK, BST_CHECKED, 0);
+            compact_mode_ = false;
             status_.SetText(L"Comfortable density | resize to test");
             RebuildLayout();
             return mwfl::EventResult::Handled();
@@ -69,10 +74,6 @@ public:
             return mwfl::EventResult::Handled();
         }
         return mwfl::EventResult::Propagate();
-    }
-
-    mwfl::EventResult OnDpiChanged(const mwfl::DpiChangedEvent& event) override {
-        ApplyFont(event.dpi_x); return mwfl::EventResult::Propagate();
     }
 
 private:
@@ -106,13 +107,11 @@ private:
         SetLayout(mwfl::Column().Margin(compact_mode_ ? 16.0_dip : 24.0_dip).Gap(gap)
             .Add(title_, mwfl::Fixed(34.0_dip)).Add(subtitle_, mwfl::Fixed(28.0_dip))
             .Add(mwfl::Row().Gap(8.0_dip).Add(compact_, mwfl::Fixed(105.0_dip)).Add(comfortable_, mwfl::Fixed(120.0_dip)).Add(long_text_, mwfl::Fixed(160.0_dip)), mwfl::Fixed(34.0_dip))
-            .Add(mwfl::Row().Gap(gap).Add(ProfileCard(pad, gap), mwfl::Fixed(560.0_dip)).Add(FormCard(pad, gap), mwfl::Stretch()), mwfl::Stretch())
+            .Add(mwfl::Row().Gap(gap)
+                .Add(ProfileCard(pad, gap), mwfl::Stretch(1.1f, 420.0_dip))
+                .Add(FormCard(pad, gap), mwfl::Stretch(1.0f, 390.0_dip)),
+                mwfl::Stretch())
             .Add(status_, mwfl::Fixed(30.0_dip)));
-    }
-    void ApplyFont(UINT dpi) {
-        if (!font_.CreateMessageFont(dpi)) return;
-        for (HWND child = ::GetWindow(GetHwnd(), GW_CHILD); child; child = ::GetWindow(child, GW_HWNDNEXT))
-            ::SendMessageW(child, WM_SETFONT, reinterpret_cast<WPARAM>(font_.GetHandle()), TRUE);
     }
     bool compact_mode_{};
     bool long_content_{};
@@ -122,7 +121,6 @@ private:
     mwfl::GroupBox profile_, metrics_, form_, explainer_;
     mwfl::TextBox email_;
     mwfl::ComboBox team_;
-    mwfl::UiFont font_;
 };
 
 }  // namespace

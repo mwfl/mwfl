@@ -13,16 +13,20 @@ public:
     void BuildUI() override {
         SetTitle(L"Modern native controls");
         mwfl::ControlHost ui{*this};
-        ui.Add(heading_, L"Native controls, modern C++20 ownership");
+        ui.Add(heading_, L"Profile and preferences");
+        ui.Add(subtitle_, L"A product-style form built entirely from native HWND controls.");
+        ui.Add(profile_group_, L"Profile");
         ui.Add(name_label_, L"Your name");
         ui.Add(name_, L"mwfl developer");
         ui.Add(greet_, L"Say hello");
         ui.Add(enabled_, L"Keep the native button enabled");
         ui.Add(accent_);
         ui.Add(progress_);
-        ui.Add(status_, L"Ready — the UI remains native HWNDs");
-        ui.Add(choices_, L"Choice controls");
-        ui.Add(sky_, L"Sky blue");
+        ui.Add(status_, L"Ready — changes are reflected immediately");
+        ui.Add(choices_, L"Theme");
+        ui.Add(sky_, L"Sky blue", mwfl::RadioButtonOptions{
+            .style = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_GROUP |
+                     BS_AUTORADIOBUTTON});
         ui.Add(cosmos_, L"Cosmic violet");
         ui.Add(items_);
         ui.Add(volume_);
@@ -44,30 +48,31 @@ public:
         volume_.SetValue(65);
         name_.SelectAll();
         name_.Focus();
+        mwfl::Must(name_.SetCueBanner(L"Enter a display name"),
+                   "set profile name cue banner");
+        SetAppearance({mwfl::ColorMode::system, mwfl::Backdrop::mica});
 
         SetLayout(
             mwfl::Row()
-                .Margin(28.0_dip)
-                .Gap(32.0_dip)
+                .Margin(32.0_dip)
+                .Gap(28.0_dip)
                 .Add(
                     mwfl::Column()
-                        .Gap(10.0_dip)
-                        .Add(heading_, mwfl::Fixed(32.0_dip))
-                        .Add(name_label_, mwfl::Fixed(24.0_dip))
-                        .Add(
-                            mwfl::Row()
-                                .Gap(20.0_dip)
-                                .Add(name_, mwfl::Stretch(1.0f, 180.0_dip))
-                                .Add(greet_, mwfl::Fixed(160.0_dip)),
-                            mwfl::Fixed(34.0_dip))
-                        .Add(
-                            mwfl::Row()
-                                .Gap(20.0_dip)
-                                .Add(enabled_, mwfl::Stretch())
-                                .Add(accent_, mwfl::Fixed(240.0_dip), {
-                                    .native_size = mwfl::SizeDip{0.0_dip, 180.0_dip},
-                                }),
-                            mwfl::Fixed(34.0_dip))
+                        .Gap(12.0_dip)
+                        .Add(heading_, mwfl::Fixed(34.0_dip))
+                        .Add(subtitle_, mwfl::Fixed(26.0_dip))
+                        .Add(mwfl::Overlay().Add(profile_group_).Add(
+                            mwfl::Column().Margin({20.0_dip, 34.0_dip, 20.0_dip, 18.0_dip})
+                                .Gap(10.0_dip)
+                                .Add(name_label_, mwfl::Fixed(22.0_dip))
+                                .Add(mwfl::Row().Gap(16.0_dip)
+                                    .Add(name_, mwfl::Stretch(1.0f, 180.0_dip))
+                                    .Add(greet_, mwfl::Fixed(132.0_dip)), mwfl::Fixed(34.0_dip))
+                                .Add(mwfl::Row().Gap(16.0_dip)
+                                    .Add(enabled_, mwfl::Stretch())
+                                    .Add(accent_, mwfl::Fixed(220.0_dip), {
+                                        .native_size = mwfl::SizeDip{0.0_dip, 180.0_dip},
+                                    }), mwfl::Fixed(34.0_dip))), mwfl::Fixed(150.0_dip))
                         .Add(progress_, mwfl::Fixed(22.0_dip))
                         .Add(status_, mwfl::Stretch(1.0f, 50.0_dip)),
                     mwfl::Stretch(1.0f, 540.0_dip))
@@ -100,6 +105,11 @@ public:
             status_.SetText(
                 L"ComboBox selection changed; still a native notification.");
         } else if (event.IsClicked(sky_) || event.IsClicked(cosmos_)) {
+            const bool sky = event.IsClicked(sky_);
+            ::PostMessageW(sky_.GetHwnd(), BM_SETCHECK,
+                           sky ? BST_CHECKED : BST_UNCHECKED, 0);
+            ::PostMessageW(cosmos_.GetHwnd(), BM_SETCHECK,
+                           sky ? BST_UNCHECKED : BST_CHECKED, 0);
             status_.SetText(L"RadioButton choice changed.");
         } else if (event.Is(items_, LBN_SELCHANGE)) {
             status_.SetText(L"ListBox selection changed.");
@@ -133,6 +143,8 @@ private:
     static constexpr mwfl::TimerId kHeartbeat{1};
 
     mwfl::Label heading_;
+    mwfl::Label subtitle_;
+    mwfl::GroupBox profile_group_;
     mwfl::Label name_label_;
     mwfl::TextBox name_;
     mwfl::Button greet_;

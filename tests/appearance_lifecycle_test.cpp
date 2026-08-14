@@ -9,6 +9,19 @@ public:
     void BuildUI() override {
         mwfl::ControlHost ui{*this};
         ui.Add(label_, L"Theme-aware native control");
+        const auto label_font = reinterpret_cast<HFONT>(
+            ::SendMessageW(label_.GetHwnd(), WM_GETFONT, 0, 0));
+        NONCLIENTMETRICSW metrics{};
+        metrics.cbSize = sizeof(metrics);
+        LOGFONTW actual{};
+        if (label_font == nullptr ||
+            ::SystemParametersInfoForDpi(
+                SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0,
+                GetDpiContext().GetDpi()) == FALSE ||
+            ::GetObjectW(label_font, sizeof(actual), &actual) == 0 ||
+            wcscmp(actual.lfFaceName, metrics.lfMessageFont.lfFaceName) != 0 ||
+            actual.lfHeight != metrics.lfMessageFont.lfHeight)
+            throw std::runtime_error("system message font was not inherited");
         if (!menu_.Create() || !menu_.AppendCommand(100, L"Theme command") ||
             !menu_.AttachToWindow(GetHwnd()))
             throw std::runtime_error("create themed menu failed");

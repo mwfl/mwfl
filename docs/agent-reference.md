@@ -28,6 +28,10 @@ common job to headers, public symbols, compiled examples, tests, and invariants.
   `OnMessage` handlers. Return `Propagate()` unless consuming the event.
 - Common operations: `SetTitle`, `SetLayout`, `Close`, `GetHwnd`,
   `GetDpiContext`, `GetWakeup`, `SetAccelerators`.
+- Font policy: `WindowOptions::use_system_message_font` defaults to `true`;
+  controls inherit the DPI-aware system message font and the child HWND tree is
+  refreshed before `OnDpiChanged`. Disable it only when the application owns
+  and reapplies all fonts itself.
 
 ## `ControlHost`
 

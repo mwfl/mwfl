@@ -52,6 +52,8 @@ public:
         mwfl::ControlHost rebar_ui{rebar_};
         rebar_ui.Add(toolbar_, {201}, {0.0_dip, 0.0_dip, 420.0_dip, 28.0_dip});
         ui.Add(tabs_, {202}, {0.0_dip, 32.0_dip, 980.0_dip, 28.0_dip});
+        ui.Add(location_, L"This PC  ›  All files");
+        location_.SetReadOnly(true);
         ui.Add(splitter_, {203}, {0.0_dip, 60.0_dip, 980.0_dip, 556.0_dip},
                mwfl::SplitterOptions{.constraints = {180.0_dip, 320.0_dip, 6.0_dip},
                                      .initial_position = 250.0_dip});
@@ -95,17 +97,22 @@ public:
                    "name Explorer list");
         mwfl::Must(mwfl::SetAccessibleName(tabs_.GetHwnd(), L"Explorer views"),
                    "name Explorer tabs");
+        mwfl::Must(mwfl::SetAccessibleName(location_.GetHwnd(), L"Current location"),
+                   "name Explorer location");
 
         SetLayout(mwfl::Column()
                       .Add(rebar_, mwfl::Auto())
                       .Add(tabs_, mwfl::Fixed(28.0_dip))
+                      .Add(mwfl::Column().Margin({8.0_dip, 5.0_dip, 8.0_dip, 5.0_dip})
+                               .Add(location_, mwfl::Stretch()),
+                           mwfl::Fixed(36.0_dip))
                       .Add(splitter_, mwfl::Stretch())
                       .Add(status_, mwfl::Auto()));
         UpdateStatusParts(980);
         UpdateStatus(L"Ready");
         tree_.SetSelection({1});
         static_cast<void>(
-            SetAppearance({mwfl::ColorMode::light, mwfl::Backdrop::mica}));
+            SetAppearance({mwfl::ColorMode::system, mwfl::Backdrop::mica}));
         if (g_self_test && ::PostMessageW(GetHwnd(), kRunSelfTest, 0, 0) == FALSE)
             throw std::runtime_error("post Explorer self-test message failed");
     }
@@ -186,10 +193,12 @@ public:
 
 private:
     void BuildImagesAndCommands() {
-        mwfl::Must(images_.Create(16, 16), "create Explorer image list");
+        mwfl::Must(images_.Create(20, 20), "create Explorer image list");
         for (const wchar_t* icon_name : {IDI_APPLICATION, IDI_INFORMATION, IDI_ASTERISK,
                                         IDI_WARNING}) {
-            mwfl::Must(images_.AddIcon(::LoadIconW(nullptr, icon_name)) >= 0,
+            const auto icon = reinterpret_cast<HICON>(::LoadImageW(
+                nullptr, icon_name, IMAGE_ICON, 20, 20, LR_SHARED));
+            mwfl::Must(icon != nullptr && images_.AddIcon(icon) >= 0,
                        "add Explorer image");
         }
         commands_.Add(mwfl::Command{kBack, L"Back", [this] { GoBack(); }}
@@ -233,6 +242,12 @@ private:
                    "refresh Explorer folder");
         tabs_.SetSelection(folder == mwfl::TreeItemId{20} ? mwfl::TabId{2}
                                                           : mwfl::TabId{1});
+        const auto folders = model_->GetFolders();
+        const auto current = std::ranges::find(
+            folders, folder, &explorer_example::FolderEntry::id);
+        location_.SetText(current == folders.end()
+            ? L"This PC"
+            : L"This PC  ›  " + current->name);
         ListView_SetItemState(list_.GetHwnd(), -1, 0, LVIS_SELECTED | LVIS_FOCUSED);
         UpdateStatus(L"Folder changed");
     }
@@ -432,6 +447,7 @@ private:
     mwfl::Rebar rebar_;
     mwfl::Toolbar toolbar_;
     mwfl::TabControl tabs_;
+    mwfl::TextBox location_;
     mwfl::TabWorkspaceModel tab_model_;
     mwfl::Splitter splitter_;
     mwfl::TreeView tree_;

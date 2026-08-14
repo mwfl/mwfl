@@ -240,6 +240,10 @@ mwfl::DockLayoutSnapshot DefaultLayout() {
 
 class DockingIdeWindow final : public mwfl::WindowBase {
 public:
+    ~DockingIdeWindow() override {
+        if (code_font_ != nullptr) ::DeleteObject(code_font_);
+    }
+
     DockingIdeWindow()
         : model_{kDocuments, {100}, mwfl::DockGroupRole::document} {
         const auto defaults = DefaultLayout();
@@ -474,11 +478,11 @@ private:
             0, 0, 10, 10, left_.GetHwnd(), reinterpret_cast<HMENU>(1103),
             ::GetModuleHandleW(nullptr), nullptr);
         output_ = ::CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT",
-            L"Build started: mwfl_showcase (Release | x64)\r\n"
-            L"Compiling native controls and docking workspace... done\r\n"
-            L"Running focused GUI verification... 12/12 passed\r\n"
-            L"Packaging public-preview assets... done\r\n"
-            L"Build succeeded in 4.8s — 0 warnings, 0 errors\r\n",
+            L"[build] mwfl_showcase  Release | x64\r\n"
+            L"[build] Native controls and docking workspace ........ done\r\n"
+            L"[test ] Focused GUI verification .................. 12/12\r\n"
+            L"[pack ] Public-preview assets ....................... done\r\n"
+            L"[done ] Succeeded in 4.8s — 0 warnings, 0 errors\r\n",
             WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_MULTILINE | ES_READONLY | WS_VSCROLL,
             0, 0, 10, 10, bottom_.GetHwnd(), reinterpret_cast<HMENU>(1104),
             ::GetModuleHandleW(nullptr), nullptr);
@@ -504,6 +508,17 @@ private:
             static_cast<void>(id);
             mwfl::SetControlFont(window, panel_font_.GetHandle());
         }
+
+        LOGFONTW code{};
+        if (::GetObjectW(panel_font_.GetHandle(), sizeof(code), &code) == 0) return;
+        code.lfPitchAndFamily = FIXED_PITCH | FF_MODERN;
+        wcscpy_s(code.lfFaceName, L"Cascadia Mono");
+        HFONT next = ::CreateFontIndirectW(&code);
+        if (next == nullptr) return;
+        for (HWND window : {main_editor_, readme_editor_, output_})
+            mwfl::SetControlFont(window, next);
+        if (code_font_ != nullptr) ::DeleteObject(code_font_);
+        code_font_ = next;
     }
 
     std::array<std::pair<mwfl::DockPanelId, HWND>, 4> PanelBindings() noexcept {
@@ -975,6 +990,7 @@ private:
     HWND explorer_ = nullptr;
     HWND output_ = nullptr;
     mwfl::UiFont panel_font_;
+    HFONT code_font_ = nullptr;
     int self_test_step_ = 1;
 };
 

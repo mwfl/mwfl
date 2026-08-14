@@ -142,9 +142,9 @@ public:
     void ConfigureWindowOptions(const WindowOptions& options) noexcept {
         apply_suggested_dpi_rect_ = options.apply_suggested_dpi_rect;
         quit_on_destroy_ = options.quit_on_destroy;
+        system_message_font_.Configure(options.use_system_message_font);
         appearance_.Configure(options.appearance);
     }
-
     void ApplyNativeResources(const WindowOptions& options) noexcept {
         const HWND window = GetHwnd();
         if (window == nullptr) {
@@ -307,6 +307,7 @@ private:
             }
         }
         if (message == WM_DPICHANGED) {
+            system_message_font_.Apply(GetHwnd(), LOWORD(wparam));
             if constexpr (requires(T& value, const DpiChangedEvent& event) {
                               value.OnDpiChanged(event);
                           }) {
@@ -417,9 +418,10 @@ private:
 
             if (message == WM_CREATE) {
                 self->wake_state_->window.store(self->m_hWnd, std::memory_order_release);
+                self->system_message_font_.Apply(self->m_hWnd,
+                    DpiContext::FromWindow(self->m_hWnd).GetDpi());
                 static_cast<T*>(self)->BuildUI();
             }
-
             if (message == WM_DPICHANGED && self->apply_suggested_dpi_rect_ &&
                 lparam != 0) {
                 const RECT* suggested = reinterpret_cast<const RECT*>(lparam);
@@ -441,6 +443,7 @@ private:
                     self->accelerator_filter_registered_ = false;
                 }
                 self->wake_state_->window.store(nullptr, std::memory_order_release);
+                self->system_message_font_.Detach(self->m_hWnd);
             }
 
             const LRESULT result = Base::WindowProc(object_pointer, message, wparam, lparam);
@@ -505,8 +508,8 @@ private:
     bool creation_complete_ = false;
     bool accelerator_filter_registered_ = false;
     bool recovery_requested_ = false;
-    bool apply_suggested_dpi_rect_ = true;
-    bool quit_on_destroy_ = true;
+    bool apply_suggested_dpi_rect_ = true, quit_on_destroy_ = true;
+    detail::SystemMessageFont system_message_font_;
     detail::WindowAppearance appearance_;
     std::optional<LayoutHost> owned_layout_;
     LayoutHost* layout_ = nullptr;  // Non-owning.

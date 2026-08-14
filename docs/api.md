@@ -249,6 +249,14 @@ Windows 10+ tray utility; `mwfl.tray_icon_state` proves every state transition
 without HWNDs and `mwfl.tray_icon_native` exercises the real shell
 protocol.
 
+`WindowOptions::use_system_message_font` defaults to `true`. Before `BuildUI`,
+the window creates the current DPI's system message font and assigns it to the
+top-level HWND, so ordinary MWFL controls inherit the user's configured UI
+font. On `WM_DPICHANGED`, the window recreates that font and updates its complete
+child HWND tree before invoking the application's typed DPI handler. Set the
+option to `false` only when the application owns every control font; custom
+fonts remain application-owned and must outlive every HWND that uses them.
+
 `WindowOptions::appearance` applies system/light/dark color preference, optional
 Mica/Acrylic/Tabbed backdrops, and corner policy after HWND creation. Unsupported
 DWM attributes are best-effort, and high-contrast mode always takes priority.

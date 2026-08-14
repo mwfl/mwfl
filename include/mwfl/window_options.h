@@ -35,6 +35,10 @@ struct WindowOptions {
     HICON small_icon = nullptr;  // Non-owning; applied with WM_SETICON.
     HCURSOR cursor = nullptr;    // Non-owning; applied to the registered class.
     HBRUSH background = nullptr; // Non-owning; applied to the registered class.
+    // Create the current DPI's system message font before BuildUI and apply it
+    // to the window's child HWND tree after DPI changes. Kept last so existing
+    // positional aggregate initialization remains source-compatible.
+    bool use_system_message_font = true;
 };
 
 namespace detail {

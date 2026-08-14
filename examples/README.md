@@ -67,6 +67,10 @@ cmake --build --preset vs2026-x64-debug
 ```
 
 All examples use the shared Per-Monitor V2 manifest in `example.manifest`.
+The reference screenshots follow the repository's
+[visual acceptance checklist](../docs/visual-acceptance.md): deterministic
+content, readable system fonts, complete unclipped controls, and explicit DPI,
+keyboard, theme, and High Contrast review for flagship applications.
 
 Run a target from its configuration directory, for example:
 

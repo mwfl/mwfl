@@ -1,4 +1,9 @@
-# v0.1.0 manual acceptance checklist
+# v0.1.0 manual acceptance checklist (archived)
+
+> Historical record for the first public preview. Current releases use this
+> workflow together with `visual-acceptance.md` and the active verification
+> scripts; version and package names below intentionally preserve the original
+> `v0.1.0` evidence.
 
 Use the four ZIP files produced from the release-candidate commit. Extract each
 ZIP to a new directory instead of running executables from a build tree. Record

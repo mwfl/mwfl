@@ -258,6 +258,8 @@ multi-monitor utility.
 The [examples catalog](examples/README.md) lists every target and its run
 commands. The [website](https://mwfl.github.io/) highlights selected
 content-rich examples with screenshots and source links.
+Screenshot and product-quality reviews follow the
+[example visual acceptance checklist](docs/visual-acceptance.md).
 
 ## Build this repository
 

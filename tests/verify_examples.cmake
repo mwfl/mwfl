@@ -99,6 +99,16 @@ foreach(example_name IN LISTS example_names)
     if(NOT EXISTS "${PROJECT_ROOT}/${image_path}")
         message(FATAL_ERROR "README screenshot is missing: ${image_path}")
     endif()
+    file(SIZE "${PROJECT_ROOT}/${image_path}" screenshot_size)
+    if(screenshot_size LESS 4096)
+        message(FATAL_ERROR "README screenshot is suspiciously small: ${image_path}")
+    endif()
+    file(READ "${PROJECT_ROOT}/${image_path}" screenshot_signature
+         OFFSET 0 LIMIT 8 HEX)
+    string(TOLOWER "${screenshot_signature}" screenshot_signature)
+    if(NOT screenshot_signature STREQUAL "89504e470d0a1a0a")
+        message(FATAL_ERROR "README screenshot is not a valid PNG: ${image_path}")
+    endif()
 endforeach()
 
 # Every compiled example carries a self-contained landing page. Derive the set
@@ -169,7 +179,8 @@ endforeach()
 foreach(marker IN ITEMS
         "docs/images/showcase/capability-collage.svg"
         "docs/images/showcase/mwfl-showcase-40s.gif"
-        "43</strong><span>compiled examples"
+        "${documented_example_count}</strong><span>compiled examples"
+        "${documented_example_count} runnable examples"
         "Public-preview scope")
     if(NOT site_home MATCHES "${marker}")
         message(FATAL_ERROR "Pages showcase is missing marker: ${marker}")

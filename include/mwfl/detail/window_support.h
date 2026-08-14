@@ -2,9 +2,29 @@
 
 #include <windows.h>
 
+#include <atlbase.h>
 #include <atlapp.h>
 
 namespace mwfl::detail {
+
+inline constexpr wchar_t kSystemMessageFontProperty[] =
+    L"mwfl.system-message-font.v1";
+
+class SystemMessageFont final {
+public:
+    ~SystemMessageFont() noexcept;
+    SystemMessageFont() noexcept = default;
+    SystemMessageFont(const SystemMessageFont&) = delete;
+    SystemMessageFont& operator=(const SystemMessageFont&) = delete;
+
+    void Configure(bool enabled) noexcept { enabled_ = enabled; }
+    void Apply(HWND window, UINT dpi) noexcept;
+    void Detach(HWND window) noexcept;
+
+private:
+    HFONT font_ = nullptr;
+    bool enabled_ = true;
+};
 
 void ReportException(
     const wchar_t* stage, UINT message, const char* description,

@@ -1,4 +1,8 @@
-# First public preview readiness plan
+# First public preview readiness plan (archived)
+
+> Historical record: this plan describes the pre-release `v0.1.0` gate. The
+> current public preview is `v0.1.3`; use the current release notes, README, and
+> verification scripts for active release status.
 
 ## Outcome
 

@@ -1,9 +1,11 @@
 #include <mwfl/window_options.h>
+#include <mwfl/detail/window_support.h>
 
 #include <wil/resource.h>
 
 #include <algorithm>
 #include <cstring>
+#include <utility>
 
 namespace mwfl::detail {
 namespace {
@@ -31,6 +33,40 @@ UINT GetMonitorDpi(HMONITOR monitor) noexcept {
 }
 
 }  // namespace
+
+SystemMessageFont::~SystemMessageFont() noexcept {
+    if (font_ != nullptr) ::DeleteObject(font_);
+}
+
+void SystemMessageFont::Apply(HWND window, UINT dpi) noexcept {
+    if (!enabled_ || window == nullptr) return;
+
+    NONCLIENTMETRICSW metrics{};
+    metrics.cbSize = sizeof(metrics);
+    if (::SystemParametersInfoForDpi(
+            SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0,
+            dpi == 0 ? 96 : dpi) == FALSE) return;
+
+    HFONT next = ::CreateFontIndirectW(&metrics.lfMessageFont);
+    if (next == nullptr) return;
+    if (::SetPropW(window, kSystemMessageFontProperty, next) == FALSE) {
+        ::DeleteObject(next);
+        return;
+    }
+
+    ::SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(next), TRUE);
+    ::EnumChildWindows(window, [](HWND child, LPARAM font) noexcept -> BOOL {
+        ::SendMessageW(child, WM_SETFONT, static_cast<WPARAM>(font), TRUE);
+        return TRUE;
+    }, reinterpret_cast<LPARAM>(next));
+
+    HFONT previous = std::exchange(font_, next);
+    if (previous != nullptr) ::DeleteObject(previous);
+}
+
+void SystemMessageFont::Detach(HWND window) noexcept {
+    if (window != nullptr) ::RemovePropW(window, kSystemMessageFontProperty);
+}
 
 RECT ResolveWindowBounds(const WindowOptions& options) noexcept {
     const POINT requested_origin =

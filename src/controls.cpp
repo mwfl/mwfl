@@ -1,5 +1,6 @@
 #include <mwfl/controls.h>
 #include <mwfl/appearance.h>
+#include <mwfl/detail/window_support.h>
 #include <wil/resource.h>
 
 #include <array>
@@ -15,9 +16,16 @@ RECT ResolveControlBounds(HWND parent, RectDip bounds) noexcept {
 }
 
 void ApplyDefaultFont(HWND window, HWND parent) noexcept {
-    HFONT font = parent != nullptr
-                     ? reinterpret_cast<HFONT>(::SendMessageW(parent, WM_GETFONT, 0, 0))
-                     : nullptr;
+    HFONT font = nullptr;
+    for (HWND ancestor = parent; ancestor != nullptr && font == nullptr;
+         ancestor = ::GetParent(ancestor)) {
+        font = reinterpret_cast<HFONT>(
+            ::SendMessageW(ancestor, WM_GETFONT, 0, 0));
+        if (font == nullptr) {
+            font = reinterpret_cast<HFONT>(
+                ::GetPropW(ancestor, detail::kSystemMessageFontProperty));
+        }
+    }
     if (font == nullptr) font = static_cast<HFONT>(::GetStockObject(DEFAULT_GUI_FONT));
     ::SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
 }

@@ -53,7 +53,7 @@ is more important than compile-time isolation.
 | `mwfl/tray_icon.h` | RAII notification-area identity, events, notifications, and Explorer recovery |
 | `mwfl/wakeup.h` | lifetime-safe worker-to-window notification |
 | `mwfl/window.h` | `Window<T>`, `WindowBase`, typed dispatch and layout ownership |
-| `mwfl/window_options.h` | window styles, bounds, resources and appearance |
+| `mwfl/window_options.h` | window styles, bounds, DPI-aware system font, resources and appearance |
 | `mwfl/mwfl.h` | umbrella include |
 
 Detailed semantics and examples are in [api.md](api.md). Ownership, error,

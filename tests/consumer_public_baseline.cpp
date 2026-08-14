@@ -6,9 +6,8 @@
 
 using mwfl::operator""_dip;
 
-// Compile-only contract for the representative v0.1 public forms. Before the
-// replacement v0.1.0 tag this is a release-candidate probe; after that tag,
-// changing one of these forms requires the documented compatibility process.
+// Compile-only contract for the representative v0.1 public forms. Changing one
+// of these forms requires the documented compatibility process.
 class PublicBaselineWindow final : public mwfl::WindowBase {
 public:
     void BuildUI() override {
@@ -43,5 +42,7 @@ static_assert(requires(mwfl::Button& button, HWND parent) {
 });
 
 int CompilePublicBaseline(HINSTANCE instance, int show) {
-    return mwfl::RunApplication<PublicBaselineWindow>(instance, show);
+    mwfl::WindowOptions options;
+    options.use_system_message_font = true;
+    return mwfl::RunApplication<PublicBaselineWindow>(instance, show, options);
 }
