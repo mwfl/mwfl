@@ -177,7 +177,7 @@ foreach(marker IN ITEMS
     endif()
 endforeach()
 foreach(marker IN ITEMS
-        "docs/images/showcase/capability-collage.svg"
+        "assets/capability-collage.png"
         "docs/images/showcase/mwfl-showcase-40s.gif"
         "${documented_example_count}</strong><span>compiled examples"
         "${documented_example_count} runnable examples"
@@ -187,16 +187,8 @@ foreach(marker IN ITEMS
     endif()
 endforeach()
 
-file(READ "${PROJECT_ROOT}/docs/images/showcase/capability-collage.svg" capability_collage)
-string(REGEX MATCHALL "<image href=\"data:image/png" embedded_showcase_images
-    "${capability_collage}")
-list(LENGTH embedded_showcase_images embedded_showcase_image_count)
-if(NOT embedded_showcase_image_count EQUAL 3)
-    message(FATAL_ERROR
-        "capability collage must embed exactly three PNG screenshots; found ${embedded_showcase_image_count}")
-endif()
-if(capability_collage MATCHES "href=\"[^\"]+\\.(png|jpg|jpeg|webp)\"")
-    message(FATAL_ERROR "capability collage must not reference external raster images")
+if(NOT EXISTS "${PROJECT_ROOT}/site/assets/capability-collage.png")
+    message(FATAL_ERROR "Pages showcase collage PNG is missing")
 endif()
 
 if(NOT EXISTS "${PROJECT_ROOT}/docs/images/mwfl-mark.svg")
