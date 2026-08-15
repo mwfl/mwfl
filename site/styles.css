@@ -618,7 +618,7 @@ code:not(pre code) {
    The information-rich pages keep their existing structure; these overrides
    give the whole site the restrained black canvas and typographic rhythm of a
    compact framework manual. */
-:root {
+:root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #000;
   --glow-a: transparent;

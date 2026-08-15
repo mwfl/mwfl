@@ -163,7 +163,7 @@ $html = @"
   <meta name="theme-color" content="#f7f9ff">
   <link rel="icon" type="image/svg+xml" href="../assets/mwfl-mark.svg">
   <link rel="stylesheet" href="../styles.css?v=20260815a">
-  <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+  <script>try{const t=localStorage.getItem("mwfl-theme");document.documentElement.dataset.theme=t||"dark"}catch{}</script>
   <script defer src="../assets/site.js?v=20260815a"></script>
 </head>
 <body>
