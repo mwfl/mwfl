@@ -32,6 +32,14 @@ struct WaitAwarePumpOptions {
 class WaitAwareMessagePump final : public MessagePump {
 public:
     explicit WaitAwareMessagePump(WaitAwarePumpOptions options = {});
+
+    // options_.handles aliases the owned handles_ storage, so an implicit
+    // copy or move would leave the span pointing into another instance.
+    WaitAwareMessagePump(const WaitAwareMessagePump&) = delete;
+    WaitAwareMessagePump& operator=(const WaitAwareMessagePump&) = delete;
+    WaitAwareMessagePump(WaitAwareMessagePump&&) = delete;
+    WaitAwareMessagePump& operator=(WaitAwareMessagePump&&) = delete;
+
     int Run(WTL::CMessageLoop& wtl_loop) noexcept override;
 
 private:

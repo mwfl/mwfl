@@ -12,13 +12,13 @@
 #include <functional>
 #include <memory>
 #include <optional>
-#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <type_traits>
 #include <utility>
 
 #include <mwfl/dpi.h>
+#include <mwfl/error.h>
 #include <mwfl/events.h>
 #include <mwfl/layout.h>
 #include <mwfl/wakeup.h>
@@ -130,7 +130,7 @@ public:
         if (IsWindow() && !layout_->Arrange(GetHwnd())) {
             layout_ = nullptr;
             owned_layout_.reset();
-            throw std::runtime_error("mwfl could not arrange the owned layout");
+            throw Error(ERROR_GEN_FAILURE, "arrange the owned window layout");
         }
     }
 
@@ -435,6 +435,8 @@ private:
                     SWP_NOZORDER | SWP_NOACTIVATE);
             }
 
+            // WM_NCDESTROY member cleanup stays before base dispatch: an
+            // overridden OnFinalMessage may destroy this object inside it.
             if (message == WM_NCDESTROY) {
                 if (self->accelerator_filter_registered_) {
                     if (WTL::CMessageLoop* loop = _Module.GetMessageLoop(); loop != nullptr) {
@@ -453,9 +455,6 @@ private:
             }
             if (message == WM_DESTROY) {
                 if (self->quit_on_destroy_) ::PostQuitMessage(self->exit_code_);
-            }
-            if (message == WM_NCDESTROY) {
-                self->wake_state_->window.store(nullptr, std::memory_order_release);
             }
             return result;
         } catch (const std::exception& error) {
@@ -544,6 +543,7 @@ public:
     virtual EventResult OnMinMaxInfo(MinMaxInfoEvent) { return EventResult::Propagate(); }
     virtual EventResult OnPaint(PaintEvent&) { return EventResult::Propagate(); }
     virtual EventResult OnWakeup() { return EventResult::Propagate(); }
+    // Never sees a message a typed handler above receives, even on Propagate.
     virtual EventResult OnMessage(const WindowMessage&) { return EventResult::Propagate(); }
 };
 
