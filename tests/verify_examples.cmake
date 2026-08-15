@@ -187,6 +187,18 @@ foreach(marker IN ITEMS
     endif()
 endforeach()
 
+file(READ "${PROJECT_ROOT}/docs/images/showcase/capability-collage.svg" capability_collage)
+string(REGEX MATCHALL "<image href=\"data:image/png" embedded_showcase_images
+    "${capability_collage}")
+list(LENGTH embedded_showcase_images embedded_showcase_image_count)
+if(NOT embedded_showcase_image_count EQUAL 3)
+    message(FATAL_ERROR
+        "capability collage must embed exactly three PNG screenshots; found ${embedded_showcase_image_count}")
+endif()
+if(capability_collage MATCHES "href=\"[^\"]+\\.(png|jpg|jpeg|webp)\"")
+    message(FATAL_ERROR "capability collage must not reference external raster images")
+endif()
+
 if(NOT EXISTS "${PROJECT_ROOT}/docs/images/mwfl-mark.svg")
     message(FATAL_ERROR "README project mark is missing")
 endif()
