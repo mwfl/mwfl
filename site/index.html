@@ -11,7 +11,7 @@
   <meta property="og:description" content="Real HWND controls, typed events, checked setup, and DPI-aware responsive layout — without closing off Win32.">
   <meta property="og:url" content="https://mwfl.github.io/">
   <meta property="og:image" content="https://raw.githubusercontent.com/mwfl/mwfl/main/docs/images/showcase/capability-collage.svg">
-  <meta name="theme-color" content="#f7f9ff">
+  <meta name="theme-color" content="#000000">
   <link rel="icon" type="image/svg+xml" href="assets/mwfl-mark.svg">
   <link rel="stylesheet" href="styles.css?v=20260813d">
   <script>try{const t=localStorage.getItem("mwfl-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
@@ -21,15 +21,12 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell nav">
-      <a class="brand" href="index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="assets/mwfl-mark.svg" alt=""><span>MWFL</span></a>
+      <a class="brand" href="index.html" aria-label="MWFL — Modern Windows Foundation Layer"><img src="assets/mwfl-mark.svg" alt=""><span>mwfl</span></a>
       <nav class="nav-links" aria-label="Main navigation">
-        <a href="components/index.html">Components</a>
-        <a href="#layers">Choose a layer</a>
-        <a href="tutorial.html">Get started</a>
-        <a href="building.html">Build reference</a>
-        <a href="changelog.html">Changelog</a>
-        <a href="llms.txt">For coding agents</a>
-        <a href="https://github.com/mwfl/mwfl">GitHub</a>
+        <a href="components/index.html">components</a>
+        <a href="#applications">examples</a>
+        <a href="tutorial.html">docs</a>
+        <a href="https://github.com/mwfl/mwfl">github ↗</a>
         <button class="theme-toggle" type="button" aria-label="Toggle color theme"></button>
       </nav>
     </div>
@@ -38,17 +35,12 @@
   <main id="main">
     <section class="shell home-hero">
       <div class="hero-copy">
-        <div class="eyebrow">Modern Windows Foundation Layer</div>
-        <h1>Native Windows UI, with less&nbsp;ceremony.</h1>
-        <p class="lede">Concise creation, typed events, checked batches, and DPI-aware responsive layout around real HWND controls — without closing off Win32.</p>
+        <div class="eyebrow">mwfl</div>
+        <h1>A productive C++20 foundation for native Windows UI.</h1>
+        <p class="lede">Real HWND controls, typed events, checked setup, and DPI-aware layout — with the Win32 escape hatch always within reach.</p>
         <div class="actions">
-          <a class="button primary" href="tutorial.html">Get started step by step</a>
-          <a class="button" href="components/catalog.html">Explore all components</a>
-          <a class="button" href="notepad.html">Build the Notepad reference app</a>
-            <a class="button" href="markdown-editor.html">Explore the Markdown Editor</a>
-            <a class="button" href="pdf-viewer.html">Explore the PDF Viewer</a>
-            <a class="button" href="document-workspace.html">Build a multi-document workspace</a>
-            <a class="button" href="docking-workspace.html">Build an IDE docking workspace</a>
+          <a class="button primary" href="tutorial.html">Get started →</a>
+          <a class="button" href="components/catalog.html">Browse the API</a>
         </div>
       </div>
       <figure class="hero-demo">
@@ -75,7 +67,7 @@ private:
     mwfl::Label message_;
     mwfl::Button close_;
 };</code></pre>
-        <figcaption>A complete window — no message-map macros, no generated application object.</figcaption>
+        <figcaption>A complete native window — no message-map macros or generated application object.</figcaption>
       </figure>
     </section>
 
