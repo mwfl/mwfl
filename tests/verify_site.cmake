@@ -152,8 +152,8 @@ foreach(html_file IN LISTS html_files)
             message(FATAL_ERROR "UTF-8 mojibake in ${html_file}: ${mojibake_hex}")
         endif()
     endforeach()
-    if(NOT html MATCHES "styles\\.css\\?v=20260815a" OR
-       NOT html MATCHES "assets/site\\.js\\?v=20260815a")
+    if(NOT html MATCHES "styles\\.css\\?v=20260815b" OR
+       NOT html MATCHES "assets/site\\.js\\?v=20260815b")
         message(FATAL_ERROR "stale or inconsistent site asset version in ${html_file}")
     endif()
     if(NOT html MATCHES "dataset\\.theme=t\\|\\|\"dark\"")
