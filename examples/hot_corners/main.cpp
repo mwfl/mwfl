@@ -5,6 +5,8 @@
 #include <oleacc.h>
 #include <shellapi.h>
 
+#include <wil/resource.h>
+
 #include <algorithm>
 #include <array>
 #include <chrono>
