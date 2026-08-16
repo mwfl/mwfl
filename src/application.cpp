@@ -95,22 +95,15 @@ bool Application::BeginRun() noexcept {
     }
     module_initialized_ = true;
 
-    const BOOL loop_added =
 #ifdef MWFL_TESTING
-        detail::IsFailureInjected(L"MWFL_TEST_FAIL_LOOP_REGISTRATION")
-        ? FALSE
-        :
-#endif
-        _Module.AddMessageLoop(&message_loop_);
-    if (loop_added == FALSE) {
-        const DWORD error = ::GetLastError();
+    if (detail::IsFailureInjected(L"MWFL_TEST_FAIL_LOOP_REGISTRATION")) {
         detail::ReportWin32(
-            L"WTL CAppModule::AddMessageLoop",
-            error == ERROR_SUCCESS ? ERROR_NOT_ENOUGH_MEMORY : error,
-            true);
+            L"message loop activation", ERROR_NOT_ENOUGH_MEMORY, true);
         EndRun();
         return false;
     }
+#endif
+    message_loop_.Activate();
     loop_registered_ = true;
 #ifdef MWFL_TESTING
     ++detail::lifecycle_snapshot.loop_registered;
@@ -120,13 +113,7 @@ bool Application::BeginRun() noexcept {
 
 void Application::EndRun() noexcept {
     if (loop_registered_) {
-        if (_Module.RemoveMessageLoop() == FALSE) {
-            const DWORD error = ::GetLastError();
-            detail::ReportWin32(
-                L"WTL CAppModule::RemoveMessageLoop",
-                error == ERROR_SUCCESS ? ERROR_INVALID_STATE : error,
-                false);
-        }
+        message_loop_.Deactivate();
         loop_registered_ = false;
 #ifdef MWFL_TESTING
         ++detail::lifecycle_snapshot.loop_removed;

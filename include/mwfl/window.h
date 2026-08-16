@@ -27,8 +27,6 @@
 #include <mwfl/detail/window_appearance.h>
 #include <mwfl/detail/window_support.h>
 
-extern WTL::CAppModule _Module;
-
 namespace mwfl {
 
 namespace detail {
@@ -112,13 +110,13 @@ public:
 
     void SetAccelerators(HACCEL accelerators) noexcept {
         this->m_hAccel = accelerators;  // Non-owning; the table must outlive the window.
-        WTL::CMessageLoop* loop = _Module.GetMessageLoop();
+        MessageLoop* loop = MessageLoop::Current();
         if (loop == nullptr) return;
         if (accelerators != nullptr && !accelerator_filter_registered_) {
             accelerator_filter_registered_ =
-                loop->AddMessageFilter(&accelerator_filter_) != FALSE;
+                loop->AddFilter(&accelerator_filter_);
         } else if (accelerators == nullptr && accelerator_filter_registered_) {
-            loop->RemoveMessageFilter(&accelerator_filter_);
+            loop->RemoveFilter(&accelerator_filter_);
             accelerator_filter_registered_ = false;
         }
     }
@@ -439,8 +437,8 @@ private:
             // overridden OnFinalMessage may destroy this object inside it.
             if (message == WM_NCDESTROY) {
                 if (self->accelerator_filter_registered_) {
-                    if (WTL::CMessageLoop* loop = _Module.GetMessageLoop(); loop != nullptr) {
-                        loop->RemoveMessageFilter(&self->accelerator_filter_);
+                    if (MessageLoop* loop = MessageLoop::Current(); loop != nullptr) {
+                        loop->RemoveFilter(&self->accelerator_filter_);
                     }
                     self->accelerator_filter_registered_ = false;
                 }

@@ -2,8 +2,6 @@
 
 #include <windows.h>
 
-#include <atlbase.h>
-#include <atlapp.h>
 #include <wil/resource.h>
 
 #include <cstdlib>
@@ -111,8 +109,10 @@ private:
             MainWindowType main_window(
                 std::forward<Arguments>(arguments)...);
             main_window.ConfigureWindowOptions(options);
+            // Same values as ATL's CWindow::rcDefault: the right-left width
+            // computation wraps back to CW_USEDEFAULT for the default size.
             RECT bounds = options.use_default_bounds
-                ? ATL::CWindow::rcDefault
+                ? RECT{CW_USEDEFAULT, CW_USEDEFAULT, 0, 0}
                 : detail::ResolveWindowBounds(options);
             const HWND window = main_window.Create(
                 nullptr,
@@ -170,7 +170,7 @@ private:
 
     HINSTANCE instance_ = nullptr;  // Non-owning process module handle.
     ApplicationOptions options_{};
-    WTL::CMessageLoop message_loop_;
+    MessageLoop message_loop_;
     wil::unique_couninitialize_call com_uninitialize_;
     bool ole_initialized_ = false;
     bool module_initialized_ = false;

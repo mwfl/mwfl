@@ -4,18 +4,12 @@
 #include <commctrl.h>
 #include <prsht.h>
 
-// ATL requires this include order.
-// clang-format off
-#include <atlbase.h>
-#include <atlapp.h>
-// clang-format on
+#include <mwfl/message_pump.h>
 
 #include <algorithm>
 #include <cassert>
 #include <stdexcept>
 #include <utility>
-
-extern WTL::CAppModule _Module;
 
 namespace mwfl {
 namespace {
@@ -138,18 +132,18 @@ struct PropertySheetDialog::State {
         RECT bounds{};
     };
 
-    class Filter final : public WTL::CMessageFilter {
+    class Filter final : public MessageFilter {
     public:
         explicit Filter(State& input) noexcept : state(input) {}
-        BOOL PreTranslateMessage(MSG* message) override {
-            if (message == nullptr || state.window == nullptr || ::IsWindow(state.window) == FALSE)
-                return FALSE;
-            const BOOL handled = PropSheet_IsDialogMessage(state.window, message);
+        bool PreTranslateMessage(MSG& message) override {
+            if (state.window == nullptr || ::IsWindow(state.window) == FALSE)
+                return false;
+            const BOOL handled = PropSheet_IsDialogMessage(state.window, &message);
             if (PropSheet_GetCurrentPageHwnd(state.window) == nullptr) {
                 state.result.native_result = PropSheet_GetResult(state.window);
                 ::DestroyWindow(state.window);
             }
-            return handled;
+            return handled != FALSE;
         }
 
     private:
@@ -228,16 +222,17 @@ struct PropertySheetDialog::State {
     }
 
     void RegisterFilter() noexcept {
-        if (filter_registered || _Module.m_pMsgLoopMap == nullptr) return;
-        WTL::CMessageLoop* loop = _Module.GetMessageLoop();
+        if (filter_registered) return;
+        MessageLoop* loop = MessageLoop::Current();
         if (loop == nullptr) return;
-        filter_registered = loop->AddMessageFilter(filter.get()) != FALSE;
+        filter_registered = loop->AddFilter(filter.get());
     }
 
     void UnregisterFilter() noexcept {
-        if (!filter_registered || _Module.m_pMsgLoopMap == nullptr) return;
-        WTL::CMessageLoop* loop = _Module.GetMessageLoop();
-        if (loop != nullptr && filter) loop->RemoveMessageFilter(filter.get());
+        if (!filter_registered) return;
+        if (MessageLoop* loop = MessageLoop::Current(); loop != nullptr && filter) {
+            loop->RemoveFilter(filter.get());
+        }
         filter_registered = false;
     }
 

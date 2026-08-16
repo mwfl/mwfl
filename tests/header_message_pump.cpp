@@ -8,3 +8,10 @@ static_assert(!std::is_copy_constructible_v<mwfl::WaitAwareMessagePump>);
 static_assert(!std::is_copy_assignable_v<mwfl::WaitAwareMessagePump>);
 static_assert(!std::is_move_constructible_v<mwfl::WaitAwareMessagePump>);
 static_assert(!std::is_move_assignable_v<mwfl::WaitAwareMessagePump>);
+
+// MessageLoop owns the thread-current registration and the filter chain;
+// copying or moving it would duplicate or orphan that registration.
+static_assert(!std::is_copy_constructible_v<mwfl::MessageLoop>);
+static_assert(!std::is_copy_assignable_v<mwfl::MessageLoop>);
+static_assert(!std::is_move_constructible_v<mwfl::MessageLoop>);
+static_assert(!std::is_move_assignable_v<mwfl::MessageLoop>);
