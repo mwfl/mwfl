@@ -382,19 +382,58 @@ The window does not need to be default-constructible.
 The same constructor forwarding works with a custom message pump through the
 consistent `Run(show, options, pump, arguments...)` member overload.
 
+## Message loop and pre-translate filters
+
+`Application` owns one `mwfl::MessageLoop` per run and activates it on the UI
+thread; `MessageLoop::Current()` returns that loop from the same thread and
+`nullptr` elsewhere. Accelerators, modeless `Dialog`s, and modeless property
+sheets register a non-owning `mwfl::MessageFilter` on the current loop; a filter
+object must outlive its registration and unregister before destruction.
+
+Filters run **newest-first**, matching the WTL loop this replaced: a modeless
+dialog created after the main window sees Escape, Enter, and Tab before the
+main window's accelerator table can translate them. A filter appears in the
+chain once (`AddFilter` on a registered filter is a successful no-op), and a
+filter may add or remove filters — including itself — from inside
+`PreTranslateMessage`. `MessageLoop::Run` pumps until `WM_QUIT` and returns its
+exit code; a custom `MessagePump::Run(MessageLoop&)` calls
+`loop.PreTranslate(message)` before `TranslateMessage`/`DispatchMessageW`.
+
+The WTL module behind `Application` is process-wide: it is initialized on the
+first run, shared by every later `Application` in the process, and terminated
+once at process exit, so an application may construct and run `Application`
+repeatedly (for example a test harness or a restart flow) without crashing.
+
 ## Wait-aware message pump
 
 The pump uses `std::chrono::milliseconds`, owns a copy of its handle list, and
-accepts callbacks directly. There is no delegate base class to implement:
+accepts callbacks directly. There is no delegate base class to implement.
+Designated initializers must follow the `WaitAwarePumpOptions` declaration
+order (`handles`, `idle_interval`, `after_dispatch`, `on_idle`, `on_signal`,
+`next_interval`):
 
 ```cpp
 using namespace std::chrono_literals;
 mwfl::WaitAwareMessagePump pump({
     .handles = handles,
     .idle_interval = 16ms,
-    .on_signal = [&](std::size_t index) { HandleSignal(index); },
     .on_idle = [&] { RenderIdleWork(); },
+    .on_signal = [&](std::size_t index) { HandleSignal(index); },
 });
+```
+
+The pump is non-copyable and non-movable because its option span aliases the
+owned handle copy.
+
+## Third-party headers available to consumers
+
+`mwfl::ui` propagates the pinned WTL and Microsoft WIL include directories in
+both the build tree and the installed package, but no public mwfl header
+includes WIL and only `mwfl/window.h` includes ATL (for its base class).
+Applications that want WIL's RAII helpers include them explicitly:
+
+```cpp
+#include <wil/resource.h>   // wil::unique_hfile, wil::unique_hkey, wil::scope_exit, ...
 ```
 
 ## Paths and file filters

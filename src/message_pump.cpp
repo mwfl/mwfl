@@ -26,6 +26,9 @@ DWORD ToNativeTimeout(std::chrono::milliseconds value) noexcept {
 
 bool MessageLoop::AddFilter(MessageFilter* filter) noexcept {
     if (filter == nullptr) return false;
+    if (std::find(filters_.begin(), filters_.end(), filter) != filters_.end()) {
+        return true;  // Already registered; a filter appears in the chain once.
+    }
     try {
         filters_.push_back(filter);
         return true;
@@ -39,11 +42,27 @@ void MessageLoop::RemoveFilter(MessageFilter* filter) noexcept {
 }
 
 bool MessageLoop::PreTranslate(MSG& message) {
-    // Index-based so a filter that unregisters during dispatch stays safe.
-    for (std::size_t index = 0; index < filters_.size(); ++index) {
+    // Newest filter first, matching the WTL loop this replaced: a modeless
+    // dialog or property sheet registers after the main window's accelerator
+    // filter and must see keystrokes before it. Iteration is index-based and
+    // resynchronizes after every callback, so a filter that adds or removes
+    // filters (including itself) during dispatch is invoked at most once, a
+    // filter removed before its turn is skipped, and filters added during the
+    // pass wait for the next message.
+    for (std::size_t index = filters_.size(); index > 0;) {
+        --index;
+        if (index >= filters_.size()) {
+            index = filters_.size();
+            continue;
+        }
         MessageFilter* const filter = filters_[index];
-        if (filter != nullptr && filter->PreTranslateMessage(message)) {
-            return true;
+        if (filter->PreTranslateMessage(message)) return true;
+        // Continue below this filter's current position if it is still
+        // registered. If it unregistered itself, the entries below it kept
+        // their positions and `index` already points just above them.
+        const auto position = std::find(filters_.begin(), filters_.end(), filter);
+        if (position != filters_.end()) {
+            index = static_cast<std::size_t>(position - filters_.begin());
         }
     }
     return false;

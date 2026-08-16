@@ -326,6 +326,21 @@ foreach(mode IN ITEMS
         TIMEOUT 20)
 endforeach()
 
+add_executable(mwfl_message_loop_test message_loop_test.cpp)
+target_compile_features(mwfl_message_loop_test PRIVATE cxx_std_20)
+target_compile_options(mwfl_message_loop_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwfl_message_loop_test PRIVATE mwfl::ui)
+# `unit` covers MessageLoop/MessageFilter/WaitAwareMessagePump semantics;
+# `order` proves a modeless dialog registered after the main window's
+# accelerator filter still sees keystrokes first; `twice` runs Application
+# repeatedly in one process, which the WTL module lifetime once broke.
+foreach(mode IN ITEMS unit order twice)
+    add_test(NAME mwfl.message_loop.${mode} COMMAND mwfl_message_loop_test ${mode})
+    set_tests_properties(mwfl.message_loop.${mode} PROPERTIES
+        ENVIRONMENT "MWFL_TEST_NO_DIALOGS=1"
+        TIMEOUT 30)
+endforeach()
+
 add_executable(mwfl_modern_api_test modern_api_test.cpp)
 target_sources(mwfl_modern_api_test PRIVATE "${PROJECT_SOURCE_DIR}/examples/example.manifest")
 target_compile_features(mwfl_modern_api_test PRIVATE cxx_std_20)
@@ -1198,7 +1213,7 @@ endif()
 # Every test has semantic labels so local agents can run a predictable subset.
 get_property(mwfl_all_tests DIRECTORY PROPERTY TESTS)
 foreach(test_name IN LISTS mwfl_all_tests)
-    if(test_name MATCHES "^mwfl\\.(lifecycle|advanced\\.)" OR
+    if(test_name MATCHES "^mwfl\\.(lifecycle|advanced\\.|message_loop\\.)" OR
        test_name STREQUAL "mwfl.integration_stress" OR
        test_name STREQUAL "mwfl.docking_stress_native")
         set(labels "lifecycle;fast")

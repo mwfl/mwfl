@@ -176,7 +176,7 @@ private:
     MessageLoop message_loop_;
     bool com_initialized_ = false;
     bool ole_initialized_ = false;
-    bool module_initialized_ = false;
+    bool module_held_ = false;
     bool loop_registered_ = false;
     bool running_ = false;
 };

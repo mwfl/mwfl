@@ -11,7 +11,7 @@ This executable demonstrates the complete milestone-1 application lifecycle:
 5. Return its result through the process entry point. Most applications can use
 the one-line `RunApplication<Window>()` helper instead.
 
-`Application` is intentionally non-copyable and non-movable. It initializes the one WTL `_Module`, registers the message loop, owns the stack lifetime of `ApplicationWindow`, and cleans up in reverse order.
+`Application` is intentionally non-copyable and non-movable. It acquires the process-wide WTL module (initialized on the first run, terminated once at process exit, so `Application` may run repeatedly in one process), activates its `mwfl::MessageLoop` on the UI thread, owns the stack lifetime of `ApplicationWindow`, and releases everything in reverse order.
 
 ## Key code
 

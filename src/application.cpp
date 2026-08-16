@@ -66,7 +66,9 @@ bool Application::BeginRun() noexcept {
         else com_initialized_ = true;
     }
 
-    const HRESULT result = _Module.Init(nullptr, instance_);
+    // The module is process-wide: initialized once, held per run, terminated at
+    // exit. See detail/module.h for why it is never terminated between runs.
+    const HRESULT result = detail::AcquireModule(instance_);
 #ifdef MWFL_TESTING
     if (SUCCEEDED(result)) {
         ++detail::lifecycle_snapshot.module_initialized;
@@ -80,7 +82,7 @@ bool Application::BeginRun() noexcept {
 #endif
     if (FAILED(effective_result)) {
         detail::ReportHresult(L"WTL CAppModule::Init", effective_result, true);
-        _Module.Term();
+        if (SUCCEEDED(result)) detail::ReleaseModule();
 #ifdef MWFL_TESTING
         ++detail::lifecycle_snapshot.module_terminated;
 #endif
@@ -94,7 +96,7 @@ bool Application::BeginRun() noexcept {
         running_ = false;
         return false;
     }
-    module_initialized_ = true;
+    module_held_ = true;
 
 #ifdef MWFL_TESTING
     if (detail::IsFailureInjected(L"MWFL_TEST_FAIL_LOOP_REGISTRATION")) {
@@ -120,9 +122,9 @@ void Application::EndRun() noexcept {
         ++detail::lifecycle_snapshot.loop_removed;
 #endif
     }
-    if (module_initialized_) {
-        _Module.Term();
-        module_initialized_ = false;
+    if (module_held_) {
+        detail::ReleaseModule();
+        module_held_ = false;
 #ifdef MWFL_TESTING
         ++detail::lifecycle_snapshot.module_terminated;
 #endif

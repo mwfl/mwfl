@@ -297,7 +297,9 @@ quality coverage.
 
 CMake fetches pinned official WTL and Microsoft WIL revisions. Exact sources
 and licenses are recorded in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-For controlled environments, see the
+Both include directories propagate through `mwfl::ui`, so applications may
+`#include <wil/resource.h>` for WIL's RAII helpers; no public mwfl header
+includes WIL for you. For controlled environments, see the
 [offline setup instructions](https://mwfl.github.io/building.html#offline).
 
 ## Documentation

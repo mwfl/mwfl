@@ -25,6 +25,8 @@ function Invoke-Checked {
 
 $toolchain = Resolve-MwflToolchain -VisualStudio $VisualStudio -Architecture $Architecture
 $presets = Get-MwflPresetNames -Toolchain $toolchain -Architecture $Architecture
+$repositoryRoot = Split-Path $PSScriptRoot -Parent
+Reset-MwflStalePresetCache -RepositoryRoot $repositoryRoot -ConfigurePreset $presets.Configure
 $configureArguments = @('--preset', $presets.Configure)
 if ($Offline) {
     $wtl = [Environment]::GetEnvironmentVariable('MWFL_WTL_SOURCE_DIR')

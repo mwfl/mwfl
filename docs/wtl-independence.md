@@ -48,13 +48,26 @@ use.
   `application.h`, `message_pump.h`, and `detail/window_support.h` no longer
   include ATL. `window.h` still includes ATL for its base class only.
 - Behavior is preserved: idle handlers were never used, `GetMessage` semantics
-  (including the `-1` continue) match the WTL loop, and the
+  (including the `-1` continue) match the WTL loop, filters run newest-first
+  exactly as `CMessageLoop::PreTranslateMessage` iterated its array backwards
+  (a modeless dialog registered after the main window sees keystrokes before
+  the accelerator filter — `mwfl.message_loop.order` proves it), and the
   `MWFL_TEST_FAIL_LOOP_REGISTRATION` injection point and lifecycle counters
-  are unchanged.
+  are unchanged. Unlike WTL, a filter that unregisters itself or others during
+  dispatch is handled deterministically (each filter runs at most once per
+  message) and duplicate registration is a no-op.
+- The `_Module` lifetime is now process-wide (`src/detail/module.h`):
+  initialized on the first `Application` run, reference-held per run, and
+  terminated once at process exit. ATL's `CAtlModule::Term` destroys module
+  critical sections that a later `Init` never recreates, so the previous
+  per-run `Init`/`Term` pairing crashed the second `Application` in a process
+  (Debug at window creation, Release inside `CAppModule::Term`).
+  `mwfl.message_loop.twice` guards this until Phase 1 deletes `_Module`.
 
 Source-compatibility note: authors of custom `MessagePump` implementations
 must update the `Run` signature. No first-party or template code required
-changes; the WTL loop type appeared in no example, test, or document.
+changes; the WTL loop type appeared in no example, test, or document. See
+`docs/releases/unreleased.md`.
 
 ## Phase 1 — replace the engine
 
