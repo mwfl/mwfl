@@ -2,6 +2,7 @@
 
 #include "detail/diagnostics.h"
 
+#include <cstdint>
 #include <cstdlib>
 #include <algorithm>
 #include <exception>
@@ -10,6 +11,8 @@
 namespace mwfl {
 
 namespace {
+
+thread_local MessageLoop* current_message_loop = nullptr;
 
 DWORD ToNativeTimeout(std::chrono::milliseconds value) noexcept {
     if (value == (std::chrono::milliseconds::max)()) return INFINITE;
@@ -21,13 +24,73 @@ DWORD ToNativeTimeout(std::chrono::milliseconds value) noexcept {
 
 }  // namespace
 
+bool MessageLoop::AddFilter(MessageFilter* filter) noexcept {
+    if (filter == nullptr) return false;
+    try {
+        filters_.push_back(filter);
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+void MessageLoop::RemoveFilter(MessageFilter* filter) noexcept {
+    std::erase(filters_, filter);
+}
+
+bool MessageLoop::PreTranslate(MSG& message) {
+    // Index-based so a filter that unregisters during dispatch stays safe.
+    for (std::size_t index = 0; index < filters_.size(); ++index) {
+        MessageFilter* const filter = filters_[index];
+        if (filter != nullptr && filter->PreTranslateMessage(message)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int MessageLoop::Run() {
+    MSG message{};
+    for (;;) {
+        const BOOL result = ::GetMessageW(&message, nullptr, 0, 0);
+        if (result == 0) {
+            return static_cast<int>(message.wParam);
+        }
+        if (result == -1) {
+            continue;
+        }
+        if (!PreTranslate(message)) {
+            ::TranslateMessage(&message);
+            ::DispatchMessageW(&message);
+        }
+    }
+}
+
+void MessageLoop::Activate() noexcept {
+    if (active_) return;
+    previous_ = current_message_loop;
+    current_message_loop = this;
+    active_ = true;
+}
+
+void MessageLoop::Deactivate() noexcept {
+    if (!active_ || current_message_loop != this) return;
+    current_message_loop = previous_;
+    previous_ = nullptr;
+    active_ = false;
+}
+
+MessageLoop* MessageLoop::Current() noexcept {
+    return current_message_loop;
+}
+
 WaitAwareMessagePump::WaitAwareMessagePump(WaitAwarePumpOptions options)
     : options_(std::move(options)),
       handles_(options_.handles.begin(), options_.handles.end()) {
     options_.handles = handles_;
 }
 
-int WaitAwareMessagePump::Run(WTL::CMessageLoop& wtl_loop) noexcept {
+int WaitAwareMessagePump::Run(MessageLoop& loop) noexcept {
     if (options_.handles.size() > MAXIMUM_WAIT_OBJECTS - 1) {
         detail::ReportWin32(L"wait-aware message pump options", ERROR_INVALID_PARAMETER, false);
         return EXIT_FAILURE;
@@ -40,7 +103,7 @@ int WaitAwareMessagePump::Run(WTL::CMessageLoop& wtl_loop) noexcept {
                 if (message.message == WM_QUIT) {
                     return static_cast<int>(message.wParam);
                 }
-                if (wtl_loop.PreTranslateMessage(&message) == FALSE) {
+                if (!loop.PreTranslate(message)) {
                     ::TranslateMessage(&message);
                     ::DispatchMessageW(&message);
                 }

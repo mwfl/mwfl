@@ -63,7 +63,7 @@ bool Application::BeginRun() noexcept {
             return false;
         }
         if (use_ole) ole_initialized_ = true;
-        else com_uninitialize_.activate();
+        else com_initialized_ = true;
     }
 
     const HRESULT result = _Module.Init(nullptr, instance_);
@@ -87,30 +87,24 @@ bool Application::BeginRun() noexcept {
         if (ole_initialized_) {
             ::OleUninitialize();
             ole_initialized_ = false;
-        } else {
-            com_uninitialize_.reset();
+        } else if (com_initialized_) {
+            ::CoUninitialize();
+            com_initialized_ = false;
         }
         running_ = false;
         return false;
     }
     module_initialized_ = true;
 
-    const BOOL loop_added =
 #ifdef MWFL_TESTING
-        detail::IsFailureInjected(L"MWFL_TEST_FAIL_LOOP_REGISTRATION")
-        ? FALSE
-        :
-#endif
-        _Module.AddMessageLoop(&message_loop_);
-    if (loop_added == FALSE) {
-        const DWORD error = ::GetLastError();
+    if (detail::IsFailureInjected(L"MWFL_TEST_FAIL_LOOP_REGISTRATION")) {
         detail::ReportWin32(
-            L"WTL CAppModule::AddMessageLoop",
-            error == ERROR_SUCCESS ? ERROR_NOT_ENOUGH_MEMORY : error,
-            true);
+            L"message loop activation", ERROR_NOT_ENOUGH_MEMORY, true);
         EndRun();
         return false;
     }
+#endif
+    message_loop_.Activate();
     loop_registered_ = true;
 #ifdef MWFL_TESTING
     ++detail::lifecycle_snapshot.loop_registered;
@@ -120,13 +114,7 @@ bool Application::BeginRun() noexcept {
 
 void Application::EndRun() noexcept {
     if (loop_registered_) {
-        if (_Module.RemoveMessageLoop() == FALSE) {
-            const DWORD error = ::GetLastError();
-            detail::ReportWin32(
-                L"WTL CAppModule::RemoveMessageLoop",
-                error == ERROR_SUCCESS ? ERROR_INVALID_STATE : error,
-                false);
-        }
+        message_loop_.Deactivate();
         loop_registered_ = false;
 #ifdef MWFL_TESTING
         ++detail::lifecycle_snapshot.loop_removed;
@@ -142,8 +130,9 @@ void Application::EndRun() noexcept {
     if (ole_initialized_) {
         ::OleUninitialize();
         ole_initialized_ = false;
-    } else {
-        com_uninitialize_.reset();
+    } else if (com_initialized_) {
+        ::CoUninitialize();
+        com_initialized_ = false;
     }
     running_ = false;
 }

@@ -35,7 +35,7 @@ is more important than compile-time isolation.
 | `mwfl/help.h` | validated CHM/local HTML/HTTPS Help requests and structured launch results |
 | `mwfl/input_controls.h` | date, calendar, hot-key, IP, up-down and link controls |
 | `mwfl/layout.h` | row/column/overlay retained layout |
-| `mwfl/message_pump.h` | default and wait-aware message pumps |
+| `mwfl/message_pump.h` | message loop, pre-translate filters, default and wait-aware message pumps |
 | `mwfl/mdi.h` | optional stable-ID legacy MDI model and owned native MDICLIENT/children |
 | `mwfl/must.h` | `Must` and `MustInvoke` checked adapters |
 | `mwfl/navigation_controls.h` | tree, list, header, tab and extended combo controls |

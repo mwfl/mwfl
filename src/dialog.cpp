@@ -2,17 +2,11 @@
 
 #include <windows.h>
 
-// ATL requires this include order.
-// clang-format off
-#include <atlbase.h>
-#include <atlapp.h>
-// clang-format on
+#include <mwfl/message_pump.h>
 
 #include <algorithm>
 #include <stdexcept>
 #include <utility>
-
-extern WTL::CAppModule _Module;
 
 namespace mwfl {
 namespace {
@@ -44,14 +38,13 @@ struct BlankDialogTemplate {
 }  // namespace
 
 struct Dialog::State {
-    class Filter final : public WTL::CMessageFilter {
+    class Filter final : public MessageFilter {
        public:
         explicit Filter(State& input) noexcept : state(input) {}
-        BOOL PreTranslateMessage(MSG* message) override {
-            return message != nullptr && state.window != nullptr &&
-                           ::IsWindow(state.window) != FALSE
-                       ? ::IsDialogMessageW(state.window, message)
-                       : FALSE;
+        bool PreTranslateMessage(MSG& message) override {
+            return state.window != nullptr &&
+                ::IsWindow(state.window) != FALSE &&
+                ::IsDialogMessageW(state.window, &message) != FALSE;
         }
 
        private:
@@ -68,15 +61,16 @@ struct Dialog::State {
     }
 
     void RegisterFilter() noexcept {
-        if (filter_registered || _Module.m_pMsgLoopMap == nullptr) return;
-        WTL::CMessageLoop* loop = _Module.GetMessageLoop();
-        if (loop != nullptr) filter_registered = loop->AddMessageFilter(&filter) != FALSE;
+        if (filter_registered) return;
+        MessageLoop* loop = MessageLoop::Current();
+        if (loop != nullptr) filter_registered = loop->AddFilter(&filter);
     }
 
     void UnregisterFilter() noexcept {
-        if (!filter_registered || _Module.m_pMsgLoopMap == nullptr) return;
-        WTL::CMessageLoop* loop = _Module.GetMessageLoop();
-        if (loop != nullptr) loop->RemoveMessageFilter(&filter);
+        if (!filter_registered) return;
+        if (MessageLoop* loop = MessageLoop::Current(); loop != nullptr) {
+            loop->RemoveFilter(&filter);
+        }
         filter_registered = false;
     }
 

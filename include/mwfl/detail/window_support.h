@@ -2,8 +2,7 @@
 
 #include <windows.h>
 
-#include <atlbase.h>
-#include <atlapp.h>
+#include <mwfl/message_pump.h>
 
 namespace mwfl::detail {
 
@@ -33,16 +32,15 @@ void ReportUnknownException(
     const wchar_t* stage, UINT message, bool show_user) noexcept;
 
 template <typename Owner>
-class AcceleratorFilter final : public WTL::CMessageFilter {
+class AcceleratorFilter final : public MessageFilter {
 public:
     explicit AcceleratorFilter(Owner* owner) noexcept : owner_(owner) {}
 
-    BOOL PreTranslateMessage(MSG* message) override {
-        return message != nullptr && owner_->GetHwnd() != nullptr &&
-                owner_->GetAccelerators() != nullptr
-            ? ::TranslateAcceleratorW(
-                  owner_->GetHwnd(), owner_->GetAccelerators(), message)
-            : FALSE;
+    bool PreTranslateMessage(MSG& message) override {
+        return owner_->GetHwnd() != nullptr &&
+            owner_->GetAccelerators() != nullptr &&
+            ::TranslateAcceleratorW(
+                owner_->GetHwnd(), owner_->GetAccelerators(), &message) != 0;
     }
 
 private:
