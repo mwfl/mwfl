@@ -2,8 +2,6 @@
 
 #include <windows.h>
 
-#include <wil/resource.h>
-
 #include <cstdlib>
 #include <concepts>
 #include <exception>
@@ -92,6 +90,11 @@ public:
     HINSTANCE GetInstance() const noexcept { return instance_; }
 
 private:
+    struct EndRunGuard {
+        Application* application;
+        ~EndRunGuard() noexcept { application->EndRun(); }
+    };
+
     template <MainWindow MainWindowType, typename... Arguments>
         requires std::constructible_from<MainWindowType, Arguments...>
     int RunImpl(
@@ -103,7 +106,7 @@ private:
             return EXIT_FAILURE;
         }
 
-        auto cleanup = wil::scope_exit([this]() noexcept { EndRun(); });
+        const EndRunGuard cleanup{this};
 
         try {
             MainWindowType main_window(
@@ -171,7 +174,7 @@ private:
     HINSTANCE instance_ = nullptr;  // Non-owning process module handle.
     ApplicationOptions options_{};
     MessageLoop message_loop_;
-    wil::unique_couninitialize_call com_uninitialize_;
+    bool com_initialized_ = false;
     bool ole_initialized_ = false;
     bool module_initialized_ = false;
     bool loop_registered_ = false;

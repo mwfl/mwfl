@@ -63,7 +63,7 @@ bool Application::BeginRun() noexcept {
             return false;
         }
         if (use_ole) ole_initialized_ = true;
-        else com_uninitialize_.activate();
+        else com_initialized_ = true;
     }
 
     const HRESULT result = _Module.Init(nullptr, instance_);
@@ -87,8 +87,9 @@ bool Application::BeginRun() noexcept {
         if (ole_initialized_) {
             ::OleUninitialize();
             ole_initialized_ = false;
-        } else {
-            com_uninitialize_.reset();
+        } else if (com_initialized_) {
+            ::CoUninitialize();
+            com_initialized_ = false;
         }
         running_ = false;
         return false;
@@ -129,8 +130,9 @@ void Application::EndRun() noexcept {
     if (ole_initialized_) {
         ::OleUninitialize();
         ole_initialized_ = false;
-    } else {
-        com_uninitialize_.reset();
+    } else if (com_initialized_) {
+        ::CoUninitialize();
+        com_initialized_ = false;
     }
     running_ = false;
 }
