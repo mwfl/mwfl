@@ -257,7 +257,10 @@ struct PropertySheetDialog::State {
         const HWND current_page = PropSheet_GetCurrentPageHwnd(sheet);
         page_bounds = BoundsInClient(sheet, current_page);
         anchored_controls.clear();
-        for (const int id : {IDOK, IDCANCEL, ID_APPLY_NOW, IDHELP}) {
+        // comctl32's Apply button identifier; WTL's atlres.h formerly
+        // provided this value as ID_APPLY_NOW.
+        constexpr int kApplyButtonId = 0x3021;
+        for (const int id : {IDOK, IDCANCEL, kApplyButtonId, IDHELP}) {
             const HWND control = ::GetDlgItem(sheet, id);
             if (control != nullptr) {
                 anchored_controls.push_back({control, BoundsInClient(sheet, control)});

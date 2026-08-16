@@ -126,7 +126,10 @@ int main() {
     ::GetClientRect(pages[0].GetHwnd(), &page_after);
     if (page_after.right <= page_before.right || page_after.bottom <= page_before.bottom) return 6;
 
-    const HWND apply_button = ::GetDlgItem(native_sheet, ID_APPLY_NOW);
+    // comctl32's Apply button identifier; WTL's atlres.h formerly provided
+    // this value as ID_APPLY_NOW.
+    constexpr int kApplyButtonId = 0x3021;
+    const HWND apply_button = ::GetDlgItem(native_sheet, kApplyButtonId);
     if (apply_button == nullptr || !pages[0].SetDirty() || ::IsWindowEnabled(apply_button) == FALSE)
         return 7;
     PropSheet_PressButton(native_sheet, PSBTN_APPLYNOW);
