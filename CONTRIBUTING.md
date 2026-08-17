@@ -15,6 +15,9 @@ fixture. Provisional APIs may receive source-compatible additions.
 ./scripts/verify.ps1 -Mode Full -VisualStudio 2026
 ```
 
+Use `-BuildRoot build-local` to configure, build, and test in a separate
+writable tree instead of the repository preset directory.
+
 Visual Studio 2022 is the minimum supported IDE and Visual Studio 2026 is
 recommended. The scripts accept `-VisualStudio 2022` for compatibility checks.
 CI additionally owns AddressSanitizer and native ARM64 validation.

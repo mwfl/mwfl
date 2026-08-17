@@ -55,11 +55,11 @@
     <section id="before">
       <div class="eyebrow">Step 0</div><h2>Know what the tools do</h2>
       <ul>
-        <li><strong>Visual Studio</strong> supplies the MSVC C++ compiler, Windows SDK, ATL, debugger, and CMake.</li>
+        <li><strong>Visual Studio</strong> supplies the MSVC C++ compiler, Windows SDK, debugger, and CMake.</li>
         <li><strong>Git</strong> lets CMake download mwfl and its pinned dependencies.</li>
         <li><strong>CMake</strong> reads <code>CMakeLists.txt</code> and creates a Visual Studio build.</li>
       </ul>
-      <p>You do not need to create a <code>.sln</code> file, configure include directories, or download WTL/WIL manually.</p>
+      <p>You do not need to create a <code>.sln</code> file, configure include directories, or download WIL manually.</p>
     </section>
 
     <section id="install">
@@ -71,7 +71,6 @@
           <ul>
             <li>MSVC x64/x86 build tools</li>
             <li>C++ CMake tools for Windows</li>
-            <li>C++ ATL for the installed MSVC toolset</li>
             <li>Windows 11 SDK or a recent Windows 10 SDK</li>
           </ul>
         </li>
@@ -103,7 +102,7 @@ project(mwfl_hello LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwfl
   GIT_REPOSITORY https://github.com/mwfl/mwfl.git
-  GIT_TAG v0.1.3
+  GIT_TAG v0.1.0
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwfl)
 
@@ -177,7 +176,7 @@ int WINAPI wWinMain(
       <p>Run one of these commands from the folder containing the three files.</p>
       <pre data-title="Visual Studio 2026"><code>cmake -S . -B build -G "Visual Studio 18 2026" -A x64</code></pre>
       <pre data-title="Visual Studio 2022"><code>cmake -S . -B build -G "Visual Studio 17 2022" -A x64</code></pre>
-      <p>The first configure needs internet access and may take a minute while Git downloads mwfl, WTL, and WIL. Success ends with:</p>
+      <p>The first configure needs internet access and may take a minute while Git downloads mwfl and WIL. Success ends with:</p>
       <pre data-title="expected result"><code>-- Configuring done
 -- Generating done
 -- Build files have been written to: .../mwfl-hello/build</code></pre>
@@ -212,8 +211,6 @@ int WINAPI wWinMain(
       <div class="eyebrow">When something fails</div><h2>Troubleshooting</h2>
       <h3>“Could not find any instance of Visual Studio”</h3>
       <p>Install the Desktop development with C++ workload, use the generator matching your installed Visual Studio version, and reopen Developer PowerShell.</p>
-      <h3>ATL headers are missing</h3>
-      <p>Open Visual Studio Installer → Modify → Individual components and install C++ ATL for your MSVC toolset. ATL is not always selected by the base workload.</p>
       <h3>Git clone or FetchContent fails</h3>
       <p>Confirm <code>git --version</code> works and that GitHub is reachable. Corporate proxies may require Git proxy configuration. Retry the configure command after connectivity is restored.</p>
       <h3>Generator does not match the previous generator</h3>

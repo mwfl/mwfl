@@ -31,7 +31,6 @@ foreach(method IN ITEMS subdirectory fetchcontent)
                 -B "${method_build}"
                 -G "${MWFL_GENERATOR}" -A "${MWFL_PLATFORM}"
                 "-DMWFL_SOURCE_DIR=${MWFL_SOURCE_DIR}"
-                "-DMWFL_WTL_SOURCE_DIR=${MWFL_WTL_SOURCE_DIR}"
                 "-DMWFL_WIL_SOURCE_DIR=${MWFL_WIL_SOURCE_DIR}"
                 "-DMWFL_DEPENDENCY_MODE=SYSTEM"
         RESULT_VARIABLE method_configure_result)
@@ -56,7 +55,6 @@ execute_process(
             "-DMWFL_ENABLE_ASAN=${MWFL_ENABLE_ASAN}"
             "-DMWFL_TEST_SCINTILLA=${MWFL_EXPECT_SCINTILLA}"
             "-DMWFL_TEST_WEBVIEW2=${MWFL_EXPECT_WEBVIEW2}"
-            "-DMWFL_WTL_SOURCE_DIR=${MWFL_WTL_SOURCE_DIR}"
             "-DMWFL_WIL_SOURCE_DIR=${MWFL_WIL_SOURCE_DIR}"
             "-DMWFL_DEPENDENCY_MODE=SYSTEM"
     RESULT_VARIABLE configure_result)

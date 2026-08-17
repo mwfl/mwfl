@@ -257,7 +257,7 @@ struct PropertySheetDialog::State {
         const HWND current_page = PropSheet_GetCurrentPageHwnd(sheet);
         page_bounds = BoundsInClient(sheet, current_page);
         anchored_controls.clear();
-        // comctl32's Apply button identifier; WTL's atlres.h formerly
+        // comctl32's Apply button identifier; kept local so no framework
         // provided this value as ID_APPLY_NOW.
         constexpr int kApplyButtonId = 0x3021;
         for (const int id : {IDOK, IDCANCEL, kApplyButtonId, IDHELP}) {

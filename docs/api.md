@@ -390,7 +390,7 @@ thread; `MessageLoop::Current()` returns that loop from the same thread and
 sheets register a non-owning `mwfl::MessageFilter` on the current loop; a filter
 object must outlive its registration and unregister before destruction.
 
-Filters run **newest-first**, matching the WTL loop this replaced: a modeless
+Filters run **newest-first**: a modeless
 dialog created after the main window sees Escape, Enter, and Tab before the
 main window's accelerator table can translate them. A filter appears in the
 chain once (`AddFilter` on a registered filter is a successful no-op), and a
@@ -399,10 +399,8 @@ filter may add or remove filters — including itself — from inside
 exit code; a custom `MessagePump::Run(MessageLoop&)` calls
 `loop.PreTranslate(message)` before `TranslateMessage`/`DispatchMessageW`.
 
-The WTL module behind `Application` is process-wide: it is initialized on the
-first run, shared by every later `Application` in the process, and terminated
-once at process exit, so an application may construct and run `Application`
-repeatedly (for example a test harness or a restart flow) without crashing.
+`Application` owns no process-wide framework module, so an application may
+construct and run it repeatedly (for example a test harness or restart flow).
 
 ## Wait-aware message pump
 
@@ -427,9 +425,8 @@ owned handle copy.
 
 ## Third-party headers available to consumers
 
-`mwfl::ui` propagates the pinned WTL and Microsoft WIL include directories in
-both the build tree and the installed package, but no public mwfl header
-includes WIL and only `mwfl/window.h` includes ATL (for its base class).
+`mwfl::ui` propagates the pinned Microsoft WIL include directory in both the
+build tree and installed package, but no public mwfl header includes WIL.
 Applications that want WIL's RAII helpers include them explicitly:
 
 ```cpp

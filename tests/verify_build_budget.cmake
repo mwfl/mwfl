@@ -72,11 +72,11 @@ endif()
 
 file(STRINGS "${PROJECT_ROOT}/include/mwfl/window.h" window_lines)
 list(LENGTH window_lines window_line_count)
-# The retained appearance accessors and typed theme-change callback added 22
-# focused lines while their implementation remains outside the template.
-if(window_line_count GREATER 550)
+# The native class-registration and HWND-binding engine replaces the former
+# external frame base while keeping the public template self-contained.
+if(window_line_count GREATER 600)
     message(FATAL_ERROR
-        "window.h exceeded its post-appearance 550-line budget: ${window_line_count}")
+        "window.h exceeded its native-engine 600-line budget: ${window_line_count}")
 endif()
 
 message(STATUS

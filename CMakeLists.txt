@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(mwfl VERSION 0.1.3 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
+project(mwfl VERSION 0.1.0 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -99,7 +99,6 @@ add_library(mwfl STATIC
     src/splitter.cpp
     src/tab_workspace.cpp
     src/tray_icon.cpp
-    src/module.cpp
     src/timer.cpp
     src/text_file.cpp
     src/text_history.cpp
@@ -323,7 +322,6 @@ if(MWFL_BUILD_WEBVIEW2)
         "$<BUILD_INTERFACE:${MWFL_WEBVIEW2_LOADER}>" runtimeobject)
 endif()
 
-get_target_property(mwfl_wtl_include_dirs WTL::WTL INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(mwfl_wil_include_dirs WIL::WIL INTERFACE_INCLUDE_DIRECTORIES)
 
 target_compile_features(mwfl PUBLIC cxx_std_20)
@@ -349,7 +347,6 @@ target_include_directories(mwfl
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(mwfl SYSTEM PUBLIC
-    $<BUILD_INTERFACE:${mwfl_wtl_include_dirs}>
     $<BUILD_INTERFACE:${mwfl_wil_include_dirs}>)
 target_link_libraries(mwfl
     PRIVATE

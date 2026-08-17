@@ -37,7 +37,7 @@ public:
     // successful no-op. Returns false only for nullptr or allocation failure.
     bool AddFilter(MessageFilter* filter) noexcept;
     void RemoveFilter(MessageFilter* filter) noexcept;
-    // Runs registered filters newest-first (the WTL order this replaced) and
+    // Runs registered filters newest-first and
     // returns true when one consumed the message. A later registration such
     // as a modeless dialog therefore sees keystrokes before the main window's
     // accelerator filter. Filters may add or remove filters, including
@@ -46,7 +46,7 @@ public:
     // Pumps until WM_QUIT and returns its exit code.
     int Run();
 
-    // Explicit per-thread registry replacing WTL's module loop map. Activate
+    // Explicit per-thread registry. Activate
     // pushes this loop as the calling thread's current loop; Deactivate pops
     // it and is a no-op on any other thread or when not current.
     void Activate() noexcept;

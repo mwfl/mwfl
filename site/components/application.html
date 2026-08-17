@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="mwfl::Application manages the WTL module, message loop, main window, and cleanup on every failure path.">
+  <meta name="description" content="mwfl::Application manages the message loop, main window, and cleanup on every failure path.">
   <link rel="canonical" href="https://mwfl.github.io/components/application.html">
   <title>Application — mwfl</title>
   <meta name="theme-color" content="#f7f9ff">
@@ -28,7 +28,7 @@
   </header>
   <main id="main" class="shell prose">
     <div class="eyebrow">Component</div><h1>mwfl::Application</h1>
-    <p>Application is the process-entry adapter. It stores a non-owning HINSTANCE and manages the WTL CAppModule, CMessageLoop, main-window object, optional COM apartment, and reverse-order cleanup on every failure path.</p>
+    <p>Application is the process-entry adapter. It stores a non-owning HINSTANCE and manages the message loop, main-window object, optional COM apartment, and reverse-order cleanup on every failure path.</p>
     <h2>Complete example</h2>
     <pre data-title="application/main.cpp"><code>#include &lt;mwfl/mwfl.h&gt;
 
@@ -46,7 +46,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     }
 }</code></pre>
     <h2>Lifetime guarantees</h2>
-    <ol><li>Initialize the single WTL <code>_Module</code>.</li><li>Register the stack-owned message loop.</li><li>Construct the main-window C++ object on the stack and create its HWND.</li><li>Run the message loop and return its exit code.</li><li>On normal and controlled failure paths, remove the message loop before terminating <code>_Module</code>.</li></ol>
+    <ol><li>Activate the stack-owned message loop.</li><li>Construct the main-window C++ object on the stack and create its HWND.</li><li>Run the message loop and return its exit code.</li><li>On normal and controlled failure paths, deactivate the message loop and release optional COM state.</li></ol>
     <div class="callout">Application is neither copyable nor movable and manages one active run at a time. Keep a final catch boundary in wWinMain.</div>
     <p>Repository source: <a href="https://github.com/mwfl/mwfl/tree/main/examples/application">examples/application</a></p>
   </main>

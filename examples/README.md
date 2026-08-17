@@ -80,7 +80,7 @@ Run a target from its configuration directory, for example:
 ./build/x64/examples/timer/Debug/mwfl_timer_demo.exe
 ```
 
-The examples remain native: every component is a real child HWND and direct Win32/WTL interoperability remains available. The wrappers provide ownership and typed ergonomics, not a closed rendering framework.
+The examples remain native: every component is a real child HWND and direct Win32 interoperability remains available. The wrappers provide ownership and typed ergonomics, not a closed rendering framework.
 
 ## Agent retrieval guide
 

@@ -42,7 +42,7 @@ void MessageLoop::RemoveFilter(MessageFilter* filter) noexcept {
 }
 
 bool MessageLoop::PreTranslate(MSG& message) {
-    // Newest filter first, matching the WTL loop this replaced: a modeless
+    // Newest filter first: a modeless
     // dialog or property sheet registers after the main window's accelerator
     // filter and must see keystrokes before it. Iteration is index-based and
     // resynchronizes after every callback, so a filter that adds or removes
