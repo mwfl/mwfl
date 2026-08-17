@@ -36,6 +36,5 @@ Preserve the documented LRESULT for messages such as `WM_QUERYENDSESSION` and
 | `WM_QUERYENDSESSION`, `WM_ENDSESSION` | save product state and return the required consent value |
 
 See `examples/system_lifecycle`, `examples/self_drawn_host`, and the C++20
-the lifecycle and modern API tests. All handlers run inside the same exception-safe
-WTL WindowProc boundary as other user message handlers. Existing WTL message
-maps remain supported for alternate map IDs and specialized chaining.
+lifecycle and modern API tests. All handlers run inside the same exception-safe
+native window-procedure boundary as other user message handlers.

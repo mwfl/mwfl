@@ -247,9 +247,7 @@ int TestAcceleratorLifetime() {
     return result;
 }
 
-// Two Application runs in one process: the WTL module must survive the first
-// EndRun. Before the process-wide module hold this crashed in Debug at window
-// creation and in Release inside CAppModule::Term.
+// Multiple Application runs in one process remain independent.
 int TestSecondApplicationRun() {
     const ACCEL entry{FVIRTKEY, VK_F5, 1001};
     AcceleratorWindow::table = ::CreateAcceleratorTableW(
@@ -264,8 +262,7 @@ int TestSecondApplicationRun() {
 }
 
 // Filter order: the modeless dialog registers its filter after the main
-// window's accelerator filter and must still see Escape first, exactly as
-// under the WTL loop.
+// window's accelerator filter and must still see Escape first.
 class OrderWindow final : public mwfl::WindowBase {
 public:
     static inline int accelerator_hits = 0;

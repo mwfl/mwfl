@@ -39,7 +39,7 @@ requested so UI applications acquire no hidden service or background runtime.
   <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/mwfl-showcase-40s.gif" alt="MWFL applications running with populated native controls"></a>
 </p>
 
-**v0.1.3 is the current public preview.** The repository contains **45 compiled
+**v0.1.0 is the current public preview.** The repository contains **45 compiled
 examples** plus six standalone applications in the mwfl organization. The downloadable release packages are VS2026/MSVC x64; source and
 CI cover x64 and ARM64. WebView2, Scintilla, graphics, imaging, printing, OLE,
 Shell, Ribbon, and MDI integrations remain separately requested optional
@@ -114,7 +114,7 @@ project(my_app LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwfl
   GIT_REPOSITORY https://github.com/mwfl/mwfl.git
-  GIT_TAG v0.1.3
+  GIT_TAG v0.1.0
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwfl)
 
@@ -133,7 +133,7 @@ cmake --build build --config Debug
 Use `Visual Studio 17 2022` with Visual Studio 2022. The complete
 [setup guide](https://mwfl.github.io/building.html) also covers an
 installed `find_package` package, the Visual Studio folder workflow, VS Code,
-offline WTL/WIL sources, and building this repository.
+offline WIL sources, and building this repository.
 
 ## What is included
 
@@ -264,7 +264,7 @@ Screenshot and product-quality reviews follow the
 ## Build this repository
 
 The authoritative 0.1 public-preview development and acceptance environment is Windows 10
-1809 or newer, x64, Visual Studio 2026 with MSVC, a Windows SDK and C++ ATL,
+1809 or newer, x64, Visual Studio 2026 with MSVC and a Windows SDK,
 CMake 3.21 or newer, and C++20.
 
 ```powershell
@@ -282,9 +282,11 @@ ctest --preset vs2026-x64-release
 
 For repository development, `./scripts/doctor.ps1` discovers the supported
 toolchains and `./scripts/verify.ps1 -Mode Fast` runs the standard edit loop.
+If the preset build tree is unavailable or read-only, pass an independent
+writable directory with `-BuildRoot build-local`.
 
 The project rejects non-Windows, non-MSVC, and 32-bit
-configurations. The v0.1.3 validation matrix contains 165 core tests and
+configurations. The v0.1.0 validation matrix contains 170 core tests and
 173 tests with all optional integrations enabled. Both VS2026 x64 Debug and
 Release optional matrices pass, including public-header independence, package
 consumption,
@@ -295,7 +297,7 @@ quality coverage.
 
 ## Dependencies
 
-CMake fetches pinned official WTL and Microsoft WIL revisions. Exact sources
+CMake fetches a pinned Microsoft WIL revision. Exact sources
 and licenses are recorded in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 Both include directories propagate through `mwfl::ui`, so applications may
 `#include <wil/resource.h>` for WIL's RAII helpers; no public mwfl header
@@ -330,13 +332,13 @@ includes WIL for you. For controlled environments, see the
 
 ## License
 
-[MIT](LICENSE). WTL, WIL, and other third-party dependencies retain their own
+[MIT](LICENSE). WIL and other third-party dependencies retain their own
 licenses.
 
 ## Acknowledgements
 
 mwfl builds on decades of Windows desktop engineering. Thank you to the teams
-and communities behind the Windows API, MFC, WTL, WIL, and Win32++ for the
+and communities behind the Windows API, MFC, WIL, and Win32++ for the
 designs, documentation, examples, and hard-won lessons that helped make native
 Windows development more approachable. Thanks also to the WebView2 and
 Scintilla projects for the optional native integrations used by the reference

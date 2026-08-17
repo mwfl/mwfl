@@ -66,7 +66,7 @@ foreach(content_file IN ITEMS docs/agent-usage.md docs/llms.txt docs/llms-full.t
 endforeach()
 
 file(READ "${PROJECT_ROOT}/templates/basic-app/CMakeLists.txt" basic_cmake)
-if(NOT basic_cmake MATCHES "GIT_TAG (v0\\.1\\.3|[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]+)" OR
+if(NOT basic_cmake MATCHES "GIT_TAG (v0\\.1\\.0|[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]+)" OR
    NOT basic_cmake MATCHES "add_executable\\(mwfl_basic_app WIN32")
-    message(FATAL_ERROR "basic template must pin v0.1.3 or an immutable revision and build a WIN32 executable")
+    message(FATAL_ERROR "basic template must pin v0.1.0 or an immutable revision and build a WIN32 executable")
 endif()

@@ -112,8 +112,7 @@ private:
             MainWindowType main_window(
                 std::forward<Arguments>(arguments)...);
             main_window.ConfigureWindowOptions(options);
-            // Same values as ATL's CWindow::rcDefault: the right-left width
-            // computation wraps back to CW_USEDEFAULT for the default size.
+            // Preserve CW_USEDEFAULT for the default position and size.
             RECT bounds = options.use_default_bounds
                 ? RECT{CW_USEDEFAULT, CW_USEDEFAULT, 0, 0}
                 : detail::ResolveWindowBounds(options);
@@ -176,7 +175,6 @@ private:
     MessageLoop message_loop_;
     bool com_initialized_ = false;
     bool ole_initialized_ = false;
-    bool module_held_ = false;
     bool loop_registered_ = false;
     bool running_ = false;
 };

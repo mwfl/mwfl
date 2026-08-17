@@ -21,8 +21,7 @@ foreach ($item in $installations) {
     $features = @(
         if ($item.CMake -and $item.CTest) { 'CMake' } else { 'no CMake' }
         if ($item.CppX64) { 'x64 C++' } else { 'no x64 C++' }
-        if ($item.CppARM64) { 'ARM64 C++' } else { 'no ARM64 C++' }
-        if ($item.ATL) { 'ATL' } else { 'no ATL' })
+        if ($item.CppARM64) { 'ARM64 C++' } else { 'no ARM64 C++' })
     Write-Host "  Visual Studio $($item.Year): $($item.Version) ($($features -join ', '))"
 }
 
@@ -37,7 +36,7 @@ Write-Host "  Fast validation: ./scripts/verify.ps1 -Mode Fast -VisualStudio $($
 Write-Host '  Reproduce this environment: open .vsconfig with Visual Studio Installer'
 
 $missingOffline = @()
-foreach ($name in @('MWFL_WTL_SOURCE_DIR', 'MWFL_WIL_SOURCE_DIR')) {
+foreach ($name in @('MWFL_WIL_SOURCE_DIR')) {
     if (-not [Environment]::GetEnvironmentVariable($name)) {
         $missingOffline += $name
     }

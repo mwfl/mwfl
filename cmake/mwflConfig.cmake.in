@@ -4,7 +4,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Dependencies.cmake")
 mwfl_resolve_dependencies()
 include("${CMAKE_CURRENT_LIST_DIR}/mwflTargets.cmake")
 set_property(TARGET mwfl::ui APPEND PROPERTY
-    INTERFACE_LINK_LIBRARIES WTL::WTL WIL::WIL)
+    INTERFACE_LINK_LIBRARIES WIL::WIL)
 
 if(TARGET mwfl::d2d)
     set(mwfl_d2d_FOUND TRUE)

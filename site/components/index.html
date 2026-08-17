@@ -63,7 +63,7 @@
       </header>
 
       <section id="application" class="doc-section">
-        <div class="doc-heading"><div><span class="tag">Foundation</span><h2>Application</h2></div><p>Initializes WTL, creates the stack-owned main window, runs the message loop, and guarantees cleanup.</p></div>
+        <div class="doc-heading"><div><span class="tag">Foundation</span><h2>Application</h2></div><p>Creates the stack-owned main window, runs the message loop, and guarantees cleanup.</p></div>
         <div class="example-grid single-code">
           <pre data-title="Complete entry point"><code>int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     return mwfl::RunApplication&lt;MainWindow&gt;(instance, show);

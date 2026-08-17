@@ -132,13 +132,24 @@ public:
         }
     }
 
-    BEGIN_MSG_MAP(AdvancedWindow)
-        MESSAGE_HANDLER(mwfl::WindowWakeup::Message(), OnWake)
-        MESSAGE_HANDLER(WM_APP + 8, OnVerifyResources)
-        MESSAGE_HANDLER(WM_DPICHANGED, OnDpiChanged)
-        MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
-        CHAIN_MSG_MAP(BaseWindow)
-    END_MSG_MAP()
+    BOOL ProcessWindowMessage(HWND window, UINT message, WPARAM wparam,
+                              LPARAM lparam, LRESULT& result,
+                              DWORD message_map_id = 0) override {
+        BOOL handled = TRUE;
+        if (message == mwfl::WindowWakeup::Message()) {
+            result = OnWake(message, wparam, lparam, handled);
+        } else if (message == WM_APP + 8) {
+            result = OnVerifyResources(message, wparam, lparam, handled);
+        } else if (message == WM_DPICHANGED) {
+            result = OnDpiChanged(message, wparam, lparam, handled);
+        } else if (message == WM_KEYDOWN) {
+            result = OnKeyDown(message, wparam, lparam, handled);
+        } else {
+            handled = FALSE;
+        }
+        return handled || BaseWindow::ProcessWindowMessage(
+            window, message, wparam, lparam, result, message_map_id);
+    }
 
 private:
     int injected_value_ = 0;

@@ -32,7 +32,6 @@ file(READ "${PROJECT_ROOT}/.vsconfig" vsconfig)
 foreach(component IN ITEMS
         Microsoft.VisualStudio.Workload.NativeDesktop
         Microsoft.VisualStudio.Component.VC.CMake.Project
-        Microsoft.VisualStudio.Component.VC.ATL
         Microsoft.VisualStudio.Component.VC.Tools.ARM64)
     if(NOT vsconfig MATCHES "${component}")
         message(FATAL_ERROR ".vsconfig is missing required component: ${component}")
