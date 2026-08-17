@@ -1,6 +1,6 @@
 # mwfl examples
 
-The repository includes 45 focused executables. GUI examples use the real `mwfl::Application` and recommended `mwfl::WindowBase` path; CLI examples use a Unicode console boundary without acquiring the UI component. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, document/MDI/Ribbon workspaces, graphics interop, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence. Product applications extracted from this catalog live in separate repositories: [Folder Compare](https://github.com/mwfl/folder-compare), [Folder Explorer](https://github.com/mwfl/folder-explorer), [Hex Editor](https://github.com/mwfl/hex-editor), [Markdown Editor](https://github.com/mwfl/markdown-editor), [PDF Reader](https://github.com/mwfl/pdf-reader), and [SQLite Viewer](https://github.com/mwfl/sqlite-viewer).
+The repository includes 54 focused executables. GUI examples use the real `mwfl::Application` and recommended `mwfl::WindowBase` path; CLI and Foundation examples remain independently requested and do not acquire the UI component. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, document/MDI/Ribbon workspaces, graphics interop, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence. Product applications extracted from this catalog live in separate repositories: [Folder Compare](https://github.com/mwfl/folder-compare), [Folder Explorer](https://github.com/mwfl/folder-explorer), [Hex Editor](https://github.com/mwfl/hex-editor), [Markdown Editor](https://github.com/mwfl/markdown-editor), [PDF Reader](https://github.com/mwfl/pdf-reader), and [SQLite Viewer](https://github.com/mwfl/sqlite-viewer).
 
 | Directory | Target | Focus |
 |---|---|---|
@@ -23,6 +23,15 @@ The repository includes 45 focused executables. GUI examples use the real `mwfl:
 | `com_sta` | `mwfl_com_sta_demo` | Application-owned COM STA initialization and cleanup |
 | `cli_basic` | `mwfl_cli_basic` | Unicode command routing, stdout/stderr, and stable exit codes |
 | `cli_worker` | `mwfl_cli_worker` | Cooperative `std::jthread` and `std::stop_token` shutdown |
+| `core_foundation` | `mwfl_core_foundation` | Errors, handles, Unicode, cancellable wait |
+| `service_host` | `mwfl_service_host` | Service state, console host, and SCM dispatcher |
+| `process_runner` | `mwfl_process_runner` | Structured child process launch and wait |
+| `ipc_framed` | `mwfl_ipc_framed` | Bounded local Named Pipe frames |
+| `diagnostics_pipeline` | `mwfl_diagnostics_pipeline` | Structured events, redaction, and bounded sinks |
+| `security_dpapi` | `mwfl_security_dpapi` | Current-user DPAPI and cleared plaintext |
+| `deployment_restart` | `mwfl_deployment_restart` | Package identity and restart registration |
+| `foundation_stack` | `mwfl_foundation_stack` | Process, IPC, and diagnostics composition |
+| `foundation_overview` | `mwfl_foundation_overview` | All Foundation targets together |
 | `controls` | `mwfl_controls_demo` | All ten supported wrappers: text, buttons, grouping, choices, list, progress, slider, commands, and timer |
 | `common_controls` | `mwfl_common_controls_demo` | TreeView, ListView, Toolbar, DateTimePicker, and every specialized Common Controls family |
 | `self_drawn_host` | `mwfl_self_drawn_host_demo` | Worker-driven dirty frames, GDI paint, wake token, and wait-aware pump |

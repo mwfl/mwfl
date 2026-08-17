@@ -94,11 +94,11 @@ relax the Windows 10+, C++20, x64/ARM64, explicit-ownership design constraints.
 
 ## Approved foundation expansion
 
-The approved dependency order is documented in
-[`foundation-roadmap.md`](foundation-roadmap.md). Windows Service hosting is an
-opt-in component, preceded by shared handle/wait/error primitives and followed
-by process/job supervision, named-pipe IPC, diagnostics, and focused security
-and deployment helpers.
+The approved dependency order and the explicit post-0.1.9 deferrals are
+documented in [`foundation-roadmap.md`](foundation-roadmap.md). The 0.1.1-0.1.9
+train ships opt-in core, Service host, process, named-pipe IPC, diagnostics,
+security, and deployment slices; see
+[`foundation-releases.md`](foundation-releases.md) for their exact examples.
 
 ## Candidate capabilities requiring an explicit project decision
 

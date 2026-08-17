@@ -39,7 +39,7 @@ requested so UI applications acquire no hidden service or background runtime.
   <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/mwfl-showcase-40s.gif" alt="MWFL applications running with populated native controls"></a>
 </p>
 
-**v0.1.0 is the current public preview.** The repository contains **45 compiled
+**v0.1.9 is the current public preview.** The repository contains **54 compiled
 examples** plus six standalone applications in the mwfl organization. The downloadable release packages are VS2026/MSVC x64; source and
 CI cover x64 and ARM64. WebView2, Scintilla, graphics, imaging, printing, OLE,
 Shell, Ribbon, and MDI integrations remain separately requested optional
@@ -114,7 +114,7 @@ project(my_app LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwfl
   GIT_REPOSITORY https://github.com/mwfl/mwfl.git
-  GIT_TAG v0.1.0
+  GIT_TAG v0.1.9
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwfl)
 
@@ -180,13 +180,13 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
 
-The repository contains 45 independently buildable examples. Each link opens
+The repository contains 54 independently buildable examples. Each link opens
 the complete source. Start with **Hello** for the smallest application,
 **Controls** for the basic widget set, or **Hot corners** for a complete
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 45 runnable examples and six standalone applications</strong></summary>
+<summary><strong>Browse all 54 runnable examples and six standalone applications</strong></summary>
 
 <br>
 
@@ -211,6 +211,15 @@ multi-monitor utility.
 | COM STA | [examples/com_sta/main.cpp](examples/com_sta/main.cpp) | COM apartment lifecycle |
 | CLI basic | [examples/cli_basic/main.cpp](examples/cli_basic/main.cpp) | Unicode command routing and stable exit codes |
 | CLI worker | [examples/cli_worker/main.cpp](examples/cli_worker/main.cpp) | Cooperative `std::jthread`/`stop_token` shutdown |
+| Foundation Core | [examples/core_foundation/main.cpp](examples/core_foundation/main.cpp) | Errors, handles, Unicode, cancellable wait |
+| Service Host | [examples/service_host/main.cpp](examples/service_host/main.cpp) | Service state, console host, and SCM dispatcher |
+| Process Runner | [examples/process_runner/main.cpp](examples/process_runner/main.cpp) | Structured launch, quoting, wait, and exit |
+| Framed IPC | [examples/ipc_framed/main.cpp](examples/ipc_framed/main.cpp) | Bounded local Named Pipe frames |
+| Diagnostics Pipeline | [examples/diagnostics_pipeline/main.cpp](examples/diagnostics_pipeline/main.cpp) | Structured redaction and bounded sinks |
+| DPAPI Security | [examples/security_dpapi/main.cpp](examples/security_dpapi/main.cpp) | Current-user protection and secure clearing |
+| Deployment Lifecycle | [examples/deployment_restart/main.cpp](examples/deployment_restart/main.cpp) | Package identity and scoped restart registration |
+| Foundation Stack | [examples/foundation_stack/main.cpp](examples/foundation_stack/main.cpp) | Process, IPC, and diagnostics composition |
+| Foundation Overview | [examples/foundation_overview/main.cpp](examples/foundation_overview/main.cpp) | All Foundation targets acquired together |
 | Controls | [examples/controls/main.cpp](examples/controls/main.cpp) | Complete form-control gallery |
 | Common Controls | [examples/common_controls/main.cpp](examples/common_controls/main.cpp) | Complete specialized-control gallery |
 | Self-drawn host | [examples/self_drawn_host/main.cpp](examples/self_drawn_host/main.cpp) | Worker-driven native drawing |

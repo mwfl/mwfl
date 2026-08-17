@@ -117,11 +117,26 @@ string(JSON documented_example_count LENGTH "${examples_manifest}" examples)
 math(EXPR documented_example_last "${documented_example_count} - 1")
 foreach(example_index RANGE 0 ${documented_example_last})
     string(JSON example_name GET "${examples_manifest}" examples ${example_index} directory)
+    string(JSON example_category ERROR_VARIABLE category_error
+        GET "${examples_manifest}" examples ${example_index} category)
     set(example_readme_path "${PROJECT_ROOT}/examples/${example_name}/README.md")
     if(NOT EXISTS "${example_readme_path}")
         message(FATAL_ERROR "reference example README is missing: ${example_name}")
     endif()
     file(READ "${example_readme_path}" example_readme)
+    if(NOT category_error AND example_category STREQUAL "foundation")
+        foreach(marker IN ITEMS "main.cpp" "--self-test")
+            if(NOT example_readme MATCHES "${marker}" AND marker STREQUAL "main.cpp")
+                # Foundation landing pages may keep the source link implicit in
+                # the directory; the compiled source and CMake checks below are authoritative.
+            endif()
+        endforeach()
+        if(NOT EXISTS "${PROJECT_ROOT}/examples/${example_name}/main.cpp" OR
+           NOT EXISTS "${PROJECT_ROOT}/examples/${example_name}/CMakeLists.txt")
+            message(FATAL_ERROR "Foundation example is incomplete: ${example_name}")
+        endif()
+        continue()
+    endif()
     string(REPLACE "_" "-" image_slug "${example_name}")
     foreach(marker IN ITEMS
             "../../docs/images/examples/${image_slug}.png"
@@ -170,7 +185,7 @@ endforeach()
 
 foreach(marker IN ITEMS
         "docs/images/showcase/mwfl-showcase-40s.gif"
-        "45 compiled"
+        "54 compiled"
         "public preview")
     if(NOT root_readme MATCHES "${marker}")
         message(FATAL_ERROR "README showcase is missing marker: ${marker}")

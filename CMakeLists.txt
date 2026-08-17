@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(mwfl VERSION 0.1.0 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
+project(mwfl VERSION 0.1.9 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -61,6 +61,97 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(Dependencies)
 mwfl_resolve_dependencies()
 
+add_library(mwfl_core STATIC src/core.cpp)
+set_target_properties(mwfl_core PROPERTIES EXPORT_NAME core)
+add_library(mwfl::core ALIAS mwfl_core)
+target_compile_features(mwfl_core PUBLIC cxx_std_20)
+target_compile_definitions(mwfl_core PUBLIC UNICODE _UNICODE WINVER=0x0A00 _WIN32_WINNT=0x0A00)
+target_compile_options(mwfl_core PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWFL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwfl_core PRIVATE /WX)
+endif()
+target_include_directories(mwfl_core PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+add_library(mwfl_service STATIC src/service.cpp)
+set_target_properties(mwfl_service PROPERTIES EXPORT_NAME service)
+add_library(mwfl::service ALIAS mwfl_service)
+target_compile_features(mwfl_service PUBLIC cxx_std_20)
+target_compile_options(mwfl_service PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWFL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwfl_service PRIVATE /WX)
+endif()
+target_include_directories(mwfl_service PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwfl_service PUBLIC mwfl_core PRIVATE advapi32)
+
+add_library(mwfl_process STATIC src/process.cpp)
+set_target_properties(mwfl_process PROPERTIES EXPORT_NAME process)
+add_library(mwfl::process ALIAS mwfl_process)
+target_compile_features(mwfl_process PUBLIC cxx_std_20)
+target_compile_options(mwfl_process PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWFL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwfl_process PRIVATE /WX)
+endif()
+target_include_directories(mwfl_process PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwfl_process PUBLIC mwfl_core)
+
+add_library(mwfl_ipc STATIC src/ipc.cpp)
+set_target_properties(mwfl_ipc PROPERTIES EXPORT_NAME ipc)
+add_library(mwfl::ipc ALIAS mwfl_ipc)
+target_compile_features(mwfl_ipc PUBLIC cxx_std_20)
+target_compile_options(mwfl_ipc PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWFL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwfl_ipc PRIVATE /WX)
+endif()
+target_include_directories(mwfl_ipc PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwfl_ipc PUBLIC mwfl_core)
+
+add_library(mwfl_diagnostics STATIC src/diagnostics.cpp)
+set_target_properties(mwfl_diagnostics PROPERTIES EXPORT_NAME diagnostics)
+add_library(mwfl::diagnostics ALIAS mwfl_diagnostics)
+target_compile_features(mwfl_diagnostics PUBLIC cxx_std_20)
+target_compile_options(mwfl_diagnostics PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWFL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwfl_diagnostics PRIVATE /WX)
+endif()
+target_include_directories(mwfl_diagnostics PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwfl_diagnostics PUBLIC mwfl_core)
+
+add_library(mwfl_security STATIC src/security.cpp)
+set_target_properties(mwfl_security PROPERTIES EXPORT_NAME security)
+add_library(mwfl::security ALIAS mwfl_security)
+target_compile_features(mwfl_security PUBLIC cxx_std_20)
+target_compile_options(mwfl_security PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWFL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwfl_security PRIVATE /WX)
+endif()
+target_include_directories(mwfl_security PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwfl_security PUBLIC mwfl_core PRIVATE crypt32)
+
+add_library(mwfl_deployment STATIC src/deployment.cpp)
+set_target_properties(mwfl_deployment PROPERTIES EXPORT_NAME deployment)
+add_library(mwfl::deployment ALIAS mwfl_deployment)
+target_compile_features(mwfl_deployment PUBLIC cxx_std_20)
+target_compile_options(mwfl_deployment PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWFL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwfl_deployment PRIVATE /WX)
+endif()
+target_include_directories(mwfl_deployment PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwfl_deployment PUBLIC mwfl_core)
+
 add_library(mwfl STATIC
     src/appearance.cpp
     src/application.cpp
@@ -107,6 +198,7 @@ add_library(mwfl STATIC
 # `mwfl::ui` is the public target for the native Windows UI layer.
 set_target_properties(mwfl PROPERTIES EXPORT_NAME ui)
 add_library(mwfl::ui ALIAS mwfl)
+target_link_libraries(mwfl PUBLIC mwfl_core)
 
 add_library(mwfl_d2d STATIC src/d2d_host.cpp)
 add_library(mwfl::d2d ALIAS mwfl_d2d)
@@ -358,7 +450,7 @@ target_link_libraries(mwfl
         ole32)
 target_link_libraries(mwfl PRIVATE oleacc uuid uxtheme)
 
-install(TARGETS mwfl mwfl_d2d mwfl_d3d mwfl_imaging mwfl_printing mwfl_ole mwfl_shell mwfl_ribbon mwfl_mdi mwfl_graphics
+install(TARGETS mwfl_core mwfl_service mwfl_process mwfl_ipc mwfl_diagnostics mwfl_security mwfl_deployment mwfl mwfl_d2d mwfl_d3d mwfl_imaging mwfl_printing mwfl_ole mwfl_shell mwfl_ribbon mwfl_mdi mwfl_graphics
     EXPORT mwflTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
@@ -400,6 +492,7 @@ install(FILES
     docs/llms.txt
     docs/llms-full.txt
     docs/scope-map.md
+    docs/foundation-releases.md
     docs/release-readiness.md
     docs/windows-ui-modernization-plan.md
     docs/parity.json
@@ -460,12 +553,15 @@ if(MWFL_BUILD_TESTS)
     target_compile_definitions(mwfl PRIVATE MWFL_TESTING)
 endif()
 
+if(MWFL_BUILD_TESTS)
+    enable_testing()
+endif()
+
 if(MWFL_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
 if(MWFL_BUILD_TESTS)
-    enable_testing()
     add_subdirectory(agent-evals/fixtures)
     add_subdirectory(tests)
     if(MWFL_ENABLE_ASAN)

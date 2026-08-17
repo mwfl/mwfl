@@ -1,22 +1,18 @@
-# Windows Service application design preview
+# Windows Service application
 
-Windows Service support is an approved opt-in foundation component, but
-`mwfl::service` is not implemented yet. The examples below are the F2 API
-acceptance shape, not currently compilable public API. Keeping them here makes
-the intended developer experience reviewable without pretending the symbols
-already ship.
+`mwfl::service` is an opt-in Foundation component. Its 0.1.2 preview slice
+provides a single-service SCM host, the same callback under a console debug
+host, and a testable status-transition model. Service installation and
+management remain application/deployment-tool responsibilities.
 
 ## One application body, two hosts
 
 The service business object should know only about cooperative cancellation:
 
 ```cpp
-class IndexingWorker {
-public:
-    int Run(std::stop_token stop) {
-        while (!stop.stop_requested()) ProcessOneBatch(stop);
-        return 0;
-    }
+auto run_indexer = [](std::stop_token stop) -> mwfl::Result<void> {
+    while (!stop.stop_requested()) ProcessOneBatch(stop);
+    return {};
 };
 ```
 
@@ -24,7 +20,9 @@ During development, the executable runs the same object as a console program:
 
 ```cpp
 int wmain() {
-    return mwfl::RunServiceConsole<IndexingWorker>(L"MWFL indexing worker");
+    mwfl::ServiceDefinition service{
+        L"MwflIndexingWorker", L"MWFL indexing worker"};
+    return mwfl::RunServiceConsole(service, run_indexer);
 }
 ```
 
@@ -35,11 +33,9 @@ The production entry point selects the SCM host explicitly:
 
 ```cpp
 int wmain() {
-    return mwfl::RunService<IndexingWorker>({
-        .name = L"MwflIndexingWorker",
-        .accepted_controls = mwfl::ServiceControls::stop |
-                             mwfl::ServiceControls::shutdown,
-    });
+    mwfl::ServiceDefinition service{
+        L"MwflIndexingWorker", L"MWFL indexing worker"};
+    return mwfl::RunWindowsService(service, run_indexer);
 }
 ```
 
@@ -47,21 +43,20 @@ No exception may cross `ServiceMain` or the control-handler callback. Starting,
 running, stop-pending, and stopped status transitions remain observable and
 carry native and service-specific exit codes.
 
-## Explicit management CLI
+## Explicit management boundary
 
 Installation is a separate elevated management action rather than a startup
 side effect:
 
 ```text
-mwfl-service-tool install --name MwflIndexingWorker --binary C:\Apps\worker.exe
-mwfl-service-tool query   --name MwflIndexingWorker
-mwfl-service-tool start   --name MwflIndexingWorker
-mwfl-service-tool stop    --name MwflIndexingWorker
-mwfl-service-tool remove  --name MwflIndexingWorker
+sc.exe create MwflIndexingWorker binPath= C:\Apps\worker.exe
+sc.exe start MwflIndexingWorker
+sc.exe stop MwflIndexingWorker
+sc.exe delete MwflIndexingWorker
 ```
 
-The F2 integration test will use a unique test name, verify start/control/stop,
-remove the service in success and failure paths, and confirm that no SCM state
-is left behind. The first implementation supports only
+The repository's non-elevated tests cover the pure state machine and console
+host. An elevated install/start/control/remove integration test is still a
+roadmap gate and is not claimed by 0.1.2. The implementation supports only
 `SERVICE_WIN32_OWN_PROCESS`; driver and shared-process services remain outside
 scope.

@@ -36,6 +36,22 @@ process supervision, IPC, diagnostic sinks, credentials, or deployment policy.
 
 ## Delivery order
 
+## 0.1.9 delivery status
+
+The 0.1.1-0.1.9 preview train has delivered the dependency boundaries and a
+focused, runnable slice of every component below. See
+[`foundation-releases.md`](foundation-releases.md) for the version-to-example
+map. The broader F2-F6 bullets remain the roadmap for post-0.1.9 expansion;
+they are not implied by the presence of a component target.
+
+Delivered today: shared errors/results/handles/Unicode/wait; a single-service
+SCM and console host; structured process launch/wait; bounded synchronous local
+pipe frames; redacting debug and rotating-file diagnostics; current-user DPAPI;
+and package-identity/Application Restart helpers. Job Objects, redirected
+process I/O, overlapped IPC with ACL/identity policy, Event Log/ETW/minidumps,
+Credential Manager/token helpers, Service management, recovery, signature
+verification, update handoff, and Task Scheduler composition remain planned.
+
 ### F0 — UI target migration and contracts
 
 - Make `mwfl::ui` canonical in build-tree, installed, FetchContent, template,

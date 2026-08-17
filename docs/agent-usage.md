@@ -94,6 +94,15 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
 | Theme and accessibility | appearance helpers | `examples/appearance/main.cpp` |
 | Custom/native messages | `WindowMessage` | `examples/native_message/main.cpp` |
 | Wait on kernel handles | wait-aware message pump | `examples/wait_aware/main.cpp` |
+| Build a Service or console-debug host | `ServiceDefinition`, `RunServiceConsole`, `RunWindowsService` | `examples/service_host/main.cpp` |
+| Launch and wait for a child process | `ProcessBuilder`, `Process` | `examples/process_runner/main.cpp` |
+| Exchange bounded local pipe frames | `PipeServer`, `PipeConnection`, `ConnectPipe` | `examples/ipc_framed/main.cpp` |
+| Emit redacted bounded diagnostics | `DiagnosticPipeline`, `BoundedFileSink` | `examples/diagnostics_pipeline/main.cpp` |
+| Protect current-user secrets | `ProtectForCurrentUser`, `UnprotectForCurrentUser`, `SecureBytes` | `examples/security_dpapi/main.cpp` |
+| Query package identity and register restart | `QueryCurrentPackageIdentity`, `RestartRegistration` | `examples/deployment_restart/main.cpp` |
+
+Foundation components are opt-in package components. Request and link only the
+target named by the example; `mwfl::ui` does not acquire these behaviors.
 
 See [recipes](recipes/index.md) for complete task flows, [public symbols](agent-reference.md)
 for contracts, [terminology](terminology.md) when translating another framework,

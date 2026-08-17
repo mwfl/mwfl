@@ -28,6 +28,7 @@ endif()
 file(GLOB public_headers "${PROJECT_ROOT}/include/mwfl/*.h")
 set(core_header_bytes 0)
 set(optional_header_bytes 0)
+set(foundation_header_bytes 0)
 set(optional_headers
     d2d_host.h
     d3d_host.h
@@ -46,10 +47,24 @@ set(optional_headers
     shell_integration.h
     scintilla.h
     webview2.h)
+set(foundation_headers
+    core.h
+    service.h
+    process.h
+    ipc.h
+    diagnostics.h
+    security.h
+    deployment.h)
 foreach(header IN LISTS public_headers)
     file(SIZE "${header}" header_bytes)
     get_filename_component(header_name "${header}" NAME)
-    if(header_name IN_LIST optional_headers)
+    if(header_name IN_LIST foundation_headers)
+        math(EXPR foundation_header_bytes "${foundation_header_bytes} + ${header_bytes}")
+        if(header_bytes GREATER 8192)
+            message(FATAL_ERROR
+                "foundation public header ${header_name} exceeded 8 KiB: ${header_bytes}")
+        endif()
+    elseif(header_name IN_LIST optional_headers)
         math(EXPR optional_header_bytes "${optional_header_bytes} + ${header_bytes}")
         if(header_bytes GREATER 8192)
             message(FATAL_ERROR
@@ -69,6 +84,10 @@ if(optional_header_bytes GREATER 73728)
     message(FATAL_ERROR
         "component public headers exceeded 72 KiB: ${optional_header_bytes}")
 endif()
+if(foundation_header_bytes GREATER 16384)
+    message(FATAL_ERROR
+        "foundation public headers exceeded 16 KiB: ${foundation_header_bytes}")
+endif()
 
 file(STRINGS "${PROJECT_ROOT}/include/mwfl/window.h" window_lines)
 list(LENGTH window_lines window_line_count)
@@ -80,4 +99,4 @@ if(window_line_count GREATER 600)
 endif()
 
 message(STATUS
-    "build budget: library=${library_bytes}; core headers=${core_header_bytes}; optional headers=${optional_header_bytes}; window.h=${window_line_count} lines")
+    "build budget: library=${library_bytes}; core headers=${core_header_bytes}; optional headers=${optional_header_bytes}; foundation headers=${foundation_header_bytes}; window.h=${window_line_count} lines")

@@ -7,7 +7,7 @@ else()
     include(FetchContent)
     FetchContent_Declare(mwfl
         GIT_REPOSITORY https://github.com/mwfl/mwfl.git
-        GIT_TAG v0.1.0)
+        GIT_TAG v0.1.9)
     FetchContent_MakeAvailable(mwfl)
 endif()
 
