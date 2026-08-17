@@ -2,10 +2,6 @@
 
 #include <windows.h>
 
-#include <atlbase.h>
-#include <atlapp.h>
-#include <atlframe.h>
-
 #include <cstdlib>
 #include <concepts>
 #include <exception>
@@ -31,13 +27,76 @@ namespace mwfl {
 
 namespace detail {
 struct WindowMarker {};
+
+class WindowCore {
+protected:
+    HWND CreateNativeWindow(const WNDCLASSEXW& descriptor, HWND parent,
+                            const RECT& bounds, const wchar_t* title,
+                            DWORD style, DWORD extended_style,
+                            HMENU menu, void* object) noexcept {
+        if (window_ != nullptr) {
+            ::SetLastError(ERROR_INVALID_STATE);
+            return nullptr;
+        }
+
+        WNDCLASSEXW existing{sizeof(existing)};
+        if (::GetClassInfoExW(descriptor.hInstance, descriptor.lpszClassName,
+                              &existing) == FALSE) {
+            WNDCLASSEXW registered = descriptor;
+            registered.lpfnWndProc = &InitialWindowProc;
+            if (::RegisterClassExW(&registered) == 0) return nullptr;
+        } else if (existing.lpfnWndProc != &InitialWindowProc) {
+            ::SetLastError(ERROR_CLASS_ALREADY_EXISTS);
+            return nullptr;
+        }
+
+        const int width = bounds.left == CW_USEDEFAULT
+            ? CW_USEDEFAULT : bounds.right - bounds.left;
+        const int height = bounds.top == CW_USEDEFAULT
+            ? CW_USEDEFAULT : bounds.bottom - bounds.top;
+        return ::CreateWindowExW(
+            extended_style, descriptor.lpszClassName, title, style,
+            bounds.left, bounds.top, width, height, parent, menu,
+            descriptor.hInstance, object);
+    }
+
+    HWND window_ = nullptr;
+
+private:
+    virtual LRESULT DispatchNativeWindowMessage(
+        HWND window, UINT message, WPARAM wparam, LPARAM lparam) noexcept = 0;
+
+    static LRESULT CALLBACK InitialWindowProc(
+        HWND window, UINT message, WPARAM wparam, LPARAM lparam) noexcept {
+        WindowCore* self = nullptr;
+        if (message == WM_NCCREATE) {
+            const auto* create = reinterpret_cast<const CREATESTRUCTW*>(lparam);
+            self = static_cast<WindowCore*>(create->lpCreateParams);
+            self->window_ = window;
+            ::SetWindowLongPtrW(window, GWLP_USERDATA,
+                                reinterpret_cast<LONG_PTR>(self));
+        } else {
+            self = reinterpret_cast<WindowCore*>(
+                ::GetWindowLongPtrW(window, GWLP_USERDATA));
+        }
+        if (self == nullptr) {
+            return ::DefWindowProcW(window, message, wparam, lparam);
+        }
+
+        const LRESULT result = self->DispatchNativeWindowMessage(
+            window, message, wparam, lparam);
+        if (message == WM_NCDESTROY) {
+            ::SetWindowLongPtrW(window, GWLP_USERDATA, 0);
+            self->window_ = nullptr;
+        }
+        return result;
+    }
+};
 }
 
 template <typename T, typename ClassTraits = DefaultWindowClassTraits>
-class Window : public WTL::CFrameWindowImpl<T>, public detail::WindowMarker {
+class Window : public detail::WindowCore, public detail::WindowMarker {
 public:
-    using Base = WTL::CFrameWindowImpl<T>;
-
     Window()
         : accelerator_filter_(this),
           wake_state_(std::make_shared<detail::WindowWakeState>()) {}
@@ -48,39 +107,27 @@ public:
     Window(Window&&) = delete;
     Window& operator=(Window&&) = delete;
 
-    static WTL::CFrameWndClassInfo& GetWndClassInfo() {
-        static WTL::CFrameWndClassInfo info = {
-            {sizeof(WNDCLASSEXW),
-             ClassTraits::GetClassStyle(),
-             Window<T, ClassTraits>::StartWindowProc,
-             0,
-             0,
-             nullptr,
-             ClassTraits::GetIcon(),
-             ClassTraits::GetCursor(),
-             ClassTraits::GetBackground(),
-             nullptr,
-             ClassTraits::GetClassName(),
-             ClassTraits::GetSmallIcon()},
-            nullptr,
-            nullptr,
-            nullptr,
-            TRUE,
-            0,
-            L"",
-            0};
-        return info;
+    HWND Create(HWND parent, const RECT& bounds, const wchar_t* title,
+                DWORD style, DWORD extended_style = 0, HMENU menu = nullptr) noexcept {
+        const WNDCLASSEXW descriptor{
+            sizeof(WNDCLASSEXW), ClassTraits::GetClassStyle(), nullptr,
+            0, 0, ::GetModuleHandleW(nullptr), ClassTraits::GetIcon(),
+            ClassTraits::GetCursor(), ClassTraits::GetBackground(), nullptr,
+            ClassTraits::GetClassName(), ClassTraits::GetSmallIcon()};
+        return CreateNativeWindow(descriptor, parent, bounds, title, style,
+                                  extended_style, menu,
+                                  static_cast<detail::WindowCore*>(this));
     }
 
-    HWND GetHwnd() const noexcept { return this->m_hWnd; }
-    HACCEL GetAccelerators() const noexcept { return this->m_hAccel; }
+    HWND GetHwnd() const noexcept { return window_; }
+    HACCEL GetAccelerators() const noexcept { return m_hAccel; }
 
     bool IsWindow() const noexcept {
-        return this->m_hWnd != nullptr && ::IsWindow(this->m_hWnd) != FALSE;
+        return window_ != nullptr && ::IsWindow(window_) != FALSE;
     }
 
     bool SetTitle(const wchar_t* title) noexcept {
-        return this->m_hWnd != nullptr && ::SetWindowTextW(this->m_hWnd, title) != FALSE;
+        return window_ != nullptr && ::SetWindowTextW(window_, title) != FALSE;
     }
 
     bool SetTitle(std::wstring_view title) {
@@ -89,8 +136,8 @@ public:
     }
 
     LRESULT Close() noexcept {
-        return this->m_hWnd != nullptr
-            ? ::SendMessageW(this->m_hWnd, WM_CLOSE, 0, 0)
+        return window_ != nullptr
+            ? ::SendMessageW(window_, WM_CLOSE, 0, 0)
             : 0;
     }
 
@@ -109,7 +156,7 @@ public:
     }
 
     void SetAccelerators(HACCEL accelerators) noexcept {
-        this->m_hAccel = accelerators;  // Non-owning; the table must outlive the window.
+        m_hAccel = accelerators;  // Non-owning; the table must outlive the window.
         MessageLoop* loop = MessageLoop::Current();
         if (loop == nullptr) return;
         if (accelerators != nullptr && !accelerator_filter_registered_) {
@@ -168,32 +215,26 @@ public:
         static_cast<void>(appearance_.Reapply(window));
     }
 
-    BOOL ProcessWindowMessage(
+    virtual BOOL ProcessWindowMessage(
         HWND window,
         UINT message,
         WPARAM wparam,
         LPARAM lparam,
         LRESULT& result,
-        DWORD message_map_id = 0) override {
-        // CFrameWindowImpl's inherited WM_DESTROY handler unconditionally posts
-        // WM_QUIT for ordinary top-level windows. SafeWindowProc applies the
-        // explicit per-instance quit policy after base dispatch instead.
-        if (message_map_id == 0 && message == WM_DESTROY) {
-            result = 0;
-            return TRUE;
-        }
+        DWORD message_map_id = 0) {
+        static_cast<void>(window);
         if (message_map_id == 0 &&
             DispatchModernMessage(message, wparam, lparam, result)) {
             return TRUE;
         }
-        return Base::ProcessWindowMessage(
-            window, message, wparam, lparam, result, message_map_id);
+        return FALSE;
     }
 
-protected:
-    WNDPROC GetWindowProc() override { return &SafeWindowProc; }
-
 private:
+    LRESULT DispatchNativeWindowMessage(
+        HWND window, UINT message, WPARAM wparam, LPARAM lparam) noexcept override {
+        return SafeWindowProc(window, message, wparam, lparam);
+    }
     template <typename Callback>
     static bool InvokeModernHandler(Callback&& callback, LRESULT& result) {
         using Return = std::invoke_result_t<Callback>;
@@ -394,14 +435,15 @@ private:
     }
 
     static LRESULT CALLBACK SafeWindowProc(
-        HWND object_pointer,
+        HWND window,
         UINT message,
         WPARAM wparam,
         LPARAM lparam) noexcept {
-        auto* self = reinterpret_cast<Window<T, ClassTraits>*>(object_pointer);
+        auto* self = reinterpret_cast<Window<T, ClassTraits>*>(
+            ::GetWindowLongPtrW(window, GWLP_USERDATA));
+        if (self == nullptr) return ::DefWindowProcW(window, message, wparam, lparam);
         const bool creation_message = !self->creation_complete_;
         const wchar_t* const stage = StageFor(message, self->creation_complete_);
-        const _ATL_MSG* const previous_message = self->m_pCurrentMsg;
 
         try {
             if (message == WindowWakeup::Message() &&
@@ -410,21 +452,22 @@ private:
             }
 
             if (message == WM_CLOSE && self->recovery_requested_) {
-                const HWND window = self->m_hWnd;
-                return window != nullptr && ::DestroyWindow(window) != FALSE ? 0 : -1;
+                const HWND recovery_window = self->window_;
+                return recovery_window != nullptr &&
+                    ::DestroyWindow(recovery_window) != FALSE ? 0 : -1;
             }
 
             if (message == WM_CREATE) {
-                self->wake_state_->window.store(self->m_hWnd, std::memory_order_release);
-                self->system_message_font_.Apply(self->m_hWnd,
-                    DpiContext::FromWindow(self->m_hWnd).GetDpi());
+                self->wake_state_->window.store(self->window_, std::memory_order_release);
+                self->system_message_font_.Apply(self->window_,
+                    DpiContext::FromWindow(self->window_).GetDpi());
                 static_cast<T*>(self)->BuildUI();
             }
             if (message == WM_DPICHANGED && self->apply_suggested_dpi_rect_ &&
                 lparam != 0) {
                 const RECT* suggested = reinterpret_cast<const RECT*>(lparam);
                 ::SetWindowPos(
-                    self->m_hWnd,
+                    self->window_,
                     nullptr,
                     suggested->left,
                     suggested->top,
@@ -443,10 +486,15 @@ private:
                     self->accelerator_filter_registered_ = false;
                 }
                 self->wake_state_->window.store(nullptr, std::memory_order_release);
-                self->system_message_font_.Detach(self->m_hWnd);
+                self->system_message_font_.Detach(self->window_);
             }
 
-            const LRESULT result = Base::WindowProc(object_pointer, message, wparam, lparam);
+            LRESULT result = 0;
+            const BOOL handled = self->ProcessWindowMessage(
+                window, message, wparam, lparam, result);
+            if (!handled) {
+                result = ::DefWindowProcW(window, message, wparam, lparam);
+            }
 
             if (message == WM_CREATE && result != -1) {
                 self->creation_complete_ = true;
@@ -461,7 +509,6 @@ private:
             detail::ReportUnknownException(stage, message, creation_message);
         }
 
-        self->m_pCurrentMsg = previous_message;
         return self->RecoverFromDispatchFailure(message, wparam, lparam, creation_message);
     }
 
@@ -479,11 +526,10 @@ private:
 
         if (message == WM_NCDESTROY) {
             wake_state_->window.store(nullptr, std::memory_order_release);
-            const HWND window = this->m_hWnd;
+            const HWND window = window_;
             const LRESULT result = window != nullptr
                 ? ::DefWindowProcW(window, message, wparam, lparam)
                 : 0;
-            this->m_hWnd = nullptr;
             if (quit_on_destroy_) ::PostQuitMessage(exit_code_);
             return result;
         }
@@ -494,14 +540,15 @@ private:
         }
 
         recovery_requested_ = true;
-        if (quit_on_destroy_ && (this->m_hWnd == nullptr ||
-            ::PostMessageW(this->m_hWnd, WM_CLOSE, 0, 0) == FALSE)) {
+        if (quit_on_destroy_ && (window_ == nullptr ||
+            ::PostMessageW(window_, WM_CLOSE, 0, 0) == FALSE)) {
             ::PostQuitMessage(exit_code_);
         }
         return 0;
     }
 
     detail::AcceleratorFilter<Window> accelerator_filter_;
+    HACCEL m_hAccel = nullptr;
     bool creation_complete_ = false;
     bool accelerator_filter_registered_ = false;
     bool recovery_requested_ = false;
@@ -514,8 +561,7 @@ private:
     std::shared_ptr<detail::WindowWakeState> wake_state_;
 };
 
-// Concise inheritance for applications. The WTL-required CRTP type is kept as
-// an implementation detail of the virtual event surface.
+// Concise inheritance for applications using the virtual event surface.
 class WindowBase : public Window<WindowBase> {
 public:
     virtual ~WindowBase() = default;

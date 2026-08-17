@@ -25,6 +25,15 @@ foreach(mode IN ITEMS
         TIMEOUT 20)
 endforeach()
 
+add_executable(mwfl_window_core_test window_core_test.cpp)
+target_compile_features(mwfl_window_core_test PRIVATE cxx_std_20)
+target_compile_options(mwfl_window_core_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwfl_window_core_test PRIVATE mwfl::ui)
+add_test(NAME mwfl.window_core COMMAND mwfl_window_core_test)
+set_tests_properties(mwfl.window_core PROPERTIES
+    ENVIRONMENT "MWFL_TEST_NO_DIALOGS=1"
+    TIMEOUT 20 LABELS "fast;native;lifecycle")
+
 foreach(header IN ITEMS application async command_controls concepts control_batch control_host control_resources controls desktop dialog document dpi events input_controls layout message_pump must native_host navigation_controls property_sheet recent_files selection single_instance splitter tab_workspace text_file text_history text_search timer tray_icon window window_options wakeup umbrella)
     # Every public header must remain independently includable.
     add_library(mwfl_header_${header} OBJECT header_${header}.cpp)
@@ -297,6 +306,12 @@ add_test(NAME mwfl.api_surface
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_api_surface.cmake")
 set_tests_properties(mwfl.api_surface PROPERTIES TIMEOUT 20)
 
+add_test(NAME mwfl.header_probe_coverage
+    COMMAND "${CMAKE_COMMAND}" "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_header_probes.cmake")
+set_tests_properties(mwfl.header_probe_coverage PROPERTIES
+    TIMEOUT 20 LABELS "fast;metadata")
+
 add_test(NAME mwfl.build_budget
     COMMAND "${CMAKE_COMMAND}"
         "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
@@ -324,6 +339,21 @@ foreach(mode IN ITEMS
     set_tests_properties(mwfl.advanced.${mode} PROPERTIES
         ENVIRONMENT "MWFL_TEST_NO_DIALOGS=1"
         TIMEOUT 20)
+endforeach()
+
+add_executable(mwfl_message_loop_test message_loop_test.cpp)
+target_compile_features(mwfl_message_loop_test PRIVATE cxx_std_20)
+target_compile_options(mwfl_message_loop_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwfl_message_loop_test PRIVATE mwfl::ui)
+# `unit` covers MessageLoop/MessageFilter/WaitAwareMessagePump semantics;
+# `order` proves a modeless dialog registered after the main window's
+# accelerator filter still sees keystrokes first; `twice` runs Application
+# repeatedly in one process without leaked process-wide framework state.
+foreach(mode IN ITEMS unit order twice)
+    add_test(NAME mwfl.message_loop.${mode} COMMAND mwfl_message_loop_test ${mode})
+    set_tests_properties(mwfl.message_loop.${mode} PROPERTIES
+        ENVIRONMENT "MWFL_TEST_NO_DIALOGS=1"
+        TIMEOUT 30)
 endforeach()
 
 add_executable(mwfl_modern_api_test modern_api_test.cpp)
@@ -1122,7 +1152,6 @@ add_test(
         "-DMWFL_EXPECT_NOTEPAD=$<BOOL:$<TARGET_EXISTS:mwfl_notepad>>"
         "-DMWFL_EXPECT_SCINTILLA=$<BOOL:$<TARGET_EXISTS:mwfl_scintilla>>"
         "-DMWFL_EXPECT_WEBVIEW2=$<BOOL:$<TARGET_EXISTS:mwfl_webview2>>"
-        "-DMWFL_WTL_SOURCE_DIR=${MWFL_RESOLVED_WTL_SOURCE_DIR}"
         "-DMWFL_WIL_SOURCE_DIR=${MWFL_RESOLVED_WIL_SOURCE_DIR}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_package_consumer.cmake")
 set_tests_properties(mwfl.package_consumer PROPERTIES TIMEOUT 600)
@@ -1198,7 +1227,7 @@ endif()
 # Every test has semantic labels so local agents can run a predictable subset.
 get_property(mwfl_all_tests DIRECTORY PROPERTY TESTS)
 foreach(test_name IN LISTS mwfl_all_tests)
-    if(test_name MATCHES "^mwfl\\.(lifecycle|advanced\\.)" OR
+    if(test_name MATCHES "^mwfl\\.(lifecycle|advanced\\.|message_loop\\.)" OR
        test_name STREQUAL "mwfl.integration_stress" OR
        test_name STREQUAL "mwfl.docking_stress_native")
         set(labels "lifecycle;fast")

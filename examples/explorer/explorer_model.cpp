@@ -26,7 +26,7 @@ ExplorerModel::ExplorerModel()
              {{1002}, {10}, L"API stability notes.txt", L"Text document", 16 * 1024, 1},
              {{2001}, {20}, L"docking-workspace.png", L"PNG image", 3 * 1024 * 1024, 2},
              {{2002}, {20}, L"markdown-editor-hero.png", L"PNG image", 2 * 1024 * 1024, 2},
-             {{3001}, {30}, L"mwfl-0.1.3-windows-x64.zip", L"ZIP archive", 11 * 1024 * 1024, 3},
+             {{3001}, {30}, L"mwfl-0.1.0-windows-x64.zip", L"ZIP archive", 11 * 1024 * 1024, 3},
              {{3002}, {30}, L"SHA256SUMS.txt", L"Text document", 2 * 1024, 1}} {
     RebuildVisible();
 }

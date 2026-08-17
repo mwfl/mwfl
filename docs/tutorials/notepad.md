@@ -13,7 +13,6 @@ Studio 2022 with:
 - Desktop development with C++;
 - MSVC C++ x64 build tools;
 - C++ CMake tools for Windows;
-- C++ ATL for the installed toolset;
 - a current Windows 10 or Windows 11 SDK; and
 - Git for Windows.
 

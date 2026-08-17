@@ -27,9 +27,6 @@ function Get-MwflVisualStudioInstallations {
             '\\bin\\Host(x64|arm64)\\x64\\cl[.]exe$' | Select-Object -First 1
         $cppArm64 = $compilers | Where-Object FullName -Match `
             '\\bin\\Host(x64|arm64)\\arm64\\cl[.]exe$' | Select-Object -First 1
-        $atl = if ($toolRoot) {
-            Join-Path $toolRoot.FullName 'atlmfc\include\atlbase.h'
-        } else { $null }
         [pscustomobject]@{
             Year = if ($major -eq 18) { 2026 } else { 2022 }
             Major = $major
@@ -39,7 +36,6 @@ function Get-MwflVisualStudioInstallations {
             CTest = if (Test-Path -LiteralPath $ctest) { $ctest } else { $null }
             CppX64 = if ($cppX64) { $cppX64.FullName } else { $null }
             CppARM64 = if ($cppArm64) { $cppArm64.FullName } else { $null }
-            ATL = if ($atl -and (Test-Path -LiteralPath $atl)) { $atl } else { $null }
         }
     } | Sort-Object Year -Descending)
 }
@@ -61,7 +57,7 @@ function Resolve-MwflToolchain {
             Select-Object -First 1
     }
     if (-not $selected) {
-        throw "Visual Studio $VisualStudio was not found. Install VS 2022 or VS 2026 with Desktop development with C++, ATL, and a Windows SDK."
+        throw "Visual Studio $VisualStudio was not found. Install VS 2022 or VS 2026 with Desktop development with C++ and a Windows SDK."
     }
     if (-not $selected.CMake -or -not $selected.CTest) {
         throw "Visual Studio $($selected.Year) is missing CMake tools. Install component Microsoft.VisualStudio.Component.VC.CMake.Project or import .vsconfig."
@@ -74,9 +70,6 @@ function Resolve-MwflToolchain {
             'Microsoft.VisualStudio.Component.VC.Tools.x86.x64'
         }
         throw "Visual Studio $($selected.Year) is missing the $Architecture C++ compiler. Install component $component or import .vsconfig."
-    }
-    if (-not $selected.ATL) {
-        throw "Visual Studio $($selected.Year) is missing C++ ATL. Install component Microsoft.VisualStudio.Component.VC.ATL or import .vsconfig."
     }
     $sdkRoot = Join-Path ([Environment]::GetFolderPath('ProgramFilesX86')) 'Windows Kits\10\Include'
     $windowsHeader = Get-ChildItem $sdkRoot -Filter windows.h -Recurse -ErrorAction SilentlyContinue |
@@ -104,4 +97,33 @@ function Get-MwflPresetNames {
         Debug = "$root-debug"
         Release = "$root-release"
     }
+}
+
+function Reset-MwflStalePresetCache {
+    # A repository that was moved or cloned into a new path keeps a
+    # CMakeCache.txt whose recorded build directory no longer matches the
+    # preset binary directory; CMake then refuses to configure. Remove the
+    # stale build tree so the caller's configure step starts clean.
+    param(
+        [Parameter(Mandatory)][string]$RepositoryRoot,
+        [Parameter(Mandatory)][string]$ConfigurePreset
+    )
+    $buildDirectory = Join-Path $RepositoryRoot "build/presets/$ConfigurePreset"
+    $cachePath = Join-Path $buildDirectory 'CMakeCache.txt'
+    if (-not (Test-Path -LiteralPath $cachePath -PathType Leaf)) { return }
+    $recorded = $null
+    foreach ($line in Get-Content -LiteralPath $cachePath) {
+        if ($line -match '^# For build in directory: (.+)$') {
+            $recorded = $Matches[1].Trim()
+            break
+        }
+    }
+    if (-not $recorded) { return }
+    $normalize = {
+        param([string]$path)
+        [System.IO.Path]::GetFullPath($path).TrimEnd('\', '/').Replace('/', '\').ToLowerInvariant()
+    }
+    if ((& $normalize $recorded) -eq (& $normalize $buildDirectory)) { return }
+    Write-Host "Removing stale CMake cache generated for '$recorded' at '$buildDirectory'"
+    Remove-Item -LiteralPath $buildDirectory -Recurse -Force
 }

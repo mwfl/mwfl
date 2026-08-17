@@ -1,17 +1,6 @@
 # Third-party notices
 
-mwfl is an independent project. Microsoft and the upstream WTL and WIL projects do not endorse mwfl.
-
-## Windows Template Library (WTL)
-
-- Official repository: <https://git.code.sf.net/p/wtl/git>
-- Release version: `10.01` (upstream does not publish a corresponding Git tag)
-- Locked commit: `011be908a1122e7bc9fd1106ecc48f22f5f86f00`
-- License: Microsoft Public License (Ms-PL)
-- Upstream license notice: each distributed WTL header contains the Ms-PL notice and links to <https://opensource.org/license/ms-pl-html>
-- Acquisition: CMake `FetchContent`, or a caller-provided `WTL::WTL` target / `MWFL_WTL_SOURCE_DIR`
-
-WTL is consumed from source and is not copied into this repository.
+mwfl is an independent project. Microsoft and the upstream WIL project do not endorse mwfl.
 
 ## Windows Implementation Library (WIL)
 

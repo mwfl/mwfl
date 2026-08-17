@@ -1,7 +1,6 @@
 #include <mwfl/application.h>
 
 #include "detail/diagnostics.h"
-#include "detail/module.h"
 #include "detail/testing.h"
 
 #include <stdexcept>
@@ -66,24 +65,11 @@ bool Application::BeginRun() noexcept {
         else com_initialized_ = true;
     }
 
-    const HRESULT result = _Module.Init(nullptr, instance_);
 #ifdef MWFL_TESTING
-    if (SUCCEEDED(result)) {
-        ++detail::lifecycle_snapshot.module_initialized;
-    }
-    const HRESULT effective_result =
-        SUCCEEDED(result) && detail::IsFailureInjected(L"MWFL_TEST_FAIL_MODULE_INIT")
-        ? E_OUTOFMEMORY
-        : result;
-#else
-    const HRESULT effective_result = result;
-#endif
-    if (FAILED(effective_result)) {
-        detail::ReportHresult(L"WTL CAppModule::Init", effective_result, true);
-        _Module.Term();
-#ifdef MWFL_TESTING
+    ++detail::lifecycle_snapshot.module_initialized;
+    if (detail::IsFailureInjected(L"MWFL_TEST_FAIL_MODULE_INIT")) {
+        detail::ReportHresult(L"application initialization", E_OUTOFMEMORY, true);
         ++detail::lifecycle_snapshot.module_terminated;
-#endif
         if (ole_initialized_) {
             ::OleUninitialize();
             ole_initialized_ = false;
@@ -94,7 +80,7 @@ bool Application::BeginRun() noexcept {
         running_ = false;
         return false;
     }
-    module_initialized_ = true;
+#endif
 
 #ifdef MWFL_TESTING
     if (detail::IsFailureInjected(L"MWFL_TEST_FAIL_LOOP_REGISTRATION")) {
@@ -120,13 +106,11 @@ void Application::EndRun() noexcept {
         ++detail::lifecycle_snapshot.loop_removed;
 #endif
     }
-    if (module_initialized_) {
-        _Module.Term();
-        module_initialized_ = false;
 #ifdef MWFL_TESTING
+    if (running_) {
         ++detail::lifecycle_snapshot.module_terminated;
-#endif
     }
+#endif
     if (ole_initialized_) {
         ::OleUninitialize();
         ole_initialized_ = false;

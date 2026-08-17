@@ -1,8 +1,8 @@
-# First public preview readiness plan (archived)
+# First public preview readiness plan
 
-> Historical record: this plan describes the pre-release `v0.1.0` gate. The
-> current public preview is `v0.1.3`; use the current release notes, README, and
-> verification scripts for active release status.
+> Active gate for replacing all historical preview releases with one clean
+> `v0.1.0`. Use this plan together with `docs/releases/v0.1.0.md` and the
+> verification scripts.
 
 ## Outcome
 

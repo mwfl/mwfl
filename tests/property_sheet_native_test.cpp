@@ -126,7 +126,7 @@ int main() {
     ::GetClientRect(pages[0].GetHwnd(), &page_after);
     if (page_after.right <= page_before.right || page_after.bottom <= page_before.bottom) return 6;
 
-    // comctl32's Apply button identifier; WTL's atlres.h formerly provided
+    // comctl32's Apply button identifier; kept local so no framework provides
     // this value as ID_APPLY_NOW.
     constexpr int kApplyButtonId = 0x3021;
     const HWND apply_button = ::GetDlgItem(native_sheet, kApplyButtonId);

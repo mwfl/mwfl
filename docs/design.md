@@ -25,7 +25,7 @@ Windows and controls are UI-thread-affine. `WindowWakeup` is the explicit
 lifetime-safe worker-to-UI notification mechanism.
 
 `WindowBase` is the concise virtual-handler API. `Window<T>` is the extension
-path for distinct CRTP types and direct WTL integration. Both share message
+path for distinct CRTP types and direct Win32 integration. Both share message
 decoding and exception boundaries.
 
 Commands describe application intent independently of menus, controls, toolbars,
