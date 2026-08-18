@@ -111,7 +111,7 @@ endif()
 target_include_directories(mwfl_ipc PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(mwfl_ipc PUBLIC mwfl_core)
+target_link_libraries(mwfl_ipc PUBLIC mwfl_core PRIVATE advapi32)
 
 add_library(mwfl_diagnostics STATIC src/diagnostics.cpp)
 set_target_properties(mwfl_diagnostics PROPERTIES EXPORT_NAME diagnostics)
@@ -124,7 +124,7 @@ endif()
 target_include_directories(mwfl_diagnostics PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(mwfl_diagnostics PUBLIC mwfl_core)
+target_link_libraries(mwfl_diagnostics PUBLIC mwfl_core PRIVATE advapi32 dbghelp)
 
 add_library(mwfl_security STATIC src/security.cpp)
 set_target_properties(mwfl_security PROPERTIES EXPORT_NAME security)
@@ -137,7 +137,7 @@ endif()
 target_include_directories(mwfl_security PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(mwfl_security PUBLIC mwfl_core PRIVATE crypt32)
+target_link_libraries(mwfl_security PUBLIC mwfl_core PRIVATE advapi32 crypt32)
 
 add_library(mwfl_deployment STATIC src/deployment.cpp)
 set_target_properties(mwfl_deployment PROPERTIES EXPORT_NAME deployment)
@@ -150,7 +150,20 @@ endif()
 target_include_directories(mwfl_deployment PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(mwfl_deployment PUBLIC mwfl_core)
+target_link_libraries(mwfl_deployment PUBLIC mwfl_core PRIVATE crypt32 version wintrust)
+
+add_library(mwfl_scheduler STATIC src/scheduler.cpp)
+set_target_properties(mwfl_scheduler PROPERTIES EXPORT_NAME scheduler)
+add_library(mwfl::scheduler ALIAS mwfl_scheduler)
+target_compile_features(mwfl_scheduler PUBLIC cxx_std_20)
+target_compile_options(mwfl_scheduler PRIVATE /W4 /permissive- /EHsc /utf-8)
+if(MWFL_WARNINGS_AS_ERRORS)
+    target_compile_options(mwfl_scheduler PRIVATE /WX)
+endif()
+target_include_directories(mwfl_scheduler PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(mwfl_scheduler PUBLIC mwfl_core PRIVATE taskschd ole32 oleaut32)
 
 add_library(mwfl STATIC
     src/appearance.cpp
@@ -450,7 +463,7 @@ target_link_libraries(mwfl
         ole32)
 target_link_libraries(mwfl PRIVATE oleacc uuid uxtheme)
 
-install(TARGETS mwfl_core mwfl_service mwfl_process mwfl_ipc mwfl_diagnostics mwfl_security mwfl_deployment mwfl mwfl_d2d mwfl_d3d mwfl_imaging mwfl_printing mwfl_ole mwfl_shell mwfl_ribbon mwfl_mdi mwfl_graphics
+install(TARGETS mwfl_core mwfl_service mwfl_process mwfl_ipc mwfl_diagnostics mwfl_security mwfl_deployment mwfl_scheduler mwfl mwfl_d2d mwfl_d3d mwfl_imaging mwfl_printing mwfl_ole mwfl_shell mwfl_ribbon mwfl_mdi mwfl_graphics
     EXPORT mwflTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
@@ -493,6 +506,7 @@ install(FILES
     docs/llms-full.txt
     docs/scope-map.md
     docs/foundation-releases.md
+    docs/foundation-migration-next.md
     docs/release-readiness.md
     docs/windows-ui-modernization-plan.md
     docs/parity.json

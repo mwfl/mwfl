@@ -100,6 +100,14 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
 | Emit redacted bounded diagnostics | `DiagnosticPipeline`, `BoundedFileSink` | `examples/diagnostics_pipeline/main.cpp` |
 | Protect current-user secrets | `ProtectForCurrentUser`, `UnprotectForCurrentUser`, `SecureBytes` | `examples/security_dpapi/main.cpp` |
 | Query package identity and register restart | `QueryCurrentPackageIdentity`, `RestartRegistration` | `examples/deployment_restart/main.cpp` |
+| Supervise a worker tree and collect output | `ProcessBuilder::Supervise`, `CollectOutput`, `TerminateTree` | `examples/process_supervisor/main.cpp` |
+| Authenticate a local IPC peer | `PipeAccessPolicy`, `PipePeerIdentity` | `examples/ipc_secure/main.cpp` |
+| Manage a Windows Service explicitly | `ServiceManager`, `ServiceInstallSpec` | `examples/service_management/main.cpp` |
+| Emit ETW/Event Log or an explicit minidump | `TraceLoggingSink`, `EventLogSink`, `WriteMiniDump` | `examples/diagnostics_native/main.cpp` |
+| Store a generic Windows credential | `CredentialManager`, `SecureWideString` | `examples/security_credentials/main.cpp` |
+| Validate an update handoff | `VerifyAuthenticode`, `PrepareUpdateHandoff` | `examples/deployment_handoff/main.cpp` |
+| Manage an application scheduled task | `TaskScheduler`, `ScheduledTaskSpec` | `examples/scheduled_task/main.cpp` |
+| Build a controller/worker application | Process + IPC + diagnostics + service | `examples/supervised_worker/main.cpp` |
 
 Foundation components are opt-in package components. Request and link only the
 target named by the example; `mwfl::ui` does not acquire these behaviors.

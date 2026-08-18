@@ -1,14 +1,13 @@
 #include <mwfl/service.h>
-#include <cassert>
 int main() {
     mwfl::ServiceStateMachine state;
-    assert(!state.Transition(mwfl::ServiceState::Running));
-    assert(state.Transition(mwfl::ServiceState::StartPending));
-    assert(state.Transition(mwfl::ServiceState::Running));
-    assert(state.Transition(mwfl::ServiceState::PausePending));
-    assert(state.Transition(mwfl::ServiceState::Paused));
-    assert(state.Transition(mwfl::ServiceState::ContinuePending));
-    assert(state.Transition(mwfl::ServiceState::Running));
-    assert(state.Transition(mwfl::ServiceState::StopPending));
-    assert(state.Transition(mwfl::ServiceState::Stopped));
+    if (state.Transition(mwfl::ServiceState::Running)) return 1;
+    if (!state.Transition(mwfl::ServiceState::StartPending)) return 2;
+    if (!state.Transition(mwfl::ServiceState::Running)) return 3;
+    if (!state.Transition(mwfl::ServiceState::PausePending)) return 4;
+    if (!state.Transition(mwfl::ServiceState::Paused)) return 5;
+    if (!state.Transition(mwfl::ServiceState::ContinuePending)) return 6;
+    if (!state.Transition(mwfl::ServiceState::Running)) return 7;
+    if (!state.Transition(mwfl::ServiceState::StopPending)) return 8;
+    return state.Transition(mwfl::ServiceState::Stopped) ? 0 : 9;
 }

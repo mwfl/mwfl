@@ -1,7 +1,47 @@
+#include <fstream>
 #include <mwfl/deployment.h>
-#include <cassert>
 #include <string>
 int main() {
-    auto identity = mwfl::QueryCurrentPackageIdentity(); assert(identity);
-    std::wstring too_long(RESTART_MAX_CMD_LINE, L'x'); auto invalid = mwfl::RegisterApplicationRestart(too_long); assert(!invalid);
+    auto identity = mwfl::QueryCurrentPackageIdentity();
+    if (!identity) return 1;
+    std::wstring too_long(RESTART_MAX_CMD_LINE, L'x');
+    auto invalid = mwfl::RegisterApplicationRestart(too_long);
+    if (invalid) return 2;
+    wchar_t executable[MAX_PATH]{};
+    if (!GetModuleFileNameW(nullptr, executable, MAX_PATH)) return 3;
+    auto version = mwfl::QueryFileVersion(executable);
+    if (!version && version.Error().code == ERROR_SUCCESS) return 4;
+    auto signature = mwfl::VerifyAuthenticode(executable);
+    if (!signature) return 5;
+    auto recovery = mwfl::RecoveryRegistration::Register(
+        [](std::stop_token) -> mwfl::Result<void> { return {}; }, std::chrono::seconds(5));
+    if (!recovery || !recovery.Value().Active()) return 6;
+
+    const auto root = std::filesystem::temp_directory_path();
+    const auto suffix = std::to_wstring(GetCurrentProcessId());
+    const auto candidate = root / (L"mwfl-deployment-candidate-" + suffix + L".bin");
+    const auto target = root / (L"mwfl-deployment-target-" + suffix + L".bin");
+    const auto backup = root / (L"mwfl-deployment-backup-" + suffix + L".bin");
+    {
+        std::ofstream(candidate, std::ios::binary) << "new";
+    }
+    {
+        std::ofstream(target, std::ios::binary) << "old";
+    }
+    mwfl::UpdateVerificationPolicy policy;
+    policy.require_valid_signature = false;
+    auto plan = mwfl::PrepareUpdateHandoff(candidate, target, backup, target, {}, policy);
+    if (!plan) return 7;
+    auto applied = mwfl::ApplyUpdateHandoff(plan.Value(), 0, std::chrono::seconds(1));
+    if (applied) return 8;
+    std::string restored;
+    {
+        std::ifstream input(target, std::ios::binary);
+        input >> restored;
+    }
+    if (restored != "old") return 9;
+    std::filesystem::remove(candidate);
+    std::filesystem::remove(target);
+    std::filesystem::remove(backup);
+    return 0;
 }

@@ -1,6 +1,6 @@
 # mwfl examples
 
-The repository includes 54 focused executables. GUI examples use the real `mwfl::Application` and recommended `mwfl::WindowBase` path; CLI and Foundation examples remain independently requested and do not acquire the UI component. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, document/MDI/Ribbon workspaces, graphics interop, and Docking Workspace are complete reference applications with dedicated model/native/GUI evidence. Product applications extracted from this catalog live in separate repositories: [Folder Compare](https://github.com/mwfl/folder-compare), [Folder Explorer](https://github.com/mwfl/folder-explorer), [Hex Editor](https://github.com/mwfl/hex-editor), [Markdown Editor](https://github.com/mwfl/markdown-editor), [PDF Reader](https://github.com/mwfl/pdf-reader), and [SQLite Viewer](https://github.com/mwfl/sqlite-viewer).
+The repository includes 62 focused executables. GUI examples use the real `mwfl::Application` and recommended `mwfl::WindowBase` path; CLI and Foundation examples remain independently requested and do not acquire the UI component. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, document/MDI/Ribbon workspaces, graphics interop, Docking Workspace, and Supervised Worker are complete reference applications with dedicated model/native/GUI evidence. Product applications extracted from this catalog live in separate repositories: [Folder Compare](https://github.com/mwfl/folder-compare), [Folder Explorer](https://github.com/mwfl/folder-explorer), [Hex Editor](https://github.com/mwfl/hex-editor), [Markdown Editor](https://github.com/mwfl/markdown-editor), [PDF Reader](https://github.com/mwfl/pdf-reader), and [SQLite Viewer](https://github.com/mwfl/sqlite-viewer).
 
 | Directory | Target | Focus |
 |---|---|---|
@@ -32,6 +32,14 @@ The repository includes 54 focused executables. GUI examples use the real `mwfl:
 | `deployment_restart` | `mwfl_deployment_restart` | Package identity and restart registration |
 | `foundation_stack` | `mwfl_foundation_stack` | Process, IPC, and diagnostics composition |
 | `foundation_overview` | `mwfl_foundation_overview` | All Foundation targets together |
+| `process_supervisor` | `mwfl_process_supervisor` | Job Object supervision and bounded output |
+| `ipc_secure` | `mwfl_ipc_secure` | Current-user ACL, peer identity, and cancellable framing |
+| `service_management` | `mwfl_service_management` | Shared service context and explicit SCM management |
+| `diagnostics_native` | `mwfl_diagnostics_native` | TraceLogging, redaction, rotation, and dump policy |
+| `security_credentials` | `mwfl_security_credentials` | Secure secrets, identity, and Credential Manager boundary |
+| `deployment_handoff` | `mwfl_deployment_handoff` | Verified update handoff planning |
+| `scheduled_task` | `mwfl_scheduled_task` | Focused current-user Task Scheduler model |
+| `supervised_worker` | `mwfl_supervised_worker` | Production controller-worker reference application |
 | `controls` | `mwfl_controls_demo` | All ten supported wrappers: text, buttons, grouping, choices, list, progress, slider, commands, and timer |
 | `common_controls` | `mwfl_common_controls_demo` | TreeView, ListView, Toolbar, DateTimePicker, and every specialized Common Controls family |
 | `self_drawn_host` | `mwfl_self_drawn_host_demo` | Worker-driven dirty frames, GDI paint, wake token, and wait-aware pump |
@@ -110,6 +118,14 @@ The examples remain native: every component is a real child HWND and direct Win3
 | Source editing | `code_editor` | Scintilla runtime, UTF-8 byte positions, save points, notifications | reference app |
 | Web content | `browser` | WebView2 runtime, async controller, navigation, process recovery | reference app |
 | Docking workspace | `docking_workspace` | Stable panel identity, transactions, floating hosts, auto-hide, persistence | reference app |
+| Supervised worker | `supervised_worker` | secure pipe, Job Object, peer identity, correlated diagnostics, fault injection | reference app |
+| Child-process supervision | `process_supervisor` | structured launch, bounded output, graceful/forced stop | focused |
+| Secure local IPC | `ipc_secure` | current-user ACL, peer SID/session/PID, timeout/cancel | focused |
+| Explicit Service management | `service_management` | shared runtime, idempotent SCM plan, integration cleanup | composed |
+| Native diagnostics | `diagnostics_native` | ETW, rotation, pre-sink redaction, explicit dump | focused |
+| Windows credentials | `security_credentials` | secure buffers, token identity, unique credential cleanup | focused |
+| Update handoff | `deployment_handoff` | signature/version policy, sibling staging, rollback | focused |
+| Application scheduling | `scheduled_task` | focused triggers, executable action, idempotent registration | focused |
 
 Coding agents should copy a complete example and modify it instead of merging
 unrelated fragments. See `docs/agent-usage.md` for lifetime and threading rules.

@@ -29,6 +29,7 @@ expansion and is not allowed to constrain the initial C++20 API design.
 | `mwfl::diagnostics` | Event Log, ETW, debug/file sinks, crash and minidump policy | opt-in |
 | `mwfl::security` | DPAPI, Credential Manager, token/SID queries, bounded security descriptors | opt-in |
 | `mwfl::deployment` | restart/recovery, package identity, version/signature and update handoff helpers | opt-in |
+| `mwfl::scheduler` | focused current-user application task composition and explicit management | opt-in |
 
 Existing rendering, printing, OLE, Shell, Ribbon, MDI, graphics, WebView2, and
 Scintilla targets remain opt-in. `mwfl::ui` never links Service Control Manager,
@@ -51,6 +52,12 @@ and package-identity/Application Restart helpers. Job Objects, redirected
 process I/O, overlapped IPC with ACL/identity policy, Event Log/ETW/minidumps,
 Credential Manager/token helpers, Service management, recovery, signature
 verification, update handoff, and Task Scheduler composition remain planned.
+
+Current `main` implements those productionization slices behind the same
+independent component boundaries, plus the new `mwfl::scheduler` target. They
+remain unreleased until the Debug/Release, compatibility, architecture, native
+integration, package, documentation, and reference-application gates below are
+complete. See [`foundation-migration-next.md`](foundation-migration-next.md).
 
 ### F0 — UI target migration and contracts
 

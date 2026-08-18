@@ -39,11 +39,17 @@ requested so UI applications acquire no hidden service or background runtime.
   <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/mwfl-showcase-40s.gif" alt="MWFL applications running with populated native controls"></a>
 </p>
 
-**v0.1.9 is the current public preview.** The repository contains **54 compiled
+**v0.1.9 is the current public preview.** The repository contains **62 compiled
 examples** plus six standalone applications in the mwfl organization. The downloadable release packages are VS2026/MSVC x64; source and
 CI cover x64 and ARM64. WebView2, Scintilla, graphics, imaging, printing, OLE,
 Shell, Ribbon, and MDI integrations remain separately requested optional
 components.
+
+`main` additionally contains the unreleased next Foundation baseline: cancellable
+Process/IPC/Service supervision, native diagnostics and credentials, verified
+deployment handoff, and the independent Scheduler component. These APIs remain
+Provisional until the full compatibility gate selects the next public version;
+see [the migration guide](docs/foundation-migration-next.md).
 
 ## Why mwfl
 
@@ -180,13 +186,13 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 ## Examples
 
-The repository contains 54 independently buildable examples. Each link opens
+The repository contains 62 independently buildable examples. Each link opens
 the complete source. Start with **Hello** for the smallest application,
 **Controls** for the basic widget set, or **Hot corners** for a complete
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 54 runnable examples and six standalone applications</strong></summary>
+<summary><strong>Browse all 62 runnable examples and six standalone applications</strong></summary>
 
 <br>
 
@@ -220,6 +226,14 @@ multi-monitor utility.
 | Deployment Lifecycle | [examples/deployment_restart/main.cpp](examples/deployment_restart/main.cpp) | Package identity and scoped restart registration |
 | Foundation Stack | [examples/foundation_stack/main.cpp](examples/foundation_stack/main.cpp) | Process, IPC, and diagnostics composition |
 | Foundation Overview | [examples/foundation_overview/main.cpp](examples/foundation_overview/main.cpp) | All Foundation targets acquired together |
+| Process Supervisor | [examples/process_supervisor/main.cpp](examples/process_supervisor/main.cpp) | Job Object supervision and bounded output |
+| Secure IPC | [examples/ipc_secure/main.cpp](examples/ipc_secure/main.cpp) | Current-user ACL and peer identity |
+| Service Management | [examples/service_management/main.cpp](examples/service_management/main.cpp) | Shared runtime and explicit SCM boundary |
+| Native Diagnostics | [examples/diagnostics_native/main.cpp](examples/diagnostics_native/main.cpp) | ETW, redaction, rotation, and dump policy |
+| Security Credentials | [examples/security_credentials/main.cpp](examples/security_credentials/main.cpp) | Secure secrets and token identity |
+| Deployment Handoff | [examples/deployment_handoff/main.cpp](examples/deployment_handoff/main.cpp) | Verified update handoff planning |
+| Scheduled Task | [examples/scheduled_task/main.cpp](examples/scheduled_task/main.cpp) | Focused Task Scheduler model |
+| Supervised Worker | [examples/supervised_worker/main.cpp](examples/supervised_worker/main.cpp) | Production controller-worker composition |
 | Controls | [examples/controls/main.cpp](examples/controls/main.cpp) | Complete form-control gallery |
 | Common Controls | [examples/common_controls/main.cpp](examples/common_controls/main.cpp) | Complete specialized-control gallery |
 | Self-drawn host | [examples/self_drawn_host/main.cpp](examples/self_drawn_host/main.cpp) | Worker-driven native drawing |

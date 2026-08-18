@@ -19,7 +19,8 @@ deliberate provisional-API compatibility break or a new compatibility baseline.
   operations, packaging, and raw Win32 escape hatches.
 - **Provisional:** the command model and optional appearance helpers.
 - **Provisional Foundation:** `core`, Service, process, IPC, diagnostics,
-  security, and deployment APIs introduced in 0.1.1-0.1.9. Their ownership,
+  security, deployment, and scheduler APIs introduced or refined after
+  0.1.1-0.1.9. Their ownership,
   cancellation, security, and failure semantics are contractual; names may be
   refined before the next minor compatibility baseline.
 - **Example:** example application code is not library API.

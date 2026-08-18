@@ -85,7 +85,14 @@ target_link_libraries(mwfl_deployment_test PRIVATE mwfl::deployment)
 add_test(NAME mwfl.deployment_public COMMAND mwfl_deployment_test)
 set_tests_properties(mwfl.deployment_public PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
-foreach(component IN ITEMS service process ipc diagnostics security deployment)
+add_executable(mwfl_scheduler_test scheduler_test.cpp)
+target_compile_features(mwfl_scheduler_test PRIVATE cxx_std_20)
+target_compile_options(mwfl_scheduler_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwfl_scheduler_test PRIVATE mwfl::scheduler)
+add_test(NAME mwfl.scheduler COMMAND mwfl_scheduler_test)
+set_tests_properties(mwfl.scheduler PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+foreach(component IN ITEMS service process ipc diagnostics security deployment scheduler)
     add_library(mwfl_header_foundation_${component} OBJECT header_${component}.cpp)
     target_compile_features(mwfl_header_foundation_${component} PRIVATE cxx_std_20)
     target_compile_options(mwfl_header_foundation_${component} PRIVATE /W4 /permissive- /EHsc /utf-8)
@@ -96,6 +103,7 @@ target_link_libraries(mwfl_header_foundation_ipc PRIVATE mwfl::ipc)
 target_link_libraries(mwfl_header_foundation_diagnostics PRIVATE mwfl::diagnostics)
 target_link_libraries(mwfl_header_foundation_security PRIVATE mwfl::security)
 target_link_libraries(mwfl_header_foundation_deployment PRIVATE mwfl::deployment)
+target_link_libraries(mwfl_header_foundation_scheduler PRIVATE mwfl::scheduler)
 set_tests_properties(mwfl.window_core PROPERTIES
     ENVIRONMENT "MWFL_TEST_NO_DIALOGS=1"
     TIMEOUT 20 LABELS "fast;native;lifecycle")

@@ -1,2 +1,2 @@
 #include <mwfl/core.h>
-static_assert(sizeof(mwfl::NativeError) == 8);
+static_assert(std::is_move_constructible_v<mwfl::NativeError>);

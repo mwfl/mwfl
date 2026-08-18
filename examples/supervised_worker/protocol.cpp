@@ -1,0 +1,2 @@
+#include "protocol.h"
+namespace example { std::vector<std::byte> Encode(std::string_view command) { std::vector<std::byte> result{std::byte{ProtocolVersion}}; const auto* data = reinterpret_cast<const std::byte*>(command.data()); result.insert(result.end(), data, data + command.size()); return result; } bool Is(std::span<const std::byte> frame, std::string_view command) { if (frame.size() != command.size() + 1 || frame[0] != std::byte{ProtocolVersion}) return false; return std::equal(frame.begin() + 1, frame.end(), reinterpret_cast<const std::byte*>(command.data())); } }

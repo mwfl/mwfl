@@ -3,6 +3,10 @@
 #include <mwfl/diagnostics.h>
 #include <mwfl/ipc.h>
 #include <mwfl/process.h>
+#include <mwfl/scheduler.h>
 #include <mwfl/security.h>
 #include <mwfl/service.h>
-int main() { return mwfl::Utf8ToWide("foundation") ? 0 : 1; }
+int main() {
+    mwfl::ScheduledTaskSpec task{L"\\mwfl", L"consumer", L"", L"test.exe"};
+    return mwfl::Utf8ToWide("foundation") && mwfl::ValidateScheduledTask(task) ? 0 : 1;
+}

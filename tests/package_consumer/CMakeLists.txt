@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(mwfl_package_consumer LANGUAGES CXX)
 
-set(mwfl_components core service process ipc diagnostics security deployment d2d d3d imaging printing ole shell ribbon mdi graphics)
+set(mwfl_components core service process ipc diagnostics security deployment scheduler d2d d3d imaging printing ole shell ribbon mdi graphics)
 if(MWFL_TEST_SCINTILLA)
     list(APPEND mwfl_components scintilla)
 endif()
@@ -28,6 +28,7 @@ add_executable(mwfl_foundation_package_consumer foundation_main.cpp)
 target_link_libraries(mwfl_foundation_package_consumer PRIVATE
     mwfl::core mwfl::service mwfl::process mwfl::ipc
     mwfl::diagnostics mwfl::security mwfl::deployment)
+target_link_libraries(mwfl_foundation_package_consumer PRIVATE mwfl::scheduler)
 target_compile_features(mwfl_foundation_package_consumer PRIVATE cxx_std_20)
 
 add_executable(mwfl_d2d_package_consumer d2d_main.cpp)
