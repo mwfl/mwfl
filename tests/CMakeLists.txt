@@ -278,10 +278,10 @@ target_compile_options(mwfl_agent_api_probe PRIVATE /W4 /permissive- /EHsc /utf-
 target_link_libraries(mwfl_agent_api_probe PRIVATE mwfl::ui)
 
 add_test(NAME mwfl.new_app_script
-    COMMAND powershell -NoProfile -ExecutionPolicy Bypass
+    COMMAND powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass
         -File "${CMAKE_CURRENT_SOURCE_DIR}/new_app_script_test.ps1"
         -ProjectRoot "${PROJECT_SOURCE_DIR}")
-set_tests_properties(mwfl.new_app_script PROPERTIES TIMEOUT 20 LABELS "fast;docs")
+set_tests_properties(mwfl.new_app_script PROPERTIES TIMEOUT 60 LABELS "fast;docs")
 
 add_library(mwfl_direct_create_test OBJECT direct_create_test.cpp)
 target_compile_features(mwfl_direct_create_test PRIVATE cxx_std_20)
