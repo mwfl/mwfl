@@ -7,11 +7,28 @@
 using namespace std::chrono_literals;
 
 namespace {
+class IntegrationService final : public mwfl::ServiceApplication {
+  public:
+    mwfl::Result<mwfl::ServiceExit> Run(mwfl::ServiceContext& context) override {
+        while (!context.StopToken().stop_requested()) {
+            const auto pause = context.WaitWhilePaused(mwfl::Deadline::After(100ms));
+            if (pause.status == mwfl::CompletionStatus::Cancelled) break;
+            std::this_thread::sleep_for(20ms);
+        }
+        return mwfl::ServiceExit{};
+    }
+};
+class OneShotService final : public mwfl::ServiceApplication {
+  public:
+    mwfl::Result<mwfl::ServiceExit> Run(mwfl::ServiceContext&) override {
+        return mwfl::ServiceExit{};
+    }
+};
 struct ServiceCleanup {
     mwfl::ServiceManager* manager;
     std::wstring name;
     ~ServiceCleanup() {
-        (void)manager->Stop(name, 2s);
+        (void)manager->Stop(name, mwfl::Deadline::After(2s));
         (void)manager->Remove(name);
     }
 };
@@ -19,25 +36,15 @@ struct ServiceCleanup {
 
 int RunInstalledService(std::wstring name) {
     mwfl::ServiceDefinition definition{std::move(name), L"MWFL integration service", 10s, true};
-    mwfl::ServiceCallbacks callbacks;
-    callbacks.run = [](mwfl::ServiceContext& context) -> mwfl::Result<mwfl::ServiceExit> {
-        while (!context.StopToken().stop_requested()) {
-            const auto pause = context.WaitWhilePaused(100ms);
-            if (pause == mwfl::WaitStatus::Cancelled) break;
-            std::this_thread::sleep_for(20ms);
-        }
-        return mwfl::ServiceExit{};
-    };
-    callbacks.control = [](mwfl::ServiceContext&,
-                           const mwfl::ServiceControlEvent&) -> mwfl::Result<void> { return {}; };
-    return mwfl::RunWindowsService(definition, std::move(callbacks));
+    IntegrationService application;
+    return mwfl::RunWindowsService(definition, application);
 }
 
 int RunIntegration(const wchar_t* executable) {
     const std::wstring name =
         L"mwfl-foundation-integration-" + std::to_wstring(GetCurrentProcessId());
     auto manager = mwfl::ServiceManager::Open(mwfl::ServiceManager::Access::Manage);
-    if (!manager) return manager.Error().code;
+    if (!manager) return manager.GetError().code;
     ServiceCleanup cleanup{&manager.Value(), name};
     (void)manager.Value().Remove(name);
     mwfl::ServiceInstallSpec spec{name,
@@ -46,20 +53,22 @@ int RunIntegration(const wchar_t* executable) {
                                   {L"--service", name},
                                   mwfl::ServiceAccount::LocalSystem,
                                   SERVICE_DEMAND_START};
-    auto installed = manager.Value().InstallOrUpdate(spec);
+    auto install_plan = manager.Value().Plan(spec);
+    auto installed = install_plan ? manager.Value().Apply(install_plan.Value())
+                                  : mwfl::Result<mwfl::ServiceMutationResult>{install_plan.GetError()};
     if (!installed || !installed.Value().created) return 10;
-    auto repeated = manager.Value().InstallOrUpdate(spec);
-    if (!repeated || repeated.Value().changed) return 11;
-    auto started = manager.Value().Start(name, 10s);
-    if (!started || started.Value().status != mwfl::ServiceOperationStatus::ReachedTarget ||
-        started.Value().snapshot.state != SERVICE_RUNNING)
+    auto repeated = manager.Value().Plan(spec);
+    if (!repeated || repeated.Value().required) return 11;
+    auto started = manager.Value().Start(name, mwfl::Deadline::After(10s));
+    if (!started || started.Value().status != mwfl::CompletionStatus::Completed ||
+        started.Value().value->state != SERVICE_RUNNING)
         return 12;
     if (!manager.Value().SendControl(name, SERVICE_CONTROL_PAUSE)) return 13;
     if (!manager.Value().SendControl(name, SERVICE_CONTROL_CONTINUE)) return 14;
     if (!manager.Value().SendControl(name, 128)) return 15;
-    auto stopped = manager.Value().Stop(name, 10s);
-    if (!stopped || stopped.Value().status != mwfl::ServiceOperationStatus::ReachedTarget ||
-        stopped.Value().snapshot.state != SERVICE_STOPPED)
+    auto stopped = manager.Value().Stop(name, mwfl::Deadline::After(10s));
+    if (!stopped || stopped.Value().status != mwfl::CompletionStatus::Completed ||
+        stopped.Value().value->state != SERVICE_STOPPED)
         return 16;
     auto removed = manager.Value().Remove(name);
     if (!removed || !removed.Value()) return 17;
@@ -80,11 +89,9 @@ int wmain(int argc, wchar_t** argv) {
     if (!state.Transition(mwfl::ServiceState::StartPending) ||
         !state.Transition(mwfl::ServiceState::Running))
         return 1;
+    OneShotService application;
     const int result = mwfl::RunServiceConsole(
-        {L"mwfl-management", L"MWFL management"},
-        mwfl::ServiceCallbacks{[](mwfl::ServiceContext&) -> mwfl::Result<mwfl::ServiceExit> {
-            return mwfl::ServiceExit{};
-        }});
+        {L"mwfl-management", L"MWFL management"}, application);
     std::wcout << L"service context and explicit management boundary passed\n";
     return result;
 }

@@ -1,21 +1,21 @@
 #include <mwfl/diagnostics.h>
 int main() {
-    const auto text = mwfl::FormatDiagnosticEvent(
-        {mwfl::EventLevel::Error,
-         L"test",
-         42,
-         {{L"public", L"yes"}, {L"token", L"hidden", mwfl::FieldSensitivity::Secret}}});
+    const auto raw = mwfl::DiagnosticEventBuilder(mwfl::EventLevel::Error, L"test", 42)
+                         .Public(L"public", L"yes")
+                         .Secret(L"token")
+                         .Build();
+    const auto text = mwfl::FormatDiagnosticEvent(mwfl::SanitizeDiagnosticEvent(raw));
     if (text.find(L"yes") == std::wstring::npos || text.find(L"hidden") != std::wstring::npos ||
         text.find(L"<secret>") == std::wstring::npos)
         return 1;
     struct FailingSink final : mwfl::DiagnosticSink {
-        mwfl::Result<void> Write(const mwfl::DiagnosticEvent&) noexcept override {
-            return mwfl::NativeError::FromWin32(ERROR_WRITE_FAULT);
+        mwfl::Result<void> Write(const mwfl::SanitizedDiagnosticEvent&) noexcept override {
+            return mwfl::SystemError::FromWin32(ERROR_WRITE_FAULT);
         }
     };
     struct InspectingSink final : mwfl::DiagnosticSink {
         bool redacted = false;
-        mwfl::Result<void> Write(const mwfl::DiagnosticEvent& event) noexcept override {
+        mwfl::Result<void> Write(const mwfl::SanitizedDiagnosticEvent& event) noexcept override {
             redacted = event.fields.size() == 2 && event.fields[1].value == L"<secret>";
             return {};
         }

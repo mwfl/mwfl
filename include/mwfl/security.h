@@ -1,39 +1,48 @@
 #pragma once
 #include <cstddef>
+#include <functional>
 #include <mwfl/core.h>
 #include <span>
 #include <string>
 #include <string_view>
 #include <vector>
 namespace mwfl {
-class SecureBytes final {
+class SecureBuffer final {
    public:
-    SecureBytes() = default;
-    explicit SecureBytes(std::span<const std::byte> bytes);
-    ~SecureBytes();
-    SecureBytes(SecureBytes&& other) noexcept;
-    SecureBytes& operator=(SecureBytes&& other) noexcept;
-    SecureBytes(const SecureBytes&) = delete;
-    SecureBytes& operator=(const SecureBytes&) = delete;
-    [[nodiscard]] std::span<const std::byte> View() const noexcept { return {data_, size_}; }
-    [[nodiscard]] std::span<std::byte> MutableView() noexcept { return {data_, size_}; }
+    SecureBuffer() = default;
+    explicit SecureBuffer(std::span<const std::byte> bytes);
+    ~SecureBuffer();
+    SecureBuffer(SecureBuffer&& other) noexcept;
+    SecureBuffer& operator=(SecureBuffer&& other) noexcept;
+    SecureBuffer(const SecureBuffer&) = delete;
+    SecureBuffer& operator=(const SecureBuffer&) = delete;
+    template <typename Callback>
+    decltype(auto) WithView(Callback&& callback) const {
+        return std::invoke(std::forward<Callback>(callback),
+                           std::span<const std::byte>{data_, size_});
+    }
     [[nodiscard]] std::size_t Size() const noexcept { return size_; }
     void Clear() noexcept;
 
    private:
+    friend class CredentialManager;
+    [[nodiscard]] std::span<std::byte> MutableView() noexcept { return {data_, size_}; }
     std::byte* data_ = nullptr;
     std::size_t size_ = 0;
 };
-class SecureWideString final {
+class SecureString final {
    public:
-    SecureWideString() = default;
-    explicit SecureWideString(std::wstring_view text);
-    ~SecureWideString();
-    SecureWideString(SecureWideString&& other) noexcept;
-    SecureWideString& operator=(SecureWideString&& other) noexcept;
-    SecureWideString(const SecureWideString&) = delete;
-    SecureWideString& operator=(const SecureWideString&) = delete;
-    [[nodiscard]] std::wstring_view View() const noexcept { return {data_, size_}; }
+    SecureString() = default;
+    explicit SecureString(std::wstring_view text);
+    ~SecureString();
+    SecureString(SecureString&& other) noexcept;
+    SecureString& operator=(SecureString&& other) noexcept;
+    SecureString(const SecureString&) = delete;
+    SecureString& operator=(const SecureString&) = delete;
+    template <typename Callback>
+    decltype(auto) WithView(Callback&& callback) const {
+        return std::invoke(std::forward<Callback>(callback), std::wstring_view{data_, size_});
+    }
     void Clear() noexcept;
 
    private:
@@ -45,17 +54,17 @@ enum class DataProtectionScope { CurrentUser, LocalMachine };
 [[nodiscard]] Result<ProtectedData> ProtectData(
     std::span<const std::byte> plaintext,
     DataProtectionScope scope = DataProtectionScope::CurrentUser, std::wstring_view purpose = {});
-[[nodiscard]] Result<SecureBytes> UnprotectData(std::span<const std::byte> protected_data,
+[[nodiscard]] Result<SecureBuffer> UnprotectData(std::span<const std::byte> protected_data,
                                                 std::wstring_view purpose = {});
 [[nodiscard]] Result<ProtectedData> ProtectForCurrentUser(std::span<const std::byte> plaintext,
                                                           std::wstring_view purpose = {});
-[[nodiscard]] Result<SecureBytes> UnprotectForCurrentUser(std::span<const std::byte> protected_data,
+[[nodiscard]] Result<SecureBuffer> UnprotectForCurrentUser(std::span<const std::byte> protected_data,
                                                           std::wstring_view purpose = {});
 enum class CredentialPersistence { Session, LocalMachine, Enterprise };
 struct GenericCredential {
     std::wstring target;
     std::wstring user_name;
-    SecureBytes secret;
+    SecureBuffer secret;
     CredentialPersistence persistence = CredentialPersistence::Session;
 };
 class CredentialManager final {

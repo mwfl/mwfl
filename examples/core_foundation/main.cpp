@@ -14,11 +14,12 @@ int wmain(int argc, wchar_t** argv) {
     if (!utf8 || utf8.Value() != "MWFL \xE2\x9C\x93") return 2;
     mwfl::KernelHandle event(CreateEventW(nullptr, TRUE, TRUE, nullptr));
     if (!event) return 3;
-    auto signaled = mwfl::WaitForHandle(event.Get(), 100ms);
-    if (!signaled || signaled.Value().status != mwfl::WaitStatus::Signaled) return 4;
+    auto signaled = mwfl::WaitForHandle(event.Get(), mwfl::Deadline::After(100ms));
+    if (!signaled || signaled.Value().status != mwfl::CompletionStatus::Completed) return 4;
     std::stop_source source; source.request_stop();
-    auto cancelled = mwfl::WaitForHandle(event.Get(), 100ms, source.get_token());
-    if (!cancelled || cancelled.Value().status != mwfl::WaitStatus::Cancelled) return 5;
+    auto cancelled = mwfl::WaitForHandle(event.Get(), mwfl::Deadline::After(100ms),
+                                         source.get_token());
+    if (!cancelled || cancelled.Value().status != mwfl::CompletionStatus::Cancelled) return 5;
     std::wcout << L"core ownership, Unicode, wait, and cancellation passed\n";
     return 0;
 }

@@ -46,26 +46,25 @@ class ServiceContext final {
    public:
     [[nodiscard]] std::stop_token StopToken() const noexcept;
     [[nodiscard]] bool IsPaused() const noexcept;
-    [[nodiscard]] WaitStatus WaitWhilePaused(
-        std::chrono::milliseconds timeout = std::chrono::milliseconds{-1}) const;
+    [[nodiscard]] OperationOutcome<void> WaitWhilePaused(Deadline deadline) const;
 
    private:
     explicit ServiceContext(std::shared_ptr<void> state) : state_(std::move(state)) {}
     std::shared_ptr<void> state_;
     friend struct ServiceContextAccess;
 };
-struct ServiceCallbacks {
-    std::function<Result<ServiceExit>(ServiceContext&)> run;
-    std::function<Result<void>(ServiceContext&, const ServiceControlEvent&)> control;
-    std::function<void(ServiceState)> state_changed;
+class ServiceApplication {
+   public:
+    virtual ~ServiceApplication() = default;
+    [[nodiscard]] virtual Result<ServiceExit> Run(ServiceContext& context) = 0;
+    [[nodiscard]] virtual Result<void> OnControl(ServiceContext&,
+                                                 const ServiceControlEvent&) { return {}; }
+    virtual void OnStateChanged(ServiceState) noexcept {}
 };
-using ServiceMain = std::function<Result<void>(std::stop_token)>;
 [[nodiscard]] int RunServiceConsole(const ServiceDefinition& definition,
-                                    ServiceCallbacks callbacks);
+                                    ServiceApplication& application);
 [[nodiscard]] int RunWindowsService(const ServiceDefinition& definition,
-                                    ServiceCallbacks callbacks);
-[[nodiscard]] int RunServiceConsole(const ServiceDefinition& definition, ServiceMain main);
-[[nodiscard]] int RunWindowsService(const ServiceDefinition& definition, ServiceMain main);
+                                    ServiceApplication& application);
 enum class ServiceAccount { LocalSystem, LocalService, NetworkService };
 struct ServiceInstallSpec {
     std::wstring name;
@@ -97,10 +96,12 @@ struct ServiceMutationResult {
     std::vector<std::wstring> changed_fields;
     ServiceSnapshot snapshot;
 };
-enum class ServiceOperationStatus { ReachedTarget, TimedOut, Cancelled };
-struct ServiceOperationResult {
-    ServiceOperationStatus status = ServiceOperationStatus::ReachedTarget;
-    ServiceSnapshot snapshot;
+struct ServiceChangePlan {
+    ServiceInstallSpec desired;
+    ServiceQueryResult current;
+    bool required = false;
+    bool creates = false;
+    std::vector<std::wstring> changed_fields;
 };
 class ServiceManager final {
    public:
@@ -113,14 +114,12 @@ class ServiceManager final {
     enum class Access { Query, Manage };
     [[nodiscard]] static Result<ServiceManager> Open(Access access = Access::Query);
     [[nodiscard]] Result<ServiceQueryResult> Query(std::wstring_view name) const;
-    [[nodiscard]] Result<ServiceMutationResult> InstallOrUpdate(
-        const ServiceInstallSpec& spec) const;
-    [[nodiscard]] Result<ServiceOperationResult> Start(std::wstring_view name,
-                                                       std::chrono::milliseconds timeout,
-                                                       std::stop_token stop = {}) const;
-    [[nodiscard]] Result<ServiceOperationResult> Stop(std::wstring_view name,
-                                                      std::chrono::milliseconds timeout,
-                                                      std::stop_token stop = {}) const;
+    [[nodiscard]] Result<ServiceChangePlan> Plan(const ServiceInstallSpec& spec) const;
+    [[nodiscard]] Result<ServiceMutationResult> Apply(const ServiceChangePlan& plan) const;
+    [[nodiscard]] Result<OperationOutcome<ServiceSnapshot>> Start(
+        std::wstring_view name, Deadline deadline, std::stop_token stop = {}) const;
+    [[nodiscard]] Result<OperationOutcome<ServiceSnapshot>> Stop(
+        std::wstring_view name, Deadline deadline, std::stop_token stop = {}) const;
     [[nodiscard]] Result<ServiceSnapshot> SendControl(std::wstring_view name, DWORD control) const;
     [[nodiscard]] Result<bool> Remove(std::wstring_view name) const;
 

@@ -3,7 +3,7 @@
 int main() {
     if (mwfl::UnprotectForCurrentUser({})) return 1;
     std::vector<std::byte> bytes{std::byte{1}, std::byte{2}};
-    mwfl::SecureBytes secure{std::span<const std::byte>(bytes)};
+    mwfl::SecureBuffer secure{std::span<const std::byte>(bytes)};
     if (secure.Size() != 2) return 2;
     secure.Clear();
     if (secure.Size() != 0) return 3;

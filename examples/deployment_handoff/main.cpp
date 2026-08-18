@@ -7,7 +7,7 @@ int wmain(int argc, wchar_t** argv) {
     { std::ofstream output(candidate, std::ios::binary); output << "candidate"; }
     { std::ofstream output(target, std::ios::binary); output << "target"; }
     mwfl::UpdateVerificationPolicy policy; policy.require_valid_signature = false;
-    auto plan = mwfl::PrepareUpdateHandoff(candidate, target, backup, target, {}, policy); std::filesystem::remove(candidate); std::filesystem::remove(target); std::filesystem::remove(backup);
+    auto plan = mwfl::VerifyUpdate(candidate, target, backup, target, {}, policy); std::filesystem::remove(candidate); std::filesystem::remove(target); std::filesystem::remove(backup);
     if (!plan || plan.Value().Target().filename() != target.filename()) return 1;
     std::wcout << L"verified update handoff planning passed\n"; return 0;
 }

@@ -18,9 +18,9 @@ int wmain(int argc, wchar_t** argv) {
                         .Argument(L"argument with spaces")
                         .Launch();
     if (!launched) return 2;
-    auto exited = launched.Value().Wait(5s);
-    if (!exited || exited.Value().status != mwfl::ProcessWaitStatus::Exited ||
-        exited.Value().exit_code != 17)
+    auto exited = launched.Value().Wait(mwfl::Deadline::After(5s));
+    if (!exited || exited.Value().status != mwfl::CompletionStatus::Completed ||
+        *exited.Value().value != 17)
         return 3;
     std::wcout << L"process quoting, launch, wait, and exit passed\n";
     return 0;

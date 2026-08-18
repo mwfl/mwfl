@@ -45,7 +45,7 @@ int wmain(int argc, wchar_t** argv) {
     auto written = mwfl::WriteMiniDump(dump, mwfl::MiniDumpKind::Normal);
     auto duplicate = mwfl::WriteMiniDump(dump, mwfl::MiniDumpKind::Normal);
     const bool dump_ok = written && std::filesystem::file_size(dump) > 0 && !duplicate &&
-                         duplicate.Error().code == ERROR_FILE_EXISTS;
+                         duplicate.GetError().code == ERROR_FILE_EXISTS;
     std::filesystem::remove(dump);
     if (!dump_ok) return 2;
     std::wcout << L"native diagnostics redaction passed\n";

@@ -1,8 +1,8 @@
 #pragma once
 #include <atomic>
-#include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <mwfl/core.h>
 #include <span>
 #include <stop_token>
@@ -22,24 +22,38 @@ struct PipeAccessPolicy {
         return {PipeAccessPolicyKind::ExplicitSids, std::move(sids)};
     }
 };
-struct PipeOptions {
+struct PipeEndpoint {
     std::wstring name;
     std::uint32_t maximum_frame_size = 1024u * 1024u;
     PipeAccessPolicy access;
 };
-enum class PipeOperationStatus { Completed, TimedOut, Cancelled, Disconnected };
-struct PipeWriteResult {
-    PipeOperationStatus status = PipeOperationStatus::Completed;
-};
-struct PipeReadResult {
-    PipeOperationStatus status = PipeOperationStatus::Completed;
-    std::vector<std::byte> payload;
-};
-struct PipePeerIdentity {
+struct PipePeer {
     DWORD process_id = 0;
     DWORD session_id = 0;
     std::wstring user_sid;
 };
+class PipeConnection;
+class PipeReader final {
+   public:
+    PipeReader() = default;
+    [[nodiscard]] Result<OperationOutcome<std::vector<std::byte>>> ReadFrame(
+        Deadline deadline, std::stop_token stop = {});
+   private:
+    friend class PipeConnection;
+    explicit PipeReader(std::shared_ptr<PipeConnection> connection) : connection_(std::move(connection)) {}
+    std::shared_ptr<PipeConnection> connection_;
+};
+class PipeWriter final {
+   public:
+    PipeWriter() = default;
+    [[nodiscard]] Result<OperationOutcome<void>> WriteFrame(
+        std::span<const std::byte> payload, Deadline deadline, std::stop_token stop = {});
+   private:
+    friend class PipeConnection;
+    explicit PipeWriter(std::shared_ptr<PipeConnection> connection) : connection_(std::move(connection)) {}
+    std::shared_ptr<PipeConnection> connection_;
+};
+struct PipeChannels final { PipeReader reader; PipeWriter writer; };
 class ScopedPipeImpersonation;
 class PipeConnection final {
    public:
@@ -49,53 +63,41 @@ class PipeConnection final {
     PipeConnection& operator=(PipeConnection&& other) noexcept;
     PipeConnection(const PipeConnection&) = delete;
     PipeConnection& operator=(const PipeConnection&) = delete;
-    [[nodiscard]] Result<PipeWriteResult> WriteFrame(
-        std::span<const std::byte> payload,
-        std::chrono::milliseconds timeout = std::chrono::milliseconds{-1},
-        std::stop_token stop = {});
-    [[nodiscard]] Result<PipeReadResult> ReadFrame(
-        std::chrono::milliseconds timeout = std::chrono::milliseconds{-1},
-        std::stop_token stop = {});
-    [[nodiscard]] Result<PipePeerIdentity> QueryPeerIdentity() const;
+    [[nodiscard]] Result<PipePeer> QueryPeer() const;
     [[nodiscard]] bool IsServerEnd() const noexcept { return server_end_; }
-
+    [[nodiscard]] PipeChannels Split() &&;
    private:
+    friend class PipeReader;
+    friend class PipeWriter;
     friend class ScopedPipeImpersonation;
+    [[nodiscard]] Result<OperationOutcome<void>> WriteFrame(
+        std::span<const std::byte> payload, Deadline deadline, std::stop_token stop);
+    [[nodiscard]] Result<OperationOutcome<std::vector<std::byte>>> ReadFrame(
+        Deadline deadline, std::stop_token stop);
     KernelHandle pipe_;
     std::uint32_t maximum_frame_size_ = 0;
     bool server_end_ = false;
     std::atomic_flag reading_ = ATOMIC_FLAG_INIT;
     std::atomic_flag writing_ = ATOMIC_FLAG_INIT;
 };
-struct PipeAcceptResult {
-    PipeOperationStatus status = PipeOperationStatus::Completed;
-    PipeConnection connection;
-};
-struct PipeConnectResult {
-    PipeOperationStatus status = PipeOperationStatus::Completed;
-    PipeConnection connection;
-};
-class PipeServer final {
+class PipeListener final {
    public:
-    PipeServer() = default;
-    PipeServer(PipeServer&&) noexcept = default;
-    PipeServer& operator=(PipeServer&&) noexcept = default;
-    PipeServer(const PipeServer&) = delete;
-    PipeServer& operator=(const PipeServer&) = delete;
-    [[nodiscard]] static Result<PipeServer> Create(PipeOptions options);
-    [[nodiscard]] Result<PipeAcceptResult> Accept(
-        std::chrono::milliseconds timeout = std::chrono::milliseconds{-1},
-        std::stop_token stop = {});
-
+    PipeListener() = default;
+    PipeListener(PipeListener&&) noexcept = default;
+    PipeListener& operator=(PipeListener&&) noexcept = default;
+    PipeListener(const PipeListener&) = delete;
+    PipeListener& operator=(const PipeListener&) = delete;
+    [[nodiscard]] static Result<PipeListener> Create(PipeEndpoint endpoint);
+    [[nodiscard]] Result<OperationOutcome<PipeConnection>> Accept(
+        Deadline deadline, std::stop_token stop = {});
    private:
-    PipeServer(PipeOptions options, KernelHandle listener)
-        : options_(std::move(options)), listener_(std::move(listener)) {}
-    PipeOptions options_;
+    PipeListener(PipeEndpoint endpoint, KernelHandle listener)
+        : endpoint_(std::move(endpoint)), listener_(std::move(listener)) {}
+    PipeEndpoint endpoint_;
     KernelHandle listener_;
 };
-[[nodiscard]] Result<PipeConnectResult> ConnectPipe(
-    const PipeOptions& options, std::chrono::milliseconds timeout = std::chrono::milliseconds{-1},
-    std::stop_token stop = {});
+[[nodiscard]] Result<OperationOutcome<PipeConnection>> ConnectPipe(
+    const PipeEndpoint& endpoint, Deadline deadline, std::stop_token stop = {});
 class ScopedPipeImpersonation final {
    public:
     ScopedPipeImpersonation() = default;
@@ -106,7 +108,6 @@ class ScopedPipeImpersonation final {
     ScopedPipeImpersonation& operator=(const ScopedPipeImpersonation&) = delete;
     [[nodiscard]] static Result<ScopedPipeImpersonation> Create(PipeConnection& connection);
     [[nodiscard]] bool Active() const noexcept { return active_; }
-
    private:
     explicit ScopedPipeImpersonation(bool active) : active_(active) {}
     bool active_ = false;

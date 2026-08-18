@@ -17,76 +17,108 @@ std::wstring FormatSystemMessage(DWORD code) {
         message.pop_back();
     return message;
 }
-DWORD BoundedTimeout(std::chrono::milliseconds timeout) noexcept {
-    if (timeout.count() < 0) return INFINITE;
-    return static_cast<DWORD>((std::min)(timeout.count(), static_cast<long long>(INFINITE - 1)));
+DWORD BoundedTimeout(Deadline deadline) noexcept {
+    const auto remaining = deadline.Remaining();
+    if (remaining.count() < 0) return INFINITE;
+    return static_cast<DWORD>((std::min)(remaining.count(), static_cast<long long>(INFINITE - 1)));
 }
 }  // namespace
-NativeError NativeError::FromWin32(DWORD value) noexcept {
+SystemError SystemError::FromWin32(DWORD value) noexcept {
     return {ErrorDomain::Win32, value == ERROR_SUCCESS ? ERROR_GEN_FAILURE : value};
 }
-NativeError NativeError::LastWin32() noexcept {
+SystemError SystemError::LastWin32() noexcept {
     return FromWin32(GetLastError());
 }
-NativeError NativeError::FromHResult(HRESULT value) noexcept {
+SystemError SystemError::FromHResult(HRESULT value) noexcept {
     return {ErrorDomain::HResult, static_cast<std::uint32_t>(value)};
 }
-NativeError NativeError::WithOperation(std::wstring value) const {
-    NativeError copy = *this;
+SystemError SystemError::Application(std::uint32_t code, std::wstring detail) {
+    return {ErrorDomain::Application, code, {}, std::move(detail)};
+}
+SystemError SystemError::Protocol(std::uint32_t code, std::wstring detail) {
+    return {ErrorDomain::Protocol, code, {}, std::move(detail)};
+}
+SystemError SystemError::Policy(std::uint32_t code, std::wstring detail) {
+    return {ErrorDomain::Policy, code, {}, std::move(detail)};
+}
+SystemError SystemError::InvalidUsage(std::uint32_t code, std::wstring detail) {
+    return {ErrorDomain::InvalidUsage, code, {}, std::move(detail)};
+}
+SystemError SystemError::WithOperation(std::wstring value) const {
+    SystemError copy = *this;
     copy.operation = std::move(value);
     return copy;
 }
-std::wstring NativeError::Message() const {
-    std::wstring message = domain == ErrorDomain::Application
-                               ? L"Application error " + std::to_wstring(code)
-                               : FormatSystemMessage(code);
+std::wstring SystemError::Message() const {
+    std::wstring message = domain == ErrorDomain::Win32 || domain == ErrorDomain::HResult
+                               ? FormatSystemMessage(code)
+                               : L"MWFL error " + std::to_wstring(code);
+    if (!detail.empty()) message += L": " + detail;
     return operation.empty() ? message : operation + L": " + message;
 }
-Result<WaitResult> WaitForHandle(HANDLE handle, std::chrono::milliseconds timeout,
-                                 std::stop_token stop) {
-    if (!KernelHandlePolicy::IsValid(handle)) return NativeError::FromWin32(ERROR_INVALID_HANDLE);
-    if (stop.stop_requested()) return WaitResult{WaitStatus::Cancelled};
+Deadline Deadline::After(std::chrono::milliseconds duration) noexcept {
+    if (duration.count() < 0) return Infinite();
+    return Deadline{std::chrono::steady_clock::now() + duration, false};
+}
+Deadline Deadline::Infinite() noexcept { return Deadline{{}, true}; }
+bool Deadline::Expired() const noexcept {
+    return !infinite_ && std::chrono::steady_clock::now() >= end_;
+}
+std::chrono::milliseconds Deadline::Remaining() const noexcept {
+    if (infinite_) return std::chrono::milliseconds{-1};
+    const auto now = std::chrono::steady_clock::now();
+    if (now >= end_) return std::chrono::milliseconds{0};
+    return std::chrono::ceil<std::chrono::milliseconds>(end_ - now);
+}
+Result<OperationOutcome<WaitObservation>> WaitForHandle(HANDLE handle, Deadline deadline,
+                                                         std::stop_token stop) {
+    if (!KernelHandlePolicy::IsValid(handle)) return SystemError::FromWin32(ERROR_INVALID_HANDLE);
+    if (stop.stop_requested())
+        return OperationOutcome<WaitObservation>::Control(CompletionStatus::Cancelled);
     KernelHandle cancelled(CreateEventW(nullptr, TRUE, FALSE, nullptr));
-    if (!cancelled) return NativeError::LastWin32();
+    if (!cancelled) return SystemError::LastWin32();
     std::stop_callback callback(stop, [event = cancelled.Get()] { SetEvent(event); });
     const std::array<HANDLE, 2> handles{handle, cancelled.Get()};
     const DWORD result = WaitForMultipleObjects(static_cast<DWORD>(handles.size()), handles.data(),
-                                                FALSE, BoundedTimeout(timeout));
+                                                FALSE, BoundedTimeout(deadline));
     // The observed handle order is the tie breaker: completion wins when the
     // native handle and cancellation event become signaled together.
-    if (result == WAIT_OBJECT_0) return WaitResult{WaitStatus::Signaled};
-    if (result == WAIT_OBJECT_0 + 1) return WaitResult{WaitStatus::Cancelled};
-    if (result == WAIT_TIMEOUT) return WaitResult{WaitStatus::Timeout};
+    if (result == WAIT_OBJECT_0)
+        return OperationOutcome<WaitObservation>::Completed(WaitObservation::Signaled);
+    if (result == WAIT_OBJECT_0 + 1)
+        return OperationOutcome<WaitObservation>::Control(CompletionStatus::Cancelled);
+    if (result == WAIT_TIMEOUT)
+        return OperationOutcome<WaitObservation>::Control(CompletionStatus::TimedOut);
     if (result >= WAIT_ABANDONED_0 && result < WAIT_ABANDONED_0 + handles.size())
-        return WaitResult{WaitStatus::Abandoned};
-    return NativeError::LastWin32();
+        return OperationOutcome<WaitObservation>::Completed(WaitObservation::Abandoned);
+    return SystemError::LastWin32();
 }
 Result<std::wstring> Utf8ToWide(std::string_view text) {
     if (text.empty()) return std::wstring{};
     if (text.size() > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
     const int size = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, text.data(),
                                          static_cast<int>(text.size()), nullptr, 0);
-    if (size == 0) return NativeError::LastWin32();
+    if (size == 0) return SystemError::LastWin32();
     std::wstring converted(static_cast<std::size_t>(size), L'\0');
     if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, text.data(),
                             static_cast<int>(text.size()), converted.data(), size) == 0)
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     return converted;
 }
 Result<std::string> WideToUtf8(std::wstring_view text) {
     if (text.empty()) return std::string{};
     if (text.size() > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
     const int size =
         WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, text.data(),
                             static_cast<int>(text.size()), nullptr, 0, nullptr, nullptr);
-    if (size == 0) return NativeError::LastWin32();
+    if (size == 0) return SystemError::LastWin32();
     std::string converted(static_cast<std::size_t>(size), '\0');
     if (WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, text.data(),
                             static_cast<int>(text.size()), converted.data(), size, nullptr,
                             nullptr) == 0)
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     return converted;
 }
 }  // namespace mwfl

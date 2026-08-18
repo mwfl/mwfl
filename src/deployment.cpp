@@ -53,7 +53,7 @@ std::wstring Quote(std::wstring_view value) {
 Result<std::wstring> Volume(const std::filesystem::path& path) {
     wchar_t volume[MAX_PATH]{};
     auto absolute = std::filesystem::absolute(path);
-    if (!GetVolumePathNameW(absolute.c_str(), volume, MAX_PATH)) return NativeError::LastWin32();
+    if (!GetVolumePathNameW(absolute.c_str(), volume, MAX_PATH)) return SystemError::LastWin32();
     return std::wstring(volume);
 }
 bool MinimumSpecified(const Version& version) {
@@ -64,10 +64,10 @@ Result<PackageIdentity> QueryCurrentPackageIdentity() {
     UINT32 length = 0;
     LONG result = GetCurrentPackageFullName(&length, nullptr);
     if (result == APPMODEL_ERROR_NO_PACKAGE) return PackageIdentity{};
-    if (result != ERROR_INSUFFICIENT_BUFFER) return NativeError::FromWin32(result);
+    if (result != ERROR_INSUFFICIENT_BUFFER) return SystemError::FromWin32(result);
     std::wstring name(length, L'\0');
     result = GetCurrentPackageFullName(&length, name.data());
-    if (result != ERROR_SUCCESS) return NativeError::FromWin32(result);
+    if (result != ERROR_SUCCESS) return SystemError::FromWin32(result);
     if (!name.empty() && !name.back()) name.pop_back();
     UINT32 family_length = 0;
     PackageFamilyNameFromFullName(name.c_str(), &family_length, nullptr);
@@ -102,27 +102,27 @@ Result<PackageIdentity> QueryCurrentPackageIdentity() {
 Result<Version> QueryFileVersion(const std::filesystem::path& path) {
     DWORD ignored = 0;
     const DWORD bytes = GetFileVersionInfoSizeW(path.c_str(), &ignored);
-    if (!bytes) return NativeError::LastWin32().WithOperation(L"GetFileVersionInfoSizeW");
+    if (!bytes) return SystemError::LastWin32().WithOperation(L"GetFileVersionInfoSizeW");
     std::vector<std::byte> storage(bytes);
     if (!GetFileVersionInfoW(path.c_str(), 0, bytes, storage.data()))
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     VS_FIXEDFILEINFO* info = nullptr;
     UINT size = 0;
     if (!VerQueryValueW(storage.data(), L"\\", reinterpret_cast<void**>(&info), &size) || !info)
-        return NativeError::FromWin32(ERROR_RESOURCE_DATA_NOT_FOUND);
+        return SystemError::FromWin32(ERROR_RESOURCE_DATA_NOT_FOUND);
     return Version{HIWORD(info->dwFileVersionMS), LOWORD(info->dwFileVersionMS),
                    HIWORD(info->dwFileVersionLS), LOWORD(info->dwFileVersionLS)};
 }
 Result<void> RegisterApplicationRestart(std::wstring_view arguments, DWORD flags) {
     if (arguments.size() >= RESTART_MAX_CMD_LINE)
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
     std::wstring copy(arguments);
     const HRESULT result = ::RegisterApplicationRestart(copy.c_str(), flags);
-    return FAILED(result) ? Result<void>{NativeError::FromHResult(result)} : Result<void>{};
+    return FAILED(result) ? Result<void>{SystemError::FromHResult(result)} : Result<void>{};
 }
 Result<void> UnregisterApplicationRestart() noexcept {
     const HRESULT result = ::UnregisterApplicationRestart();
-    return FAILED(result) ? Result<void>{NativeError::FromHResult(result)} : Result<void>{};
+    return FAILED(result) ? Result<void>{SystemError::FromHResult(result)} : Result<void>{};
 }
 RestartRegistration::RestartRegistration(std::wstring_view arguments, DWORD flags) {
     active_ = static_cast<bool>(RegisterApplicationRestart(arguments, flags));
@@ -142,16 +142,16 @@ RestartRegistration& RestartRegistration::operator=(RestartRegistration&& other)
 Result<RecoveryRegistration> RecoveryRegistration::Register(RecoveryCallback callback,
                                                             std::chrono::milliseconds interval) {
     if (!callback || interval < std::chrono::seconds(5) || interval > std::chrono::minutes(5))
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
     std::scoped_lock lock(recovery_mutex);
-    if (recovery_active) return NativeError::FromWin32(ERROR_ALREADY_EXISTS);
+    if (recovery_active) return SystemError::FromWin32(ERROR_ALREADY_EXISTS);
     recovery_callback = std::move(callback);
     recovery_stop = std::stop_source{};
     const HRESULT result = RegisterApplicationRecoveryCallback(
         RecoveryThunk, nullptr, static_cast<DWORD>(interval.count()), 0);
     if (FAILED(result)) {
         recovery_callback = {};
-        return NativeError::FromHResult(result);
+        return SystemError::FromHResult(result);
     }
     recovery_active = true;
     return RecoveryRegistration(true);
@@ -183,7 +183,7 @@ RecoveryRegistration& RecoveryRegistration::operator=(RecoveryRegistration&& oth
 Result<SignatureVerification> VerifyAuthenticode(const std::filesystem::path& path,
                                                  RevocationPolicy policy) {
     if (!std::filesystem::is_regular_file(path))
-        return NativeError::FromWin32(ERROR_FILE_NOT_FOUND);
+        return SystemError::FromWin32(ERROR_FILE_NOT_FOUND);
     WINTRUST_FILE_INFO file{sizeof(file), path.c_str(), nullptr, nullptr};
     WINTRUST_DATA data{sizeof(data)};
     data.dwUIChoice = WTD_UI_NONE;
@@ -210,7 +210,7 @@ Result<SignatureVerification> VerifyAuthenticode(const std::filesystem::path& pa
         result = SignatureStatus::RevocationUnavailable;
     return SignatureVerification{result, status};
 }
-Result<UpdateHandoffPlan> PrepareUpdateHandoff(const std::filesystem::path& candidate,
+Result<VerifiedUpdate> VerifyUpdate(const std::filesystem::path& candidate,
                                                const std::filesystem::path& target,
                                                const std::filesystem::path& backup,
                                                const std::filesystem::path& restart,
@@ -221,26 +221,26 @@ Result<UpdateHandoffPlan> PrepareUpdateHandoff(const std::filesystem::path& cand
         !std::filesystem::is_regular_file(target, filesystem_error) || filesystem_error ||
         target.empty() || backup.empty() || restart.empty() || target == backup ||
         candidate == target)
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
     auto target_volume = Volume(target), backup_volume = Volume(backup);
-    if (!target_volume) return target_volume.Error();
+    if (!target_volume) return target_volume.GetError();
     if (!backup_volume ||
         _wcsicmp(target_volume.Value().c_str(), backup_volume.Value().c_str()) != 0)
-        return NativeError::FromWin32(ERROR_NOT_SAME_DEVICE);
+        return SystemError::FromWin32(ERROR_NOT_SAME_DEVICE);
     if (policy.require_valid_signature) {
         auto signature = VerifyAuthenticode(candidate, policy.revocation);
-        if (!signature) return signature.Error();
+        if (!signature) return signature.GetError();
         if (signature.Value().status != SignatureStatus::Valid)
-            return NativeError::FromHResult(TRUST_E_SUBJECT_NOT_TRUSTED)
+            return SystemError::FromHResult(TRUST_E_SUBJECT_NOT_TRUSTED)
                 .WithOperation(L"Update candidate signature");
     }
     if (MinimumSpecified(policy.minimum_version)) {
         auto version = QueryFileVersion(candidate);
-        if (!version) return version.Error();
+        if (!version) return version.GetError();
         if (version.Value() < policy.minimum_version)
-            return NativeError::FromWin32(ERROR_PRODUCT_VERSION);
+            return SystemError::FromWin32(ERROR_PRODUCT_VERSION);
     }
-    UpdateHandoffPlan plan;
+    VerifiedUpdate plan;
     plan.candidate_ = std::filesystem::absolute(candidate);
     plan.target_ = std::filesystem::absolute(target);
     plan.backup_ = std::filesystem::absolute(backup);
@@ -249,57 +249,77 @@ Result<UpdateHandoffPlan> PrepareUpdateHandoff(const std::filesystem::path& cand
     plan.policy_ = policy;
     return plan;
 }
-Result<void> ApplyUpdateHandoff(const UpdateHandoffPlan& plan, DWORD process_id,
-                                std::chrono::milliseconds timeout, std::stop_token stop) {
-    if (process_id) {
-        KernelHandle process(OpenProcess(SYNCHRONIZE, FALSE, process_id));
-        if (!process) return NativeError::LastWin32();
-        auto waited = WaitForHandle(process.Get(), timeout, stop);
-        if (!waited) return waited.Error();
-        if (waited.Value().status == WaitStatus::Timeout)
-            return NativeError::FromWin32(WAIT_TIMEOUT);
-        if (waited.Value().status == WaitStatus::Cancelled)
-            return NativeError::FromWin32(ERROR_CANCELLED);
+StagedUpdate::~StagedUpdate() {
+    if (active_ && !staging_.empty()) DeleteFileW(staging_.c_str());
+}
+StagedUpdate::StagedUpdate(StagedUpdate&& other) noexcept
+    : verified_(std::move(other.verified_)),
+      staging_(std::move(other.staging_)),
+      active_(std::exchange(other.active_, false)) {}
+StagedUpdate& StagedUpdate::operator=(StagedUpdate&& other) noexcept {
+    if (this != &other) {
+        if (active_ && !staging_.empty()) DeleteFileW(staging_.c_str());
+        verified_ = std::move(other.verified_);
+        staging_ = std::move(other.staging_);
+        active_ = std::exchange(other.active_, false);
     }
-    // A plan is immutable, but its candidate file is not. Re-validate at execution time and
-    // again after staging so a post-plan replacement cannot bypass the selected policy.
+    return *this;
+}
+Result<StagedUpdate> StageUpdate(VerifiedUpdate plan) {
     if (plan.Policy().require_valid_signature) {
         auto signature = VerifyAuthenticode(plan.Candidate(), plan.Policy().revocation);
-        if (!signature) return signature.Error();
+        if (!signature) return signature.GetError();
         if (signature.Value().status != SignatureStatus::Valid)
-            return NativeError::FromHResult(TRUST_E_SUBJECT_NOT_TRUSTED)
+            return SystemError::FromHResult(TRUST_E_SUBJECT_NOT_TRUSTED)
                 .WithOperation(L"Update candidate signature changed");
     }
     if (MinimumSpecified(plan.Policy().minimum_version)) {
         auto version = QueryFileVersion(plan.Candidate());
-        if (!version) return version.Error();
+        if (!version) return version.GetError();
         if (version.Value() < plan.Policy().minimum_version)
-            return NativeError::FromWin32(ERROR_PRODUCT_VERSION);
+            return SystemError::FromWin32(ERROR_PRODUCT_VERSION);
     }
     auto staging = plan.Target();
     staging += L".mwfl-stage";
     if (!CopyFileW(plan.Candidate().c_str(), staging.c_str(), TRUE))
-        return NativeError::LastWin32().WithOperation(L"Stage update");
+        return SystemError::LastWin32().WithOperation(L"Stage update");
     if (plan.Policy().require_valid_signature) {
-        auto staged_signature = VerifyAuthenticode(staging, plan.Policy().revocation);
-        if (!staged_signature || staged_signature.Value().status != SignatureStatus::Valid) {
+        auto signature = VerifyAuthenticode(staging, plan.Policy().revocation);
+        if (!signature || signature.Value().status != SignatureStatus::Valid) {
             DeleteFileW(staging.c_str());
-            return staged_signature
-                       ? Result<void>{NativeError::FromHResult(TRUST_E_SUBJECT_NOT_TRUSTED)
-                                          .WithOperation(L"Staged update signature")}
-                       : Result<void>{staged_signature.Error()};
+            return signature ? SystemError::FromHResult(TRUST_E_SUBJECT_NOT_TRUSTED)
+                                   .WithOperation(L"Staged update signature")
+                             : signature.GetError();
         }
     }
+    StagedUpdate result;
+    result.verified_ = std::move(plan);
+    result.staging_ = std::move(staging);
+    result.active_ = true;
+    return result;
+}
+Result<OperationOutcome<AppliedUpdate>> ApplyUpdate(StagedUpdate staged, DWORD process_id,
+                                                    Deadline deadline, std::stop_token stop) {
+    const auto& plan = staged.verified_;
+    if (process_id) {
+        KernelHandle process(OpenProcess(SYNCHRONIZE, FALSE, process_id));
+        if (!process) return SystemError::LastWin32();
+        auto waited = WaitForHandle(process.Get(), deadline, stop);
+        if (!waited) return waited.GetError();
+        if (waited.Value().status != CompletionStatus::Completed)
+            return OperationOutcome<AppliedUpdate>::Control(waited.Value().status);
+    }
+    const auto& staging = staged.staging_;
     DeleteFileW(plan.Backup().c_str());
     if (std::filesystem::exists(plan.Target()) &&
         !MoveFileExW(plan.Target().c_str(), plan.Backup().c_str(),
                      MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
         DeleteFileW(staging.c_str());
-        return NativeError::LastWin32().WithOperation(L"Backup update target");
+        return SystemError::LastWin32().WithOperation(L"Backup update target");
     }
     if (!MoveFileExW(staging.c_str(), plan.Target().c_str(),
                      MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
-        const auto error = NativeError::LastWin32().WithOperation(L"Commit update");
+        const auto error = SystemError::LastWin32().WithOperation(L"Commit update");
         MoveFileExW(plan.Backup().c_str(), plan.Target().c_str(),
                     MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
         DeleteFileW(staging.c_str());
@@ -313,7 +333,7 @@ Result<void> ApplyUpdateHandoff(const UpdateHandoffPlan& plan, DWORD process_id,
     PROCESS_INFORMATION info{};
     if (!CreateProcessW(plan.RestartExecutable().c_str(), mutable_command.data(), nullptr, nullptr,
                         FALSE, 0, nullptr, nullptr, &startup, &info)) {
-        const auto error = NativeError::LastWin32().WithOperation(L"Restart updated application");
+        const auto error = SystemError::LastWin32().WithOperation(L"Restart updated application");
         MoveFileExW(plan.Target().c_str(), staging.c_str(), MOVEFILE_REPLACE_EXISTING);
         MoveFileExW(plan.Backup().c_str(), plan.Target().c_str(),
                     MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
@@ -322,6 +342,7 @@ Result<void> ApplyUpdateHandoff(const UpdateHandoffPlan& plan, DWORD process_id,
     }
     CloseHandle(info.hThread);
     CloseHandle(info.hProcess);
-    return {};
+    staged.active_ = false;
+    return OperationOutcome<AppliedUpdate>::Completed({plan.Target(), plan.Backup()});
 }
 }  // namespace mwfl

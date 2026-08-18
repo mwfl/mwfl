@@ -12,29 +12,21 @@
 #include <vector>
 namespace mwfl {
 [[nodiscard]] std::wstring QuoteWindowsArgument(std::wstring_view argument);
-enum class ProcessWaitStatus { Exited, TimedOut, Cancelled };
-struct ProcessWaitResult {
-    ProcessWaitStatus status = ProcessWaitStatus::TimedOut;
-    DWORD exit_code = STILL_ACTIVE;
-};
 struct ProcessJobOptions {
     bool kill_on_close = true;
     std::optional<DWORD> active_process_limit;
     std::optional<std::size_t> process_memory_limit;
     std::optional<std::size_t> job_memory_limit;
+    std::optional<DWORD> cpu_rate_hard_cap;
 };
 struct ProcessOutput {
-    ProcessWaitResult process;
+    DWORD exit_code = STILL_ACTIVE;
     std::vector<std::byte> stdout_bytes;
     std::vector<std::byte> stderr_bytes;
     bool stdout_truncated = false;
     bool stderr_truncated = false;
 };
-enum class ProcessInputStatus { Completed, TimedOut, Cancelled, Disconnected };
-struct ProcessInputResult {
-    ProcessInputStatus status = ProcessInputStatus::Completed;
-    std::size_t bytes_written = 0;
-};
+class SupervisedProcess;
 class Process final {
    public:
     Process() = default;
@@ -47,25 +39,68 @@ class Process final {
     Process& operator=(const Process&) = delete;
     [[nodiscard]] DWORD Id() const noexcept { return id_; }
     [[nodiscard]] HANDLE NativeHandle() const noexcept { return process_.Get(); }
-    [[nodiscard]] bool Supervised() const noexcept { return static_cast<bool>(job_); }
-    [[nodiscard]] Result<ProcessWaitResult> Wait(std::chrono::milliseconds timeout,
-                                                 std::stop_token stop = {}) const;
+    [[nodiscard]] Result<OperationOutcome<DWORD>> Wait(Deadline deadline,
+                                                        std::stop_token stop = {}) const;
     [[nodiscard]] Result<void> RequestConsoleStop() const noexcept;
-    [[nodiscard]] Result<void> Terminate(DWORD exit_code) noexcept;
-    [[nodiscard]] Result<void> TerminateTree(DWORD exit_code) noexcept;
-    [[nodiscard]] Result<ProcessOutput> CollectOutput(std::size_t maximum_stdout_bytes,
-                                                      std::size_t maximum_stderr_bytes,
-                                                      std::chrono::milliseconds timeout,
-                                                      std::stop_token stop = {});
-    [[nodiscard]] Result<ProcessInputResult> WriteInput(std::span<const std::byte> input,
-                                                        std::chrono::milliseconds timeout,
-                                                        std::stop_token stop = {});
+    [[nodiscard]] Result<OperationOutcome<ProcessOutput>> CollectOutput(
+        std::size_t maximum_stdout_bytes, std::size_t maximum_stderr_bytes, Deadline deadline,
+        std::stop_token stop = {});
+    [[nodiscard]] Result<OperationOutcome<std::size_t>> WriteInput(
+        std::span<const std::byte> input, Deadline deadline, std::stop_token stop = {});
+    [[nodiscard]] Result<OperationOutcome<std::size_t>> ReadStdout(
+        std::span<std::byte> output, Deadline deadline, std::stop_token stop = {});
+    [[nodiscard]] Result<OperationOutcome<std::size_t>> ReadStderr(
+        std::span<std::byte> output, Deadline deadline, std::stop_token stop = {});
     void CloseInput() noexcept { stdin_write_.Reset(); }
 
    private:
+    friend class SupervisedProcess;
+    [[nodiscard]] Result<void> TerminateTree(DWORD exit_code) noexcept;
     KernelHandle process_, thread_, job_, stdin_write_, stdout_read_, stderr_read_;
     DWORD id_ = 0;
     bool new_process_group_ = false;
+};
+class SupervisedProcess final {
+   public:
+    SupervisedProcess() = default;
+    explicit SupervisedProcess(Process process) : process_(std::move(process)) {}
+    SupervisedProcess(SupervisedProcess&&) noexcept = default;
+    SupervisedProcess& operator=(SupervisedProcess&&) noexcept = default;
+    SupervisedProcess(const SupervisedProcess&) = delete;
+    SupervisedProcess& operator=(const SupervisedProcess&) = delete;
+    [[nodiscard]] DWORD Id() const noexcept { return process_.Id(); }
+    [[nodiscard]] HANDLE NativeHandle() const noexcept { return process_.NativeHandle(); }
+    [[nodiscard]] Result<OperationOutcome<DWORD>> Wait(Deadline deadline,
+                                                        std::stop_token stop = {}) const {
+        return process_.Wait(deadline, stop);
+    }
+    [[nodiscard]] Result<void> RequestConsoleStop() const noexcept {
+        return process_.RequestConsoleStop();
+    }
+    [[nodiscard]] Result<void> TerminateTree(DWORD exit_code) noexcept {
+        return process_.TerminateTree(exit_code);
+    }
+    [[nodiscard]] Result<OperationOutcome<ProcessOutput>> RunUntilExit(
+        std::size_t maximum_stdout_bytes, std::size_t maximum_stderr_bytes, Deadline deadline,
+        std::stop_token stop = {}) {
+        return process_.CollectOutput(maximum_stdout_bytes, maximum_stderr_bytes, deadline, stop);
+    }
+    [[nodiscard]] Result<OperationOutcome<std::size_t>> WriteInput(
+        std::span<const std::byte> input, Deadline deadline, std::stop_token stop = {}) {
+        return process_.WriteInput(input, deadline, stop);
+    }
+    [[nodiscard]] Result<OperationOutcome<std::size_t>> ReadStdout(
+        std::span<std::byte> output, Deadline deadline, std::stop_token stop = {}) {
+        return process_.ReadStdout(output, deadline, stop);
+    }
+    [[nodiscard]] Result<OperationOutcome<std::size_t>> ReadStderr(
+        std::span<std::byte> output, Deadline deadline, std::stop_token stop = {}) {
+        return process_.ReadStderr(output, deadline, stop);
+    }
+    void CloseInput() noexcept { process_.CloseInput(); }
+
+   private:
+    Process process_;
 };
 class ProcessBuilder final {
    public:
@@ -77,11 +112,13 @@ class ProcessBuilder final {
     ProcessBuilder& RemoveEnvironment(std::wstring name);
     ProcessBuilder& RedirectStdout(bool enabled = true) noexcept;
     ProcessBuilder& RedirectStderr(bool enabled = true) noexcept;
+    ProcessBuilder& MergeStderrIntoStdout(bool enabled = true) noexcept;
     ProcessBuilder& RedirectStdin(bool enabled = true) noexcept;
     ProcessBuilder& NoWindow(bool enabled = true) noexcept;
     ProcessBuilder& NewProcessGroup(bool enabled = true) noexcept;
-    ProcessBuilder& Supervise(ProcessJobOptions options = {});
     [[nodiscard]] Result<Process> Launch() const;
+    [[nodiscard]] Result<SupervisedProcess> LaunchSupervised(
+        ProcessJobOptions options = {}) const;
 
    private:
     std::filesystem::path executable_, working_directory_;
@@ -90,6 +127,7 @@ class ProcessBuilder final {
     std::optional<ProcessJobOptions> job_options_;
     bool inherit_environment_ = true, redirect_stdout_ = false, redirect_stderr_ = false,
          redirect_stdin_ = false;
-    bool no_window_ = false, new_process_group_ = false;
+    bool no_window_ = false, new_process_group_ = false, merge_stderr_ = false;
+    [[nodiscard]] Result<Process> LaunchConfigured() const;
 };
 }  // namespace mwfl

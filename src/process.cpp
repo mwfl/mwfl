@@ -12,7 +12,7 @@ struct CaseInsensitiveLess {
 };
 Result<KernelHandle> CreateJob(const ProcessJobOptions& options) {
     KernelHandle job(CreateJobObjectW(nullptr, nullptr));
-    if (!job) return NativeError::LastWin32().WithOperation(L"CreateJobObjectW");
+    if (!job) return SystemError::LastWin32().WithOperation(L"CreateJobObjectW");
     JOBOBJECT_EXTENDED_LIMIT_INFORMATION limits{};
     if (options.kill_on_close)
         limits.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
@@ -30,27 +30,38 @@ Result<KernelHandle> CreateJob(const ProcessJobOptions& options) {
     }
     if (!SetInformationJobObject(job.Get(), JobObjectExtendedLimitInformation, &limits,
                                  sizeof(limits)))
-        return NativeError::LastWin32().WithOperation(L"SetInformationJobObject");
+        return SystemError::LastWin32().WithOperation(L"SetInformationJobObject");
+    if (options.cpu_rate_hard_cap) {
+        if (*options.cpu_rate_hard_cap < 1 || *options.cpu_rate_hard_cap > 10000)
+            return SystemError::InvalidUsage(ERROR_INVALID_PARAMETER, L"CPU rate must be 1..10000")
+                .WithOperation(L"Create process job");
+        JOBOBJECT_CPU_RATE_CONTROL_INFORMATION cpu{};
+        cpu.ControlFlags = JOB_OBJECT_CPU_RATE_CONTROL_ENABLE | JOB_OBJECT_CPU_RATE_CONTROL_HARD_CAP;
+        cpu.CpuRate = *options.cpu_rate_hard_cap;
+        if (!SetInformationJobObject(job.Get(), JobObjectCpuRateControlInformation, &cpu,
+                                     sizeof(cpu)))
+            return SystemError::LastWin32().WithOperation(L"Set job CPU rate");
+    }
     return std::move(job);
 }
 Result<std::pair<KernelHandle, KernelHandle>> CreateOutputPipe() {
     SECURITY_ATTRIBUTES sa{sizeof(sa), nullptr, TRUE};
     HANDLE read = nullptr, write = nullptr;
     if (!CreatePipe(&read, &write, &sa, 0))
-        return NativeError::LastWin32().WithOperation(L"CreatePipe");
+        return SystemError::LastWin32().WithOperation(L"CreatePipe");
     KernelHandle r(read), w(write);
     if (!SetHandleInformation(r.Get(), HANDLE_FLAG_INHERIT, 0))
-        return NativeError::LastWin32().WithOperation(L"SetHandleInformation");
+        return SystemError::LastWin32().WithOperation(L"SetHandleInformation");
     return std::pair<KernelHandle, KernelHandle>{std::move(r), std::move(w)};
 }
 Result<std::pair<KernelHandle, KernelHandle>> CreateInputPipe() {
     SECURITY_ATTRIBUTES sa{sizeof(sa), nullptr, TRUE};
     HANDLE read = nullptr, write = nullptr;
     if (!CreatePipe(&read, &write, &sa, 0))
-        return NativeError::LastWin32().WithOperation(L"Create stdin pipe");
+        return SystemError::LastWin32().WithOperation(L"Create stdin pipe");
     KernelHandle r(read), w(write);
     if (!SetHandleInformation(w.Get(), HANDLE_FLAG_INHERIT, 0))
-        return NativeError::LastWin32().WithOperation(L"Set stdin pipe inheritance");
+        return SystemError::LastWin32().WithOperation(L"Set stdin pipe inheritance");
     return std::pair<KernelHandle, KernelHandle>{std::move(r), std::move(w)};
 }
 Result<KernelHandle> DuplicateInheritable(HANDLE source, bool input, std::wstring_view operation) {
@@ -60,13 +71,13 @@ Result<KernelHandle> DuplicateInheritable(HANDLE source, bool input, std::wstrin
                                          FILE_SHARE_READ | FILE_SHARE_WRITE, &attributes,
                                          OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
         if (null_handle == INVALID_HANDLE_VALUE)
-            return NativeError::LastWin32().WithOperation(std::wstring(operation));
+            return SystemError::LastWin32().WithOperation(std::wstring(operation));
         return KernelHandle(null_handle);
     }
     HANDLE duplicate = nullptr;
     if (!DuplicateHandle(GetCurrentProcess(), source, GetCurrentProcess(), &duplicate, 0, TRUE,
                          DUPLICATE_SAME_ACCESS))
-        return NativeError::LastWin32().WithOperation(std::wstring(operation));
+        return SystemError::LastWin32().WithOperation(std::wstring(operation));
     return KernelHandle(duplicate);
 }
 Result<std::vector<wchar_t>> BuildEnvironment(
@@ -75,7 +86,7 @@ Result<std::vector<wchar_t>> BuildEnvironment(
     std::map<std::wstring, std::wstring, CaseInsensitiveLess> values;
     if (inherit) {
         wchar_t* block = GetEnvironmentStringsW();
-        if (!block) return NativeError::LastWin32().WithOperation(L"GetEnvironmentStringsW");
+        if (!block) return SystemError::LastWin32().WithOperation(L"GetEnvironmentStringsW");
         for (const wchar_t* p = block; *p; p += wcslen(p) + 1) {
             std::wstring_view entry(p);
             const auto eq = entry.find(L'=', entry.starts_with(L'=') ? 1 : 0);
@@ -87,7 +98,7 @@ Result<std::vector<wchar_t>> BuildEnvironment(
     }
     for (const auto& [name, value] : changes) {
         if (name.empty() || name.find(L'=') != std::wstring::npos)
-            return NativeError::FromWin32(ERROR_INVALID_PARAMETER)
+            return SystemError::FromWin32(ERROR_INVALID_PARAMETER)
                 .WithOperation(L"Process environment");
         if (value)
             values[name] = *value;
@@ -161,40 +172,33 @@ Process::Process(KernelHandle process, KernelHandle thread, KernelHandle job, Ke
       stderr_read_(std::move(err)),
       id_(id),
       new_process_group_(group) {}
-Result<ProcessWaitResult> Process::Wait(std::chrono::milliseconds timeout,
-                                        std::stop_token stop) const {
-    auto waited = WaitForHandle(process_.Get(), timeout, stop);
-    if (!waited) return waited.Error().WithOperation(L"Wait for process");
-    if (waited.Value().status == WaitStatus::Timeout)
-        return ProcessWaitResult{ProcessWaitStatus::TimedOut, STILL_ACTIVE};
-    if (waited.Value().status == WaitStatus::Cancelled)
-        return ProcessWaitResult{ProcessWaitStatus::Cancelled, STILL_ACTIVE};
+Result<OperationOutcome<DWORD>> Process::Wait(Deadline deadline, std::stop_token stop) const {
+    auto waited = WaitForHandle(process_.Get(), deadline, stop);
+    if (!waited) return waited.GetError().WithOperation(L"Wait for process");
+    if (waited.Value().status != CompletionStatus::Completed)
+        return OperationOutcome<DWORD>::Control(waited.Value().status);
     DWORD code = 0;
     if (!GetExitCodeProcess(process_.Get(), &code))
-        return NativeError::LastWin32().WithOperation(L"GetExitCodeProcess");
-    return ProcessWaitResult{ProcessWaitStatus::Exited, code};
+        return SystemError::LastWin32().WithOperation(L"GetExitCodeProcess");
+    return OperationOutcome<DWORD>::Completed(code);
 }
 Result<void> Process::RequestConsoleStop() const noexcept {
     if (!new_process_group_ || !id_)
-        return NativeError::FromWin32(ERROR_INVALID_STATE).WithOperation(L"RequestConsoleStop");
+        return SystemError::FromWin32(ERROR_INVALID_STATE).WithOperation(L"RequestConsoleStop");
     if (!GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, id_))
-        return NativeError::LastWin32().WithOperation(L"GenerateConsoleCtrlEvent");
-    return {};
-}
-Result<void> Process::Terminate(DWORD code) noexcept {
-    if (!process_ || !TerminateProcess(process_.Get(), code))
-        return NativeError::LastWin32().WithOperation(L"TerminateProcess");
+        return SystemError::LastWin32().WithOperation(L"GenerateConsoleCtrlEvent");
     return {};
 }
 Result<void> Process::TerminateTree(DWORD code) noexcept {
-    if (!job_) return NativeError::FromWin32(ERROR_INVALID_STATE).WithOperation(L"TerminateTree");
+    if (!job_) return SystemError::FromWin32(ERROR_INVALID_STATE).WithOperation(L"TerminateTree");
     if (!TerminateJobObject(job_.Get(), code))
-        return NativeError::LastWin32().WithOperation(L"TerminateJobObject");
+        return SystemError::LastWin32().WithOperation(L"TerminateJobObject");
     return {};
 }
-Result<ProcessOutput> Process::CollectOutput(std::size_t max_out, std::size_t max_err,
-                                             std::chrono::milliseconds timeout,
-                                             std::stop_token stop) {
+Result<OperationOutcome<ProcessOutput>> Process::CollectOutput(std::size_t max_out,
+                                                                std::size_t max_err,
+                                                                Deadline deadline,
+                                                                std::stop_token stop) {
     ProcessOutput output;
     std::stop_source drains;
     std::jthread out_thread, err_thread;
@@ -208,26 +212,27 @@ Result<ProcessOutput> Process::CollectOutput(std::size_t max_out, std::size_t ma
             DrainPipe(stderr_read_.Get(), max_err, output.stderr_bytes, output.stderr_truncated,
                       drains.get_token());
         });
-    auto waited = Wait(timeout, stop);
+    auto waited = Wait(deadline, stop);
     if (!waited) {
         drains.request_stop();
-        return waited.Error();
+        return waited.GetError();
     }
-    output.process = waited.Value();
-    if (output.process.status == ProcessWaitStatus::Exited) {
+    if (waited.Value().status == CompletionStatus::Completed) {
         if (out_thread.joinable()) out_thread.join();
         if (err_thread.joinable()) err_thread.join();
+        output.exit_code = *waited.Value().value;
     } else {
         drains.request_stop();
+        return OperationOutcome<ProcessOutput>::Control(waited.Value().status);
     }
-    return output;
+    return OperationOutcome<ProcessOutput>::Completed(std::move(output));
 }
-Result<ProcessInputResult> Process::WriteInput(std::span<const std::byte> input,
-                                               std::chrono::milliseconds timeout,
-                                               std::stop_token stop) {
-    if (!stdin_write_) return NativeError::FromWin32(ERROR_INVALID_HANDLE);
-    if (input.empty()) return ProcessInputResult{};
-    if (input.size() > MAXDWORD) return NativeError::FromWin32(ERROR_FILE_TOO_LARGE);
+Result<OperationOutcome<std::size_t>> Process::WriteInput(std::span<const std::byte> input,
+                                                          Deadline deadline,
+                                                          std::stop_token stop) {
+    if (!stdin_write_) return SystemError::FromWin32(ERROR_INVALID_HANDLE);
+    if (input.empty()) return OperationOutcome<std::size_t>::Completed(0);
+    if (input.size() > MAXDWORD) return SystemError::FromWin32(ERROR_FILE_TOO_LARGE);
     DWORD written = 0;
     DWORD error = ERROR_SUCCESS;
     std::jthread writer([&] {
@@ -235,26 +240,67 @@ Result<ProcessInputResult> Process::WriteInput(std::span<const std::byte> input,
         if (!WriteFile(stdin_write_.Get(), input.data(), size, &written, nullptr))
             error = GetLastError();
     });
-    auto waited = WaitForHandle(writer.native_handle(), timeout, stop);
+    auto waited = WaitForHandle(writer.native_handle(), deadline, stop);
     if (!waited) {
         CancelSynchronousIo(writer.native_handle());
         writer.join();
-        return waited.Error();
+        return waited.GetError();
     }
-    if (waited.Value().status != WaitStatus::Signaled) {
+    if (waited.Value().status != CompletionStatus::Completed) {
         CancelSynchronousIo(writer.native_handle());
         writer.join();
-        return ProcessInputResult{waited.Value().status == WaitStatus::Cancelled
-                                      ? ProcessInputStatus::Cancelled
-                                      : ProcessInputStatus::TimedOut,
-                                  written};
+        return OperationOutcome<std::size_t>::Control(waited.Value().status);
     }
     writer.join();
     if (error == ERROR_BROKEN_PIPE || error == ERROR_NO_DATA)
-        return ProcessInputResult{ProcessInputStatus::Disconnected, written};
+        return OperationOutcome<std::size_t>::Control(CompletionStatus::Disconnected);
     if (error != ERROR_SUCCESS)
-        return NativeError::FromWin32(error).WithOperation(L"Write process stdin");
-    return ProcessInputResult{ProcessInputStatus::Completed, written};
+        return SystemError::FromWin32(error).WithOperation(L"Write process stdin");
+    return OperationOutcome<std::size_t>::Completed(written);
+}
+namespace {
+Result<OperationOutcome<std::size_t>> ReadProcessPipe(HANDLE pipe, std::span<std::byte> output,
+                                                       Deadline deadline,
+                                                       std::stop_token stop,
+                                                       std::wstring_view operation) {
+    if (!pipe) return SystemError::FromWin32(ERROR_INVALID_HANDLE).WithOperation(std::wstring(operation));
+    if (output.empty()) return OperationOutcome<std::size_t>::Completed(0);
+    if (output.size() > MAXDWORD) return SystemError::FromWin32(ERROR_FILE_TOO_LARGE);
+    DWORD read = 0;
+    DWORD error = ERROR_SUCCESS;
+    std::jthread reader([&] {
+        if (!ReadFile(pipe, output.data(), static_cast<DWORD>(output.size()), &read, nullptr))
+            error = GetLastError();
+    });
+    auto waited = WaitForHandle(reader.native_handle(), deadline, stop);
+    if (!waited) {
+        CancelSynchronousIo(reader.native_handle());
+        reader.join();
+        return waited.GetError();
+    }
+    if (waited.Value().status != CompletionStatus::Completed) {
+        CancelSynchronousIo(reader.native_handle());
+        reader.join();
+        return OperationOutcome<std::size_t>::Control(waited.Value().status);
+    }
+    reader.join();
+    if (error == ERROR_BROKEN_PIPE || error == ERROR_NO_DATA ||
+        (error == ERROR_SUCCESS && read == 0))
+        return OperationOutcome<std::size_t>::Control(CompletionStatus::Disconnected);
+    if (error != ERROR_SUCCESS)
+        return SystemError::FromWin32(error).WithOperation(std::wstring(operation));
+    return OperationOutcome<std::size_t>::Completed(read);
+}
+}  // namespace
+Result<OperationOutcome<std::size_t>> Process::ReadStdout(std::span<std::byte> output,
+                                                          Deadline deadline,
+                                                          std::stop_token stop) {
+    return ReadProcessPipe(stdout_read_.Get(), output, deadline, stop, L"Read process stdout");
+}
+Result<OperationOutcome<std::size_t>> Process::ReadStderr(std::span<std::byte> output,
+                                                          Deadline deadline,
+                                                          std::stop_token stop) {
+    return ReadProcessPipe(stderr_read_.Get(), output, deadline, stop, L"Read process stderr");
 }
 ProcessBuilder& ProcessBuilder::Executable(std::filesystem::path v) {
     executable_ = std::move(v);
@@ -288,6 +334,11 @@ ProcessBuilder& ProcessBuilder::RedirectStderr(bool v) noexcept {
     redirect_stderr_ = v;
     return *this;
 }
+ProcessBuilder& ProcessBuilder::MergeStderrIntoStdout(bool v) noexcept {
+    merge_stderr_ = v;
+    if (v) redirect_stdout_ = true;
+    return *this;
+}
 ProcessBuilder& ProcessBuilder::RedirectStdin(bool v) noexcept {
     redirect_stdin_ = v;
     return *this;
@@ -300,66 +351,78 @@ ProcessBuilder& ProcessBuilder::NewProcessGroup(bool v) noexcept {
     new_process_group_ = v;
     return *this;
 }
-ProcessBuilder& ProcessBuilder::Supervise(ProcessJobOptions v) {
-    job_options_ = std::move(v);
-    return *this;
-}
 Result<Process> ProcessBuilder::Launch() const {
+    auto copy = *this;
+    copy.job_options_.reset();
+    return copy.LaunchConfigured();
+}
+Result<SupervisedProcess> ProcessBuilder::LaunchSupervised(ProcessJobOptions options) const {
+    auto copy = *this;
+    copy.job_options_ = std::move(options);
+    auto process = copy.LaunchConfigured();
+    if (!process) return process.GetError();
+    return SupervisedProcess(std::move(process.Value()));
+}
+Result<Process> ProcessBuilder::LaunchConfigured() const {
     if (executable_.empty())
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER).WithOperation(L"Process executable");
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER).WithOperation(L"Process executable");
     std::wstring command = QuoteWindowsArgument(executable_.wstring());
     for (const auto& arg : arguments_) {
         command.push_back(L' ');
         command += QuoteWindowsArgument(arg);
     }
     auto environment = BuildEnvironment(inherit_environment_, environment_);
-    if (!environment) return environment.Error();
+    if (!environment) return environment.GetError();
     KernelHandle in_read, in_write, out_read, out_write, err_read, err_write;
     if (redirect_stdin_) {
         auto p = CreateInputPipe();
-        if (!p) return p.Error();
+        if (!p) return p.GetError();
         in_read = std::move(p.Value().first);
         in_write = std::move(p.Value().second);
     }
     if (redirect_stdout_) {
         auto p = CreateOutputPipe();
-        if (!p) return p.Error();
+        if (!p) return p.GetError();
         out_read = std::move(p.Value().first);
         out_write = std::move(p.Value().second);
     }
-    if (redirect_stderr_) {
+    if (redirect_stderr_ && !merge_stderr_) {
         auto p = CreateOutputPipe();
-        if (!p) return p.Error();
+        if (!p) return p.GetError();
         err_read = std::move(p.Value().first);
         err_write = std::move(p.Value().second);
     }
     KernelHandle inherited_input, inherited_output, inherited_error;
-    if (redirect_stdin_ || redirect_stdout_ || redirect_stderr_) {
+    if (redirect_stdin_ || redirect_stdout_ || redirect_stderr_ || merge_stderr_) {
         if (!redirect_stdin_) {
             auto input =
                 DuplicateInheritable(GetStdHandle(STD_INPUT_HANDLE), true, L"Duplicate stdin");
-            if (!input) return input.Error();
+            if (!input) return input.GetError();
             inherited_input = std::move(input.Value());
         }
         if (!redirect_stdout_) {
             auto output =
                 DuplicateInheritable(GetStdHandle(STD_OUTPUT_HANDLE), false, L"Duplicate stdout");
-            if (!output) return output.Error();
+            if (!output) return output.GetError();
             inherited_output = std::move(output.Value());
         }
-        if (!redirect_stderr_) {
+        if (!redirect_stderr_ && !merge_stderr_) {
             auto error =
                 DuplicateInheritable(GetStdHandle(STD_ERROR_HANDLE), false, L"Duplicate stderr");
-            if (!error) return error.Error();
+            if (!error) return error.GetError();
             inherited_error = std::move(error.Value());
         }
     }
     STARTUPINFOEXW startup{};
     startup.StartupInfo.cb = sizeof(startup);
     startup.StartupInfo.dwFlags =
-        redirect_stdin_ || redirect_stdout_ || redirect_stderr_ ? STARTF_USESTDHANDLES : 0;
+        redirect_stdin_ || redirect_stdout_ || redirect_stderr_ || merge_stderr_
+            ? STARTF_USESTDHANDLES
+            : 0;
     startup.StartupInfo.hStdOutput = redirect_stdout_ ? out_write.Get() : inherited_output.Get();
-    startup.StartupInfo.hStdError = redirect_stderr_ ? err_write.Get() : inherited_error.Get();
+    startup.StartupInfo.hStdError = merge_stderr_ ? out_write.Get()
+                                                  : (redirect_stderr_ ? err_write.Get()
+                                                                      : inherited_error.Get());
     startup.StartupInfo.hStdInput = redirect_stdin_ ? in_read.Get() : inherited_input.Get();
     std::vector<HANDLE> inherited;
     if (out_write) inherited.push_back(out_write.Get());
@@ -375,12 +438,12 @@ Result<Process> ProcessBuilder::Launch() const {
         attrs.resize(bytes);
         startup.lpAttributeList = reinterpret_cast<PPROC_THREAD_ATTRIBUTE_LIST>(attrs.data());
         if (!InitializeProcThreadAttributeList(startup.lpAttributeList, 1, 0, &bytes))
-            return NativeError::LastWin32().WithOperation(L"InitializeProcThreadAttributeList");
+            return SystemError::LastWin32().WithOperation(L"InitializeProcThreadAttributeList");
         if (!UpdateProcThreadAttribute(startup.lpAttributeList, 0,
                                        PROC_THREAD_ATTRIBUTE_HANDLE_LIST, inherited.data(),
                                        inherited.size() * sizeof(HANDLE), nullptr, nullptr)) {
             DeleteProcThreadAttributeList(startup.lpAttributeList);
-            return NativeError::LastWin32().WithOperation(L"UpdateProcThreadAttribute");
+            return SystemError::LastWin32().WithOperation(L"UpdateProcThreadAttribute");
         }
     }
     KernelHandle job;
@@ -388,7 +451,7 @@ Result<Process> ProcessBuilder::Launch() const {
         auto created = CreateJob(*job_options_);
         if (!created) {
             if (startup.lpAttributeList) DeleteProcThreadAttributeList(startup.lpAttributeList);
-            return created.Error();
+            return created.GetError();
         }
         job = std::move(created.Value());
     }
@@ -405,7 +468,7 @@ Result<Process> ProcessBuilder::Launch() const {
         environment.Value().data(), directory.empty() ? nullptr : directory.c_str(),
         &startup.StartupInfo, &info);
     if (startup.lpAttributeList) DeleteProcThreadAttributeList(startup.lpAttributeList);
-    if (!launched) return NativeError::LastWin32().WithOperation(L"CreateProcessW");
+    if (!launched) return SystemError::LastWin32().WithOperation(L"CreateProcessW");
     KernelHandle process(info.hProcess), thread(info.hThread);
     out_write.Reset();
     err_write.Reset();
@@ -413,11 +476,11 @@ Result<Process> ProcessBuilder::Launch() const {
     if (job) {
         if (!AssignProcessToJobObject(job.Get(), process.Get())) {
             TerminateProcess(process.Get(), ERROR_PROCESS_ABORTED);
-            return NativeError::LastWin32().WithOperation(L"AssignProcessToJobObject");
+            return SystemError::LastWin32().WithOperation(L"AssignProcessToJobObject");
         }
         if (ResumeThread(thread.Get()) == static_cast<DWORD>(-1)) {
             TerminateJobObject(job.Get(), ERROR_PROCESS_ABORTED);
-            return NativeError::LastWin32().WithOperation(L"ResumeThread");
+            return SystemError::LastWin32().WithOperation(L"ResumeThread");
         }
     }
     return Process(std::move(process), std::move(thread), std::move(job), std::move(in_write),

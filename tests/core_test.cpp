@@ -12,20 +12,23 @@ int main() {
     if (!round_trip || round_trip.Value() != "hello \xE2\x9C\x93") return 3;
     mwfl::KernelHandle event(CreateEventW(nullptr, TRUE, FALSE, nullptr));
     if (!event) return 4;
-    auto timeout = mwfl::WaitForHandle(event.Get(), 0ms);
-    if (!timeout || timeout.Value().status != mwfl::WaitStatus::Timeout) return 5;
+    auto timeout = mwfl::WaitForHandle(event.Get(), mwfl::Deadline::After(0ms));
+    if (!timeout || timeout.Value().status != mwfl::CompletionStatus::TimedOut) return 5;
     std::stop_source source;
     source.request_stop();
-    auto cancelled = mwfl::WaitForHandle(event.Get(), 1s, source.get_token());
-    if (!cancelled || cancelled.Value().status != mwfl::WaitStatus::Cancelled) return 6;
-    mwfl::NativeError contextual =
-        mwfl::NativeError::FromWin32(ERROR_ACCESS_DENIED).WithOperation(L"open worker");
+    auto cancelled =
+        mwfl::WaitForHandle(event.Get(), mwfl::Deadline::After(1s), source.get_token());
+    if (!cancelled || cancelled.Value().status != mwfl::CompletionStatus::Cancelled) return 6;
+    mwfl::SystemError contextual =
+        mwfl::SystemError::FromWin32(ERROR_ACCESS_DENIED).WithOperation(L"open worker");
     if (contextual.code != ERROR_ACCESS_DENIED ||
         !contextual.Message().starts_with(L"open worker: "))
         return 7;
     SetEvent(event.Get());
-    auto completed_first = mwfl::WaitForHandle(event.Get(), 1s, source.get_token());
-    if (!completed_first || completed_first.Value().status != mwfl::WaitStatus::Cancelled) return 8;
+    auto completed_first =
+        mwfl::WaitForHandle(event.Get(), mwfl::Deadline::After(1s), source.get_token());
+    if (!completed_first || completed_first.Value().status != mwfl::CompletionStatus::Cancelled)
+        return 8;
 
     mwfl::KernelHandle race_begin(CreateEventW(nullptr, FALSE, FALSE, nullptr));
     mwfl::KernelHandle race_done(CreateEventW(nullptr, FALSE, FALSE, nullptr));
@@ -48,9 +51,10 @@ int main() {
         active_source = &race_source;
         SetEvent(race_begin.Get());
         SetEvent(event.Get());
-        auto raced = mwfl::WaitForHandle(event.Get(), 1s, race_source.get_token());
-        if (!raced || (raced.Value().status != mwfl::WaitStatus::Signaled &&
-                       raced.Value().status != mwfl::WaitStatus::Cancelled))
+        auto raced = mwfl::WaitForHandle(event.Get(), mwfl::Deadline::After(1s),
+                                         race_source.get_token());
+        if (!raced || (raced.Value().status != mwfl::CompletionStatus::Completed &&
+                       raced.Value().status != mwfl::CompletionStatus::Cancelled))
             return 10;
         if (WaitForSingleObject(race_done.Get(), INFINITE) != WAIT_OBJECT_0) return 11;
     }

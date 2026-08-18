@@ -72,11 +72,11 @@ Result<ComPtr<ITaskService>> Connect() {
     const HRESULT created = CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER,
                                              IID_PPV_ARGS(&service));
     if (FAILED(created))
-        return NativeError::FromHResult(created).WithOperation(L"CoCreateInstance TaskScheduler");
+        return SystemError::FromHResult(created).WithOperation(L"CoCreateInstance TaskScheduler");
     VARIANT empty = EmptyVariant();
     const HRESULT connected = service->Connect(empty, empty, empty, empty);
     if (FAILED(connected))
-        return NativeError::FromHResult(connected).WithOperation(L"ITaskService::Connect");
+        return SystemError::FromHResult(connected).WithOperation(L"ITaskService::Connect");
     return service;
 }
 Result<ComPtr<ITaskFolder>> OpenFolder(ITaskService* service, std::wstring_view folder,
@@ -87,12 +87,12 @@ Result<ComPtr<ITaskFolder>> OpenFolder(ITaskService* service, std::wstring_view 
     SysFreeString(path);
     if (SUCCEEDED(hr) || !create)
         return SUCCEEDED(hr) ? Result<ComPtr<ITaskFolder>>{result}
-                             : Result<ComPtr<ITaskFolder>>{NativeError::FromHResult(hr)};
+                             : Result<ComPtr<ITaskFolder>>{SystemError::FromHResult(hr)};
     ComPtr<ITaskFolder> root;
     BSTR root_name = SysAllocString(L"\\");
     hr = service->GetFolder(root_name, &root);
     SysFreeString(root_name);
-    if (FAILED(hr)) return NativeError::FromHResult(hr);
+    if (FAILED(hr)) return SystemError::FromHResult(hr);
     std::wstring relative(folder);
     if (!relative.empty() && relative.front() == L'\\') relative.erase(relative.begin());
     BSTR name = SysAllocString(relative.c_str());
@@ -100,7 +100,7 @@ Result<ComPtr<ITaskFolder>> OpenFolder(ITaskService* service, std::wstring_view 
     hr = root->CreateFolder(name, sddl, &result);
     SysFreeString(name);
     if (FAILED(hr))
-        return NativeError::FromHResult(hr).WithOperation(L"Create Task Scheduler folder");
+        return SystemError::FromHResult(hr).WithOperation(L"Create Task Scheduler folder");
     return result;
 }
 std::wstring TakeBstr(BSTR value) {
@@ -115,7 +115,7 @@ Result<ScheduledTaskSnapshot> Snapshot(ITaskFolder* folder, std::wstring_view fo
     const HRESULT hr = folder->GetTask(name, &task);
     SysFreeString(name);
     if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)) return ScheduledTaskSnapshot{};
-    if (FAILED(hr)) return NativeError::FromHResult(hr);
+    if (FAILED(hr)) return SystemError::FromHResult(hr);
     ScheduledTaskSnapshot result;
     result.exists = true;
     result.folder = folder_name;
@@ -127,7 +127,7 @@ Result<ScheduledTaskSnapshot> Snapshot(ITaskFolder* folder, std::wstring_view fo
     result.state = static_cast<LONG>(state);
     result.enabled = enabled == VARIANT_TRUE;
     ComPtr<ITaskDefinition> definition;
-    if (FAILED(task->get_Definition(&definition))) return NativeError::FromHResult(E_FAIL);
+    if (FAILED(task->get_Definition(&definition))) return SystemError::FromHResult(E_FAIL);
     ComPtr<IRegistrationInfo> registration;
     definition->get_RegistrationInfo(&registration);
     BSTR text = nullptr;
@@ -169,7 +169,7 @@ Result<ScheduledTaskSnapshot> Snapshot(ITaskFolder* folder, std::wstring_view fo
     }
     return result;
 }
-bool Equivalent(const ScheduledTaskSnapshot& current, const ScheduledTaskSpec& desired) {
+bool Equivalent(const ScheduledTaskSnapshot& current, const TaskDefinition& desired) {
     if (!current.exists || !current.enabled || current.description != desired.description ||
         current.executable != desired.executable ||
         current.arguments != Arguments(desired.arguments) || current.trigger != desired.trigger)
@@ -178,49 +178,58 @@ bool Equivalent(const ScheduledTaskSnapshot& current, const ScheduledTaskSpec& d
            current.start_boundary == Boundary(desired.start_time);
 }
 }  // namespace
-Result<void> ValidateScheduledTask(const ScheduledTaskSpec& spec) {
+Result<void> ValidateScheduledTask(const TaskDefinition& spec) {
     if (spec.folder.empty() || spec.folder == L"\\" || spec.folder.front() != L'\\' ||
         spec.folder.find(L'/') != std::wstring::npos ||
         spec.folder.find(L"..") != std::wstring::npos ||
         spec.name.empty() || spec.name.find_first_of(L"\\/") != std::wstring::npos ||
         spec.executable.empty())
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER)
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER)
             .WithOperation(L"Scheduled task definition");
     if (spec.trigger == ScheduledTaskTrigger::Once &&
         spec.start_time == std::chrono::system_clock::time_point{})
-        return NativeError::FromWin32(ERROR_INVALID_TIME);
+        return SystemError::FromWin32(ERROR_INVALID_TIME);
     return {};
 }
 Result<ScheduledTaskSnapshot> TaskScheduler::Query(std::wstring_view folder,
                                                    std::wstring_view name) const {
     ComScope com;
-    if (!com.Usable()) return NativeError::FromHResult(com.Result());
+    if (!com.Usable()) return SystemError::FromHResult(com.Result());
     auto service = Connect();
-    if (!service) return service.Error();
+    if (!service) return service.GetError();
     auto opened = OpenFolder(service.Value().Get(), folder, false);
     if (!opened) {
-        if (opened.Error().code == static_cast<DWORD>(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)))
+        if (opened.GetError().code == static_cast<DWORD>(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)))
             return ScheduledTaskSnapshot{};
-        return opened.Error();
+        return opened.GetError();
     }
     return Snapshot(opened.Value().Get(), folder, name);
 }
-Result<ScheduledTaskMutation> TaskScheduler::InstallOrUpdate(const ScheduledTaskSpec& spec) const {
+Result<TaskChangePlan> TaskScheduler::Plan(const TaskDefinition& spec) const {
     auto valid = ValidateScheduledTask(spec);
-    if (!valid) return valid.Error();
+    if (!valid) return valid.GetError();
     auto before = Query(spec.folder, spec.name);
-    if (!before) return before.Error();
-    if (Equivalent(before.Value(), spec))
-        return ScheduledTaskMutation{false, false, std::move(before.Value())};
+    if (!before) return before.GetError();
+    const bool equivalent = Equivalent(before.Value(), spec);
+    const bool creates = !before.Value().exists;
+    return TaskChangePlan{spec, std::move(before.Value()), !equivalent, creates};
+}
+Result<TaskApplyResult> TaskScheduler::Apply(const TaskChangePlan& plan) const {
+    auto replanned = Plan(plan.desired);
+    if (!replanned) return replanned.GetError();
+    const auto& spec = replanned.Value().desired;
+    auto before = replanned.Value().current;
+    if (!replanned.Value().required)
+        return TaskApplyResult{false, false, std::move(before)};
     ComScope com;
-    if (!com.Usable()) return NativeError::FromHResult(com.Result());
+    if (!com.Usable()) return SystemError::FromHResult(com.Result());
     auto service = Connect();
-    if (!service) return service.Error();
+    if (!service) return service.GetError();
     auto folder = OpenFolder(service.Value().Get(), spec.folder, true);
-    if (!folder) return folder.Error();
+    if (!folder) return folder.GetError();
     ComPtr<ITaskDefinition> definition;
     HRESULT hr = service.Value()->NewTask(0, &definition);
-    if (FAILED(hr)) return NativeError::FromHResult(hr);
+    if (FAILED(hr)) return SystemError::FromHResult(hr);
     ComPtr<IRegistrationInfo> registration;
     definition->get_RegistrationInfo(&registration);
     BSTR description = SysAllocString(spec.description.c_str());
@@ -238,7 +247,7 @@ Result<ScheduledTaskMutation> TaskScheduler::InstallOrUpdate(const ScheduledTask
                                   ? TASK_TRIGGER_LOGON
                                   : TASK_TRIGGER_TIME,
                               &trigger);
-        if (FAILED(hr)) return NativeError::FromHResult(hr);
+        if (FAILED(hr)) return SystemError::FromHResult(hr);
         if (spec.trigger == ScheduledTaskTrigger::Once) {
             ComPtr<ITimeTrigger> timed;
             trigger.As(&timed);
@@ -251,7 +260,7 @@ Result<ScheduledTaskMutation> TaskScheduler::InstallOrUpdate(const ScheduledTask
     definition->get_Actions(&actions);
     ComPtr<IAction> action;
     hr = actions->Create(TASK_ACTION_EXEC, &action);
-    if (FAILED(hr)) return NativeError::FromHResult(hr);
+    if (FAILED(hr)) return SystemError::FromHResult(hr);
     ComPtr<IExecAction> exec;
     action.As(&exec);
     BSTR path = SysAllocString(spec.executable.c_str());
@@ -267,57 +276,57 @@ Result<ScheduledTaskMutation> TaskScheduler::InstallOrUpdate(const ScheduledTask
                                                 empty, empty, TASK_LOGON_INTERACTIVE_TOKEN, empty,
                                                 &registered);
     SysFreeString(task_name);
-    if (FAILED(hr)) return NativeError::FromHResult(hr).WithOperation(L"RegisterTaskDefinition");
+    if (FAILED(hr)) return SystemError::FromHResult(hr).WithOperation(L"RegisterTaskDefinition");
     auto after = Snapshot(folder.Value().Get(), spec.folder, spec.name);
-    if (!after) return after.Error();
-    return ScheduledTaskMutation{!before.Value().exists, true, std::move(after.Value())};
+    if (!after) return after.GetError();
+    return TaskApplyResult{!before.exists, true, std::move(after.Value())};
 }
 Result<void> TaskScheduler::Run(std::wstring_view folder, std::wstring_view name) const {
     ComScope com;
-    if (!com.Usable()) return NativeError::FromHResult(com.Result());
+    if (!com.Usable()) return SystemError::FromHResult(com.Result());
     auto service = Connect();
-    if (!service) return service.Error();
+    if (!service) return service.GetError();
     auto opened = OpenFolder(service.Value().Get(), folder, false);
-    if (!opened) return opened.Error();
+    if (!opened) return opened.GetError();
     BSTR task_name = SysAllocString(std::wstring(name).c_str());
     ComPtr<IRegisteredTask> task;
     HRESULT hr = opened.Value()->GetTask(task_name, &task);
     SysFreeString(task_name);
-    if (FAILED(hr)) return NativeError::FromHResult(hr);
+    if (FAILED(hr)) return SystemError::FromHResult(hr);
     VARIANT empty = EmptyVariant();
     ComPtr<IRunningTask> running;
     hr = task->Run(empty, &running);
-    return FAILED(hr) ? Result<void>{NativeError::FromHResult(hr)} : Result<void>{};
+    return FAILED(hr) ? Result<void>{SystemError::FromHResult(hr)} : Result<void>{};
 }
 Result<void> TaskScheduler::Stop(std::wstring_view folder, std::wstring_view name) const {
     ComScope com;
-    if (!com.Usable()) return NativeError::FromHResult(com.Result());
+    if (!com.Usable()) return SystemError::FromHResult(com.Result());
     auto service = Connect();
-    if (!service) return service.Error();
+    if (!service) return service.GetError();
     auto opened = OpenFolder(service.Value().Get(), folder, false);
-    if (!opened) return opened.Error();
+    if (!opened) return opened.GetError();
     BSTR task_name = SysAllocString(std::wstring(name).c_str());
     ComPtr<IRegisteredTask> task;
     HRESULT hr = opened.Value()->GetTask(task_name, &task);
     SysFreeString(task_name);
-    if (FAILED(hr)) return NativeError::FromHResult(hr);
+    if (FAILED(hr)) return SystemError::FromHResult(hr);
     hr = task->Stop(0);
-    return FAILED(hr) ? Result<void>{NativeError::FromHResult(hr)} : Result<void>{};
+    return FAILED(hr) ? Result<void>{SystemError::FromHResult(hr)} : Result<void>{};
 }
 Result<bool> TaskScheduler::Remove(std::wstring_view folder, std::wstring_view name) const {
     auto current = Query(folder, name);
-    if (!current) return current.Error();
+    if (!current) return current.GetError();
     if (!current.Value().exists) return false;
     ComScope com;
-    if (!com.Usable()) return NativeError::FromHResult(com.Result());
+    if (!com.Usable()) return SystemError::FromHResult(com.Result());
     auto service = Connect();
-    if (!service) return service.Error();
+    if (!service) return service.GetError();
     auto opened = OpenFolder(service.Value().Get(), folder, false);
-    if (!opened) return opened.Error();
+    if (!opened) return opened.GetError();
     BSTR task_name = SysAllocString(std::wstring(name).c_str());
     const HRESULT hr = opened.Value()->DeleteTask(task_name, 0);
     SysFreeString(task_name);
-    if (FAILED(hr)) return NativeError::FromHResult(hr);
+    if (FAILED(hr)) return SystemError::FromHResult(hr);
     return true;
 }
 }  // namespace mwfl

@@ -67,8 +67,13 @@ struct UpdateVerificationPolicy {
     RevocationPolicy revocation = RevocationPolicy::Offline;
     Version minimum_version{};
 };
-class UpdateHandoffPlan final {
+class VerifiedUpdate final {
    public:
+    VerifiedUpdate() = default;
+    VerifiedUpdate(VerifiedUpdate&&) noexcept = default;
+    VerifiedUpdate& operator=(VerifiedUpdate&&) noexcept = default;
+    VerifiedUpdate(const VerifiedUpdate&) = delete;
+    VerifiedUpdate& operator=(const VerifiedUpdate&) = delete;
     [[nodiscard]] const std::filesystem::path& Candidate() const noexcept { return candidate_; }
     [[nodiscard]] const std::filesystem::path& Target() const noexcept { return target_; }
     [[nodiscard]] const std::filesystem::path& Backup() const noexcept { return backup_; }
@@ -81,19 +86,39 @@ class UpdateHandoffPlan final {
     [[nodiscard]] const UpdateVerificationPolicy& Policy() const noexcept { return policy_; }
 
    private:
-    friend Result<UpdateHandoffPlan> PrepareUpdateHandoff(
+    friend Result<VerifiedUpdate> VerifyUpdate(
         const std::filesystem::path&, const std::filesystem::path&, const std::filesystem::path&,
         const std::filesystem::path&, std::vector<std::wstring>, const UpdateVerificationPolicy&);
     std::filesystem::path candidate_, target_, backup_, restart_executable_;
     std::vector<std::wstring> restart_arguments_;
     UpdateVerificationPolicy policy_;
 };
-[[nodiscard]] Result<UpdateHandoffPlan> PrepareUpdateHandoff(
+class StagedUpdate final {
+   public:
+    StagedUpdate() = default;
+    ~StagedUpdate();
+    StagedUpdate(StagedUpdate&& other) noexcept;
+    StagedUpdate& operator=(StagedUpdate&& other) noexcept;
+    StagedUpdate(const StagedUpdate&) = delete;
+    StagedUpdate& operator=(const StagedUpdate&) = delete;
+    [[nodiscard]] const std::filesystem::path& StagingPath() const noexcept { return staging_; }
+   private:
+    friend Result<StagedUpdate> StageUpdate(VerifiedUpdate);
+    friend Result<OperationOutcome<struct AppliedUpdate>> ApplyUpdate(
+        StagedUpdate, DWORD, Deadline, std::stop_token);
+    VerifiedUpdate verified_;
+    std::filesystem::path staging_;
+    bool active_ = false;
+};
+struct AppliedUpdate {
+    std::filesystem::path target;
+    std::filesystem::path backup;
+};
+[[nodiscard]] Result<VerifiedUpdate> VerifyUpdate(
     const std::filesystem::path& candidate, const std::filesystem::path& target,
     const std::filesystem::path& backup, const std::filesystem::path& restart_executable,
     std::vector<std::wstring> restart_arguments, const UpdateVerificationPolicy& policy = {});
-[[nodiscard]] Result<void> ApplyUpdateHandoff(const UpdateHandoffPlan& plan,
-                                              DWORD target_process_id,
-                                              std::chrono::milliseconds timeout,
-                                              std::stop_token stop = {});
+[[nodiscard]] Result<StagedUpdate> StageUpdate(VerifiedUpdate verified);
+[[nodiscard]] Result<OperationOutcome<AppliedUpdate>> ApplyUpdate(
+    StagedUpdate staged, DWORD target_process_id, Deadline deadline, std::stop_token stop = {});
 }  // namespace mwfl

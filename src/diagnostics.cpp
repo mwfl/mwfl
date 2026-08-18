@@ -61,8 +61,33 @@ LONG WINAPI DumpFilter(EXCEPTION_POINTERS* exception) noexcept {
     return previous ? previous(exception) : EXCEPTION_CONTINUE_SEARCH;
 }
 }  // namespace
-DiagnosticEvent RedactDiagnosticEvent(const DiagnosticEvent& event) {
-    DiagnosticEvent copy = event;
+DiagnosticEventBuilder::DiagnosticEventBuilder(EventLevel level, std::wstring category,
+                                               std::uint32_t event_id) {
+    event_.level = level;
+    event_.category = std::move(category);
+    event_.event_id = event_id;
+}
+DiagnosticEventBuilder& DiagnosticEventBuilder::Public(std::wstring name, std::wstring value) {
+    event_.fields.push_back({std::move(name), std::move(value), FieldSensitivity::Public});
+    return *this;
+}
+DiagnosticEventBuilder& DiagnosticEventBuilder::Sensitive(std::wstring name) {
+    event_.fields.push_back({std::move(name), {}, FieldSensitivity::Sensitive});
+    return *this;
+}
+DiagnosticEventBuilder& DiagnosticEventBuilder::Secret(std::wstring name) {
+    event_.fields.push_back({std::move(name), {}, FieldSensitivity::Secret});
+    return *this;
+}
+DiagnosticEventBuilder& DiagnosticEventBuilder::Correlation(std::wstring value) {
+    event_.correlation_id = std::move(value);
+    return *this;
+}
+DiagnosticEvent DiagnosticEventBuilder::Build() { return std::move(event_); }
+SanitizedDiagnosticEvent SanitizeDiagnosticEvent(const DiagnosticEvent& event) {
+    SanitizedDiagnosticEvent copy{event.level, event.category, event.event_id, event.fields,
+                                  event.timestamp, event.process_id, event.thread_id,
+                                  event.correlation_id};
     if (copy.timestamp == std::chrono::system_clock::time_point{})
         copy.timestamp = std::chrono::system_clock::now();
     if (!copy.process_id) copy.process_id = GetCurrentProcessId();
@@ -76,8 +101,7 @@ DiagnosticEvent RedactDiagnosticEvent(const DiagnosticEvent& event) {
     }
     return copy;
 }
-std::wstring FormatDiagnosticEvent(const DiagnosticEvent& event) {
-    const auto safe = RedactDiagnosticEvent(event);
+std::wstring FormatDiagnosticEvent(const SanitizedDiagnosticEvent& safe) {
     std::wstring text =
         L"[" + Level(safe.level) + L"] " + safe.category + L"/" + std::to_wstring(safe.event_id) +
         L" pid=" + std::to_wstring(safe.process_id) + L" tid=" + std::to_wstring(safe.thread_id);
@@ -85,27 +109,27 @@ std::wstring FormatDiagnosticEvent(const DiagnosticEvent& event) {
     for (const auto& field : safe.fields) text += L" " + field.name + L"=" + field.value;
     return text;
 }
-Result<void> DebugOutputSink::Write(const DiagnosticEvent& event) noexcept {
+Result<void> DebugOutputSink::Write(const SanitizedDiagnosticEvent& event) noexcept {
     try {
         const auto line = FormatDiagnosticEvent(event) + L"\n";
         OutputDebugStringW(line.c_str());
         return {};
     } catch (...) {
-        return NativeError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION, L"DebugOutputSink"};
+        return SystemError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION, L"DebugOutputSink"};
     }
 }
 BoundedFileSink::BoundedFileSink(std::filesystem::path path, std::uintmax_t maximum,
                                  std::size_t rotations)
     : path_(std::move(path)), maximum_bytes_(maximum), rotation_count_(rotations) {}
-Result<void> BoundedFileSink::Write(const DiagnosticEvent& event) noexcept {
+Result<void> BoundedFileSink::Write(const SanitizedDiagnosticEvent& event) noexcept {
     try {
         std::scoped_lock lock(mutex_);
         if (path_.empty() || !maximum_bytes_)
-            return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+            return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
         auto utf8 = WideToUtf8(FormatDiagnosticEvent(event) + L"\n");
-        if (!utf8) return utf8.Error();
+        if (!utf8) return utf8.GetError();
         if (utf8.Value().size() > maximum_bytes_)
-            return NativeError::FromWin32(ERROR_BUFFER_OVERFLOW)
+            return SystemError::FromWin32(ERROR_BUFFER_OVERFLOW)
                 .WithOperation(L"Diagnostic record");
         std::error_code error;
         const auto current = std::filesystem::file_size(path_, error);
@@ -121,30 +145,30 @@ Result<void> BoundedFileSink::Write(const DiagnosticEvent& event) noexcept {
                     error.clear();
                     std::filesystem::rename(from, to, error);
                     if (error)
-                        return NativeError::FromWin32(static_cast<DWORD>(error.value()))
+                        return SystemError::FromWin32(static_cast<DWORD>(error.value()))
                             .WithOperation(L"Rotate diagnostic file");
                 }
             }
         }
         std::ofstream output(path_, std::ios::binary | std::ios::app);
-        if (!output) return NativeError::FromWin32(ERROR_OPEN_FAILED);
+        if (!output) return SystemError::FromWin32(ERROR_OPEN_FAILED);
         output.write(utf8.Value().data(), static_cast<std::streamsize>(utf8.Value().size()));
-        if (!output) return NativeError::FromWin32(ERROR_WRITE_FAULT);
+        if (!output) return SystemError::FromWin32(ERROR_WRITE_FAULT);
         return {};
     } catch (...) {
-        return NativeError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION, L"BoundedFileSink"};
+        return SystemError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION, L"BoundedFileSink"};
     }
 }
-Result<void> TraceLoggingSink::Write(const DiagnosticEvent& event) noexcept {
+Result<void> TraceLoggingSink::Write(const SanitizedDiagnosticEvent& event) noexcept {
     try {
         std::scoped_lock lock(provider_mutex);
         const auto registered = TraceLoggingRegister(g_mwfl_provider);
         if (registered != ERROR_SUCCESS)
-            return NativeError::FromWin32(registered).WithOperation(L"TraceLoggingRegister");
+            return SystemError::FromWin32(registered).WithOperation(L"TraceLoggingRegister");
         auto utf8 = WideToUtf8(FormatDiagnosticEvent(event));
         if (!utf8) {
             TraceLoggingUnregister(g_mwfl_provider);
-            return utf8.Error();
+            return utf8.GetError();
         }
         TraceLoggingWrite(g_mwfl_provider, "DiagnosticEvent",
                           TraceLoggingString(utf8.Value().c_str(), "message"),
@@ -153,14 +177,14 @@ Result<void> TraceLoggingSink::Write(const DiagnosticEvent& event) noexcept {
         return {};
     } catch (...) {
         TraceLoggingUnregister(g_mwfl_provider);
-        return NativeError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION,
+        return SystemError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION,
                            L"TraceLoggingSink"};
     }
 }
-Result<void> EventLogSink::Write(const DiagnosticEvent& event) noexcept {
+Result<void> EventLogSink::Write(const SanitizedDiagnosticEvent& event) noexcept {
     try {
         HANDLE source = RegisterEventSourceW(nullptr, source_.c_str());
-        if (!source) return NativeError::LastWin32().WithOperation(L"RegisterEventSourceW");
+        if (!source) return SystemError::LastWin32().WithOperation(L"RegisterEventSourceW");
         const std::wstring text = FormatDiagnosticEvent(event);
         const wchar_t* strings[]{text.c_str()};
         const BOOL written = ReportEventW(source, EventType(event.level), 0, event.event_id,
@@ -168,9 +192,9 @@ Result<void> EventLogSink::Write(const DiagnosticEvent& event) noexcept {
         const DWORD error = written ? ERROR_SUCCESS : GetLastError();
         DeregisterEventSource(source);
         return written ? Result<void>{}
-                       : Result<void>{NativeError::FromWin32(error).WithOperation(L"ReportEventW")};
+                       : Result<void>{SystemError::FromWin32(error).WithOperation(L"ReportEventW")};
     } catch (...) {
-        return NativeError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION, L"EventLogSink"};
+        return SystemError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION, L"EventLogSink"};
     }
 }
 Result<bool> EventLogSourceManager::Exists(std::wstring_view source) {
@@ -179,21 +203,21 @@ Result<bool> EventLogSourceManager::Exists(std::wstring_view source) {
         L"SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\" + std::wstring(source);
     const LONG result = RegOpenKeyExW(HKEY_LOCAL_MACHINE, path.c_str(), 0, KEY_READ, &key);
     if (result == ERROR_FILE_NOT_FOUND) return false;
-    if (result != ERROR_SUCCESS) return NativeError::FromWin32(result);
+    if (result != ERROR_SUCCESS) return SystemError::FromWin32(result);
     RegCloseKey(key);
     return true;
 }
 Result<void> EventLogSourceManager::Install(std::wstring_view source,
                                             const std::filesystem::path& message_file) {
     if (source.empty() || message_file.empty())
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
     const std::wstring path =
         L"SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\" + std::wstring(source);
     HKEY key = nullptr;
     DWORD disposition = 0;
     LONG result = RegCreateKeyExW(HKEY_LOCAL_MACHINE, path.c_str(), 0, nullptr, 0, KEY_SET_VALUE,
                                   nullptr, &key, &disposition);
-    if (result != ERROR_SUCCESS) return NativeError::FromWin32(result);
+    if (result != ERROR_SUCCESS) return SystemError::FromWin32(result);
     const auto file = message_file.wstring();
     result = RegSetValueExW(key, L"EventMessageFile", 0, REG_EXPAND_SZ,
                             reinterpret_cast<const BYTE*>(file.c_str()),
@@ -203,7 +227,7 @@ Result<void> EventLogSourceManager::Install(std::wstring_view source,
         result = RegSetValueExW(key, L"TypesSupported", 0, REG_DWORD,
                                 reinterpret_cast<const BYTE*>(&types), sizeof(types));
     RegCloseKey(key);
-    return result == ERROR_SUCCESS ? Result<void>{} : Result<void>{NativeError::FromWin32(result)};
+    return result == ERROR_SUCCESS ? Result<void>{} : Result<void>{SystemError::FromWin32(result)};
 }
 Result<bool> EventLogSourceManager::Remove(std::wstring_view source) {
     auto exists = Exists(source);
@@ -212,7 +236,7 @@ Result<bool> EventLogSourceManager::Remove(std::wstring_view source) {
         L"SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\" + std::wstring(source);
     const LONG result = RegDeleteTreeW(HKEY_LOCAL_MACHINE, path.c_str());
     if (result == ERROR_FILE_NOT_FOUND) return false;
-    if (result != ERROR_SUCCESS) return NativeError::FromWin32(result);
+    if (result != ERROR_SUCCESS) return SystemError::FromWin32(result);
     return true;
 }
 void DiagnosticPipeline::Add(std::shared_ptr<DiagnosticSink> sink) {
@@ -228,20 +252,20 @@ DiagnosticWriteReport DiagnosticPipeline::Write(const DiagnosticEvent& event) no
             std::scoped_lock lock(mutex_);
             sinks = sinks_;
         }
-        const auto redacted = RedactDiagnosticEvent(event);
+        const auto redacted = SanitizeDiagnosticEvent(event);
         for (const auto& sink : sinks) {
             auto result = sink->Write(redacted);
             if (result)
                 ++report.succeeded;
             else {
                 ++report.failed;
-                if (!report.first_error) report.first_error = result.Error();
+                if (!report.first_error) report.first_error = result.GetError();
             }
         }
     } catch (...) {
         ++report.failed;
         report.first_error =
-            NativeError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION, L"DiagnosticPipeline"};
+            SystemError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION, L"DiagnosticPipeline"};
     }
     return report;
 }
@@ -249,24 +273,24 @@ Result<void> WriteMiniDump(const std::filesystem::path& path, MiniDumpKind kind,
                            EXCEPTION_POINTERS* exception) noexcept {
     try {
         if (path.empty() || std::filesystem::exists(path))
-            return NativeError::FromWin32(path.empty() ? ERROR_INVALID_PARAMETER
+            return SystemError::FromWin32(path.empty() ? ERROR_INVALID_PARAMETER
                                                        : ERROR_FILE_EXISTS);
         KernelHandle file(CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_NEW,
                                       FILE_ATTRIBUTE_NORMAL, nullptr));
-        if (!file) return NativeError::LastWin32().WithOperation(L"Create minidump");
+        if (!file) return SystemError::LastWin32().WithOperation(L"Create minidump");
         MINIDUMP_EXCEPTION_INFORMATION info{GetCurrentThreadId(), exception, FALSE};
         if (!MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file.Get(),
                                DumpType(kind), exception ? &info : nullptr, nullptr, nullptr))
-            return NativeError::LastWin32().WithOperation(L"MiniDumpWriteDump");
+            return SystemError::LastWin32().WithOperation(L"MiniDumpWriteDump");
         return {};
     } catch (...) {
-        return NativeError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION, L"WriteMiniDump"};
+        return SystemError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION, L"WriteMiniDump"};
     }
 }
 Result<ScopedUnhandledExceptionDump> ScopedUnhandledExceptionDump::Install(
     std::filesystem::path path, MiniDumpKind kind) {
     std::scoped_lock lock(dump_mutex);
-    if (dump_handler_active || path.empty()) return NativeError::FromWin32(ERROR_ALREADY_EXISTS);
+    if (dump_handler_active || path.empty()) return SystemError::FromWin32(ERROR_ALREADY_EXISTS);
     dump_path = std::move(path);
     dump_kind = kind;
     previous_filter = SetUnhandledExceptionFilter(DumpFilter);

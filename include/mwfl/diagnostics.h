@@ -26,25 +26,46 @@ struct DiagnosticEvent {
     DWORD thread_id = 0;
     std::wstring correlation_id;
 };
+struct SanitizedDiagnosticEvent {
+    EventLevel level = EventLevel::Information;
+    std::wstring category;
+    std::uint32_t event_id = 0;
+    std::vector<EventField> fields;
+    std::chrono::system_clock::time_point timestamp{};
+    DWORD process_id = 0;
+    DWORD thread_id = 0;
+    std::wstring correlation_id;
+};
+class DiagnosticEventBuilder final {
+   public:
+    DiagnosticEventBuilder(EventLevel level, std::wstring category, std::uint32_t event_id);
+    DiagnosticEventBuilder& Public(std::wstring name, std::wstring value);
+    DiagnosticEventBuilder& Sensitive(std::wstring name);
+    DiagnosticEventBuilder& Secret(std::wstring name);
+    DiagnosticEventBuilder& Correlation(std::wstring value);
+    [[nodiscard]] DiagnosticEvent Build();
+   private:
+    DiagnosticEvent event_;
+};
 struct DiagnosticWriteReport {
     std::size_t succeeded = 0;
     std::size_t failed = 0;
-    std::optional<NativeError> first_error;
+    std::optional<SystemError> first_error;
 };
 class DiagnosticSink {
    public:
     virtual ~DiagnosticSink() = default;
-    virtual Result<void> Write(const DiagnosticEvent& redacted_event) noexcept = 0;
+    virtual Result<void> Write(const SanitizedDiagnosticEvent& event) noexcept = 0;
 };
 class DebugOutputSink final : public DiagnosticSink {
    public:
-    Result<void> Write(const DiagnosticEvent& event) noexcept override;
+    Result<void> Write(const SanitizedDiagnosticEvent& event) noexcept override;
 };
 class BoundedFileSink final : public DiagnosticSink {
    public:
     BoundedFileSink(std::filesystem::path path, std::uintmax_t maximum_bytes,
                     std::size_t rotation_count = 1);
-    Result<void> Write(const DiagnosticEvent& event) noexcept override;
+    Result<void> Write(const SanitizedDiagnosticEvent& event) noexcept override;
 
    private:
     std::filesystem::path path_;
@@ -54,12 +75,12 @@ class BoundedFileSink final : public DiagnosticSink {
 };
 class TraceLoggingSink final : public DiagnosticSink {
    public:
-    Result<void> Write(const DiagnosticEvent& event) noexcept override;
+    Result<void> Write(const SanitizedDiagnosticEvent& event) noexcept override;
 };
 class EventLogSink final : public DiagnosticSink {
    public:
     explicit EventLogSink(std::wstring source) : source_(std::move(source)) {}
-    Result<void> Write(const DiagnosticEvent& event) noexcept override;
+    Result<void> Write(const SanitizedDiagnosticEvent& event) noexcept override;
 
    private:
     std::wstring source_;
@@ -99,6 +120,6 @@ class ScopedUnhandledExceptionDump final {
     explicit ScopedUnhandledExceptionDump(bool active) : active_(active) {}
     bool active_ = false;
 };
-[[nodiscard]] DiagnosticEvent RedactDiagnosticEvent(const DiagnosticEvent& event);
-[[nodiscard]] std::wstring FormatDiagnosticEvent(const DiagnosticEvent& event);
+[[nodiscard]] SanitizedDiagnosticEvent SanitizeDiagnosticEvent(const DiagnosticEvent& event);
+[[nodiscard]] std::wstring FormatDiagnosticEvent(const SanitizedDiagnosticEvent& event);
 }  // namespace mwfl

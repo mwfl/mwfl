@@ -32,19 +32,19 @@ CredentialPersistence Persist(DWORD value) {
 Result<TokenIdentity> IdentityFromToken(HANDLE token) {
     DWORD bytes = 0;
     GetTokenInformation(token, TokenUser, nullptr, 0, &bytes);
-    if (GetLastError() != ERROR_INSUFFICIENT_BUFFER) return NativeError::LastWin32();
+    if (GetLastError() != ERROR_INSUFFICIENT_BUFFER) return SystemError::LastWin32();
     std::vector<std::byte> user_storage(bytes);
     if (!GetTokenInformation(token, TokenUser, user_storage.data(), bytes, &bytes))
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     auto* user = reinterpret_cast<TOKEN_USER*>(user_storage.data());
     wchar_t* sid = nullptr;
-    if (!ConvertSidToStringSidW(user->User.Sid, &sid)) return NativeError::LastWin32();
+    if (!ConvertSidToStringSidW(user->User.Sid, &sid)) return SystemError::LastWin32();
     std::wstring sid_text(sid);
     LocalFree(sid);
     DWORD session = 0;
     bytes = sizeof(session);
     if (!GetTokenInformation(token, TokenSessionId, &session, bytes, &bytes))
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     TOKEN_ELEVATION elevation{};
     bytes = sizeof(elevation);
     const bool elevated = GetTokenInformation(token, TokenElevation, &elevation, bytes, &bytes) &&
@@ -76,7 +76,7 @@ bool ValidSidText(std::wstring_view value) {
     return valid != FALSE;
 }
 }  // namespace
-SecureBytes::SecureBytes(std::span<const std::byte> bytes) {
+SecureBuffer::SecureBuffer(std::span<const std::byte> bytes) {
     if (!bytes.empty()) {
         data_ = static_cast<std::byte*>(HeapAlloc(GetProcessHeap(), 0, bytes.size()));
         if (!data_) throw std::bad_alloc();
@@ -84,12 +84,12 @@ SecureBytes::SecureBytes(std::span<const std::byte> bytes) {
         std::memcpy(data_, bytes.data(), size_);
     }
 }
-SecureBytes::~SecureBytes() {
+SecureBuffer::~SecureBuffer() {
     Clear();
 }
-SecureBytes::SecureBytes(SecureBytes&& other) noexcept
+SecureBuffer::SecureBuffer(SecureBuffer&& other) noexcept
     : data_(std::exchange(other.data_, nullptr)), size_(std::exchange(other.size_, 0)) {}
-SecureBytes& SecureBytes::operator=(SecureBytes&& other) noexcept {
+SecureBuffer& SecureBuffer::operator=(SecureBuffer&& other) noexcept {
     if (this != &other) {
         Clear();
         data_ = std::exchange(other.data_, nullptr);
@@ -97,7 +97,7 @@ SecureBytes& SecureBytes::operator=(SecureBytes&& other) noexcept {
     }
     return *this;
 }
-void SecureBytes::Clear() noexcept {
+void SecureBuffer::Clear() noexcept {
     if (data_) {
         SecureZeroMemory(data_, size_);
         HeapFree(GetProcessHeap(), 0, data_);
@@ -105,7 +105,7 @@ void SecureBytes::Clear() noexcept {
         size_ = 0;
     }
 }
-SecureWideString::SecureWideString(std::wstring_view text) {
+SecureString::SecureString(std::wstring_view text) {
     if (!text.empty()) {
         data_ = static_cast<wchar_t*>(
             HeapAlloc(GetProcessHeap(), 0, (text.size() + 1) * sizeof(wchar_t)));
@@ -115,12 +115,12 @@ SecureWideString::SecureWideString(std::wstring_view text) {
         data_[size_] = L'\0';
     }
 }
-SecureWideString::~SecureWideString() {
+SecureString::~SecureString() {
     Clear();
 }
-SecureWideString::SecureWideString(SecureWideString&& other) noexcept
+SecureString::SecureString(SecureString&& other) noexcept
     : data_(std::exchange(other.data_, nullptr)), size_(std::exchange(other.size_, 0)) {}
-SecureWideString& SecureWideString::operator=(SecureWideString&& other) noexcept {
+SecureString& SecureString::operator=(SecureString&& other) noexcept {
     if (this != &other) {
         Clear();
         data_ = std::exchange(other.data_, nullptr);
@@ -128,7 +128,7 @@ SecureWideString& SecureWideString::operator=(SecureWideString&& other) noexcept
     }
     return *this;
 }
-void SecureWideString::Clear() noexcept {
+void SecureString::Clear() noexcept {
     if (data_) {
         SecureZeroMemory(data_, (size_ + 1) * sizeof(wchar_t));
         HeapFree(GetProcessHeap(), 0, data_);
@@ -139,29 +139,29 @@ void SecureWideString::Clear() noexcept {
 Result<ProtectedData> ProtectData(std::span<const std::byte> plaintext, DataProtectionScope scope,
                                   std::wstring_view purpose) {
     if (plaintext.size() > MAXDWORD || purpose.size() > MAXDWORD / sizeof(wchar_t))
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
     DATA_BLOB input = Blob(plaintext), output{}, entropy = Entropy(purpose);
     DWORD flags = CRYPTPROTECT_UI_FORBIDDEN |
                   (scope == DataProtectionScope::LocalMachine ? CRYPTPROTECT_LOCAL_MACHINE : 0);
     if (!CryptProtectData(&input, L"mwfl protected data", purpose.empty() ? nullptr : &entropy,
                           nullptr, nullptr, flags, &output))
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     ProtectedData result(output.cbData);
     std::memcpy(result.data(), output.pbData, output.cbData);
     SecureZeroMemory(output.pbData, output.cbData);
     LocalFree(output.pbData);
     return result;
 }
-Result<SecureBytes> UnprotectData(std::span<const std::byte> protected_data,
+Result<SecureBuffer> UnprotectData(std::span<const std::byte> protected_data,
                                   std::wstring_view purpose) {
     if (protected_data.empty() || protected_data.size() > MAXDWORD ||
         purpose.size() > MAXDWORD / sizeof(wchar_t))
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
     DATA_BLOB input = Blob(protected_data), output{}, entropy = Entropy(purpose);
     if (!CryptUnprotectData(&input, nullptr, purpose.empty() ? nullptr : &entropy, nullptr, nullptr,
                             CRYPTPROTECT_UI_FORBIDDEN, &output))
-        return NativeError::LastWin32();
-    SecureBytes bytes(std::span<const std::byte>(reinterpret_cast<const std::byte*>(output.pbData),
+        return SystemError::LastWin32();
+    SecureBuffer bytes(std::span<const std::byte>(reinterpret_cast<const std::byte*>(output.pbData),
                                                  output.cbData));
     SecureZeroMemory(output.pbData, output.cbData);
     LocalFree(output.pbData);
@@ -171,13 +171,13 @@ Result<ProtectedData> ProtectForCurrentUser(std::span<const std::byte> plaintext
                                             std::wstring_view purpose) {
     return ProtectData(plaintext, DataProtectionScope::CurrentUser, purpose);
 }
-Result<SecureBytes> UnprotectForCurrentUser(std::span<const std::byte> data,
+Result<SecureBuffer> UnprotectForCurrentUser(std::span<const std::byte> data,
                                             std::wstring_view purpose) {
     return UnprotectData(data, purpose);
 }
 Result<void> CredentialManager::Write(GenericCredential credential) {
     if (credential.target.empty() || credential.secret.Size() > CRED_MAX_CREDENTIAL_BLOB_SIZE)
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
     CREDENTIALW value{};
     value.Type = CRED_TYPE_GENERIC;
     value.TargetName = credential.target.data();
@@ -185,18 +185,18 @@ Result<void> CredentialManager::Write(GenericCredential credential) {
     value.CredentialBlobSize = static_cast<DWORD>(credential.secret.Size());
     value.CredentialBlob = reinterpret_cast<BYTE*>(credential.secret.MutableView().data());
     value.Persist = Persist(credential.persistence);
-    if (!CredWriteW(&value, 0)) return NativeError::LastWin32().WithOperation(L"CredWriteW");
+    if (!CredWriteW(&value, 0)) return SystemError::LastWin32().WithOperation(L"CredWriteW");
     return {};
 }
 Result<GenericCredential> CredentialManager::Read(std::wstring_view target) {
     std::wstring copy(target);
     PCREDENTIALW raw = nullptr;
     if (!CredReadW(copy.c_str(), CRED_TYPE_GENERIC, 0, &raw))
-        return NativeError::LastWin32().WithOperation(L"CredReadW");
+        return SystemError::LastWin32().WithOperation(L"CredReadW");
     GenericCredential result;
     result.target = raw->TargetName ? raw->TargetName : L"";
     result.user_name = raw->UserName ? raw->UserName : L"";
-    result.secret = SecureBytes(std::span<const std::byte>(
+    result.secret = SecureBuffer(std::span<const std::byte>(
         reinterpret_cast<const std::byte*>(raw->CredentialBlob), raw->CredentialBlobSize));
     result.persistence = Persist(raw->Persist);
     CredFree(raw);
@@ -206,7 +206,7 @@ Result<bool> CredentialManager::Remove(std::wstring_view target) {
     std::wstring copy(target);
     if (CredDeleteW(copy.c_str(), CRED_TYPE_GENERIC, 0)) return true;
     if (GetLastError() == ERROR_NOT_FOUND) return false;
-    return NativeError::LastWin32().WithOperation(L"CredDeleteW");
+    return SystemError::LastWin32().WithOperation(L"CredDeleteW");
 }
 Result<std::vector<std::wstring>> CredentialManager::Enumerate(std::wstring_view filter) {
     DWORD count = 0;
@@ -215,7 +215,7 @@ Result<std::vector<std::wstring>> CredentialManager::Enumerate(std::wstring_view
     if (!CredEnumerateW(copy.empty() ? nullptr : copy.c_str(),
                         copy.empty() ? CRED_ENUMERATE_ALL_CREDENTIALS : 0, &count, &values)) {
         if (GetLastError() == ERROR_NOT_FOUND) return std::vector<std::wstring>{};
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     }
     std::vector<std::wstring> result;
     for (DWORD i = 0; i < count; ++i)
@@ -226,14 +226,14 @@ Result<std::vector<std::wstring>> CredentialManager::Enumerate(std::wstring_view
 }
 Result<TokenIdentity> QueryCurrentProcessIdentity() {
     HANDLE raw = nullptr;
-    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &raw)) return NativeError::LastWin32();
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &raw)) return SystemError::LastWin32();
     KernelHandle token(raw);
     return IdentityFromToken(token.Get());
 }
 Result<TokenIdentity> QueryCurrentThreadIdentity(bool open_as_self) {
     HANDLE raw = nullptr;
     if (!OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, open_as_self, &raw))
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     KernelHandle token(raw);
     return IdentityFromToken(token.Get());
 }
@@ -249,7 +249,7 @@ Result<std::vector<std::byte>> SecurityDescriptorBuilder::Build() const {
     if ((!owner_.empty() && !ValidSidText(owner_)) ||
         std::any_of(rules_.begin(), rules_.end(),
                     [](const auto& rule) { return !ValidSidText(rule.sid); }))
-        return NativeError::FromWin32(ERROR_INVALID_SID);
+        return SystemError::FromWin32(ERROR_INVALID_SID);
     constexpr BYTE supported_inheritance = OBJECT_INHERIT_ACE | CONTAINER_INHERIT_ACE |
                                            NO_PROPAGATE_INHERIT_ACE | INHERIT_ONLY_ACE |
                                            INHERITED_ACE;
@@ -258,7 +258,7 @@ Result<std::vector<std::byte>> SecurityDescriptorBuilder::Build() const {
     sddl += L"D:P";
     for (const auto& rule : rules_) {
         if ((rule.inheritance & ~supported_inheritance) != 0)
-            return NativeError::FromWin32(ERROR_INVALID_FLAGS)
+            return SystemError::FromWin32(ERROR_INVALID_FLAGS)
                 .WithOperation(L"Security descriptor inheritance");
         wchar_t mask[16]{};
         swprintf_s(mask, L"0x%08X", rule.access_mask);
@@ -276,7 +276,7 @@ Result<std::vector<std::byte>> SecurityDescriptorBuilder::Build() const {
     ULONG bytes = 0;
     if (!ConvertStringSecurityDescriptorToSecurityDescriptorW(sddl.c_str(), SDDL_REVISION_1,
                                                               &descriptor, &bytes))
-        return NativeError::LastWin32().WithOperation(L"Convert security descriptor");
+        return SystemError::LastWin32().WithOperation(L"Convert security descriptor");
     std::vector<std::byte> result(bytes);
     std::memcpy(result.data(), descriptor, bytes);
     LocalFree(descriptor);

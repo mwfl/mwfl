@@ -6,7 +6,7 @@
 #include <vector>
 namespace mwfl {
 enum class ScheduledTaskTrigger { OnDemand, CurrentUserLogon, Once };
-struct ScheduledTaskSpec {
+struct TaskDefinition {
     std::wstring folder = L"\\mwfl";
     std::wstring name;
     std::wstring description;
@@ -27,20 +27,26 @@ struct ScheduledTaskSnapshot {
     ScheduledTaskTrigger trigger = ScheduledTaskTrigger::OnDemand;
     std::wstring start_boundary;
 };
-struct ScheduledTaskMutation {
+struct TaskApplyResult {
     bool created = false;
     bool changed = false;
     ScheduledTaskSnapshot snapshot;
+};
+struct TaskChangePlan {
+    TaskDefinition desired;
+    ScheduledTaskSnapshot current;
+    bool required = false;
+    bool creates = false;
 };
 class TaskScheduler final {
    public:
     [[nodiscard]] Result<ScheduledTaskSnapshot> Query(std::wstring_view folder,
                                                       std::wstring_view name) const;
-    [[nodiscard]] Result<ScheduledTaskMutation> InstallOrUpdate(
-        const ScheduledTaskSpec& spec) const;
+    [[nodiscard]] Result<TaskChangePlan> Plan(const TaskDefinition& definition) const;
+    [[nodiscard]] Result<TaskApplyResult> Apply(const TaskChangePlan& plan) const;
     [[nodiscard]] Result<void> Run(std::wstring_view folder, std::wstring_view name) const;
     [[nodiscard]] Result<void> Stop(std::wstring_view folder, std::wstring_view name) const;
     [[nodiscard]] Result<bool> Remove(std::wstring_view folder, std::wstring_view name) const;
 };
-[[nodiscard]] Result<void> ValidateScheduledTask(const ScheduledTaskSpec& spec);
+[[nodiscard]] Result<void> ValidateScheduledTask(const TaskDefinition& spec);
 }  // namespace mwfl

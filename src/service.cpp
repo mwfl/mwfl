@@ -18,6 +18,11 @@ struct ServiceContextAccess {
     }
 };
 namespace {
+struct ServiceCallbacks {
+    std::function<Result<ServiceExit>(ServiceContext&)> run;
+    std::function<Result<void>(ServiceContext&, const ServiceControlEvent&)> control;
+    std::function<void(ServiceState)> state_changed;
+};
 std::mutex host_mutex;
 std::shared_ptr<ServiceRuntimeState> active_state;
 const ServiceDefinition* active_definition = nullptr;
@@ -127,7 +132,7 @@ DWORD WINAPI ServiceControl(DWORD control, DWORD event_type, void* event_data, v
         auto context = ServiceContextAccess::Make(state);
         if (callbacks && callbacks->control) {
             auto handled = callbacks->control(context, event);
-            if (!handled) return handled.Error().code;
+            if (!handled) return handled.GetError().code;
         }
         if (event.kind == ServiceControlKind::Stop || event.kind == ServiceControlKind::Shutdown) {
             NotifyState(ServiceState::StopPending, NO_ERROR, 0, 1,
@@ -162,10 +167,10 @@ DWORD WINAPI ServiceControl(DWORD control, DWORD event_type, void* event_data, v
 }
 Result<ServiceExit> Invoke(ServiceCallbacks& callbacks, ServiceContext& context) {
     try {
-        if (!callbacks.run) return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        if (!callbacks.run) return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
         return callbacks.run(context);
     } catch (...) {
-        return NativeError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION,
+        return SystemError{ErrorDomain::Application, ERROR_UNHANDLED_EXCEPTION,
                            L"Service run callback"};
     }
 }
@@ -183,7 +188,7 @@ void WINAPI ServiceEntry(DWORD, wchar_t**) noexcept {
         }
         auto context = ServiceContextAccess::Make(state);
         NotifyState(ServiceState::Running);
-        Result<ServiceExit> result = NativeError::FromWin32(ERROR_GEN_FAILURE);
+        Result<ServiceExit> result = SystemError::FromWin32(ERROR_GEN_FAILURE);
         std::jthread worker([&] { result = Invoke(*active_callbacks, context); });
         DWORD checkpoint = 1;
         std::optional<std::chrono::steady_clock::time_point> stop_started;
@@ -213,7 +218,7 @@ void WINAPI ServiceEntry(DWORD, wchar_t**) noexcept {
         if (result)
             exit = result.Value();
         else
-            exit.win32_code = result.Error().code;
+            exit.win32_code = result.GetError().code;
         if (stop_timed_out && exit.win32_code == ERROR_SUCCESS)
             exit.win32_code = ERROR_SERVICE_REQUEST_TIMEOUT;
         {
@@ -289,11 +294,11 @@ Result<ServiceSnapshot> Snapshot(SC_HANDLE service, std::wstring name) {
     QueryServiceConfigW(service, nullptr, 0, &bytes);
     std::vector<std::byte> config_storage(bytes);
     auto* config = reinterpret_cast<QUERY_SERVICE_CONFIGW*>(config_storage.data());
-    if (!QueryServiceConfigW(service, config, bytes, &bytes)) return NativeError::LastWin32();
+    if (!QueryServiceConfigW(service, config, bytes, &bytes)) return SystemError::LastWin32();
     SERVICE_STATUS_PROCESS status{};
     if (!QueryServiceStatusEx(service, SC_STATUS_PROCESS_INFO, reinterpret_cast<BYTE*>(&status),
                               sizeof(status), &bytes))
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     return ServiceSnapshot{std::move(name),
                            config->lpDisplayName ? config->lpDisplayName : L"",
                            config->lpBinaryPathName ? config->lpBinaryPathName : L"",
@@ -304,21 +309,18 @@ Result<ServiceSnapshot> Snapshot(SC_HANDLE service, std::wstring name) {
                            status.dwWin32ExitCode,
                            status.dwServiceSpecificExitCode};
 }
-Result<ServiceOperationResult> WaitState(SC_HANDLE service, std::wstring name, DWORD desired,
-                                         std::chrono::milliseconds timeout, std::stop_token stop) {
-    const auto end = std::chrono::steady_clock::now() + timeout;
+Result<OperationOutcome<ServiceSnapshot>> WaitState(SC_HANDLE service, std::wstring name,
+                                                     DWORD desired, Deadline deadline,
+                                                     std::stop_token stop) {
     while (true) {
         auto snapshot = Snapshot(service, name);
-        if (!snapshot) return snapshot.Error();
+        if (!snapshot) return snapshot.GetError();
         if (snapshot.Value().state == desired)
-            return ServiceOperationResult{ServiceOperationStatus::ReachedTarget,
-                                          std::move(snapshot.Value())};
+            return OperationOutcome<ServiceSnapshot>::Completed(std::move(snapshot.Value()));
         if (stop.stop_requested())
-            return ServiceOperationResult{ServiceOperationStatus::Cancelled,
-                                          std::move(snapshot.Value())};
-        if (timeout.count() >= 0 && std::chrono::steady_clock::now() >= end)
-            return ServiceOperationResult{ServiceOperationStatus::TimedOut,
-                                          std::move(snapshot.Value())};
+            return OperationOutcome<ServiceSnapshot>::Control(CompletionStatus::Cancelled);
+        if (deadline.Expired())
+            return OperationOutcome<ServiceSnapshot>::Control(CompletionStatus::TimedOut);
         Sleep(50);
     }
 }
@@ -338,18 +340,21 @@ bool ServiceContext::IsPaused() const noexcept {
     std::scoped_lock lock(state->mutex);
     return state->paused;
 }
-WaitStatus ServiceContext::WaitWhilePaused(std::chrono::milliseconds timeout) const {
+OperationOutcome<void> ServiceContext::WaitWhilePaused(Deadline deadline) const {
     auto state = std::static_pointer_cast<ServiceRuntimeState>(state_);
-    if (!state) return WaitStatus::Cancelled;
+    if (!state) return OperationOutcome<void>::Control(CompletionStatus::Cancelled);
     std::unique_lock lock(state->mutex);
-    if (!state->paused) return WaitStatus::Signaled;
+    if (!state->paused) return OperationOutcome<void>::Completed();
     const auto predicate = [&] { return !state->paused || state->stop.stop_requested(); };
+    const auto timeout = deadline.Remaining();
     const bool ready =
         timeout.count() < 0
             ? (state->changed.wait(lock, state->stop.get_token(), predicate), true)
             : state->changed.wait_for(lock, state->stop.get_token(), timeout, predicate);
-    if (state->stop.stop_requested()) return WaitStatus::Cancelled;
-    return ready ? WaitStatus::Signaled : WaitStatus::Timeout;
+    if (state->stop.stop_requested())
+        return OperationOutcome<void>::Control(CompletionStatus::Cancelled);
+    return ready ? OperationOutcome<void>::Completed()
+                 : OperationOutcome<void>::Control(CompletionStatus::TimedOut);
 }
 int RunServiceConsole(const ServiceDefinition& definition, ServiceCallbacks callbacks) {
     if (definition.name.empty() || !callbacks.run) return ERROR_INVALID_PARAMETER;
@@ -372,8 +377,8 @@ int RunServiceConsole(const ServiceDefinition& definition, ServiceCallbacks call
         active_callbacks = nullptr;
     }
     if (!result) {
-        std::wcerr << definition.display_name << L": " << result.Error().Message() << L'\n';
-        return result.Error().code;
+        std::wcerr << definition.display_name << L": " << result.GetError().Message() << L'\n';
+        return result.GetError().code;
     }
     return result.Value().service_specific_code ? ERROR_SERVICE_SPECIFIC_ERROR
                                                 : result.Value().win32_code;
@@ -396,23 +401,23 @@ int RunWindowsService(const ServiceDefinition& definition, ServiceCallbacks call
     }
     return error;
 }
-int RunServiceConsole(const ServiceDefinition& definition, ServiceMain main) {
-    return RunServiceConsole(
-        definition, ServiceCallbacks{[main = std::move(main)](
-                                         ServiceContext& context) mutable -> Result<ServiceExit> {
-            auto result = main(context.StopToken());
-            return result ? Result<ServiceExit>{ServiceExit{}}
-                          : Result<ServiceExit>{result.Error()};
-        }});
+int RunServiceConsole(const ServiceDefinition& definition, ServiceApplication& application) {
+    ServiceCallbacks callbacks;
+    callbacks.run = [&](ServiceContext& context) { return application.Run(context); };
+    callbacks.control = [&](ServiceContext& context, const ServiceControlEvent& event) {
+        return application.OnControl(context, event);
+    };
+    callbacks.state_changed = [&](ServiceState state) { application.OnStateChanged(state); };
+    return RunServiceConsole(definition, std::move(callbacks));
 }
-int RunWindowsService(const ServiceDefinition& definition, ServiceMain main) {
-    return RunWindowsService(
-        definition, ServiceCallbacks{[main = std::move(main)](
-                                         ServiceContext& context) mutable -> Result<ServiceExit> {
-            auto result = main(context.StopToken());
-            return result ? Result<ServiceExit>{ServiceExit{}}
-                          : Result<ServiceExit>{result.Error()};
-        }});
+int RunWindowsService(const ServiceDefinition& definition, ServiceApplication& application) {
+    ServiceCallbacks callbacks;
+    callbacks.run = [&](ServiceContext& context) { return application.Run(context); };
+    callbacks.control = [&](ServiceContext& context, const ServiceControlEvent& event) {
+        return application.OnControl(context, event);
+    };
+    callbacks.state_changed = [&](ServiceState state) { application.OnStateChanged(state); };
+    return RunWindowsService(definition, std::move(callbacks));
 }
 ServiceManager::~ServiceManager() {
     if (manager_) CloseServiceHandle(manager_);
@@ -431,7 +436,7 @@ Result<ServiceManager> ServiceManager::Open(Access access) {
     const DWORD desired =
         SC_MANAGER_CONNECT | (access == Access::Manage ? SC_MANAGER_CREATE_SERVICE : 0);
     SC_HANDLE handle = OpenSCManagerW(nullptr, nullptr, desired);
-    if (!handle) return NativeError::LastWin32().WithOperation(L"OpenSCManagerW");
+    if (!handle) return SystemError::LastWin32().WithOperation(L"OpenSCManagerW");
     return ServiceManager(handle, access);
 }
 Result<ServiceQueryResult> ServiceManager::Query(std::wstring_view name) const {
@@ -440,20 +445,40 @@ Result<ServiceQueryResult> ServiceManager::Query(std::wstring_view name) const {
         OpenServiceW(manager_, copy.c_str(), SERVICE_QUERY_CONFIG | SERVICE_QUERY_STATUS);
     if (!raw) {
         if (GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST) return ServiceQueryResult{};
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     }
     auto snapshot = Snapshot(raw, copy);
     CloseServiceHandle(raw);
     return snapshot ? ServiceQueryResult{ServiceQueryStatus::Found, std::move(snapshot.Value())}
-                    : Result<ServiceQueryResult>{snapshot.Error()};
+                    : Result<ServiceQueryResult>{snapshot.GetError()};
 }
-Result<ServiceMutationResult> ServiceManager::InstallOrUpdate(
-    const ServiceInstallSpec& spec) const {
-    if (access_ != Access::Manage)
-        return NativeError::FromWin32(ERROR_ACCESS_DENIED)
-            .WithOperation(L"ServiceManager opened for query");
+Result<ServiceChangePlan> ServiceManager::Plan(const ServiceInstallSpec& spec) const {
     if (spec.name.empty() || spec.executable.empty())
-        return NativeError::FromWin32(ERROR_INVALID_PARAMETER);
+        return SystemError::FromWin32(ERROR_INVALID_PARAMETER);
+    auto current = Query(spec.name);
+    if (!current) return current.GetError();
+    std::vector<std::wstring> fields;
+    const bool creates = current.Value().status == ServiceQueryStatus::NotFound;
+    if (!creates) {
+        const auto& snapshot = current.Value().snapshot;
+        if (snapshot.display_name != spec.display_name) fields.push_back(L"display_name");
+        if (snapshot.binary_path != BinaryCommand(spec)) fields.push_back(L"binary_path");
+        if (snapshot.start_type != spec.start_type) fields.push_back(L"start_type");
+        if (_wcsicmp(snapshot.account_name.c_str(), AccountName(spec.account)) != 0)
+            fields.push_back(L"account");
+    }
+    return ServiceChangePlan{spec, std::move(current.Value()), creates || !fields.empty(), creates,
+                             std::move(fields)};
+}
+Result<ServiceMutationResult> ServiceManager::Apply(const ServiceChangePlan& plan) const {
+    if (access_ != Access::Manage)
+        return SystemError::FromWin32(ERROR_ACCESS_DENIED)
+            .WithOperation(L"ServiceManager opened for query");
+    auto replanned = Plan(plan.desired);
+    if (!replanned) return replanned.GetError();
+    const auto& spec = replanned.Value().desired;
+    if (!replanned.Value().required)
+        return ServiceMutationResult{false, false, {}, replanned.Value().current.snapshot};
     const std::wstring command = BinaryCommand(spec);
     SC_HANDLE service =
         OpenServiceW(manager_, spec.name.c_str(),
@@ -467,14 +492,14 @@ Result<ServiceMutationResult> ServiceManager::InstallOrUpdate(
             nullptr, nullptr, nullptr, AccountName(spec.account), nullptr);
         created = true;
     }
-    if (!service) return NativeError::LastWin32();
+    if (!service) return SystemError::LastWin32();
     bool changed = created;
     std::vector<std::wstring> fields;
     if (!created) {
         auto before = Snapshot(service, spec.name);
         if (!before) {
             CloseServiceHandle(service);
-            return before.Error();
+            return before.GetError();
         }
         if (before.Value().display_name != spec.display_name) fields.push_back(L"display_name");
         if (before.Value().binary_path != command) fields.push_back(L"binary_path");
@@ -486,47 +511,47 @@ Result<ServiceMutationResult> ServiceManager::InstallOrUpdate(
             !ChangeServiceConfigW(service, SERVICE_NO_CHANGE, spec.start_type, SERVICE_NO_CHANGE,
                                   command.c_str(), nullptr, nullptr, nullptr,
                                   AccountName(spec.account), nullptr, spec.display_name.c_str())) {
-            const auto error = NativeError::LastWin32();
+            const auto error = SystemError::LastWin32();
             CloseServiceHandle(service);
             return error;
         }
     }
     auto after = Snapshot(service, spec.name);
     CloseServiceHandle(service);
-    if (!after) return after.Error();
+    if (!after) return after.GetError();
     return ServiceMutationResult{created, changed, std::move(fields), std::move(after.Value())};
 }
-Result<ServiceOperationResult> ServiceManager::Start(std::wstring_view name,
-                                                     std::chrono::milliseconds timeout,
-                                                     std::stop_token stop) const {
+Result<OperationOutcome<ServiceSnapshot>> ServiceManager::Start(std::wstring_view name,
+                                                                 Deadline deadline,
+                                                                 std::stop_token stop) const {
     std::wstring copy(name);
     SC_HANDLE service = OpenServiceW(manager_, copy.c_str(),
                                      SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG);
-    if (!service) return NativeError::LastWin32();
+    if (!service) return SystemError::LastWin32();
     if (!StartServiceW(service, 0, nullptr) && GetLastError() != ERROR_SERVICE_ALREADY_RUNNING) {
-        auto error = NativeError::LastWin32();
+        auto error = SystemError::LastWin32();
         CloseServiceHandle(service);
         return error;
     }
-    auto result = WaitState(service, copy, SERVICE_RUNNING, timeout, stop);
+    auto result = WaitState(service, copy, SERVICE_RUNNING, deadline, stop);
     CloseServiceHandle(service);
     return result;
 }
-Result<ServiceOperationResult> ServiceManager::Stop(std::wstring_view name,
-                                                    std::chrono::milliseconds timeout,
-                                                    std::stop_token stop) const {
+Result<OperationOutcome<ServiceSnapshot>> ServiceManager::Stop(std::wstring_view name,
+                                                                Deadline deadline,
+                                                                std::stop_token stop) const {
     std::wstring copy(name);
     SC_HANDLE service = OpenServiceW(manager_, copy.c_str(),
                                      SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG);
-    if (!service) return NativeError::LastWin32();
+    if (!service) return SystemError::LastWin32();
     SERVICE_STATUS status{};
     if (!ControlService(service, SERVICE_CONTROL_STOP, &status) &&
         GetLastError() != ERROR_SERVICE_NOT_ACTIVE) {
-        auto error = NativeError::LastWin32();
+        auto error = SystemError::LastWin32();
         CloseServiceHandle(service);
         return error;
     }
-    auto result = WaitState(service, copy, SERVICE_STOPPED, timeout, stop);
+    auto result = WaitState(service, copy, SERVICE_STOPPED, deadline, stop);
     CloseServiceHandle(service);
     return result;
 }
@@ -535,10 +560,10 @@ Result<ServiceSnapshot> ServiceManager::SendControl(std::wstring_view name, DWOR
     SC_HANDLE service = OpenServiceW(manager_, copy.c_str(),
                                      SERVICE_USER_DEFINED_CONTROL | SERVICE_PAUSE_CONTINUE |
                                          SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG);
-    if (!service) return NativeError::LastWin32();
+    if (!service) return SystemError::LastWin32();
     SERVICE_STATUS status{};
     if (!ControlService(service, control, &status)) {
-        auto error = NativeError::LastWin32();
+        auto error = SystemError::LastWin32();
         CloseServiceHandle(service);
         return error;
     }
@@ -551,12 +576,12 @@ Result<bool> ServiceManager::Remove(std::wstring_view name) const {
     SC_HANDLE service = OpenServiceW(manager_, copy.c_str(), DELETE);
     if (!service) {
         if (GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST) return false;
-        return NativeError::LastWin32();
+        return SystemError::LastWin32();
     }
     const BOOL removed = DeleteService(service);
     const DWORD error = removed ? ERROR_SUCCESS : GetLastError();
     CloseServiceHandle(service);
-    if (!removed && error != ERROR_SERVICE_MARKED_FOR_DELETE) return NativeError::FromWin32(error);
+    if (!removed && error != ERROR_SERVICE_MARKED_FOR_DELETE) return SystemError::FromWin32(error);
     return true;
 }
 }  // namespace mwfl

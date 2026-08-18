@@ -96,17 +96,17 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
 | Wait on kernel handles | wait-aware message pump | `examples/wait_aware/main.cpp` |
 | Build a Service or console-debug host | `ServiceDefinition`, `RunServiceConsole`, `RunWindowsService` | `examples/service_host/main.cpp` |
 | Launch and wait for a child process | `ProcessBuilder`, `Process` | `examples/process_runner/main.cpp` |
-| Exchange bounded local pipe frames | `PipeServer`, `PipeConnection`, `ConnectPipe` | `examples/ipc_framed/main.cpp` |
+| Exchange bounded local pipe frames | `PipeListener`, `PipeConnection`, `ConnectPipe` | `examples/ipc_framed/main.cpp` |
 | Emit redacted bounded diagnostics | `DiagnosticPipeline`, `BoundedFileSink` | `examples/diagnostics_pipeline/main.cpp` |
-| Protect current-user secrets | `ProtectForCurrentUser`, `UnprotectForCurrentUser`, `SecureBytes` | `examples/security_dpapi/main.cpp` |
+| Protect current-user secrets | `ProtectForCurrentUser`, `UnprotectForCurrentUser`, `SecureBuffer` | `examples/security_dpapi/main.cpp` |
 | Query package identity and register restart | `QueryCurrentPackageIdentity`, `RestartRegistration` | `examples/deployment_restart/main.cpp` |
 | Supervise a worker tree and collect output | `ProcessBuilder::Supervise`, `CollectOutput`, `TerminateTree` | `examples/process_supervisor/main.cpp` |
 | Authenticate a local IPC peer | `PipeAccessPolicy`, `PipePeerIdentity` | `examples/ipc_secure/main.cpp` |
 | Manage a Windows Service explicitly | `ServiceManager`, `ServiceInstallSpec` | `examples/service_management/main.cpp` |
 | Emit ETW/Event Log or an explicit minidump | `TraceLoggingSink`, `EventLogSink`, `WriteMiniDump` | `examples/diagnostics_native/main.cpp` |
-| Store a generic Windows credential | `CredentialManager`, `SecureWideString` | `examples/security_credentials/main.cpp` |
-| Validate an update handoff | `VerifyAuthenticode`, `PrepareUpdateHandoff` | `examples/deployment_handoff/main.cpp` |
-| Manage an application scheduled task | `TaskScheduler`, `ScheduledTaskSpec` | `examples/scheduled_task/main.cpp` |
+| Store a generic Windows credential | `CredentialManager`, `SecureString` | `examples/security_credentials/main.cpp` |
+| Validate an update handoff | `VerifyAuthenticode`, `VerifyUpdate` | `examples/deployment_handoff/main.cpp` |
+| Manage an application scheduled task | `TaskScheduler`, `TaskDefinition` | `examples/scheduled_task/main.cpp` |
 | Build a controller/worker application | Process + IPC + diagnostics + service | `examples/supervised_worker/main.cpp` |
 
 Foundation components are opt-in package components. Request and link only the

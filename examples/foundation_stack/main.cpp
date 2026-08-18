@@ -12,14 +12,15 @@ std::vector<std::byte> Bytes(std::string_view text) {
     return {first, first + text.size()};
 }
 int Worker(std::wstring_view pipe_name) {
-    const mwfl::PipeOptions options{std::wstring(pipe_name), 1024};
-    auto connection = mwfl::ConnectPipe(options, 5s);
-    if (!connection || connection.Value().status != mwfl::PipeOperationStatus::Completed) return 20;
-    auto sent = connection.Value().connection.WriteFrame(Bytes("worker-ready"), 5s);
-    if (!sent || sent.Value().status != mwfl::PipeOperationStatus::Completed) return 20;
-    auto ack = connection.Value().connection.ReadFrame(5s);
-    return ack && ack.Value().status == mwfl::PipeOperationStatus::Completed &&
-                   ack.Value().payload == Bytes("controller-ack")
+    const mwfl::PipeEndpoint options{std::wstring(pipe_name), 1024};
+    auto connection = mwfl::ConnectPipe(options, mwfl::Deadline::After(5s));
+    if (!connection || connection.Value().status != mwfl::CompletionStatus::Completed) return 20;
+    auto channels = std::move(*connection.Value().value).Split();
+    auto sent = channels.writer.WriteFrame(Bytes("worker-ready"), mwfl::Deadline::After(5s));
+    if (!sent || sent.Value().status != mwfl::CompletionStatus::Completed) return 20;
+    auto ack = channels.reader.ReadFrame(mwfl::Deadline::After(5s));
+    return ack && ack.Value().status == mwfl::CompletionStatus::Completed &&
+                   *ack.Value().value == Bytes("controller-ack")
                ? 23
                : 21;
 }
@@ -37,26 +38,26 @@ int wmain(int argc, wchar_t** argv) {
     if (GetModuleFileNameW(nullptr, executable, MAX_PATH) == 0) return 1;
     const std::wstring pipe_name =
         L"\\\\.\\pipe\\mwfl-foundation-stack-" + std::to_wstring(GetCurrentProcessId());
-    auto listener = mwfl::PipeServer::Create({pipe_name, 1024});
+    auto listener = mwfl::PipeListener::Create({pipe_name, 1024});
     if (!listener) return 2;
     auto child = mwfl::ProcessBuilder{}
                      .Executable(executable)
                      .Argument(L"--worker")
                      .Argument(pipe_name)
-                     .Supervise()
-                     .Launch();
+                     .LaunchSupervised();
     if (!child) return 2;
-    auto connection = listener.Value().Accept(5s);
-    if (!connection || connection.Value().status != mwfl::PipeOperationStatus::Completed) return 3;
-    auto ready = connection.Value().connection.ReadFrame(5s);
-    if (!ready || ready.Value().status != mwfl::PipeOperationStatus::Completed ||
-        ready.Value().payload != Bytes("worker-ready"))
+    auto connection = listener.Value().Accept(mwfl::Deadline::After(5s));
+    if (!connection || connection.Value().status != mwfl::CompletionStatus::Completed) return 3;
+    auto channels = std::move(*connection.Value().value).Split();
+    auto ready = channels.reader.ReadFrame(mwfl::Deadline::After(5s));
+    if (!ready || ready.Value().status != mwfl::CompletionStatus::Completed ||
+        *ready.Value().value != Bytes("worker-ready"))
         return 4;
-    auto sent = connection.Value().connection.WriteFrame(Bytes("controller-ack"), 5s);
-    if (!sent || sent.Value().status != mwfl::PipeOperationStatus::Completed) return 5;
-    auto exit = child.Value().Wait(5s);
-    if (!exit || exit.Value().status != mwfl::ProcessWaitStatus::Exited ||
-        exit.Value().exit_code != 23)
+    auto sent = channels.writer.WriteFrame(Bytes("controller-ack"), mwfl::Deadline::After(5s));
+    if (!sent || sent.Value().status != mwfl::CompletionStatus::Completed) return 5;
+    auto exit = child.Value().Wait(mwfl::Deadline::After(5s));
+    if (!exit || exit.Value().status != mwfl::CompletionStatus::Completed ||
+        *exit.Value().value != 23)
         return 6;
     (void)diagnostics.Write(
         {mwfl::EventLevel::Information, L"foundation-stack", 2, {{L"phase", L"complete"}}});

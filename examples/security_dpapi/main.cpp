@@ -8,7 +8,11 @@ int wmain(int argc, wchar_t** argv) {
     auto bytes = std::span(reinterpret_cast<const std::byte*>(secret), sizeof(secret) - 1);
     auto protected_data = mwfl::ProtectForCurrentUser(bytes, L"mwfl.example"); if (!protected_data) return 1;
     auto restored = mwfl::UnprotectForCurrentUser(protected_data.Value(), L"mwfl.example"); if (!restored) return 2;
-    if (restored.Value().Size() != bytes.size() || std::memcmp(restored.Value().View().data(), bytes.data(), bytes.size()) != 0) return 3;
+    const bool matches = restored.Value().WithView([&](auto view) {
+        return view.size() == bytes.size() &&
+               std::memcmp(view.data(), bytes.data(), bytes.size()) == 0;
+    });
+    if (!matches) return 3;
     restored.Value().Clear();
     std::wcout << L"current-user DPAPI protection and secure clearing passed\n"; return 0;
 }

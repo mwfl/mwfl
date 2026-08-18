@@ -7,6 +7,6 @@
 #include <mwfl/security.h>
 #include <mwfl/service.h>
 int main() {
-    mwfl::ScheduledTaskSpec task{L"\\mwfl", L"consumer", L"", L"test.exe"};
+    mwfl::TaskDefinition task{L"\\mwfl", L"consumer", L"", L"test.exe"};
     return mwfl::Utf8ToWide("foundation") && mwfl::ValidateScheduledTask(task) ? 0 : 1;
 }

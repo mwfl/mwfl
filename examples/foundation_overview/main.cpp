@@ -18,14 +18,16 @@ int wmain(int argc, wchar_t** argv) {
     mwfl::ServiceStateMachine service;
     if (!service.Transition(mwfl::ServiceState::StartPending)) return 2;
     if (mwfl::QuoteWindowsArgument(L"a b") != L"\"a b\"") return 3;
-    if (mwfl::ConnectPipe({L"invalid", 1})) return 4;
-    if (mwfl::FormatDiagnosticEvent({mwfl::EventLevel::Information, L"overview", 1, {}}).empty())
+    if (mwfl::ConnectPipe({L"invalid", 1},
+                          mwfl::Deadline::After(std::chrono::milliseconds{0}))) return 4;
+    auto event = mwfl::DiagnosticEventBuilder(mwfl::EventLevel::Information, L"overview", 1).Build();
+    if (mwfl::FormatDiagnosticEvent(mwfl::SanitizeDiagnosticEvent(event)).empty())
         return 5;
-    mwfl::SecureBytes secret;
+    mwfl::SecureBuffer secret;
     if (secret.Size() != 0) return 6;
     auto identity = mwfl::QueryCurrentPackageIdentity();
     if (!identity) return 7;
-    mwfl::ScheduledTaskSpec task{L"\\mwfl", L"overview", L"", L"test.exe"};
+    mwfl::TaskDefinition task{L"\\mwfl", L"overview", L"", L"test.exe"};
     if (!mwfl::ValidateScheduledTask(task)) return 8;
     std::wcout << L"0.1.1-0.1.9 Foundation targets compose successfully\n";
     return 0;

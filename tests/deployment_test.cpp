@@ -10,7 +10,7 @@ int main() {
     wchar_t executable[MAX_PATH]{};
     if (!GetModuleFileNameW(nullptr, executable, MAX_PATH)) return 3;
     auto version = mwfl::QueryFileVersion(executable);
-    if (!version && version.Error().code == ERROR_SUCCESS) return 4;
+    if (!version && version.GetError().code == ERROR_SUCCESS) return 4;
     auto signature = mwfl::VerifyAuthenticode(executable);
     if (!signature) return 5;
     auto recovery = mwfl::RecoveryRegistration::Register(
@@ -30,16 +30,19 @@ int main() {
     }
     mwfl::UpdateVerificationPolicy policy;
     policy.require_valid_signature = false;
-    auto plan = mwfl::PrepareUpdateHandoff(candidate, target, backup, target, {}, policy);
+    auto plan = mwfl::VerifyUpdate(candidate, target, backup, target, {}, policy);
     if (!plan) return 7;
-    auto applied = mwfl::ApplyUpdateHandoff(plan.Value(), 0, std::chrono::seconds(1));
-    if (applied) return 8;
+    auto staged = mwfl::StageUpdate(std::move(plan.Value()));
+    if (!staged) return 8;
+    auto applied = mwfl::ApplyUpdate(std::move(staged.Value()), 0,
+                                     mwfl::Deadline::After(std::chrono::seconds(1)));
+    if (applied) return 9;
     std::string restored;
     {
         std::ifstream input(target, std::ios::binary);
         input >> restored;
     }
-    if (restored != "old") return 9;
+    if (restored != "old") return 10;
     std::filesystem::remove(candidate);
     std::filesystem::remove(target);
     std::filesystem::remove(backup);
