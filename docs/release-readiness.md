@@ -1,6 +1,6 @@
-# First public preview readiness plan
+# First public preview readiness plan (archived)
 
-> Active gate for replacing all historical preview releases with one clean
+> Historical gate for replacing all historical preview releases with one clean
 > `v0.1.0`. Use this plan together with `docs/releases/v0.1.0.md` and the
 > verification scripts.
 

@@ -39,17 +39,15 @@ requested so UI applications acquire no hidden service or background runtime.
   <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/mwfl-showcase-40s.gif" alt="MWFL applications running with populated native controls"></a>
 </p>
 
-**v0.1.9 is the current public preview.** The repository contains **62 compiled
-examples** plus six standalone applications in the mwfl organization. The downloadable release packages are VS2026/MSVC x64; source and
+**v0.2.0 is the current public preview.** The repository contains **62 compiled
+examples** plus nine standalone applications in the mwfl organization. The downloadable release packages are VS2026/MSVC x64; source and
 CI cover x64 and ARM64. WebView2, Scintilla, graphics, imaging, printing, OLE,
 Shell, Ribbon, and MDI integrations remain separately requested optional
 components.
 
-`main` additionally contains the unreleased next Foundation baseline: cancellable
-Process/IPC/Service supervision, native diagnostics and credentials, verified
-deployment handoff, and the independent Scheduler component. These APIs remain
-Provisional until the full compatibility gate selects the next public version;
-see [the migration guide](docs/foundation-migration-next.md).
+The 0.2 Foundation baseline adds cancellable Process/IPC/Service supervision,
+native diagnostics and credentials, verified deployment handoff, and the
+independent Scheduler component. See [the 0.1.9 to 0.2.0 migration guide](docs/foundation-migration-next.md).
 
 ## Why mwfl
 
@@ -120,7 +118,7 @@ project(my_app LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwfl
   GIT_REPOSITORY https://github.com/mwfl/mwfl.git
-  GIT_TAG v0.1.9
+  GIT_TAG v0.2.0
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwfl)
 
@@ -192,7 +190,7 @@ the complete source. Start with **Hello** for the smallest application,
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 62 runnable examples and six standalone applications</strong></summary>
+<summary><strong>Browse all 62 runnable examples and nine standalone applications</strong></summary>
 
 <br>
 
@@ -259,6 +257,9 @@ multi-monitor utility.
 | Browser | [examples/browser/main.cpp](examples/browser/main.cpp) | Optional pinned WebView2, offline startup, process recovery, and navigation |
 | PDF Reader | [mwfl/pdf-reader](https://github.com/mwfl/pdf-reader) | Standalone local PDF reader with native tabs, drag-and-drop, shortcuts, placement, and WebView2 recovery |
 | Markdown Editor | [mwfl/markdown-editor](https://github.com/mwfl/markdown-editor) | Standalone local Markdown editing with Scintilla, safe offline preview, atomic saves, and GUI self-test |
+| Notepad Colon | [mwfl/notepad-colon](https://github.com/mwfl/notepad-colon) | Standalone native code editor with Scintilla, Tree-sitter languages, large-file workflows, and sandboxed language hosting |
+| Rho PDF | [mwfl/rhopdf](https://github.com/mwfl/rhopdf) | Standalone local-first PDF workspace with native tools, indexing, citations, and opt-in local AI |
+| Startup Manager | [mwfl/startup-manager](https://github.com/mwfl/startup-manager) | Standalone safety-focused startup inventory with explicit registry and scheduled-task operations |
 | Docking Workspace | [examples/docking_workspace/main.cpp](examples/docking_workspace/main.cpp) | IDE-style documents and tools with docking, floating, auto-hide, keyboard operation, and layout restore |
 | Printing | [examples/printing/main.cpp](examples/printing/main.cpp) | Shared pagination, preview, printer settings, and balanced native print jobs |
 | OLE drag/drop | [examples/ole_drag_drop/main.cpp](examples/ole_drag_drop/main.cpp) | Unicode, files, and custom formats through native OLE drag/drop |
@@ -286,7 +287,7 @@ Screenshot and product-quality reviews follow the
 
 ## Build this repository
 
-The authoritative 0.1 public-preview development and acceptance environment is Windows 10
+The authoritative 0.2 public-preview development and acceptance environment is Windows 10
 1809 or newer, x64, Visual Studio 2026 with MSVC and a Windows SDK,
 CMake 3.21 or newer, and C++20.
 
@@ -309,10 +310,9 @@ If the preset build tree is unavailable or read-only, pass an independent
 writable directory with `-BuildRoot build-local`.
 
 The project rejects non-Windows, non-MSVC, and 32-bit
-configurations. The v0.1.0 validation matrix contains 170 core tests and
-173 tests with all optional integrations enabled. Both VS2026 x64 Debug and
-Release optional matrices pass, including public-header independence, package
-consumption,
+configurations. The release matrix runs more than 190 tests and over 200 with
+all optional integrations enabled. Both VS2026 x64 Debug and Release optional
+matrices cover public-header independence, package consumption,
 manifests, examples, GUI self-tests, resource lifetime, API surface, and
 deterministic property cases. VS2022, ARM64, sanitizers, coverage,
 static analysis, and GitHub Actions provide additional compatibility and
@@ -331,7 +331,8 @@ includes WIL for you. For controlled environments, see the
 
 - [Windows desktop capability roadmap](docs/win32xx-parity-roadmap.md)
 - [Windows application foundation roadmap](docs/foundation-roadmap.md)
-- [First public preview readiness plan](docs/release-readiness.md)
+- [0.2.0 release readiness plan](docs/release-readiness-0.2.0.md)
+- [First public preview readiness archive](docs/release-readiness.md)
 - [Modern Windows UI API coverage plan](docs/windows-ui-modernization-plan.md)
 - [IDE-style docking workspace tutorial](docs/tutorials/docking-workspace.md)
 

@@ -5,7 +5,7 @@ if(MWFL_SOURCE_DIR)
     add_subdirectory("${MWFL_SOURCE_DIR}" mwfl-source EXCLUDE_FROM_ALL)
 else()
     include(FetchContent)
-    FetchContent_Declare(mwfl GIT_REPOSITORY https://github.com/mwfl/mwfl.git GIT_TAG v0.1.9)
+    FetchContent_Declare(mwfl GIT_REPOSITORY https://github.com/mwfl/mwfl.git GIT_TAG v0.2.0)
     FetchContent_MakeAvailable(mwfl)
 endif()
 

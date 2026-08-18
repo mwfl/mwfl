@@ -20,3 +20,16 @@ All examples support `--self-test`. System mutation remains explicit: the
 Service example never installs itself, IPC names are process-unique, DPAPI uses
 the current user, diagnostics uses a bounded temporary file, and deployment
 does not download or install software.
+
+## 0.2.0 compatibility baseline
+
+Version 0.2.0 productionizes those slices and adds the independent Scheduler
+component. The focused examples are `process_supervisor`, `ipc_secure`,
+`service_management`, `diagnostics_native`, `security_credentials`,
+`deployment_handoff`, and `scheduled_task`. The multi-file
+`supervised_worker` reference application demonstrates their complete vertical
+composition without adding a general RPC or updater framework.
+
+Runtime code never installs or repairs machine state implicitly. Service,
+Event Log source, credential, and scheduled-task mutation remains explicit,
+idempotent, reversible, and separate from ordinary self-tests.

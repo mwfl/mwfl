@@ -13,7 +13,7 @@ try {
     $cmake = [System.IO.File]::ReadAllText((Join-Path $project 'CMakeLists.txt'))
     if ($cmake -notmatch 'project\(SampleApp ' -or
         $cmake -notmatch 'add_executable\(SampleApp WIN32' -or
-        $cmake -notmatch 'GIT_TAG v0\.1\.9' -or
+        $cmake -notmatch 'GIT_TAG v0\.2\.0' -or
         $cmake -notmatch 'mwfl::ui') {
         throw 'Generated project does not contain the expected target and release pin.'
     }

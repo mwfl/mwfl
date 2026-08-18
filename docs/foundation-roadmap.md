@@ -35,9 +35,9 @@ Existing rendering, printing, OLE, Shell, Ribbon, MDI, graphics, WebView2, and
 Scintilla targets remain opt-in. `mwfl::ui` never links Service Control Manager,
 process supervision, IPC, diagnostic sinks, credentials, or deployment policy.
 
-## Delivery order
+## Delivery status
 
-## 0.1.9 delivery status
+### 0.1.9 preview train
 
 The 0.1.1-0.1.9 preview train has delivered the dependency boundaries and a
 focused, runnable slice of every component below. See
@@ -53,11 +53,14 @@ process I/O, overlapped IPC with ACL/identity policy, Event Log/ETW/minidumps,
 Credential Manager/token helpers, Service management, recovery, signature
 verification, update handoff, and Task Scheduler composition remain planned.
 
-Current `main` implements those productionization slices behind the same
-independent component boundaries, plus the new `mwfl::scheduler` target. They
-remain unreleased until the Debug/Release, compatibility, architecture, native
-integration, package, documentation, and reference-application gates below are
-complete. See [`foundation-migration-next.md`](foundation-migration-next.md).
+### 0.2.0 production Foundation baseline
+
+Version 0.2.0 implements those productionization slices behind the same
+independent component boundaries, plus the new `mwfl::scheduler` target. The
+Debug/Release, compatibility, architecture, package, documentation, and
+reference-application gates define the released baseline. Privileged native
+mutation remains an explicitly authorized integration gate and is never implied
+by ordinary CI. See [`foundation-migration-next.md`](foundation-migration-next.md).
 
 ### F0 — UI target migration and contracts
 

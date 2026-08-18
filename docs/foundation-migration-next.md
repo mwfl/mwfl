@@ -1,9 +1,9 @@
-# Foundation migration after 0.1.9
+# Foundation migration from 0.1.9 to 0.2.0
 
-The Foundation APIs are provisional. Current `main` deliberately refines the
-0.1.9 slice before the next compatibility baseline.
+The 0.1.9 Foundation APIs were provisional. Version 0.2.0 deliberately refines
+that slice and establishes the next public-preview compatibility baseline.
 
-| 0.1.9 usage | Current `main` |
+| 0.1.9 usage | 0.2.0 |
 |---|---|
 | `ProcessExit::code` | `ProcessWaitResult::{status, exit_code}` |
 | timeout/cancellation returned as process errors | `OperationOutcome<T>` with `TimedOut` / `Cancelled` |
