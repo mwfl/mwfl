@@ -42,8 +42,10 @@ int wmain(int argc, wchar_t** argv) {
     const auto dump = path.parent_path() /
                       (L"mwfl-diagnostics-" + std::to_wstring(GetCurrentProcessId()) + L".dmp");
     std::filesystem::remove(dump);
-    auto written = mwfl::WriteMiniDump(dump, mwfl::MiniDumpKind::Normal);
-    auto duplicate = mwfl::WriteMiniDump(dump, mwfl::MiniDumpKind::Normal);
+    // Thread metadata is usually enough to diagnose a native crash without
+    // collecting full process memory that may contain user content or secrets.
+    auto written = mwfl::WriteMiniDump(dump, mwfl::MiniDumpKind::WithThreadInfo);
+    auto duplicate = mwfl::WriteMiniDump(dump, mwfl::MiniDumpKind::WithThreadInfo);
     const bool dump_ok = written && std::filesystem::file_size(dump) > 0 && !duplicate &&
                          duplicate.GetError().code == ERROR_FILE_EXISTS;
     std::filesystem::remove(dump);

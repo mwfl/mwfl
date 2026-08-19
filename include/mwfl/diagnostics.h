@@ -101,7 +101,10 @@ class DiagnosticPipeline final {
     std::mutex mutex_;
     std::vector<std::shared_ptr<DiagnosticSink>> sinks_;
 };
-enum class MiniDumpKind { Normal, WithDataSegments, WithFullMemory };
+// Select the amount of process state written to a dump. WithThreadInfo adds
+// per-thread timing and start-address metadata without including full process
+// memory, making it a useful default for privacy-conscious desktop crash dumps.
+enum class MiniDumpKind { Normal, WithThreadInfo, WithDataSegments, WithFullMemory };
 [[nodiscard]] Result<void> WriteMiniDump(const std::filesystem::path& path, MiniDumpKind kind,
                                          EXCEPTION_POINTERS* exception = nullptr) noexcept;
 class ScopedUnhandledExceptionDump final {
