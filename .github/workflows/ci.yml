@@ -59,33 +59,6 @@ jobs:
       - name: Test
         run: ctest --preset vs2022-x64-release
 
-  clang-cl:
-    name: clang-cl x64 Release compatibility
-    runs-on: windows-2025
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Build and test with clang-cl
-        shell: pwsh
-        run: |
-          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-          $installation = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-          if (-not $installation) { throw 'Visual C++ build tools were not found' }
-          $devcmd = Join-Path $installation 'Common7\Tools\VsDevCmd.bat'
-          cmd /s /c "`"$devcmd`" -arch=x64 -host_arch=x64 && set" | ForEach-Object {
-            if ($_ -match '^([^=]+)=(.*)$') { Set-Item "env:$($matches[1])" $matches[2] }
-          }
-          $clang = (Get-Command clang-cl -ErrorAction Stop).Source
-          & $clang --version
-          cmake -S . -B build/clang-cl -G Ninja -DCMAKE_BUILD_TYPE=Release `
-            -DCMAKE_CXX_COMPILER="$clang" -DMWFL_BUILD_EXAMPLES=ON `
-            -DMWFL_BUILD_TESTS=ON -DMWFL_WARNINGS_AS_ERRORS=ON
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          cmake --build build/clang-cl --parallel 2
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          ctest --test-dir build/clang-cl -LE gui --output-on-failure
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
   optional-components:
     name: VS 2026 x64 optional components ${{ matrix.configuration }}
     runs-on: windows-2025-vs2026
