@@ -43,6 +43,8 @@ WORD EventType(EventLevel level) {
 }
 MINIDUMP_TYPE DumpType(MiniDumpKind kind) {
     switch (kind) {
+        case MiniDumpKind::WithThreadInfo:
+            return MiniDumpWithThreadInfo;
         case MiniDumpKind::WithDataSegments:
             return MiniDumpWithDataSegs;
         case MiniDumpKind::WithFullMemory:
