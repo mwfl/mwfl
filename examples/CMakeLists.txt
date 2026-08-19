@@ -4,7 +4,7 @@ function(mwfl_add_example target)
         "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/example.manifest")
     target_compile_features(${target} PRIVATE cxx_std_20)
     target_compile_options(${target} PRIVATE /W4 /permissive- /EHsc /utf-8)
-    target_link_libraries(${target} PRIVATE mwfl::ui)
+    target_link_libraries(${target} PRIVATE mwfl::app)
     set_property(
         SOURCE "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/example.manifest"
         PROPERTY VS_TOOL_OVERRIDE "Manifest")

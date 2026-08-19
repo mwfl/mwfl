@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(mwfl VERSION 0.2.0 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
+project(mwfl VERSION 0.2.1 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -167,6 +167,8 @@ target_link_libraries(mwfl_scheduler PUBLIC mwfl_core PRIVATE taskschd ole32 ole
 
 add_library(mwfl STATIC
     src/window_core.cpp
+    src/app_support_update_checker.cpp
+    src/app_support_version.cpp
     src/appearance.cpp
     src/application.cpp
     src/command.cpp
@@ -209,10 +211,17 @@ add_library(mwfl STATIC
     src/text_history.cpp
     src/text_search.cpp
     src/window_options.cpp)
-# `mwfl::ui` is the public target for the native Windows UI layer.
+# `mwfl::ui` is the precise target for the native Windows UI layer.
 set_target_properties(mwfl PROPERTIES EXPORT_NAME ui)
 add_library(mwfl::ui ALIAS mwfl)
 target_link_libraries(mwfl PUBLIC mwfl_core)
+
+# Default application-facing facade. This interface target adds no second
+# library or runtime artifact.
+add_library(mwfl_app INTERFACE)
+set_target_properties(mwfl_app PROPERTIES EXPORT_NAME app)
+add_library(mwfl::app ALIAS mwfl_app)
+target_link_libraries(mwfl_app INTERFACE mwfl)
 
 add_library(mwfl_d2d STATIC src/d2d_host.cpp)
 add_library(mwfl::d2d ALIAS mwfl_d2d)
@@ -460,6 +469,7 @@ target_link_libraries(mwfl
         comdlg32
         advapi32
         dwmapi
+        winhttp
         shell32
         ole32)
 target_link_libraries(mwfl PRIVATE oleacc uuid uxtheme)
@@ -468,6 +478,7 @@ install(TARGETS mwfl_core mwfl_service mwfl_process mwfl_ipc mwfl_diagnostics mw
     EXPORT mwflTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(TARGETS mwfl_app EXPORT mwflTargets)
 if(MWFL_BUILD_SCINTILLA)
     install(TARGETS mwfl_scintilla EXPORT mwflTargets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -510,6 +521,7 @@ install(FILES
     docs/foundation-migration-next.md
     docs/release-readiness.md
     docs/release-readiness-0.2.0.md
+    docs/release-readiness-0.2.1.md
     docs/windows-ui-modernization-plan.md
     docs/parity.json
     docs/win32xx-parity-roadmap.md

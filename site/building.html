@@ -31,7 +31,7 @@
     <div class="hero">
       <div class="eyebrow">Build reference</div>
       <h1>Choose and configure your build workflow.</h1>
-      <p class="lede">This page is the reference for CMake, IDE, installed-package, repository, and offline workflows. Every path builds the same C++20 x64 or ARM64 library and links the exported <code>mwfl::ui</code> target.</p>
+      <p class="lede">This page is the reference for CMake, IDE, installed-package, repository, and offline workflows. Every path builds the same C++20 x64 or ARM64 library and links the exported <code>mwfl::app</code> target.</p>
       <div class="callout"><strong>Building your first Windows application?</strong> Follow the <a href="tutorial.html">15-minute beginner tutorial</a> first. It starts with installing Visual Studio and ends with a running window.</div>
       <nav class="page-toc" aria-label="On this page">
         <a href="#cmake">CMake</a>
@@ -61,12 +61,12 @@ project(my_app LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwfl
   GIT_REPOSITORY https://github.com/mwfl/mwfl.git
-  GIT_TAG v0.2.0
+  GIT_TAG v0.2.1
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwfl)
 
 add_executable(my_app WIN32 main.cpp)
-target_link_libraries(my_app PRIVATE mwfl::ui)</code></pre>
+target_link_libraries(my_app PRIVATE mwfl::app)</code></pre>
       <pre data-title="PowerShell"><code>cmake -S . -B build -G "Visual Studio 18 2026" -A x64
 cmake --build build --config Debug</code></pre>
       <div class="callout"><strong>Visual Studio 2022:</strong> replace the generator with <code>Visual Studio 17 2022</code>. The library supports VS 2022 or newer.</div>
@@ -80,7 +80,7 @@ cmake --build mwfl-build --config Release
 cmake --install mwfl-build --config Release --prefix C:/deps/mwfl</code></pre>
       <pre data-title="consumer CMakeLists.txt"><code>find_package(mwfl CONFIG REQUIRED)
 add_executable(my_app WIN32 main.cpp)
-target_link_libraries(my_app PRIVATE mwfl::ui)
+target_link_libraries(my_app PRIVATE mwfl::app)
 
 # configure
 cmake -S . -B build -A x64 -DCMAKE_PREFIX_PATH=C:/deps/mwfl</code></pre>
@@ -164,7 +164,7 @@ ctest --preset vs2026-x64-debug</code></pre>
 
     <section id="optional">
       <div class="eyebrow">Explicit dependencies</div><h2>Optional integrations</h2>
-      <p>Core applications link <code>mwfl::ui</code> and never fetch WebView2 or Scintilla. Enable only the component an application uses.</p>
+      <p>Desktop applications link <code>mwfl::app</code> and never fetch WebView2 or Scintilla. Enable only the component an application uses.</p>
       <pre data-title="Visual Studio 2026 x64"><code># Browser
 cmake --preset vs2026-x64-webview2
 cmake --build --preset vs2026-x64-webview2-debug --target mwfl_browser_demo

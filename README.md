@@ -39,9 +39,10 @@ requested so UI applications acquire no hidden service or background runtime.
   <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/mwfl-showcase-40s.gif" alt="MWFL applications running with populated native controls"></a>
 </p>
 
-**v0.2.0 is the current public preview.** The repository contains **62 compiled
-examples** plus eight public standalone applications in the mwfl organization. The downloadable release packages are VS2026/MSVC x64; source and
-CI cover x64 and ARM64. WebView2, Scintilla, graphics, imaging, printing, OLE,
+**v0.2.1 is the current public preview.** The repository contains **62 compiled
+examples** plus eight public standalone applications in the mwfl organization.
+Downloadable MSVC packages cover x64 and ARM64. WebView2, Scintilla, graphics,
+imaging, printing, OLE,
 Shell, Ribbon, and MDI integrations remain separately requested optional
 components.
 
@@ -118,12 +119,12 @@ project(my_app LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwfl
   GIT_REPOSITORY https://github.com/mwfl/mwfl.git
-  GIT_TAG v0.2.0
+  GIT_TAG v0.2.1
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwfl)
 
 add_executable(my_app WIN32 main.cpp)
-target_link_libraries(my_app PRIVATE mwfl::ui)
+target_link_libraries(my_app PRIVATE mwfl::app)
 ```
 
 The example pins the latest public-preview release. Use an immutable commit only
@@ -158,13 +159,20 @@ offline WIL sources, and building this repository.
   Jump Lists, taskbar integration, contextual Help, Ribbon, EMF, and GDI+;
 - optional, isolated Direct2D, Direct3D, WIC imaging, pinned Scintilla, and
   pinned WebView2 components with reference applications and offline self-tests.
+- built-in UI application support for bounded GitHub Release checks,
+  reminder policy, and explicit user opt-out; it never downloads or replaces binaries.
 
-The native UI layer is linked explicitly as `mwfl::ui`. Optional components are
-requested explicitly. For example, configure with
+Complete desktop applications link `mwfl::app`; the precise native UI layer
+remains available as `mwfl::ui`. Optional components are requested explicitly.
+For example, configure with
 `MWFL_BUILD_WEBVIEW2=ON` and link `mwfl::webview2`, or configure with
 `MWFL_BUILD_SCINTILLA=ON`, link `mwfl::scintilla`, and call
 `mwfl_deploy_scintilla(your_target)`. Core-only consumers do not fetch, link,
 or deploy either dependency.
+
+Standalone applications link `mwfl::app` and include
+`<mwfl/app_support/update_checker.h>`; no second MWFL target is required.
+Foundation-only consumers remain independent of this UI capability.
 
 The [component reference](https://mwfl.github.io/components/) shows
 every control with current code, a native screenshot, and its runnable example.
@@ -177,7 +185,7 @@ Detailed API notes live in [docs/api.md](docs/api.md).
 
 | Layer | Start here when you need | Entry point |
 |---|---|---|
-| UI | windows, controls, events, layout, DPI, timers, worker handoff | `mwfl::ui`; [UI guide](docs/README.md#core) |
+| UI | windows, controls, events, layout, DPI, timers, worker handoff | `mwfl::app` (default), `mwfl::ui` (precise); [UI guide](docs/README.md#core) |
 | Application | commands, forms, documents, dialogs, settings, persistence | [Application guide](docs/README.md#application) |
 | Advanced | docking, printing, OLE, Shell, Ribbon, MDI, graphics | [Advanced guide](docs/README.md#advanced) |
 | Optional | Direct2D/3D, WIC, WebView2, Scintilla | [Optional guide](docs/README.md#optional) |
@@ -331,6 +339,7 @@ includes WIL for you. For controlled environments, see the
 - [Windows desktop capability roadmap](docs/win32xx-parity-roadmap.md)
 - [Windows application foundation roadmap](docs/foundation-roadmap.md)
 - [0.2.0 release readiness plan](docs/release-readiness-0.2.0.md)
+- [0.2.1 release readiness plan](docs/release-readiness-0.2.1.md)
 - [First public preview readiness archive](docs/release-readiness.md)
 - [Modern Windows UI API coverage plan](docs/windows-ui-modernization-plan.md)
 - [IDE-style docking workspace tutorial](docs/tutorials/docking-workspace.md)

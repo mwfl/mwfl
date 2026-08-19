@@ -96,6 +96,18 @@ target_link_libraries(mwfl_scheduler_test PRIVATE mwfl::scheduler)
 add_test(NAME mwfl.scheduler COMMAND mwfl_scheduler_test)
 set_tests_properties(mwfl.scheduler PROPERTIES TIMEOUT 20 LABELS "fast;unit")
 
+add_executable(mwfl_app_support_test app_support_test.cpp)
+target_compile_features(mwfl_app_support_test PRIVATE cxx_std_20)
+target_compile_options(mwfl_app_support_test PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwfl_app_support_test PRIVATE mwfl::ui)
+add_test(NAME mwfl.app_support COMMAND mwfl_app_support_test)
+set_tests_properties(mwfl.app_support PROPERTIES TIMEOUT 20 LABELS "fast;unit")
+
+add_library(mwfl_header_app_support_update_checker OBJECT header_app_support_update_checker.cpp)
+target_compile_features(mwfl_header_app_support_update_checker PRIVATE cxx_std_20)
+target_compile_options(mwfl_header_app_support_update_checker PRIVATE /W4 /permissive- /EHsc /utf-8)
+target_link_libraries(mwfl_header_app_support_update_checker PRIVATE mwfl::app)
+
 foreach(component IN ITEMS service process ipc diagnostics security deployment scheduler)
     add_library(mwfl_header_foundation_${component} OBJECT header_${component}.cpp)
     target_compile_features(mwfl_header_foundation_${component} PRIVATE cxx_std_20)

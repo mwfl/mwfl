@@ -1,9 +1,13 @@
-file(GLOB public_header_paths "${PROJECT_ROOT}/include/mwfl/*.h")
+file(GLOB_RECURSE public_header_paths "${PROJECT_ROOT}/include/mwfl/*.h")
+list(FILTER public_header_paths EXCLUDE REGEX "[/\\\\]detail[/\\\\]")
 file(GLOB probe_paths "${PROJECT_ROOT}/tests/header_*.cpp")
 
 set(public_headers "")
 foreach(path IN LISTS public_header_paths)
-    get_filename_component(name "${path}" NAME_WE)
+    file(RELATIVE_PATH name "${PROJECT_ROOT}/include/mwfl" "${path}")
+    string(REGEX REPLACE "\\.h$" "" name "${name}")
+    string(REPLACE "/" "_" name "${name}")
+    string(REPLACE "\\\\" "_" name "${name}")
     list(APPEND public_headers "${name}")
 endforeach()
 

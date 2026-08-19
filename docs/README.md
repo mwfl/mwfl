@@ -48,5 +48,11 @@ WebView2, and Scintilla without expanding the core dependency surface.
 - [Code editor](tutorials/code-editor.md)
 - [Markdown editor](tutorials/markdown-editor.md)
 
+Applications that publish GitHub Releases can use
+`mwfl::app_support::UpdateChecker` through the default `mwfl::app` target. It
+provides a bounded latest-version check, reminder policy, and explicit
+automatic-check opt-out. It opens the official Release page after confirmation
+and never downloads or replaces binaries.
+
 Before changing public API, read the [0.1 contract audit](public-api-contract-audit.md),
 [stability policy](stability.md), and [development architecture](development-architecture.md).

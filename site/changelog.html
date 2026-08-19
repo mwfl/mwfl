@@ -33,6 +33,19 @@
       <h1>Changelog</h1>
       <p class="lede">Public releases of mwfl and the capabilities introduced by each one.</p>
     </div>
+    <section id="v0-2-1">
+      <div class="eyebrow">Application support and production hardening · August 2026</div>
+      <h2>0.2.1</h2>
+      <p>mwfl 0.2.1 adds a shared application-support surface and tightens the 0.2 Foundation baseline without changing its compatibility direction.</p>
+      <h3>Highlights</h3>
+      <ul>
+        <li><code>mwfl::app_support::UpdateChecker</code> gives MWFL applications one bounded GitHub Release check, reminder policy, and user-controlled opt-out.</li>
+        <li>Process output collection and Foundation waits use one monotonic deadline and stop-aware native waits.</li>
+        <li>Large reference examples are split into reviewable application units, with independent-header and compile-cost budgets.</li>
+        <li>MSVC x64 and ARM64 packaging includes provenance, and repeatable Agent blind evaluations track framework usability.</li>
+      </ul>
+      <p><a href="https://github.com/mwfl/mwfl/releases/tag/v0.2.1">Release notes and the VS2026/MSVC downloads</a>.</p>
+    </section>
     <section id="v0-2-0">
       <div class="eyebrow">Production Foundation baseline · August 2026</div>
       <h2>0.2.0</h2>

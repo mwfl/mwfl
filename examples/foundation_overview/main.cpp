@@ -29,6 +29,6 @@ int wmain(int argc, wchar_t** argv) {
     if (!identity) return 7;
     mwfl::TaskDefinition task{L"\\mwfl", L"overview", L"", L"test.exe"};
     if (!mwfl::ValidateScheduledTask(task)) return 8;
-    std::wcout << L"0.2.0 Foundation targets compose successfully\n";
+    std::wcout << L"0.2.1 Foundation targets compose successfully\n";
     return 0;
 }
