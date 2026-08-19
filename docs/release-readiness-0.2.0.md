@@ -19,7 +19,7 @@ immutable `v0.2.0` tag.
   exactly two x64 ZIP archives and `SHA256SUMS-x64.txt`.
 - The GitHub Release tag and project version match, every uploaded archive is
   non-empty, and the published checksums match the assets.
-- All nine standalone applications configure, build, test, and pass GitHub
+- All eight public standalone applications configure, build, test, and pass GitHub
   Actions with their MWFL dependency pinned to `v0.2.0`.
 
 ## Explicit boundaries

@@ -31,6 +31,21 @@ evidence.
 Track first-attempt compilation separately from eventual compilation. Do not
 edit an agent result before recording first-attempt evidence.
 
+## Run the complete blind baseline
+
+Prepare prompt-only inputs outside the repository, give each prompt to the
+same clean agent/model configuration, and save each answer as `<task-id>.cpp`:
+
+```powershell
+./agent-evals/prepare-blind-run.ps1 -OutputDirectory ../mwfl-blind-run
+./agent-evals/run-suite.ps1 -CandidateDirectory ../mwfl-blind-run/candidates `
+  -Agent codex -Model model-name -Blind
+```
+
+`run-suite.ps1` refuses to treat the checked-in golden fixtures as blind,
+records all 34 first-attempt results, and enforces `baseline-policy.json`.
+Only an actually isolated run may be checked in as a blind baseline.
+
 The fixture matching each task is the golden public-API patch. It is compiled
 with `/W4 /permissive- /WX`; it is a structural reference, not a byte-for-byte
 answer requirement.

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "detail/foundation_wait.h"
 #include <condition_variable>
 #include <iostream>
 #include <mutex>
@@ -321,7 +322,10 @@ Result<OperationOutcome<ServiceSnapshot>> WaitState(SC_HANDLE service, std::wstr
             return OperationOutcome<ServiceSnapshot>::Control(CompletionStatus::Cancelled);
         if (deadline.Expired())
             return OperationOutcome<ServiceSnapshot>::Control(CompletionStatus::TimedOut);
-        Sleep(50);
+        auto retry = detail::WaitForDelay(deadline, std::chrono::milliseconds(50), stop);
+        if (!retry) return retry.GetError().WithOperation(L"Wait for service status change");
+        if (retry.Value() != CompletionStatus::Completed)
+            return OperationOutcome<ServiceSnapshot>::Control(retry.Value());
     }
 }
 }  // namespace

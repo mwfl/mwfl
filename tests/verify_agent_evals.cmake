@@ -2,11 +2,20 @@ foreach(path IN ITEMS
         agent-evals/README.md agent-evals/tasks.json agent-evals/rubric.json
         agent-evals/result-template.json agent-evals/score-result.ps1
         agent-evals/run-eval.ps1
+        agent-evals/run-suite.ps1 agent-evals/prepare-blind-run.ps1
+        agent-evals/verify-baseline.ps1 agent-evals/baseline-policy.json
         agent-evals/fixtures/CMakeLists.txt)
     if(NOT EXISTS "${PROJECT_ROOT}/${path}")
         message(FATAL_ERROR "agent eval asset is missing: ${path}")
     endif()
 endforeach()
+
+file(READ "${PROJECT_ROOT}/agent-evals/baseline-policy.json" baseline_policy)
+string(JSON baseline_tasks GET "${baseline_policy}" minimum_tasks)
+string(JSON baseline_blind GET "${baseline_policy}" require_blind)
+if(NOT baseline_tasks EQUAL 34 OR NOT baseline_blind)
+    message(FATAL_ERROR "Agent baseline policy must cover all 34 tasks and require blind runs")
+endif()
 
 file(READ "${PROJECT_ROOT}/agent-evals/tasks.json" tasks_json)
 string(JSON task_count LENGTH "${tasks_json}" tasks)

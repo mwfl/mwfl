@@ -26,9 +26,11 @@ if(library_bytes GREATER library_limit)
 endif()
 
 file(GLOB public_headers "${PROJECT_ROOT}/include/mwfl/*.h")
+file(GLOB_RECURSE detail_headers "${PROJECT_ROOT}/include/mwfl/detail/*.h")
 set(core_header_bytes 0)
 set(optional_header_bytes 0)
 set(foundation_header_bytes 0)
+set(detail_header_bytes 0)
 set(optional_headers
     d2d_host.h
     d3d_host.h
@@ -61,7 +63,7 @@ foreach(header IN LISTS public_headers)
     get_filename_component(header_name "${header}" NAME)
     if(header_name IN_LIST foundation_headers)
         math(EXPR foundation_header_bytes "${foundation_header_bytes} + ${header_bytes}")
-        if(header_bytes GREATER 16384)
+        if(header_bytes GREATER 8192)
             message(FATAL_ERROR
                 "foundation public header ${header_name} exceeded 8 KiB: ${header_bytes}")
         endif()
@@ -74,6 +76,10 @@ foreach(header IN LISTS public_headers)
     else()
         math(EXPR core_header_bytes "${core_header_bytes} + ${header_bytes}")
     endif()
+endforeach()
+foreach(header IN LISTS detail_headers)
+    file(SIZE "${header}" header_bytes)
+    math(EXPR detail_header_bytes "${detail_header_bytes} + ${header_bytes}")
 endforeach()
 # The nine focused 0.7 docking headers total 23,136 bytes. Keep the aggregate
 # ceiling close to the measured 190,071-byte public core surface.
@@ -89,15 +95,19 @@ if(foundation_header_bytes GREATER 65536)
     message(FATAL_ERROR
         "foundation public headers exceeded 64 KiB: ${foundation_header_bytes}")
 endif()
+if(detail_header_bytes GREATER 8192)
+    message(FATAL_ERROR
+        "detail public header implementation exceeded 8 KiB: ${detail_header_bytes}")
+endif()
 
 file(STRINGS "${PROJECT_ROOT}/include/mwfl/window.h" window_lines)
 list(LENGTH window_lines window_line_count)
 # The native class-registration and HWND-binding engine replaces the former
 # external frame base while keeping the public template self-contained.
-if(window_line_count GREATER 600)
+if(window_line_count GREATER 540)
     message(FATAL_ERROR
-        "window.h exceeded its native-engine 600-line budget: ${window_line_count}")
+        "window.h exceeded its native-engine 540-line budget: ${window_line_count}")
 endif()
 
 message(STATUS
-    "build budget: library=${library_bytes}; core headers=${core_header_bytes}; optional headers=${optional_header_bytes}; foundation headers=${foundation_header_bytes}; window.h=${window_line_count} lines")
+    "build budget: library=${library_bytes}; core headers=${core_header_bytes}; optional headers=${optional_header_bytes}; foundation headers=${foundation_header_bytes}; detail headers=${detail_header_bytes}; window.h=${window_line_count} lines")

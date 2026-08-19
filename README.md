@@ -40,7 +40,7 @@ requested so UI applications acquire no hidden service or background runtime.
 </p>
 
 **v0.2.0 is the current public preview.** The repository contains **62 compiled
-examples** plus nine standalone applications in the mwfl organization. The downloadable release packages are VS2026/MSVC x64; source and
+examples** plus eight public standalone applications in the mwfl organization. The downloadable release packages are VS2026/MSVC x64; source and
 CI cover x64 and ARM64. WebView2, Scintilla, graphics, imaging, printing, OLE,
 Shell, Ribbon, and MDI integrations remain separately requested optional
 components.
@@ -190,7 +190,7 @@ the complete source. Start with **Hello** for the smallest application,
 multi-monitor utility.
 
 <details>
-<summary><strong>Browse all 62 runnable examples and nine standalone applications</strong></summary>
+<summary><strong>Browse all 62 runnable examples and eight public standalone applications</strong></summary>
 
 <br>
 
@@ -258,7 +258,6 @@ multi-monitor utility.
 | PDF Reader | [mwfl/pdf-reader](https://github.com/mwfl/pdf-reader) | Standalone local PDF reader with native tabs, drag-and-drop, shortcuts, placement, and WebView2 recovery |
 | Markdown Editor | [mwfl/markdown-editor](https://github.com/mwfl/markdown-editor) | Standalone local Markdown editing with Scintilla, safe offline preview, atomic saves, and GUI self-test |
 | Notepad Colon | [mwfl/notepad-colon](https://github.com/mwfl/notepad-colon) | Standalone native code editor with Scintilla, Tree-sitter languages, large-file workflows, and sandboxed language hosting |
-| Rho PDF | [mwfl/rhopdf](https://github.com/mwfl/rhopdf) | Standalone local-first PDF workspace with native tools, indexing, citations, and opt-in local AI |
 | Startup Manager | [mwfl/startup-manager](https://github.com/mwfl/startup-manager) | Standalone safety-focused startup inventory with explicit registry and scheduled-task operations |
 | Docking Workspace | [examples/docking_workspace/main.cpp](examples/docking_workspace/main.cpp) | IDE-style documents and tools with docking, floating, auto-hide, keyboard operation, and layout restore |
 | Printing | [examples/printing/main.cpp](examples/printing/main.cpp) | Shared pagination, preview, printer settings, and balanced native print jobs |

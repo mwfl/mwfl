@@ -35,9 +35,11 @@ foreach(package_document IN ITEMS
     endif()
 endforeach()
 if(NOT release_workflow_text MATCHES "Visual Studio 18 2026" OR
-   NOT release_workflow_text MATCHES "-A x64" OR
-   release_workflow_text MATCHES "architecture: ARM64|windows-11-arm")
-    message(FATAL_ERROR "Current binary release must package VS2026/MSVC x64 only")
+   NOT release_workflow_text MATCHES "architecture: x64" OR
+   NOT release_workflow_text MATCHES "architecture: ARM64" OR
+   NOT release_workflow_text MATCHES "windows-11-arm" OR
+   NOT release_workflow_text MATCHES "attest-build-provenance")
+    message(FATAL_ERROR "Release workflow must package and attest x64 and ARM64 artifacts")
 endif()
 foreach(versioned_file IN ITEMS
         site/building.html

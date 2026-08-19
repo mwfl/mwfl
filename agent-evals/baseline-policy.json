@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "minimum_tasks": 34,
+  "minimum_first_compile_percent": 80,
+  "minimum_eventual_compile_percent": 95,
+  "minimum_public_api_only_percent": 100,
+  "minimum_average_score": 85,
+  "require_blind": true
+}

@@ -166,6 +166,7 @@ target_include_directories(mwfl_scheduler PUBLIC
 target_link_libraries(mwfl_scheduler PUBLIC mwfl_core PRIVATE taskschd ole32 oleaut32)
 
 add_library(mwfl STATIC
+    src/window_core.cpp
     src/appearance.cpp
     src/application.cpp
     src/command.cpp

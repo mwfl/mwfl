@@ -86,6 +86,7 @@
     {"name":"vs2022-x64-debug","configurePreset":"vs2022-x64","configuration":"Debug"},
     {"name":"vs2022-x64-release","configurePreset":"vs2022-x64","configuration":"Release"},
     {"name":"vs2022-arm64-debug","configurePreset":"vs2022-arm64","configuration":"Debug"},
+    {"name":"vs2022-arm64-release","configurePreset":"vs2022-arm64","configuration":"Release"},
     {"name":"vs2026-x64-debug","configurePreset":"vs2026-x64","configuration":"Debug"},
     {"name":"vs2026-x64-release","configurePreset":"vs2026-x64","configuration":"Release"},
     {"name":"vs2026-x64-scintilla-debug","configurePreset":"vs2026-x64-scintilla","configuration":"Debug"},
@@ -95,6 +96,7 @@
     {"name":"vs2026-x64-optional-debug","configurePreset":"vs2026-x64-optional","configuration":"Debug"},
     {"name":"vs2026-x64-optional-release","configurePreset":"vs2026-x64-optional","configuration":"Release"},
     {"name":"vs2026-arm64-debug","configurePreset":"vs2026-arm64","configuration":"Debug"},
+    {"name":"vs2026-arm64-release","configurePreset":"vs2026-arm64","configuration":"Release"},
     {"name":"x64-debug","configurePreset":"vs2026-x64","configuration":"Debug"},
     {"name":"x64-release","configurePreset":"vs2026-x64","configuration":"Release"},
     {"name":"arm64-debug","configurePreset":"vs2026-arm64","configuration":"Debug"}
@@ -103,6 +105,7 @@
     {"name":"vs2022-x64-debug","configurePreset":"vs2022-x64","configuration":"Debug","output":{"outputOnFailure":true}},
     {"name":"vs2022-x64-release","configurePreset":"vs2022-x64","configuration":"Release","output":{"outputOnFailure":true}},
     {"name":"vs2022-arm64-debug","configurePreset":"vs2022-arm64","configuration":"Debug","output":{"outputOnFailure":true}},
+    {"name":"vs2022-arm64-release","configurePreset":"vs2022-arm64","configuration":"Release","output":{"outputOnFailure":true}},
     {"name":"vs2026-x64-debug","configurePreset":"vs2026-x64","configuration":"Debug","output":{"outputOnFailure":true}},
     {"name":"vs2026-x64-release","configurePreset":"vs2026-x64","configuration":"Release","output":{"outputOnFailure":true}},
     {"name":"vs2026-x64-scintilla-debug","configurePreset":"vs2026-x64-scintilla","configuration":"Debug","output":{"outputOnFailure":true}},
@@ -112,6 +115,7 @@
     {"name":"vs2026-x64-optional-debug","configurePreset":"vs2026-x64-optional","configuration":"Debug","output":{"outputOnFailure":true}},
     {"name":"vs2026-x64-optional-release","configurePreset":"vs2026-x64-optional","configuration":"Release","output":{"outputOnFailure":true}},
     {"name":"vs2026-arm64-debug","configurePreset":"vs2026-arm64","configuration":"Debug","output":{"outputOnFailure":true}},
+    {"name":"vs2026-arm64-release","configurePreset":"vs2026-arm64","configuration":"Release","output":{"outputOnFailure":true}},
     {"name":"x64-debug","configurePreset":"vs2026-x64","configuration":"Debug","output":{"outputOnFailure":true}},
     {"name":"x64-release","configurePreset":"vs2026-x64","configuration":"Release","output":{"outputOnFailure":true}},
     {"name":"arm64-debug","configurePreset":"vs2026-arm64","configuration":"Debug","output":{"outputOnFailure":true}}

@@ -1,9 +1,10 @@
-# Milestone completion reflections
+# Historical milestone reflections
 
-Each completed parity milestone has a reflection named after its version. A
-reflection is written only after implementation and full verification. It must
-identify direct evidence for every acceptance item, record defects found during
-the completion audit, and state whether the milestone is thoroughly complete.
+These documents preserve the evidence and limitations observed when each
+capability milestone closed. They are point-in-time records, not the current
+support matrix. Deferred CI work mentioned in older reflections was
+subsequently completed for the 0.2.0 public baseline.
 
-The parity verifier rejects a milestone marked `complete` when its reflection is
-missing or lacks the required evidence sections.
+For current claims, use the live GitHub Actions workflows,
+[`../release-readiness-0.2.0.md`](../release-readiness-0.2.0.md), and
+[`../stability.md`](../stability.md).

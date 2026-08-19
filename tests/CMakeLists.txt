@@ -397,6 +397,13 @@ add_test(NAME mwfl.build_budget
         "-DMWFL_ARCHITECTURE=${CMAKE_GENERATOR_PLATFORM}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_build_budget.cmake")
 set_tests_properties(mwfl.build_budget PROPERTIES TIMEOUT 20)
+if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64")
+    add_test(NAME mwfl.compile_cost
+        COMMAND powershell -NoProfile -ExecutionPolicy Bypass
+            -File "${CMAKE_CURRENT_SOURCE_DIR}/verify_compile_cost.ps1"
+            -ProjectRoot "${PROJECT_SOURCE_DIR}")
+    set_tests_properties(mwfl.compile_cost PROPERTIES LABELS "quality;headers" TIMEOUT 60)
+endif()
 if(MWFL_ENABLE_ASAN)
     # Instrumented archives contain sanitizer metadata and are not release-size
     # artifacts. Normal Debug/Release configurations retain the strict budget.

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <array>
+#include "detail/foundation_wait.h"
 #include <limits>
 #include <mwfl/ipc.h>
 #include <sddl.h>
@@ -312,7 +313,10 @@ Result<OperationOutcome<PipeConnection>> ConnectPipe(const PipeEndpoint& endpoin
         const DWORD remaining = RemainingMilliseconds(deadline);
         if (!remaining)
             return OperationOutcome<PipeConnection>::Control(CompletionStatus::TimedOut);
-        Sleep((std::min<DWORD>)(remaining, 10));
+        auto retry = detail::WaitForDelay(deadline, std::chrono::milliseconds(10), stop);
+        if (!retry) return retry.GetError().WithOperation(L"Wait to retry pipe connection");
+        if (retry.Value() != CompletionStatus::Completed)
+            return OperationOutcome<PipeConnection>::Control(retry.Value());
     }
 }
 ScopedPipeImpersonation::~ScopedPipeImpersonation() {

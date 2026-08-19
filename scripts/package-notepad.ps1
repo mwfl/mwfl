@@ -4,6 +4,8 @@ param(
     [string]$VisualStudio = 'Auto',
     [ValidatePattern('^[0-9]+[.][0-9]+[.][0-9]+$')]
     [string]$Version = '0.2.0',
+    [ValidateSet('x64', 'ARM64')]
+    [string]$Architecture = 'x64',
     [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\build\packages')
 )
 
@@ -19,17 +21,18 @@ function Invoke-Checked {
     }
 }
 
-$toolchain = Resolve-MwflToolchain -VisualStudio $VisualStudio -Architecture x64
+$toolchain = Resolve-MwflToolchain -VisualStudio $VisualStudio -Architecture $Architecture
 $projectRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$buildRoot = Join-Path $projectRoot "build\notepad\vs$($toolchain.Year)-x64"
+$architectureSlug = $Architecture.ToLowerInvariant()
+$buildRoot = Join-Path $projectRoot "build\notepad\vs$($toolchain.Year)-$architectureSlug"
 $stageRoot = Join-Path $buildRoot 'stage'
 $resolvedOutput = [System.IO.Path]::GetFullPath($OutputDirectory)
-$packageName = "mwfl-notepad-$Version-windows-x64"
+$packageName = "mwfl-notepad-$Version-windows-$architectureSlug"
 $archive = Join-Path $resolvedOutput "$packageName.zip"
 $generator = "Visual Studio $($toolchain.Major) $($toolchain.Year)"
 
 Invoke-Checked $toolchain.CMake @(
-    '-S', $projectRoot, '-B', $buildRoot, '-G', $generator, '-A', 'x64',
+    '-S', $projectRoot, '-B', $buildRoot, '-G', $generator, '-A', $Architecture,
     '-DMWFL_BUILD_EXAMPLES=ON', '-DMWFL_BUILD_TESTS=ON')
 Invoke-Checked $toolchain.CMake @(
     '--build', $buildRoot, '--config', 'Release', '--target', 'mwfl_notepad')
@@ -57,7 +60,7 @@ MWFL Notepad $Version
 Run bin\mwfl_notepad.exe.
 
 Requirements:
-- Windows 10 1809 or newer, x64
+- Windows 10 1809 or newer, $Architecture
 
 The editor preserves UTF-8 and UTF-16 encodings, rejects malformed input,
 uses atomic saves with external-change detection, and keeps documents local.

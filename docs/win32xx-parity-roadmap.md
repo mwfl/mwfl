@@ -1,5 +1,9 @@
 # Windows desktop capability roadmap
 
+> Status: capability milestones 0.2 through 0.8 are complete and shipped in
+> the 0.2.0 public baseline. The validation sequencing below is historical;
+> current support claims are defined by `stability.md` and the live CI matrix.
+
 ## Objective
 
 mwfl provides a focused Windows 10+, C++20, CMake-native, DPI-correct, and

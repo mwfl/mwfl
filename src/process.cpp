@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <array>
+#include <atomic>
 #include <map>
 #include <mwfl/process.h>
 #include <thread>
@@ -44,25 +45,25 @@ Result<KernelHandle> CreateJob(const ProcessJobOptions& options) {
     }
     return std::move(job);
 }
-Result<std::pair<KernelHandle, KernelHandle>> CreateOutputPipe() {
-    SECURITY_ATTRIBUTES sa{sizeof(sa), nullptr, TRUE};
-    HANDLE read = nullptr, write = nullptr;
-    if (!CreatePipe(&read, &write, &sa, 0))
-        return SystemError::LastWin32().WithOperation(L"CreatePipe");
-    KernelHandle r(read), w(write);
-    if (!SetHandleInformation(r.Get(), HANDLE_FLAG_INHERIT, 0))
-        return SystemError::LastWin32().WithOperation(L"SetHandleInformation");
-    return std::pair<KernelHandle, KernelHandle>{std::move(r), std::move(w)};
-}
-Result<std::pair<KernelHandle, KernelHandle>> CreateInputPipe() {
-    SECURITY_ATTRIBUTES sa{sizeof(sa), nullptr, TRUE};
-    HANDLE read = nullptr, write = nullptr;
-    if (!CreatePipe(&read, &write, &sa, 0))
-        return SystemError::LastWin32().WithOperation(L"Create stdin pipe");
-    KernelHandle r(read), w(write);
-    if (!SetHandleInformation(w.Get(), HANDLE_FLAG_INHERIT, 0))
-        return SystemError::LastWin32().WithOperation(L"Set stdin pipe inheritance");
-    return std::pair<KernelHandle, KernelHandle>{std::move(r), std::move(w)};
+Result<std::pair<KernelHandle, KernelHandle>> CreateRedirectPipe(bool parent_reads) {
+    static std::atomic_uint64_t next_pipe{1};
+    const auto name = L"\\\\.\\pipe\\mwfl.process." + std::to_wstring(GetCurrentProcessId()) +
+                      L"." + std::to_wstring(next_pipe.fetch_add(1));
+    const DWORD access = (parent_reads ? PIPE_ACCESS_INBOUND : PIPE_ACCESS_OUTBOUND) |
+                         FILE_FLAG_OVERLAPPED;
+    KernelHandle parent(CreateNamedPipeW(name.c_str(), access,
+                                         PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT, 1,
+                                         64 * 1024, 64 * 1024, 0, nullptr));
+    if (!parent)
+        return SystemError::LastWin32().WithOperation(L"Create process redirect pipe");
+    SECURITY_ATTRIBUTES inheritable{sizeof(inheritable), nullptr, TRUE};
+    KernelHandle child(CreateFileW(name.c_str(), parent_reads ? GENERIC_WRITE : GENERIC_READ, 0,
+                                   &inheritable, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr));
+    if (!child)
+        return SystemError::LastWin32().WithOperation(L"Open process redirect pipe");
+    return parent_reads
+               ? std::pair<KernelHandle, KernelHandle>{std::move(parent), std::move(child)}
+               : std::pair<KernelHandle, KernelHandle>{std::move(child), std::move(parent)};
 }
 Result<KernelHandle> DuplicateInheritable(HANDLE source, bool input, std::wstring_view operation) {
     if (!source || source == INVALID_HANDLE_VALUE) {
@@ -115,26 +116,62 @@ Result<std::vector<wchar_t>> BuildEnvironment(
     block.push_back(L'\0');
     return block;
 }
-void DrainPipe(HANDLE pipe, std::size_t maximum, std::vector<std::byte>& output, bool& truncated,
-               std::stop_token stop) {
+Result<OperationOutcome<std::size_t>> TransferProcessPipe(
+    HANDLE pipe, void* buffer, DWORD size, bool write, Deadline deadline, std::stop_token stop,
+    std::wstring_view operation) {
+    KernelHandle event(CreateEventW(nullptr, TRUE, FALSE, nullptr));
+    if (!event) return SystemError::LastWin32().WithOperation(std::wstring(operation));
+    OVERLAPPED overlapped{};
+    overlapped.hEvent = event.Get();
+    DWORD transferred = 0;
+    const BOOL started = write ? WriteFile(pipe, buffer, size, nullptr, &overlapped)
+                               : ReadFile(pipe, buffer, size, nullptr, &overlapped);
+    if (!started && GetLastError() != ERROR_IO_PENDING) {
+        const DWORD error = GetLastError();
+        if (error == ERROR_BROKEN_PIPE || error == ERROR_NO_DATA || error == ERROR_PIPE_NOT_CONNECTED)
+            return OperationOutcome<std::size_t>::Control(CompletionStatus::Disconnected);
+        return SystemError::FromWin32(error).WithOperation(std::wstring(operation));
+    }
+    auto waited = WaitForHandle(event.Get(), deadline, stop);
+    if (!waited) {
+        CancelIoEx(pipe, &overlapped);
+        GetOverlappedResult(pipe, &overlapped, &transferred, TRUE);
+        return waited.GetError().WithOperation(std::wstring(operation));
+    }
+    if (waited.Value().status != CompletionStatus::Completed) {
+        CancelIoEx(pipe, &overlapped);
+        GetOverlappedResult(pipe, &overlapped, &transferred, TRUE);
+        return OperationOutcome<std::size_t>::Control(waited.Value().status);
+    }
+    if (!GetOverlappedResult(pipe, &overlapped, &transferred, FALSE)) {
+        const DWORD error = GetLastError();
+        if (error == ERROR_BROKEN_PIPE || error == ERROR_NO_DATA || error == ERROR_PIPE_NOT_CONNECTED)
+            return OperationOutcome<std::size_t>::Control(CompletionStatus::Disconnected);
+        return SystemError::FromWin32(error).WithOperation(std::wstring(operation));
+    }
+    if (!write && transferred == 0)
+        return OperationOutcome<std::size_t>::Control(CompletionStatus::Disconnected);
+    return OperationOutcome<std::size_t>::Completed(transferred);
+}
+struct DrainResult {
+    CompletionStatus status = CompletionStatus::Completed;
+    std::optional<SystemError> error;
+};
+DrainResult DrainPipe(HANDLE pipe, std::size_t maximum, std::vector<std::byte>& output,
+                      bool& truncated, Deadline deadline, std::stop_token stop) {
     std::array<std::byte, 4096> buffer{};
-    while (!stop.stop_requested()) {
-        DWORD available = 0;
-        if (!PeekNamedPipe(pipe, nullptr, 0, nullptr, &available, nullptr)) break;
-        if (!available) {
-            Sleep(2);
-            continue;
-        }
-        DWORD read = 0;
-        if (!ReadFile(pipe, buffer.data(), (std::min)(available, static_cast<DWORD>(buffer.size())),
-                      &read, nullptr) ||
-            !read)
-            break;
-        const auto keep = (std::min)(static_cast<std::size_t>(read),
+    while (true) {
+        auto read = TransferProcessPipe(pipe, buffer.data(), static_cast<DWORD>(buffer.size()),
+                                        false, deadline, stop, L"Drain process output");
+        if (!read) return {CompletionStatus::Completed, read.GetError()};
+        if (read.Value().status == CompletionStatus::Disconnected) return {};
+        if (read.Value().status != CompletionStatus::Completed) return {read.Value().status, {}};
+        const auto transferred = *read.Value().value;
+        const auto keep = (std::min)(transferred,
                                      maximum > output.size() ? maximum - output.size() : 0);
         output.insert(output.end(), buffer.begin(),
                       buffer.begin() + static_cast<std::ptrdiff_t>(keep));
-        truncated = truncated || keep != read;
+        truncated = truncated || keep != transferred;
     }
 }
 }  // namespace
@@ -201,28 +238,40 @@ Result<OperationOutcome<ProcessOutput>> Process::CollectOutput(std::size_t max_o
                                                                 std::stop_token stop) {
     ProcessOutput output;
     std::stop_source drains;
+    std::stop_callback stop_drains(stop, [&] { drains.request_stop(); });
+    DrainResult out_result, err_result;
     std::jthread out_thread, err_thread;
     if (stdout_read_)
         out_thread = std::jthread([&] {
-            DrainPipe(stdout_read_.Get(), max_out, output.stdout_bytes, output.stdout_truncated,
-                      drains.get_token());
+            out_result = DrainPipe(stdout_read_.Get(), max_out, output.stdout_bytes,
+                                   output.stdout_truncated, deadline, drains.get_token());
         });
     if (stderr_read_)
         err_thread = std::jthread([&] {
-            DrainPipe(stderr_read_.Get(), max_err, output.stderr_bytes, output.stderr_truncated,
-                      drains.get_token());
+            err_result = DrainPipe(stderr_read_.Get(), max_err, output.stderr_bytes,
+                                   output.stderr_truncated, deadline, drains.get_token());
         });
     auto waited = Wait(deadline, stop);
     if (!waited) {
         drains.request_stop();
+        if (out_thread.joinable()) out_thread.join();
+        if (err_thread.joinable()) err_thread.join();
         return waited.GetError();
     }
     if (waited.Value().status == CompletionStatus::Completed) {
         if (out_thread.joinable()) out_thread.join();
         if (err_thread.joinable()) err_thread.join();
+        if (out_result.error) return std::move(*out_result.error);
+        if (err_result.error) return std::move(*err_result.error);
+        if (out_result.status != CompletionStatus::Completed)
+            return OperationOutcome<ProcessOutput>::Control(out_result.status);
+        if (err_result.status != CompletionStatus::Completed)
+            return OperationOutcome<ProcessOutput>::Control(err_result.status);
         output.exit_code = *waited.Value().value;
     } else {
         drains.request_stop();
+        if (out_thread.joinable()) out_thread.join();
+        if (err_thread.joinable()) err_thread.join();
         return OperationOutcome<ProcessOutput>::Control(waited.Value().status);
     }
     return OperationOutcome<ProcessOutput>::Completed(std::move(output));
@@ -233,30 +282,9 @@ Result<OperationOutcome<std::size_t>> Process::WriteInput(std::span<const std::b
     if (!stdin_write_) return SystemError::FromWin32(ERROR_INVALID_HANDLE);
     if (input.empty()) return OperationOutcome<std::size_t>::Completed(0);
     if (input.size() > MAXDWORD) return SystemError::FromWin32(ERROR_FILE_TOO_LARGE);
-    DWORD written = 0;
-    DWORD error = ERROR_SUCCESS;
-    std::jthread writer([&] {
-        const auto size = static_cast<DWORD>(input.size());
-        if (!WriteFile(stdin_write_.Get(), input.data(), size, &written, nullptr))
-            error = GetLastError();
-    });
-    auto waited = WaitForHandle(writer.native_handle(), deadline, stop);
-    if (!waited) {
-        CancelSynchronousIo(writer.native_handle());
-        writer.join();
-        return waited.GetError();
-    }
-    if (waited.Value().status != CompletionStatus::Completed) {
-        CancelSynchronousIo(writer.native_handle());
-        writer.join();
-        return OperationOutcome<std::size_t>::Control(waited.Value().status);
-    }
-    writer.join();
-    if (error == ERROR_BROKEN_PIPE || error == ERROR_NO_DATA)
-        return OperationOutcome<std::size_t>::Control(CompletionStatus::Disconnected);
-    if (error != ERROR_SUCCESS)
-        return SystemError::FromWin32(error).WithOperation(L"Write process stdin");
-    return OperationOutcome<std::size_t>::Completed(written);
+    return TransferProcessPipe(stdin_write_.Get(), const_cast<std::byte*>(input.data()),
+                               static_cast<DWORD>(input.size()), true, deadline, stop,
+                               L"Write process stdin");
 }
 namespace {
 Result<OperationOutcome<std::size_t>> ReadProcessPipe(HANDLE pipe, std::span<std::byte> output,
@@ -266,30 +294,8 @@ Result<OperationOutcome<std::size_t>> ReadProcessPipe(HANDLE pipe, std::span<std
     if (!pipe) return SystemError::FromWin32(ERROR_INVALID_HANDLE).WithOperation(std::wstring(operation));
     if (output.empty()) return OperationOutcome<std::size_t>::Completed(0);
     if (output.size() > MAXDWORD) return SystemError::FromWin32(ERROR_FILE_TOO_LARGE);
-    DWORD read = 0;
-    DWORD error = ERROR_SUCCESS;
-    std::jthread reader([&] {
-        if (!ReadFile(pipe, output.data(), static_cast<DWORD>(output.size()), &read, nullptr))
-            error = GetLastError();
-    });
-    auto waited = WaitForHandle(reader.native_handle(), deadline, stop);
-    if (!waited) {
-        CancelSynchronousIo(reader.native_handle());
-        reader.join();
-        return waited.GetError();
-    }
-    if (waited.Value().status != CompletionStatus::Completed) {
-        CancelSynchronousIo(reader.native_handle());
-        reader.join();
-        return OperationOutcome<std::size_t>::Control(waited.Value().status);
-    }
-    reader.join();
-    if (error == ERROR_BROKEN_PIPE || error == ERROR_NO_DATA ||
-        (error == ERROR_SUCCESS && read == 0))
-        return OperationOutcome<std::size_t>::Control(CompletionStatus::Disconnected);
-    if (error != ERROR_SUCCESS)
-        return SystemError::FromWin32(error).WithOperation(std::wstring(operation));
-    return OperationOutcome<std::size_t>::Completed(read);
+    return TransferProcessPipe(pipe, output.data(), static_cast<DWORD>(output.size()), false,
+                               deadline, stop, operation);
 }
 }  // namespace
 Result<OperationOutcome<std::size_t>> Process::ReadStdout(std::span<std::byte> output,
@@ -375,19 +381,19 @@ Result<Process> ProcessBuilder::LaunchConfigured() const {
     if (!environment) return environment.GetError();
     KernelHandle in_read, in_write, out_read, out_write, err_read, err_write;
     if (redirect_stdin_) {
-        auto p = CreateInputPipe();
+        auto p = CreateRedirectPipe(false);
         if (!p) return p.GetError();
         in_read = std::move(p.Value().first);
         in_write = std::move(p.Value().second);
     }
     if (redirect_stdout_) {
-        auto p = CreateOutputPipe();
+        auto p = CreateRedirectPipe(true);
         if (!p) return p.GetError();
         out_read = std::move(p.Value().first);
         out_write = std::move(p.Value().second);
     }
     if (redirect_stderr_ && !merge_stderr_) {
-        auto p = CreateOutputPipe();
+        auto p = CreateRedirectPipe(true);
         if (!p) return p.GetError();
         err_read = std::move(p.Value().first);
         err_write = std::move(p.Value().second);
