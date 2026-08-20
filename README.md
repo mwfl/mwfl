@@ -127,7 +127,7 @@ add_executable(my_app WIN32 main.cpp)
 target_link_libraries(my_app PRIVATE mwfl::app)
 ```
 
-The example pins the latest public-preview release. Use an immutable commit only
+The example pins the current public release. Use an immutable commit only
 when deliberately testing unreleased changes.
 
 ```powershell

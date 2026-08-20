@@ -31,6 +31,16 @@
     ["building", `${rootPath}building.html`, "Build reference"],
     ["changelog", `${rootPath}changelog.html`, "Changelog"]
   ];
+  const feedbackTargets = {
+    "folder-compare.html": ["folder-compare", "Folder Compare"],
+    "folder-explorer.html": ["folder-explorer", "Folder Explorer"],
+    "hex-editor.html": ["hex-editor", "Hex Editor"],
+    "markdown-editor.html": ["markdown-editor", "Markdown Editor"],
+    "pdf-viewer.html": ["pdf-reader", "PDF Reader"],
+    "sqlite-viewer.html": ["sqlite-viewer", "SQLite Viewer"]
+  };
+  const [feedbackRepository, feedbackProduct] = feedbackTargets[page]
+    || ["mwfl", "MWFL"];
   document.querySelectorAll(".site-header .nav-links").forEach((nav) => {
     nav.replaceChildren(...primaryLinks.map(([section, href, label]) => {
       const link = document.createElement("a");
@@ -48,6 +58,16 @@
     github.rel = "noopener noreferrer";
     github.textContent = "GitHub";
     nav.append(github);
+    const feedback = document.createElement("a");
+    feedback.href = `https://github.com/mwfl/${feedbackRepository}/issues/new`;
+    feedback.target = "_blank";
+    feedback.rel = "noopener noreferrer";
+    feedback.textContent = "Feedback";
+    feedback.setAttribute(
+      "aria-label",
+      `Send feedback for ${feedbackProduct} on GitHub Issues`
+    );
+    nav.append(feedback);
     const themeToggle = document.createElement("button");
     themeToggle.className = "theme-toggle";
     themeToggle.type = "button";
