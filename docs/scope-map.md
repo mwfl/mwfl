@@ -95,12 +95,12 @@ relax the Windows 10+, C++20, x64/ARM64, explicit-ownership design constraints.
 ## Approved foundation expansion
 
 The approved dependency order is documented in
-[`foundation-roadmap.md`](foundation-roadmap.md). Version 0.2.0 ships the
+[`foundation-roadmap.md`](foundation-roadmap.md). Version 0.1.0 ships the
 productionized opt-in core, Service, process, named-pipe IPC, diagnostics,
 security, deployment, and scheduler components. See
-[`foundation-releases.md`](foundation-releases.md) for the historical 0.1.x
-delivery train and [`foundation-migration-next.md`](foundation-migration-next.md)
-for the 0.2.0 compatibility changes.
+[`foundation-releases.md`](foundation-releases.md) for the component delivery
+record and [`release-readiness.md`](release-readiness.md) for the official
+baseline evidence.
 
 ## Candidate capabilities requiring an explicit project decision
 

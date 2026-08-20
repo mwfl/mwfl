@@ -37,13 +37,13 @@ process supervision, IPC, diagnostic sinks, credentials, or deployment policy.
 
 ## Delivery status
 
-### 0.1.9 preview train
+### 0.1.0 official baseline
 
-The 0.1.1-0.1.9 preview train has delivered the dependency boundaries and a
+The first official 0.1.0 release delivers the dependency boundaries and a
 focused, runnable slice of every component below. See
-[`foundation-releases.md`](foundation-releases.md) for the version-to-example
-map. The broader F2-F6 bullets remain the roadmap for post-0.1.9 expansion;
-they are not implied by the presence of a component target.
+[`foundation-releases.md`](foundation-releases.md) for the component-to-example
+map. The broader F2-F6 bullets describe possible future expansion; they are not
+implied by the presence of a component target.
 
 Delivered today: shared errors/results/handles/Unicode/wait; a single-service
 SCM and console host; structured process launch/wait; bounded synchronous local
@@ -53,14 +53,12 @@ process I/O, overlapped IPC with ACL/identity policy, Event Log/ETW/minidumps,
 Credential Manager/token helpers, Service management, recovery, signature
 verification, update handoff, and Task Scheduler composition remain planned.
 
-### 0.2.0 production Foundation baseline
-
-Version 0.2.0 implements those productionization slices behind the same
-independent component boundaries, plus the new `mwfl::scheduler` target. The
+The 0.1.0 baseline also includes the productionized slices behind the same
+independent component boundaries, including the `mwfl::scheduler` target. The
 Debug/Release, compatibility, architecture, package, documentation, and
 reference-application gates define the released baseline. Privileged native
 mutation remains an explicitly authorized integration gate and is never implied
-by ordinary CI. See [`foundation-migration-next.md`](foundation-migration-next.md).
+by ordinary CI.
 
 ### F0 — UI target migration and contracts
 

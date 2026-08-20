@@ -121,6 +121,23 @@ if(NOT site_css MATCHES "@media \\(max-width: 480px\\)" OR
 endif()
 
 file(READ "${SITE_ROOT}/assets/site.js" site_script)
+foreach(marker IN ITEMS
+        "Shared primary navigation"
+        "Home"
+        "Components"
+        "Applications"
+        "Get started"
+        "Build reference"
+        "Changelog"
+        "noopener noreferrer")
+    if(NOT site_script MATCHES "${marker}")
+        message(FATAL_ERROR "shared Pages navigation is missing marker: ${marker}")
+    endif()
+endforeach()
+if(NOT site_script MATCHES "https://github.com/" OR
+   NOT site_script MATCHES "link.target = \\\"_blank\\\"")
+    message(FATAL_ERROR "GitHub links must open in a new browsing context")
+endif()
 if(NOT site_script MATCHES "aria-pressed" OR
    NOT site_script MATCHES "Following system" OR
    NOT site_script MATCHES "return to system theme" OR
