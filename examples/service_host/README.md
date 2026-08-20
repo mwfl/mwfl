@@ -1,6 +1,6 @@
 # Service host
 
-Demonstrates the 0.1.2 Service lifecycle state machine and the console debug
+Demonstrates the 0.1.0 Service lifecycle state machine and the console debug
 host. The console host runs the same stop-token-aware callback used by a service
 implementation without installing or mutating SCM state.
 

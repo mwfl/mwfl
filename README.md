@@ -39,16 +39,16 @@ requested so UI applications acquire no hidden service or background runtime.
   <a href="https://mwfl.github.io/"><img width="100%" src="docs/images/showcase/mwfl-showcase-40s.gif" alt="MWFL applications running with populated native controls"></a>
 </p>
 
-**v0.3.0 is the current public preview.** The repository contains **62 compiled
+**v0.1.0 is the first official public release.** The repository contains **62 compiled
 examples** plus eight public standalone applications in the mwfl organization.
 Downloadable MSVC packages cover x64 and ARM64. WebView2, Scintilla, graphics,
 imaging, printing, OLE,
 Shell, Ribbon, and MDI integrations remain separately requested optional
 components.
 
-The 0.2 Foundation baseline adds cancellable Process/IPC/Service supervision,
+The 0.1.0 Foundation baseline includes cancellable Process/IPC/Service supervision,
 native diagnostics and credentials, verified deployment handoff, and the
-independent Scheduler component. See [the 0.1.9 to 0.2.0 migration guide](docs/foundation-migration-next.md).
+independent Scheduler component.
 
 ## Why mwfl
 
@@ -119,7 +119,7 @@ project(my_app LANGUAGES CXX)
 include(FetchContent)
 FetchContent_Declare(mwfl
   GIT_REPOSITORY https://github.com/mwfl/mwfl.git
-  GIT_TAG v0.3.0
+  GIT_TAG v0.1.0
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(mwfl)
 
@@ -294,7 +294,7 @@ Screenshot and product-quality reviews follow the
 
 ## Build this repository
 
-The authoritative 0.2 public-preview development and acceptance environment is Windows 10
+The authoritative 0.1.0 development and acceptance environment is Windows 10
 1809 or newer, x64, Visual Studio 2026 with MSVC and a Windows SDK,
 CMake 3.21 or newer, and C++20.
 
@@ -338,8 +338,7 @@ includes WIL for you. For controlled environments, see the
 
 - [Windows desktop capability roadmap](docs/win32xx-parity-roadmap.md)
 - [Windows application foundation roadmap](docs/foundation-roadmap.md)
-- [0.2.0 release readiness plan](docs/release-readiness-0.2.0.md)
-- [0.3.0 release readiness plan](docs/release-readiness-0.3.0.md)
+- [0.1.0 release readiness plan](docs/release-readiness.md)
 - [First public preview readiness archive](docs/release-readiness.md)
 - [Modern Windows UI API coverage plan](docs/windows-ui-modernization-plan.md)
 - [IDE-style docking workspace tutorial](docs/tutorials/docking-workspace.md)
