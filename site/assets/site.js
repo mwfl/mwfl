@@ -1,6 +1,66 @@
 (() => {
   "use strict";
 
+  /* ---------- Shared primary navigation ----------
+     Keep the same menu on every page so moving between guides, applications,
+     and the component catalog never changes the header width or link order. */
+  const inComponents = location.pathname.includes("/components/");
+  const page = location.pathname.split("/").pop() || "index.html";
+  const rootPath = inComponents ? "../" : "";
+  const applicationPages = new Set([
+    "folder-compare.html", "folder-explorer.html", "hex-editor.html",
+    "markdown-editor.html", "notepad.html", "pdf-viewer.html",
+    "sqlite-viewer.html"
+  ]);
+  const activeSection = inComponents
+    ? "components"
+    : applicationPages.has(page)
+      ? "applications"
+      : page === "tutorial.html"
+        ? "tutorial"
+        : page === "building.html"
+          ? "building"
+          : page === "changelog.html"
+            ? "changelog"
+            : "home";
+  const primaryLinks = [
+    ["home", `${rootPath}index.html`, "Home"],
+    ["components", `${rootPath}components/index.html`, "Components"],
+    ["applications", `${rootPath}index.html#applications`, "Applications"],
+    ["tutorial", `${rootPath}tutorial.html`, "Get started"],
+    ["building", `${rootPath}building.html`, "Build reference"],
+    ["changelog", `${rootPath}changelog.html`, "Changelog"]
+  ];
+  document.querySelectorAll(".site-header .nav-links").forEach((nav) => {
+    nav.replaceChildren(...primaryLinks.map(([section, href, label]) => {
+      const link = document.createElement("a");
+      link.href = href;
+      link.textContent = label;
+      if (section === activeSection) {
+        link.className = "active";
+        link.setAttribute("aria-current", "page");
+      }
+      return link;
+    }));
+    const github = document.createElement("a");
+    github.href = "https://github.com/mwfl/mwfl";
+    github.target = "_blank";
+    github.rel = "noopener noreferrer";
+    github.textContent = "GitHub";
+    nav.append(github);
+    const themeToggle = document.createElement("button");
+    themeToggle.className = "theme-toggle";
+    themeToggle.type = "button";
+    themeToggle.setAttribute("aria-label", "Toggle color theme");
+    nav.append(themeToggle);
+  });
+
+  /* GitHub is supporting context for the documentation, so keep Pages open. */
+  document.querySelectorAll('a[href^="https://github.com/"]').forEach((link) => {
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+  });
+
   /* ---------- Theme toggle ----------
      With no saved override, CSS and this script follow the operating-system
      preference. The button switches to the opposite theme; pressing it again

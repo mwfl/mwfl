@@ -1,6 +1,6 @@
 # Windows Service application
 
-`mwfl::service` is an opt-in Foundation component. Its 0.1.2 preview slice
+`mwfl::service` is an opt-in Foundation component. Its 0.1.0 official slice
 provides a single-service SCM host, the same callback under a console debug
 host, and a testable status-transition model. Service installation and
 management remain application/deployment-tool responsibilities.
@@ -57,6 +57,6 @@ sc.exe delete MwflIndexingWorker
 
 The repository's non-elevated tests cover the pure state machine and console
 host. An elevated install/start/control/remove integration test is still a
-roadmap gate and is not claimed by 0.1.2. The implementation supports only
+roadmap gate and is not claimed by 0.1.0. The implementation supports only
 `SERVICE_WIN32_OWN_PROCESS`; driver and shared-process services remain outside
 scope.
