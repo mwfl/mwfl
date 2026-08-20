@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(mwfl VERSION 0.3.0 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
+project(mwfl VERSION 0.1.0 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -518,11 +518,7 @@ install(FILES
     docs/llms-full.txt
     docs/scope-map.md
     docs/foundation-releases.md
-    docs/foundation-migration-next.md
     docs/release-readiness.md
-    docs/release-readiness-0.2.0.md
-    docs/release-readiness-0.2.1.md
-    docs/release-readiness-0.3.0.md
     docs/windows-ui-modernization-plan.md
     docs/parity.json
     docs/win32xx-parity-roadmap.md

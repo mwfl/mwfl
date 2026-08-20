@@ -194,7 +194,7 @@ target_link_libraries(my_app PRIVATE
     <section id="usage-library" class="usage-library"><div class="eyebrow">All usage paths</div><h2>From first window to native integration.</h2><p>These lists are generated from every checked-in recipe and tutorial, so specialized workflows remain discoverable even when one capability card links a broader guide.</p><div class="usage-columns">
 $usage
       </div></section>
-    <section class="catalog-next"><div><div class="eyebrow">0.3 Foundation baseline</div><h2>Build GUI, CLI, Service, and supervised-worker applications from one tested native foundation.</h2></div><p><a class="button primary" href="https://github.com/mwfl/mwfl/releases/tag/v0.3.0">Explore the 0.3.0 release</a></p></section>
+    <section class="catalog-next"><div><div class="eyebrow">0.1.0 official baseline</div><h2>Build GUI, CLI, Service, and supervised-worker applications from one tested native foundation.</h2></div><p><a class="button primary" href="https://github.com/mwfl/mwfl/releases/tag/v0.1.0">Explore the first official release</a></p></section>
   </main>
   <footer class="site-footer"><div class="shell footer"><span>Modern Windows Foundation Layer &middot; MIT licensed &middot; Windows 10+ &middot; x64</span><nav aria-label="Footer"><a href="../building.html">Build</a><a href="https://github.com/mwfl/mwfl">Source</a></nav></div></footer>
 </body>

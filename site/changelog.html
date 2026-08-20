@@ -33,62 +33,10 @@
       <h1>Changelog</h1>
       <p class="lede">Public releases of mwfl and the capabilities introduced by each one.</p>
     </div>
-    <section id="v0-3-0">
-      <div class="eyebrow">Privacy-conscious crash diagnostics · August 2026</div>
-      <h2>0.3.0</h2>
-      <p>mwfl 0.3.0 adds an opt-in thread-information minidump tier while preserving the privacy-first default.</p>
-      <h3>Highlights</h3>
-      <ul>
-        <li><code>MiniDumpKind::WithThreadInfo</code> captures thread metadata without opting into broad process-memory dumps.</li>
-        <li>The native diagnostics example demonstrates the new tier.</li>
-        <li>Templates and consumer examples pin the immutable <code>v0.3.0</code> release.</li>
-      </ul>
-      <p><a href="https://github.com/mwfl/mwfl/releases/tag/v0.3.0">Release notes and the VS2026/MSVC downloads</a>.</p>
-    </section>
-    <section id="v0-2-1">
-      <div class="eyebrow">Application support and production hardening · August 2026</div>
-      <h2>0.2.1</h2>
-      <p>mwfl 0.2.1 adds a shared application-support surface and tightens the 0.2 Foundation baseline without changing its compatibility direction.</p>
-      <h3>Highlights</h3>
-      <ul>
-        <li><code>mwfl::app_support::UpdateChecker</code> gives MWFL applications one bounded GitHub Release check, reminder policy, and user-controlled opt-out.</li>
-        <li>Process output collection and Foundation waits use one monotonic deadline and stop-aware native waits.</li>
-        <li>Large reference examples are split into reviewable application units, with independent-header and compile-cost budgets.</li>
-        <li>MSVC x64 and ARM64 packaging includes provenance, and repeatable Agent blind evaluations track framework usability.</li>
-      </ul>
-      <p><a href="https://github.com/mwfl/mwfl/releases/tag/v0.2.1">Release notes and the VS2026/MSVC downloads</a>.</p>
-    </section>
-    <section id="v0-2-0">
-      <div class="eyebrow">Production Foundation baseline · August 2026</div>
-      <h2>0.2.0</h2>
-      <p>mwfl 0.2.0 turns the provisional Foundation slices into one coherent baseline for GUI, CLI, Windows Service, and supervised worker applications.</p>
-      <h3>Highlights</h3>
-      <ul>
-        <li>Monotonic deadlines, stop-token cancellation, structured outcomes, and contextual native errors.</li>
-        <li>Job-based process supervision, bounded concurrent output, secure cancellable local Named Pipe IPC, and shared console/SCM service logic.</li>
-        <li>Thread-safe diagnostic fanout, ETW, Event Log, minidumps, secure buffers, credentials, and Windows identity helpers.</li>
-        <li>Recovery, version and Authenticode inspection, verified update handoff, and an independent Task Scheduler component.</li>
-        <li>62 compiled examples plus eight public standalone organization applications validated against the same release.</li>
-      </ul>
-      <p><a href="https://github.com/mwfl/mwfl/releases/tag/v0.2.0">Release notes and the VS2026/MSVC x64 download</a>.</p>
-    </section>
-    <section id="v0-1-9">
-      <div class="eyebrow">Foundation release train · August 2026</div>
-      <h2>0.1.9</h2>
-      <p>mwfl 0.1.9 completes the backward-compatible 0.1.1-0.1.9 Foundation train while preserving the independently acquired UI layer.</p>
-      <h3>Highlights</h3>
-      <ul>
-        <li>Core errors, results, handle ownership, Unicode conversion, cancellable waits.</li>
-        <li>Opt-in Service, child-process, bounded local IPC, diagnostics, security, and deployment components.</li>
-        <li>Nine runnable Foundation examples, including a controller/worker integration stack.</li>
-        <li>54 compiled examples in total, independent public-header probes, and installed-package consumers.</li>
-      </ul>
-      <p><a href="https://github.com/mwfl/mwfl/blob/main/docs/releases/v0.1.9.md">Development-train notes</a>.</p>
-    </section>
     <section id="v0-1-0">
-      <div class="eyebrow">First public preview · August 2026</div>
+      <div class="eyebrow">First official public release · August 2026</div>
       <h2>0.1.0</h2>
-      <p>mwfl 0.1.0 establishes the first supported public-preview baseline for building native Windows desktop applications with C++20.</p>
+      <p>mwfl 0.1.0 is the first official release for building native Windows desktop, CLI, Service, and supervised-worker applications with C++20.</p>
       <h3>Highlights</h3>
       <ul>
         <li>WTL/ATL-free real HWND windows and native control wrappers with typed events and explicit ownership.</li>
@@ -96,9 +44,11 @@
         <li>Menus, accelerators, dialogs, clipboard, file drops, window placement, appearance, and accessibility helpers.</li>
         <li>Safe worker-to-UI wakeups, timers, and wait-aware message pumping.</li>
         <li>Visual Studio 2022 and 2026 support across x64 and ARM64 using the Microsoft Visual C++ compiler.</li>
-        <li>45 compiled examples, CMake packages, copyable starters, and coding-agent-oriented guidance and evaluations.</li>
+        <li>Foundation components for services, processes, IPC, diagnostics, security, deployment, and scheduling.</li>
+        <li>Privacy-conscious structured diagnostics, minidumps, update checking, and Authenticode verification.</li>
+        <li>62 compiled examples, CMake packages, copyable starters, and coding-agent-oriented guidance and evaluations.</li>
       </ul>
-      <p><a href="https://github.com/mwfl/mwfl/releases/tag/v0.1.0">Release notes and the VS2026/MSVC x64 download</a>. Source builds and CI also cover ARM64; no ARM64 binary package is published for this preview.</p>
+      <p><a href="https://github.com/mwfl/mwfl/releases/tag/v0.1.0">Release notes and the VS2026/MSVC downloads</a>. Binary packages are published for x64 and ARM64.</p>
     </section>
   </main>
   <footer class="site-footer">

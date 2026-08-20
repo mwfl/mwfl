@@ -1,10 +1,10 @@
 # API stability policy
 
-The `v0.1.0` public-preview release establishes the supported public baseline.
+The `v0.1.0` official release establishes the supported public baseline.
 The audited baseline is recorded in [public-api-contract-audit.md](public-api-contract-audit.md).
 
-From `v0.2.0` onward, documented stable APIs preserve source compatibility within the
-0.2.x line. ABI compatibility is not promised: applications should
+From `v0.1.0` onward, documented stable APIs preserve source compatibility within the
+0.1.x line. ABI compatibility is not promised: applications should
 rebuild mwfl and their code with the same MSVC toolset and runtime configuration.
 
 During the 0.x public preview, patch releases may add backward-compatible
@@ -19,9 +19,9 @@ deliberate provisional-API compatibility break or a new compatibility baseline.
   operations, packaging, and raw Win32 escape hatches.
 - **Provisional:** the command model and optional appearance helpers.
 - **Stable Foundation baseline:** `core`, Service, process, IPC, diagnostics,
-  security, deployment, and scheduler APIs released in 0.2.0. Their ownership,
+  security, deployment, and scheduler APIs released in 0.1.0. Their ownership,
   cancellation, security, failure, and explicit-mutation semantics are
-  contractual within the 0.2.x line.
+  contractual within the 0.1.x line.
 - **Example:** example application code is not library API.
 - **Internal:** `mwfl::detail`, `src/detail`, and test-only definitions.
 
