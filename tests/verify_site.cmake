@@ -55,7 +55,7 @@ endforeach()
 
 if(NOT component_catalog MATCHES "component-search" OR
    NOT component_catalog MATCHES "data-catalog-filter" OR
-   NOT component_catalog MATCHES "releases/tag/v0.2.1")
+   NOT component_catalog MATCHES "releases/tag/v0.3.0")
     message(FATAL_ERROR "Pages catalog is missing search, filters, or the next plan")
 endif()
 
@@ -106,7 +106,7 @@ foreach(marker IN ITEMS "templates/basic-app" "DocumentState" "WriteTextFileAtom
 endforeach()
 
 file(READ "${SITE_ROOT}/changelog.html" changelog)
-foreach(marker IN ITEMS "0.2.1" "releases/tag/v0.2.1" "x64" "ARM64")
+foreach(marker IN ITEMS "0.3.0" "releases/tag/v0.3.0" "x64" "ARM64")
     if(NOT changelog MATCHES "${marker}")
         message(FATAL_ERROR "changelog is missing release marker: ${marker}")
     endif()

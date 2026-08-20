@@ -1,4 +1,5 @@
-/* mwfl site — a code-first, monospace design inspired by gpui.rs. */
+/* mwfl site — a Fluent-inspired design derived from the project mark:
+   luminous cyan, Windows blue, and electric violet on a clean neutral base. */
 
 :root {
   color-scheme: light;
@@ -27,53 +28,53 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #000000;
-  --glow-a: transparent;
-  --glow-b: transparent;
-  --surface: #0a0a0a;
-  --surface-2: #151515;
-  --text: #f5f5f5;
-  --muted: #a3a3a3;
-  --line: #272727;
-  --line-strong: #454545;
-  --accent: #8be0ff;
-  --accent-soft: rgba(255, 255, 255, .07);
-  --chip-line: #3f3f3f;
-  --chip-bg: #151515;
-  --card-shadow: 0 1px 2px rgba(0, 0, 0, .7), 0 14px 38px rgba(0, 0, 0, .55);
-  --card-shadow-hover: 0 3px 7px rgba(0, 0, 0, .75), 0 22px 52px rgba(0, 0, 0, .7);
-  --header-bg: rgba(0, 0, 0, .86);
-  --code-bg: #080808;
-  --code-bg-2: #121212;
-  --code-line: #303030;
-  --code-text: #f1f1f1;
-  --code-muted: #a1a1a1;
+  --bg: #070b18;
+  --glow-a: rgba(53, 185, 237, .18);
+  --glow-b: rgba(91, 70, 230, .16);
+  --surface: #0e1529;
+  --surface-2: #151e38;
+  --text: #f4f7ff;
+  --muted: #a9b5d1;
+  --line: #263455;
+  --line-strong: #3d5282;
+  --accent: #7ddcff;
+  --accent-soft: rgba(83, 177, 245, .12);
+  --chip-line: #385581;
+  --chip-bg: #13213c;
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 16px 42px rgba(0, 0, 0, .32);
+  --card-shadow-hover: 0 3px 8px rgba(0, 0, 0, .5), 0 24px 56px rgba(31, 61, 137, .3);
+  --header-bg: rgba(7, 11, 24, .84);
+  --code-bg: #080e20;
+  --code-bg-2: #111a33;
+  --code-line: #2b3b62;
+  --code-text: #edf4ff;
+  --code-muted: #9aabd0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     color-scheme: dark;
-    --bg: #000000;
-    --glow-a: transparent;
-    --glow-b: transparent;
-    --surface: #0a0a0a;
-    --surface-2: #151515;
-    --text: #f5f5f5;
-    --muted: #a3a3a3;
-    --line: #272727;
-    --line-strong: #454545;
-    --accent: #8be0ff;
-    --accent-soft: rgba(255, 255, 255, .07);
-    --chip-line: #3f3f3f;
-    --chip-bg: #151515;
-    --card-shadow: 0 1px 2px rgba(0, 0, 0, .7), 0 14px 38px rgba(0, 0, 0, .55);
-    --card-shadow-hover: 0 3px 7px rgba(0, 0, 0, .75), 0 22px 52px rgba(0, 0, 0, .7);
-    --header-bg: rgba(0, 0, 0, .86);
-    --code-bg: #080808;
-    --code-bg-2: #121212;
-    --code-line: #303030;
-    --code-text: #f1f1f1;
-    --code-muted: #a1a1a1;
+    --bg: #070b18;
+    --glow-a: rgba(53, 185, 237, .18);
+    --glow-b: rgba(91, 70, 230, .16);
+    --surface: #0e1529;
+    --surface-2: #151e38;
+    --text: #f4f7ff;
+    --muted: #a9b5d1;
+    --line: #263455;
+    --line-strong: #3d5282;
+    --accent: #7ddcff;
+    --accent-soft: rgba(83, 177, 245, .12);
+    --chip-line: #385581;
+    --chip-bg: #13213c;
+    --card-shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 16px 42px rgba(0, 0, 0, .32);
+    --card-shadow-hover: 0 3px 8px rgba(0, 0, 0, .5), 0 24px 56px rgba(31, 61, 137, .3);
+    --header-bg: rgba(7, 11, 24, .84);
+    --code-bg: #080e20;
+    --code-bg-2: #111a33;
+    --code-line: #2b3b62;
+    --code-text: #edf4ff;
+    --code-muted: #9aabd0;
   }
 }
 
@@ -612,182 +613,4 @@ code:not(pre code) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; }
   .example-card:hover { transform: none; }
-}
-
-/* ---------- Code-first visual system ----------
-   The information-rich pages keep their existing structure; these overrides
-   give the whole site the restrained black canvas and typographic rhythm of a
-   compact framework manual. */
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #000;
-  --glow-a: transparent;
-  --glow-b: transparent;
-  --surface: #050505;
-  --surface-2: #0b0e14;
-  --text: #f2f0eb;
-  --muted: #918f8b;
-  --line: #222326;
-  --line-strong: #3b3d42;
-  --accent: #f2f0eb;
-  --accent-soft: rgba(255, 255, 255, .055);
-  --chip-line: #34363a;
-  --chip-bg: #0b0e14;
-  --card-shadow: none;
-  --card-shadow-hover: none;
-  --header-bg: rgba(0, 0, 0, .88);
-  --code-bg: #0b0e14;
-  --code-bg-2: #0b0e14;
-  --code-line: rgba(255, 255, 255, .1);
-  --code-text: #bfbdb7;
-  --code-muted: #797b80;
-}
-
-:root[data-theme="light"] {
-  color-scheme: light;
-  --bg: #f5f4ef;
-  --surface: #fbfaf6;
-  --surface-2: #ecebe6;
-  --text: #161616;
-  --muted: #686762;
-  --line: #d8d6cf;
-  --line-strong: #aaa8a1;
-  --accent: #161616;
-  --accent-soft: rgba(0, 0, 0, .05);
-  --chip-line: #c8c6bf;
-  --chip-bg: #ecebe6;
-  --header-bg: rgba(245, 244, 239, .9);
-  --code-bg: #e9e8e3;
-  --code-bg-2: #e9e8e3;
-  --code-line: rgba(0, 0, 0, .12);
-  --code-text: #30302e;
-  --code-muted: #74736e;
-}
-
-body {
-  background: var(--bg);
-  font-family: "Geist Mono", "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
-  font-size: 15px;
-  line-height: 1.65;
-}
-
-h1, h2, h3, .brand, .button, .copy-btn {
-  font-family: inherit;
-}
-
-.shell { width: min(1184px, calc(100% - 6rem)); }
-.site-header { border-bottom: 0; }
-.nav { min-height: 6rem; }
-.brand { font-weight: 400; letter-spacing: 0; }
-.brand img { display: none; }
-.nav-links { gap: 1.5rem; }
-.nav-links a {
-  padding: 0;
-  border-radius: 0;
-  font-size: .9rem;
-}
-.nav-links a:hover, .nav-links a.active { background: none; color: var(--text); }
-.theme-toggle {
-  width: 1.8rem; height: 1.8rem; margin-left: .25rem;
-  border: 0; border-radius: 0; background: transparent;
-}
-
-.eyebrow {
-  color: var(--text);
-  font: 400 1.35rem/1.2 inherit;
-  letter-spacing: 0;
-  text-transform: lowercase;
-}
-h1 { font-size: clamp(1rem, 1.8vw, 1.1rem); font-weight: 400; line-height: 1.65; letter-spacing: 0; }
-h2 { font-size: 1.08rem; font-weight: 700; letter-spacing: 0; }
-h3 { font-size: .95rem; font-weight: 600; }
-.lede { color: var(--text); font-size: 1rem; }
-
-.home-hero {
-  grid-template-columns: minmax(0, 1fr) minmax(420px, 1.3fr);
-  gap: 4.5rem;
-  align-items: start;
-  padding: 2.2rem 0 5rem;
-}
-.home-hero h1 { max-width: 43rem; margin: 1.7rem 0 0; font-size: clamp(1rem, 1.8vw, 1.1rem); }
-.home-hero .lede { margin-top: 0; }
-.home-hero .hero-copy::after {
-  content: "Built for real desktop applications. Thin by design.";
-  display: block;
-  margin-top: 4.8rem;
-  color: var(--muted);
-  font-style: italic;
-}
-.actions { gap: 1.4rem; }
-.button {
-  padding: .2rem 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  color: var(--muted);
-  font-weight: 400;
-  font-style: italic;
-}
-.button:hover, .button.primary, .button.primary:hover {
-  border: 0;
-  background: none;
-  box-shadow: none;
-  color: var(--text);
-  filter: none;
-}
-
-pre, .window {
-  border-radius: .25rem;
-  background: var(--code-bg);
-  box-shadow: none;
-}
-.window-bar { background: var(--code-bg); }
-.window-glyphs { display: none; }
-.hero-demo figcaption { text-align: left; }
-
-.section { padding: 5rem 0; border-top: 1px solid var(--line); }
-.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); }
-.card {
-  padding: 1.35rem 1.25rem 1.35rem 0;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  border-radius: 0;
-  background: transparent;
-}
-.card:nth-child(odd) { padding-right: 2rem; border-right: 1px solid var(--line); }
-.card:nth-child(even) { padding-left: 2rem; }
-.tag { padding: 0; border: 0; border-radius: 0; background: none; color: var(--muted); font-weight: 400; }
-
-.cta-band, .stat-strip, .home-strip, .requirements {
-  border-radius: 0;
-  background: var(--line);
-  box-shadow: none;
-}
-.cta-band { padding: 2rem 0; border-width: 1px 0; background: transparent; }
-.stat-strip { margin-bottom: 5rem; }
-.stat-strip strong { color: var(--text); font-weight: 400; }
-.showcase-figure, .example-card { border-radius: .25rem; box-shadow: none; }
-.example-card:hover { transform: none; }
-.example-card img { filter: saturate(.82) contrast(.96); }
-
-.quick-code { padding: 5rem 0; }
-.docs-sidebar nav a { border-radius: 0; }
-.docs-sidebar nav a:hover { background: transparent; }
-.page-toc a { border-radius: 0; background: transparent; }
-.prose { max-width: 800px; }
-.footer { border-top-color: var(--line); }
-
-@media (max-width: 900px) {
-  .shell { width: min(100% - 2.5rem, 760px); }
-  .home-hero { grid-template-columns: 1fr; gap: 2rem; }
-  .home-hero .hero-copy::after { margin-top: 2.5rem; }
-}
-
-@media (max-width: 640px) {
-  .nav { min-height: 4.5rem; }
-  .nav-links.nav-links-open { background: var(--bg); border-color: var(--line); }
-  .grid { grid-template-columns: 1fr; }
-  .card:nth-child(odd), .card:nth-child(even) { padding: 1.25rem 0; border-right: 0; }
-  .home-hero { padding-top: 2rem; }
-  .section { padding: 3.5rem 0; }
 }
