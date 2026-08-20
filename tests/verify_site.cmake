@@ -129,6 +129,7 @@ foreach(marker IN ITEMS
         "Get started"
         "Build reference"
         "Changelog"
+        "Feedback"
         "noopener noreferrer")
     if(NOT site_script MATCHES "${marker}")
         message(FATAL_ERROR "shared Pages navigation is missing marker: ${marker}")
@@ -138,6 +139,19 @@ if(NOT site_script MATCHES "https://github.com/" OR
    NOT site_script MATCHES "link.target = \\\"_blank\\\"")
     message(FATAL_ERROR "GitHub links must open in a new browsing context")
 endif()
+foreach(marker IN ITEMS
+        "folder-compare.html"
+        "folder-explorer.html"
+        "hex-editor.html"
+        "markdown-editor.html"
+        "pdf-reader"
+        "sqlite-viewer.html"
+        "issues/new"
+        "Send feedback for")
+    if(NOT site_script MATCHES "${marker}")
+        message(FATAL_ERROR "shared Pages feedback routing is missing marker: ${marker}")
+    endif()
+endforeach()
 if(NOT site_script MATCHES "aria-pressed" OR
    NOT site_script MATCHES "Following system" OR
    NOT site_script MATCHES "return to system theme" OR
