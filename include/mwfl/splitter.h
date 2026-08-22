@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <commctrl.h>
 
+#include <limits>
+
 #include <mwfl/concepts.h>
 #include <mwfl/controls.h>
 #include <mwfl/dpi.h>
@@ -52,7 +54,8 @@ private:
     Dip position_{160.0f};
 };
 
-inline constexpr UINT kSplitterPositionChanged = NM_FIRST - 80U;
+inline constexpr UINT kSplitterPositionChanged =
+    (std::numeric_limits<UINT>::max)() - 79U;
 
 struct SplitterNotification {
     NMHDR header{};

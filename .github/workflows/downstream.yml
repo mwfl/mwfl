@@ -1,0 +1,50 @@
+name: Downstream consumers
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 5 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  applications:
+    name: ${{ matrix.application }} against candidate MWFL
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        application:
+          - folder-compare
+          - folder-explorer
+          - hex-editor
+          - markdown-editor
+          - notepad-colon
+          - pdf-reader
+          - sqlite-viewer
+          - startup-manager
+    steps:
+      - name: Checkout MWFL candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: mwfl
+      - name: Checkout downstream application
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: mwfl/${{ matrix.application }}
+          path: ${{ matrix.application }}
+      - name: Configure against candidate source
+        shell: pwsh
+        working-directory: ${{ matrix.application }}
+        run: cmake --preset vs2026-x64
+      - name: Build
+        working-directory: ${{ matrix.application }}
+        run: cmake --build --preset vs2026-x64-release --parallel 2
+      - name: Test
+        working-directory: ${{ matrix.application }}
+        run: ctest --preset vs2026-x64-release --output-on-failure

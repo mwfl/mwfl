@@ -2,6 +2,29 @@
 
 The repository includes 62 focused executables. GUI examples use the real `mwfl::Application` and recommended `mwfl::WindowBase` path; CLI and Foundation examples remain independently requested and do not acquire the UI component. Common messages use typed C++20 event handlers rather than message-map macros. Notepad, Hot Corners, Settings, Explorer, Drawing, Image Viewer, Printing, OLE Drag/Drop, Shell Integration, Code Editor, Browser, document/MDI/Ribbon workspaces, graphics interop, Docking Workspace, and Supervised Worker are complete reference applications with dedicated model/native/GUI evidence. Product applications extracted from this catalog live in separate repositories: [Folder Compare](https://github.com/mwfl/folder-compare), [Folder Explorer](https://github.com/mwfl/folder-explorer), [Hex Editor](https://github.com/mwfl/hex-editor), [Markdown Editor](https://github.com/mwfl/markdown-editor), [PDF Reader](https://github.com/mwfl/pdf-reader), and [SQLite Viewer](https://github.com/mwfl/sqlite-viewer).
 
+## Choose a learning path
+
+The catalog is intentionally layered. These are not 62 equivalent starting
+points, and their source directories remain stable so existing links keep
+working.
+
+| Path | Start with | Use it for |
+|---|---|---|
+| Starter | `hello`, `cli_basic`, `core_foundation`, `foundation_overview` | The smallest complete GUI, CLI, or Foundation host |
+| Focused | `application`, `window`, `timer`, `wakeup`, `process_runner`, `ipc_secure` | One ownership, event, threading, or system contract |
+| Catalog | `controls`, `common_controls` | Discover native control wrappers |
+| Composed | `form_binding`, `commands`, `desktop_integration` | Combine several ordinary application APIs |
+| Advanced | `wait_aware`, `self_drawn_host`, `system_lifecycle` | Message-pump, rendering, and operating-system boundaries |
+| Reference | `notepad`, `explorer`, `document_workspace`, `docking_workspace`, `supervised_worker` | Copy a complete application architecture |
+
+Official standalone applications are downstream consumers, not additional
+syntax examples. Their machine-readable catalog and compatibility role live in
+[`docs/downstream-consumers.json`](../docs/downstream-consumers.json).
+
+Before adding another executable, prefer extending an existing example or
+writing a recipe unless the change introduces a distinct public contract or a
+canonical multi-component composition.
+
 | Directory | Target | Focus |
 |---|---|---|
 | `hello` | `mwfl_hello` | Smallest complete mwfl program |

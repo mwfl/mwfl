@@ -97,12 +97,8 @@ switch ($Mode) {
     'Full' {
         Invoke-MwflBuild Debug
         Invoke-MwflTest Debug
-        if ($Architecture -eq 'x64') {
-            Invoke-MwflBuild Release
-            Invoke-MwflTest Release
-        } else {
-            Write-Host 'Release ARM64 has no repository preset; Debug validation completed.'
-        }
+        Invoke-MwflBuild Release
+        Invoke-MwflTest Release
     }
 }
 
