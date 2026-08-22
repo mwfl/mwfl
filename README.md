@@ -52,6 +52,8 @@ independent Scheduler component.
 
 ## Why mwfl
 
+**See the same native window implemented both ways:** [raw Win32 vs. mwfl](docs/raw-win32-comparison.md).
+
 | Native by design | Modern where it matters | Small and transparent | Ready for real desktop work |
 |---|---|---|---|
 | Real HWND controls, Win32 messages, styles, handles, and return values remain available. | Typed events, RAII resources, C++20 ranges, checked setup, and responsive layout remove repetitive plumbing. | No custom renderer, virtual DOM, code generator, reflection system, or message-map macros. | Per-Monitor V2 DPI, accessibility helpers, shell integration, worker wakeups, and wait-aware pumping. |
