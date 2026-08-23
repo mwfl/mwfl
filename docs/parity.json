@@ -10,10 +10,15 @@
   },
   "active_release": {
     "version": "0.1.1",
-    "status": "in_progress",
+    "status": "complete",
     "theme": "ecosystem-and-source-compatibility",
     "acceptance": "docs/milestones/0.1.1.md",
-    "evidence": "docs/releases/0.1.1-candidate.md"
+    "evidence": "docs/releases/0.1.1-candidate.md",
+    "commit": "c40624326163bb59f4a1d5c74842e51ae13ffc78",
+    "tag": "v0.1.1",
+    "ci_run": 32612122580,
+    "downstream_run": 32612122581,
+    "release_run": 32613130579
   },
   "milestones": [
     {
