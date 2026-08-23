@@ -65,3 +65,38 @@ foreach(job IN ITEMS vs2022-compatibility static-analysis address-sanitizer cove
         message(FATAL_ERROR "Required 0.1.1 CI job is missing: ${job}")
     endif()
 endforeach()
+
+file(READ "${PROJECT_ROOT}/docs/parity.json" parity)
+string(JSON release_version GET "${parity}" active_release version)
+string(JSON release_status GET "${parity}" active_release status)
+string(JSON release_commit GET "${parity}" active_release commit)
+string(JSON release_tag GET "${parity}" active_release tag)
+if(NOT release_version STREQUAL "0.1.1" OR
+   NOT release_status STREQUAL "complete" OR
+   NOT release_commit STREQUAL "c40624326163bb59f4a1d5c74842e51ae13ffc78" OR
+   NOT release_tag STREQUAL "v0.1.1")
+    message(FATAL_ERROR "0.1.1 release metadata is not closed on the published commit and tag")
+endif()
+
+file(READ "${PROJECT_ROOT}/docs/milestones/0.1.1.md" milestone)
+if(milestone MATCHES "- \\[ \\]")
+    message(FATAL_ERROR "Completed 0.1.1 milestone has unchecked acceptance items")
+endif()
+
+file(READ "${PROJECT_ROOT}/docs/releases/unreleased.md" unreleased)
+if(unreleased MATCHES "0\\.1\\.1 \\(unreleased\\)" OR
+   NOT unreleased MATCHES "v0\\.1\\.1\\.md")
+    message(FATAL_ERROR "Unreleased notes do not hand off cleanly from v0.1.1")
+endif()
+
+file(READ "${PROJECT_ROOT}/docs/releases/0.1.1-candidate.md" evidence)
+foreach(marker IN ITEMS
+        "32612122580" "32612122581" "32613130579"
+        "c40624326163bb59f4a1d5c74842e51ae13ffc78"
+        "6b4106f1d0f8be74c31a355ebb8d5a2a29b502715fd315afd80284989fe63b9f"
+        "dad7654f2d67054521ee3b391ebc18eb3ad8fbb0f9c380f6b5f9f65ffbcd7500"
+        "gh attestation verify" "All 0.1.1 acceptance and publication gates are complete")
+    if(NOT evidence MATCHES "${marker}")
+        message(FATAL_ERROR "0.1.1 release evidence is missing: ${marker}")
+    endif()
+endforeach()
