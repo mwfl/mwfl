@@ -56,7 +56,11 @@ if(NOT schema_version EQUAL 1 OR path_count LESS 10)
 endif()
 
 file(READ "${PROJECT_ROOT}/AGENTS.md" agents)
-foreach(term IN ITEMS doctor.ps1 verify.ps1 "Visual Studio 2022" "Visual Studio 2026")
+foreach(term IN ITEMS
+        doctor.ps1 verify.ps1 "Visual Studio 2022" "Visual Studio 2026"
+        "Release completion discipline" "actively monitor GitHub Actions"
+        "official downstream-consumer workflow" "tag-triggered Release package"
+        "SHA-256 checksum files" "Never report a version as released")
     if(NOT agents MATCHES "${term}")
         message(FATAL_ERROR "AGENTS.md does not cover ${term}")
     endif()
