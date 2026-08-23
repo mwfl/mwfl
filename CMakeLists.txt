@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(mwfl VERSION 0.1.0 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
+project(mwfl VERSION 0.1.1 DESCRIPTION "Modern Windows Foundation Layer" LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -507,6 +507,8 @@ install(FILES
     docs/accessibility.md
     docs/reference.md
     docs/public-api-contract-audit.md
+    docs/public-api-baseline-0.1.txt
+    docs/downstream-consumers.json
     docs/system-message-recipes.md
     docs/agent-usage.md
     docs/agent-reference.md
@@ -519,6 +521,8 @@ install(FILES
     docs/scope-map.md
     docs/foundation-releases.md
     docs/release-readiness.md
+    docs/releases/0.1.1-candidate.md
+    docs/milestones/0.1.1.md
     docs/windows-ui-modernization-plan.md
     docs/parity.json
     docs/win32xx-parity-roadmap.md

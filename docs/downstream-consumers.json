@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "baseline": "v0.1.0",
+  "consumers": [
+    {"name":"folder-compare","repository":"mwfl/folder-compare","preset":"vs2026-x64","local_option":"FOLDER_COMPARE_MWFL_SOURCE_DIR","role":"file comparison and cancellable virtual results"},
+    {"name":"folder-explorer","repository":"mwfl/folder-explorer","preset":"vs2026-x64","local_option":"FOLDER_EXPLORER_MWFL_SOURCE_DIR","role":"large folder inventory, process and diagnostics"},
+    {"name":"hex-editor","repository":"mwfl/hex-editor","preset":"vs2026-x64","local_option":"HEX_EDITOR_MWFL_SOURCE_DIR","role":"custom drawing, scrolling and safe document writes"},
+    {"name":"markdown-editor","repository":"mwfl/markdown-editor","preset":"vs2026-x64","local_option":"MARKDOWN_EDITOR_MWFL_SOURCE_DIR","role":"Scintilla, WebView2 and document workspace"},
+    {"name":"notepad-colon","repository":"mwfl/notepad-colon","preset":"vs2026-x64","local_option":"MWFL_SOURCE_DIR","role":"large-file and multi-document editing"},
+    {"name":"pdf-reader","repository":"mwfl/pdf-reader","preset":"vs2026-x64","local_option":"PDF_READER_MWFL_SOURCE_DIR","role":"WebView2 document tabs and recovery"},
+    {"name":"sqlite-viewer","repository":"mwfl/sqlite-viewer","preset":"vs2026-x64","local_option":"SQLITE_VIEWER_MWFL_SOURCE_DIR","role":"read-only data workspace and virtual results"},
+    {"name":"startup-manager","repository":"mwfl/startup-manager","preset":"vs2026-x64","local_option":"STARTUP_MANAGER_MWFL_SOURCE_DIR","role":"elevation, scheduler and reversible system changes"}
+  ]
+}

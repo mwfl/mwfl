@@ -62,6 +62,7 @@ DockPlacementRecoveryResult RecoverDockFloatingPlacement(
             }
         }
     }
+    if (!target) return {DockPlacementRecoveryStatus::no_monitors};
 
     DockFloatingPlacement recovered = saved;
     recovered.monitor_key = target->key;

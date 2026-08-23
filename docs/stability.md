@@ -26,9 +26,16 @@ deliberate provisional-API compatibility break or a new compatibility baseline.
 - **Internal:** `mwfl::detail`, `src/detail`, and test-only definitions.
 
 After `v0.1.0`, public removals or signature changes require release notes and a
-compile-time compatibility fixture. Deprecations remain for at least one minor
-release. The project does not silently change ownership, thread-affinity,
+compile-time compatibility fixture. Deprecations remain available for at least
+one subsequent minor release and carry a documented replacement before
+removal. The project does not silently change ownership, thread-affinity,
 exception, or failure semantics.
+
+The complete installed-header baseline is machine-readable in
+[`public-api-baseline-0.1.txt`](public-api-baseline-0.1.txt). CI verifies that
+every baseline header remains present, while the frozen package consumer
+continues to compile through installed-package, `FetchContent`, and
+`add_subdirectory` acquisition. Additive headers and APIs are allowed.
 
 The maintained configurations are 64-bit Windows 10 1809 or newer on x64
 and ARM64 using the Microsoft Visual C++ compiler. Each is enforced in CI.

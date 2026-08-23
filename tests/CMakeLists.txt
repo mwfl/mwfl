@@ -396,6 +396,12 @@ add_test(NAME mwfl.api_surface
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_api_surface.cmake")
 set_tests_properties(mwfl.api_surface PROPERTIES TIMEOUT 20)
 
+add_test(NAME mwfl.compatibility_0_1_1
+    COMMAND "${CMAKE_COMMAND}" "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_0_1_1_metadata.cmake")
+set_tests_properties(mwfl.compatibility_0_1_1 PROPERTIES
+    TIMEOUT 20 LABELS "docs;metadata;fast")
+
 add_test(NAME mwfl.header_probe_coverage
     COMMAND "${CMAKE_COMMAND}" "-DPROJECT_ROOT=${PROJECT_SOURCE_DIR}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_header_probes.cmake")
@@ -1346,7 +1352,7 @@ foreach(test_name IN LISTS mwfl_all_tests)
            test_name STREQUAL "mwfl.notepad_gui" OR
            test_name STREQUAL "mwfl.document_workspace_gui")
         set(labels "gui;integration")
-    elseif(test_name MATCHES "^mwfl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap)$")
+    elseif(test_name MATCHES "^mwfl\\.(site_links|examples\\.catalog|release_metadata|agent_assets|developer_assets|agent_evals|api_index|change_selector|architecture_boundaries|parity_roadmap|compatibility_0_1_1)$")
         set(labels "docs;metadata;fast")
     elseif(test_name STREQUAL "mwfl.package_consumer")
         set(labels "package;integration;slow")

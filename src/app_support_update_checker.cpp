@@ -167,7 +167,8 @@ CheckResult FetchLatest(const UpdateCheckerOptions& options, bool manual) {
     constexpr wchar_t headers[] =
         L"Accept: application/vnd.github+json\r\n"
         L"X-GitHub-Api-Version: 2022-11-28\r\n";
-    if (!::WinHttpSendRequest(request.value, headers, static_cast<DWORD>(-1),
+    if (!::WinHttpSendRequest(request.value, headers,
+                              static_cast<DWORD>(std::size(headers) - 1),
                               WINHTTP_NO_REQUEST_DATA, 0, 0, 0) ||
         !::WinHttpReceiveResponse(request.value, nullptr)) {
         result.error = L"GitHub did not return a release response.";

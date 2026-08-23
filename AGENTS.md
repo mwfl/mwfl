@@ -85,6 +85,25 @@ Do not claim a check passed unless it was executed. Report the selected Visual
 Studio version, architecture, configuration, and any intentionally skipped
 checks.
 
+## Release completion discipline
+
+- Pushing a release branch, merge commit, or version tag starts validation; it
+  does not complete a release.
+- After every release-related push, actively monitor GitHub Actions until all
+  required workflows for the exact latest commit or tag reach a terminal
+  successful state. Do not rely on an earlier successful run, and do not treat
+  a newer failure as superseded until its replacement run succeeds.
+- Investigate every failure, fix the underlying code, test, workflow, or
+  metadata issue, push the fix, and observe the replacement run to completion.
+- Before merging a release PR, require the main CI workflow and the
+  official downstream-consumer workflow to succeed for the release candidate.
+- A version is formally released only after the tag-triggered Release package
+  workflow succeeds for x64 and ARM64, publishes the GitHub Release, and the
+  expected ZIPs, SHA-256 checksum files, and provenance attestations are
+  verified on that exact tag.
+- Never report a version as released while any required workflow is queued,
+  running, cancelled, skipped unexpectedly, or failed.
+
 ## Editing style
 
 - Match `.clang-format` and `.editorconfig` without reformatting unrelated code.

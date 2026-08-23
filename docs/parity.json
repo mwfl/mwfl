@@ -8,6 +8,13 @@
     "architectures": ["x64", "ARM64"],
     "api_compatibility_target": false
   },
+  "active_release": {
+    "version": "0.1.1",
+    "status": "in_progress",
+    "theme": "ecosystem-and-source-compatibility",
+    "acceptance": "docs/milestones/0.1.1.md",
+    "evidence": "docs/releases/0.1.1-candidate.md"
+  },
   "milestones": [
     {
       "version": "0.2",
